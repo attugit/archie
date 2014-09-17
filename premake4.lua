@@ -18,6 +18,7 @@ local gtest = project "gtest"
     targetdir "build/release/lib"
 
 local ut = project "unittest"
+  includedirs { "include/" }
   kind "ConsoleApp"
   links { "gtest", "pthread" }
   files { "test/*.cpp" }
