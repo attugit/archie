@@ -22,7 +22,11 @@ local ut = project "unittest"
   kind "ConsoleApp"
   links { "gtest", "pthread" }
   files { "test/*.cpp" }
-  local path = ""
+--[[
+  buildoptions { "-fprofile-arcs", "-ftest-coverage", "-pg" }
+  links { "gcov" }
+  linkoptions { "-pg" }
+--]]
   configuration "debug"
     defines { "DEBUG" }
     flags { "Symbols" }
