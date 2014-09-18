@@ -39,20 +39,41 @@ struct TypeSet<Head, Tail...> : TypeSet<Head>, TypeSet<Tail...> {
 
   constexpr std::size_t size() const { return 1 + sizeof...(Tail); }
 
-  friend bool operator<(TypeSet<Head, Tail...> const& lhs,
-                        TypeSet<Head, Tail...> const& rhs) {
-    return (&lhs != &rhs) ? lhs.less<Head, Tail...>(rhs) : false;
-  }
+  using SelfType = TypeSet<Head, Tail...>;
 
 private:
+  template <typename...>
+  struct compare;
+
   template <typename T, typename... U>
-  bool less(TypeSet<Head, Tail...> const& rhs) const {
-    return (this->get<T>() != rhs.get<T>()) ? (this->get<T>() < rhs.get<T>())
-                                            : less<Tail...>(rhs);
-  }
+  struct compare<T, U...> {
+    static bool less(SelfType const& lhs, SelfType const& rhs) {
+      return compare<T>::neq(lhs, rhs) ? compare<T>::less(lhs, rhs)
+                                       : compare<U...>::less(lhs, rhs);
+    };
+    static bool eq(SelfType const& lhs, SelfType const& rhs) {
+      return compare<T>::eq(lhs, rhs) ? compare<U...>::eq(lhs, rhs) : false;
+    }
+  };
   template <typename T>
-  bool less(TypeSet<Head, Tail...> const& rhs) {
-    return (this->get<T>() < rhs.get<T>());
+  struct compare<T> {
+    static bool less(SelfType const& lhs, SelfType const& rhs) {
+      return lhs.get<T>() < rhs.get<T>();
+    }
+    static bool eq(SelfType const& lhs, SelfType const& rhs) {
+      return lhs.get<T>() == rhs.get<T>();
+    }
+    static bool neq(SelfType const& lhs, SelfType const& rhs) {
+      return !compare<T>::eq(lhs, rhs);
+    }
+  };
+
+public:
+  friend bool operator<(SelfType const& lhs, SelfType const& rhs) {
+    return (&lhs != &rhs) ? compare<Head, Tail...>::less(lhs, rhs) : false;
+  }
+  friend bool operator==(SelfType const& lhs, SelfType const& rhs) {
+    return (&lhs != &rhs) ? compare<Head, Tail...>::eq(lhs, rhs) : true;
   }
 };
 
@@ -78,8 +99,15 @@ struct TypeSet<Head> {
   friend bool operator<(TypeSet<Head> const& lhs, TypeSet<Head> const& rhs) {
     return lhs.get<Head>() < rhs.get<Head>();
   }
+  friend bool operator==(TypeSet<Head> const& lhs, TypeSet<Head> const& rhs) {
+    return lhs.get<Head>() == rhs.get<Head>();
+  }
 
 private:
+  template <typename T>
+  bool less(TypeSet<T> const& rhs) const {
+    return this->get<T>() < rhs.get<T>();
+  }
   Head value;
 };
 
