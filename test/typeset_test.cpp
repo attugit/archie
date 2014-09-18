@@ -32,4 +32,14 @@ TEST_F(typeset_test, nothing) {
   EXPECT_EQ(2.0, au::get<double>(triplet));
   EXPECT_EQ("name", au::get<std::string>(triplet));
   static_assert(au::type_set_size(triplet) == 3, "");
+
+  au::TypeSet<unsigned, double> lhs(1, 2.0);
+  au::TypeSet<unsigned, double> rhs(1, 3.0);
+  au::TypeSet<unsigned, double> third(2, 1.0);
+  EXPECT_TRUE(lhs < rhs);
+  EXPECT_FALSE(lhs < lhs);
+  EXPECT_FALSE(rhs < rhs);
+  EXPECT_TRUE(lhs < third);
+  EXPECT_TRUE(rhs < third);
+  EXPECT_FALSE(third < lhs);
 }
