@@ -27,4 +27,19 @@ TEST_F(typeholder_test, nothing) {
   auto row = table.front();
   EXPECT_EQ(30, au::select<PersonAge>(row));
   static_assert(au::is_TypeHolder<PersonId>::value, "");
+  PersonId id1(1), id2(2);
+
+  EXPECT_TRUE(id1 < id2);
+  EXPECT_TRUE(id2 > id1);
+  EXPECT_TRUE(id1 <= id2);
+  EXPECT_TRUE(id2 >= id1);
+  EXPECT_TRUE(id1 == id1);
+  EXPECT_TRUE(id1 != id2);
+
+  EXPECT_FALSE(id2 < id1);
+  EXPECT_FALSE(id1 > id2);
+  EXPECT_FALSE(id2 <= id1);
+  EXPECT_FALSE(id1 >= id2);
+  EXPECT_FALSE(id1 == id2);
+  EXPECT_FALSE(id2 != id2);
 }

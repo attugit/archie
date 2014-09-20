@@ -1,4 +1,5 @@
 #include <archie/utils/typeset.h>
+#include <archie/utils/get.h>
 
 #include <gtest/gtest.h>
 namespace au = archie::utils;

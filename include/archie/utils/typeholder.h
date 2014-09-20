@@ -1,11 +1,13 @@
 #ifndef ARCHIE_UTILS_TYPE_HOLDER_H_INCLUDED
 #define ARCHIE_UTILS_TYPE_HOLDER_H_INCLUDED
 
+#include <archie/utils/operators.h>
+
 namespace archie {
 namespace utils {
 
   template <typename T>
-  struct TypeHolder {
+  struct TypeHolder : Operators<TypeHolder<T>> {
     using value_type = T;
     using reference = T&;
     using const_reference = const T&;
@@ -26,6 +28,10 @@ namespace utils {
     }
     reference operator*() { return get<value_type>(); }
     const_reference operator*() const { return get<value_type>(); }
+
+    friend bool operator<(TypeHolder const& lhs, TypeHolder const& rhs) {
+      return (&lhs != &rhs) ? lhs.value < rhs.value : false;
+    }
 
   private:
     value_type value;
