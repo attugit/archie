@@ -4,32 +4,32 @@
 namespace archie {
 namespace utils {
 
-template <typename T>
-struct TypeHolder {
-  using value_type = T;
-  using reference = T&;
-  using const_reference = const T&;
+  template <typename T>
+  struct TypeHolder {
+    using value_type = T;
+    using reference = T&;
+    using const_reference = const T&;
 
-  template <typename U>
-  explicit TypeHolder(TypeHolder<U> other)
-      : value(*other) {}
-  template <typename U>
-  explicit TypeHolder(U u)
-      : value(u) {}
-  template <typename U>
-  U& get() {
-    return value;
-  }
-  template <typename U>
-  U const& get() const {
-    return value;
-  }
-  reference operator*() { return get<value_type>(); }
-  const_reference operator*() const { return get<value_type>(); }
+    template <typename U>
+    explicit TypeHolder(TypeHolder<U> other)
+        : value(*other) {}
+    template <typename U>
+    explicit TypeHolder(U u)
+        : value(u) {}
+    template <typename U>
+    U& get() {
+      return value;
+    }
+    template <typename U>
+    U const& get() const {
+      return value;
+    }
+    reference operator*() { return get<value_type>(); }
+    const_reference operator*() const { return get<value_type>(); }
 
-private:
-  value_type value;
-};
+  private:
+    value_type value;
+  };
 }
 }
 

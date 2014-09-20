@@ -21,7 +21,6 @@ using Table = TableType<std::vector, PersonId, PersonName, PersonAge>;
 namespace au = archie::utils;
 struct typeholder_test : ::testing::Test {};
 
-
 TEST_F(typeholder_test, nothing) {
   Table table;
   table.emplace_back(PersonId(1), PersonName("Name"), PersonAge(30));
