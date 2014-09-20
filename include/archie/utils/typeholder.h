@@ -7,6 +7,12 @@ namespace utils {
 template <typename T>
 struct TypeHolder {
   using value_type = T;
+  using reference = T&;
+  using const_reference = const T&;
+
+  template <typename U>
+  explicit TypeHolder(TypeHolder<U> other)
+      : value(*other) {}
   template <typename U>
   explicit TypeHolder(U u)
       : value(u) {}
@@ -18,6 +24,8 @@ struct TypeHolder {
   U const& get() const {
     return value;
   }
+  reference operator*() { return get<value_type>(); }
+  const_reference operator*() const { return get<value_type>(); }
 
 private:
   value_type value;
@@ -29,10 +37,13 @@ private:
   struct name : archie::utils::TypeHolder<underlying> {                        \
     using BaseType = archie::utils::TypeHolder<underlying>;                    \
     using value_type = typename BaseType::value_type;                          \
+    using reference = typename BaseType::reference;                            \
+    using const_reference = typename BaseType::const_reference;                \
     template <typename U>                                                      \
     explicit name(U u)                                                         \
         : BaseType(u) {}                                                       \
     using BaseType::get;                                                       \
+    using BaseType::operator*;                                                 \
   }
 
 #endif
