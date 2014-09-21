@@ -17,7 +17,9 @@ namespace utils {
 
   template <typename Head, typename... Tail>
   struct TypeSet<Head, Tail...>
-      : TypeSet<Head>, TypeSet<Tail...>, Operators<TypeSet<Head, Tail...>> {
+      : TypeSet<Head>,
+        TypeSet<Tail...>,
+        Operators<TypeSet<Head, Tail...>, TypeSet<Head, Tail...>> {
     TypeSet(Head head, Tail... tail)
         : TypeSet<Head>(std::forward<Head>(head)),
           TypeSet<Tail...>(std::forward<Tail>(tail)...) {}
@@ -71,7 +73,7 @@ namespace utils {
   };
 
   template <typename Head>
-  struct TypeSet<Head> : Operators<TypeSet<Head>> {
+  struct TypeSet<Head> : Operators<TypeSet<Head>, TypeSet<Head>> {
     template <typename U>
     explicit TypeSet(U u)
         : value(std::forward<U>(u)) {}

@@ -54,15 +54,21 @@ namespace utils {
   struct is_equality_comparable<Tp>
       : detail::is_equality_comparable_helper<Tp, Tp>::type {};
 
-  template <typename T>
+  template <typename Tp, typename Up>
   struct Operators {
-    friend bool operator!=(T const& lhs, T const& rhs) {
+    friend bool operator!=(Tp const& lhs, Up const& rhs) {
       return (lhs < rhs) || (lhs > rhs);
     }
-    friend bool operator==(T const& lhs, T const& rhs) { return !(lhs != rhs); }
-    friend bool operator>(T const& lhs, T const& rhs) { return rhs < lhs; }
-    friend bool operator>=(T const& lhs, T const& rhs) { return !(lhs < rhs); }
-    friend bool operator<=(T const& lhs, T const& rhs) { return !(lhs > rhs); }
+    friend bool operator==(Tp const& lhs, Up const& rhs) {
+      return !(lhs != rhs);
+    }
+    friend bool operator>(Tp const& lhs, Up const& rhs) { return rhs < lhs; }
+    friend bool operator>=(Tp const& lhs, Up const& rhs) {
+      return !(lhs < rhs);
+    }
+    friend bool operator<=(Tp const& lhs, Up const& rhs) {
+      return !(lhs > rhs);
+    }
   };
 }
 }

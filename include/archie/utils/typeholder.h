@@ -7,7 +7,7 @@ namespace archie {
 namespace utils {
 
   template <typename T>
-  struct TypeHolder : Operators<TypeHolder<T>> {
+  struct TypeHolder : Operators<TypeHolder<T>, TypeHolder<T>> {
     using value_type = T;
     using reference = T&;
     using const_reference = const T&;
