@@ -54,7 +54,7 @@ namespace utils {
   struct is_equality_comparable<Tp>
       : detail::is_equality_comparable_helper<Tp, Tp>::type {};
 
-  template <typename Tp, typename Up>
+  template <typename Tp, typename Up, Requires<is_less_comparable<Tp, Up>>...>
   struct Operators {
     friend bool operator!=(Tp const& lhs, Up const& rhs) {
       return (lhs < rhs) || (lhs > rhs);

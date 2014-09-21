@@ -12,6 +12,9 @@ namespace utils {
   template <typename... Types>
   struct TypeSet;
 
+  template <typename... Types>
+  bool operator<(TypeSet<Types...> const&, TypeSet<Types...> const&);
+
   template <typename T, typename... Types>
   T const& get(TypeSet<Types...> const&);
 

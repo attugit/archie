@@ -6,6 +6,12 @@
 namespace archie {
 namespace utils {
 
+  template <typename Tp>
+  struct TypeHolder;
+
+  template <typename Tp>
+  bool operator<(TypeHolder<Tp> const&, TypeHolder<Tp> const&);
+
   template <typename T>
   struct TypeHolder : Operators<TypeHolder<T>, TypeHolder<T>> {
     using value_type = T;
