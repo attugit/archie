@@ -66,14 +66,14 @@ namespace utils {
   using Requires =
       typename std::enable_if<Condition::value, detail::enabler>::type;
 
-  template <typename Condition>
-  using RequiresAll = Requires<All<Condition>>;
+  template <typename... Conditions>
+  using RequiresAll = Requires<All<Conditions...>>;
 
-  template <typename Condition>
-  using RequiresAny = Requires<Any<Condition>>;
+  template <typename... Conditions>
+  using RequiresAny = Requires<Any<Conditions...>>;
 
-  template <typename Condition>
-  using RequiresNone = Requires<None<Condition>>;
+  template <typename... Conditions>
+  using RequiresNone = Requires<None<Conditions...>>;
 }
 }
 
