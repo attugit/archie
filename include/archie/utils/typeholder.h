@@ -1,19 +1,13 @@
 #ifndef ARCHIE_UTILS_TYPE_HOLDER_H_INCLUDED
 #define ARCHIE_UTILS_TYPE_HOLDER_H_INCLUDED
 
-#include <archie/utils/operators.h>
+#include <boost/operators.hpp>
 
 namespace archie {
 namespace utils {
 
-  template <typename Tp>
-  struct TypeHolder;
-
-  template <typename Tp>
-  bool operator<(TypeHolder<Tp> const&, TypeHolder<Tp> const&);
-
   template <typename T>
-  struct TypeHolder : Operators<TypeHolder<T>, TypeHolder<T>> {
+  struct TypeHolder : boost::totally_ordered<TypeHolder<T>> {
     using value_type = T;
     using reference = T&;
     using const_reference = const T&;
@@ -37,6 +31,10 @@ namespace utils {
 
     friend bool operator<(TypeHolder const& lhs, TypeHolder const& rhs) {
       return (&lhs != &rhs) ? lhs.value < rhs.value : false;
+    }
+
+    friend bool operator==(TypeHolder const& lhs, TypeHolder const& rhs) {
+      return (&lhs != &rhs) ? lhs.value == rhs.value : true;
     }
 
   private:

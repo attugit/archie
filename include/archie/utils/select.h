@@ -4,28 +4,28 @@
 #include <type_traits>
 #include <archie/utils/typeholder.h>
 #include <archie/utils/requires.h>
-#include <archie/utils/get.h>
+#include <tuple>
 
 namespace archie {
 namespace utils {
 
   template <typename...>
-  struct is_TypeHolder;
+  struct IsTypeHolder;
 
   template <typename T, typename U>
-  struct is_TypeHolder<T, U> : public std::is_base_of<TypeHolder<U>, T> {};
+  struct IsTypeHolder<T, U> : public std::is_base_of<TypeHolder<U>, T> {};
 
   template <typename T>
-  struct is_TypeHolder<T> : public is_TypeHolder<T, typename T::value_type> {};
+  struct IsTypeHolder<T> : public IsTypeHolder<T, typename T::value_type> {};
 
-  template <typename T, typename Set, Requires<is_TypeHolder<T>>...>
-  typename T::reference select(Set& set) {
-    return *(get<T>(set));
+  template <typename T, typename Set, typename = Requires<IsTypeHolder<T>>>
+  auto select(Set& set) -> decltype(*(std::declval<T>())) {
+    return *(std::get<T>(set));
   }
 
-  template <typename T, typename Set, Requires<is_TypeHolder<T>>...>
-  typename T::const_reference select(Set const& set) {
-    return *(get<T>(set));
+  template <typename T, typename Set, typename = Requires<IsTypeHolder<T>>>
+  auto select(Set const& set) -> decltype(*(std::declval<T>())) {
+    return *(std::get<T>(set));
   }
 }
 }

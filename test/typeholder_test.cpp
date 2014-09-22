@@ -26,11 +26,8 @@ TEST_F(typeholder_test, nothing) {
   table.emplace_back(PersonId(1), PersonName("Name"), PersonAge(30));
   auto row = table.front();
   EXPECT_EQ(30, au::select<PersonAge>(row));
-  static_assert(au::is_TypeHolder<PersonId>::value, "");
-  static_assert(au::is_less_comparable<PersonId, PersonId>::value, "");
-  static_assert(au::is_less_comparable<PersonId>::value, "");
-  static_assert(au::is_equality_comparable<PersonId, PersonId>::value, "");
-  static_assert(au::is_equality_comparable<PersonId>::value, "");
+  auto id = std::get<PersonId>(row);
+  EXPECT_EQ(1, *id);
   PersonId id1(1), id2(2);
 
   EXPECT_TRUE(id1 < id2);
