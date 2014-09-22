@@ -5,6 +5,7 @@
 #include <archie/utils/requires.h>
 #include <archie/utils/operators.h>
 #include <type_traits>
+#include <boost/operators.hpp>
 
 namespace archie {
 namespace utils {
@@ -22,7 +23,7 @@ namespace utils {
   struct TypeSet<Head, Tail...>
       : TypeSet<Head>,
         TypeSet<Tail...>,
-        Operators<TypeSet<Head, Tail...>, TypeSet<Head, Tail...>> {
+        boost::totally_ordered<TypeSet<Head, Tail...>> {
     TypeSet(Head head, Tail... tail)
         : TypeSet<Head>(std::forward<Head>(head)),
           TypeSet<Tail...>(std::forward<Tail>(tail)...) {}
@@ -58,6 +59,9 @@ namespace utils {
         return compare<T>::eq(lhs, rhs) ? compare<U...>::less(lhs, rhs)
                                         : compare<T>::less(lhs, rhs);
       };
+      static bool eq(SelfType const& lhs, SelfType const& rhs) {
+        return compare<T>::eq(lhs, rhs) ? compare<U...>::eq(lhs, rhs) : false;
+      }
     };
     template <typename T>
     struct compare<T> {
@@ -73,10 +77,13 @@ namespace utils {
     friend bool operator<(SelfType const& lhs, SelfType const& rhs) {
       return (&lhs != &rhs) ? compare<Head, Tail...>::less(lhs, rhs) : false;
     }
+    friend bool operator==(SelfType const& lhs, SelfType const& rhs) {
+      return (&lhs != &rhs) ? compare<Head, Tail...>::eq(lhs, rhs) : true;
+    }
   };
 
   template <typename Head>
-  struct TypeSet<Head> : Operators<TypeSet<Head>, TypeSet<Head>> {
+  struct TypeSet<Head> : boost::totally_ordered<TypeSet<Head>> {
     template <typename U>
     explicit TypeSet(U u)
         : value(std::forward<U>(u)) {}
@@ -96,6 +103,9 @@ namespace utils {
 
     friend bool operator<(TypeSet<Head> const& lhs, TypeSet<Head> const& rhs) {
       return lhs.get<Head>() < rhs.get<Head>();
+    }
+    friend bool operator==(TypeSet<Head> const& lhs, TypeSet<Head> const& rhs) {
+      return lhs.get<Head>() == rhs.get<Head>();
     }
 
   private:
