@@ -1,5 +1,4 @@
 #include <archie/utils/typeholder.h>
-#include <archie/utils/select.h>
 #include <string>
 
 ARCHIE_UTILS_GENERATE_TYPE_HOLDER(PersonId, unsigned);
@@ -16,6 +15,8 @@ using TableType = Container<RowType<Columns...>>;
 
 #include <gtest/gtest.h>
 #include <vector>
+#include <archie/utils/select.h>
+#include <archie/utils/get.h>
 
 using Table = TableType<std::vector, PersonId, PersonName, PersonAge>;
 namespace au = archie::utils;
@@ -25,8 +26,9 @@ TEST_F(typeholder_test, nothing) {
   Table table;
   table.emplace_back(PersonId(1), PersonName("Name"), PersonAge(30));
   auto row = table.front();
-  EXPECT_EQ(30, au::select<PersonAge>(row));
   auto id = std::get<PersonId>(row);
+  auto sel = au::Select<PersonId, PersonAge>::from(row);
+  EXPECT_EQ(1, *au::get<PersonId>(sel));
   EXPECT_EQ(1, *id);
   PersonId id1(1), id2(2);
 
