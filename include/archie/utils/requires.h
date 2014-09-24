@@ -2,40 +2,26 @@
 #define ARCHIE_UTILS_REQUIRES_H_INCLUDED
 
 #include <utility>
+#include <type_traits>
 
 namespace archie {
 namespace utils {
   template <bool B>
   using Boolean = std::integral_constant<bool, B>;
 
+  template <typename... Conditions>
+  using And = std::__and_<Conditions...>;
+
+  template <typename... Conditions>
+  using All = And<Conditions...>;
+
+  template <typename... Conditions>
+  using Or = std::__or_<Conditions...>;
+
+  template <typename... Conditions>
+  using Any = Or<Conditions...>;
+
   namespace detail {
-
-    template <typename... Conditions>
-    struct All;
-
-    template <typename Head, typename... Tail>
-    struct All<Head, Tail...> {
-      using type = Boolean<Head::value && detail::All<Tail...>::type::value>;
-    };
-
-    template <typename Head>
-    struct All<Head> {
-      using type = Boolean<Head::value>;
-    };
-
-    template <typename... Conditions>
-    struct Any;
-
-    template <typename Head, typename... Tail>
-    struct Any<Head, Tail...> {
-      using type = Boolean<Head::value || detail::Any<Tail...>::type::value>;
-    };
-
-    template <typename Head>
-    struct Any<Head> {
-      using type = Boolean<Head::value>;
-    };
-
     template <typename Condition>
     struct Not {
       using type = Boolean<!Condition::value>;
@@ -43,18 +29,11 @@ namespace utils {
 
     template <typename... Conditions>
     struct None {
-      using type = Boolean<
-          detail::Not<typename detail::Any<Conditions...>::type>::type::value>;
+      using type = Boolean<detail::Not<Any<Conditions...>>::type::value>;
     };
 
     struct enabler {};
   }
-
-  template <typename... Conditions>
-  struct All : public detail::All<Conditions...>::type {};
-
-  template <typename... Conditions>
-  struct Any : public detail::Any<Conditions...>::type {};
 
   template <typename Condition>
   struct Not : public detail::Not<Condition>::type {};
