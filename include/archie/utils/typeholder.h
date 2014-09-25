@@ -7,24 +7,39 @@ namespace archie {
 namespace utils {
 
   template <typename Tp>
-  struct TypeHolder : boost::totally_ordered<TypeHolder<Tp>> {
+  struct TypeHolder
+      : boost::totally_ordered<TypeHolder<Tp>,
+                               boost::totally_ordered<TypeHolder<Tp>, Tp>> {
     using value_type = Tp;
+    using reference = Tp&;
+    using const_reference = Tp const&;
+    using pointer = Tp*;
+    using const_pointer = const Tp*;
     using type = TypeHolder<Tp>;
 
     template <typename Up>
-    explicit TypeHolder(Up&& up)
+    TypeHolder(Up&& up)
         : value(std::forward<Up>(up)) {}
 
-    value_type& operator*() { return value; }
-    value_type const& operator*() const { return value; }
+    reference operator*() { return value; }
+    const_reference operator*() const { return value; }
+    pointer operator->() { return &value; }
+    const_pointer operator->() const { return &value; }
 
     friend bool operator<(type const& lhs, type const& rhs) {
       return lhs.value < rhs.value;
     }
+    friend bool operator<(type const& lhs, const_reference rhs) {
+      return lhs.value < rhs;
+    }
     friend bool operator==(type const& lhs, type const& rhs) {
       return lhs.value == rhs.value;
     }
+    friend bool operator==(type const& lhs, const_reference rhs) {
+      return lhs.value == rhs;
+    }
 
+  private:
     value_type value;
   };
 }
@@ -43,6 +58,7 @@ namespace utils {
     name& operator=(name&&) = default;                                         \
     name& operator=(name const&) = default;                                    \
     using BaseType::operator*;                                                 \
+    using BaseType::operator->;                                                \
   }
 
 #endif

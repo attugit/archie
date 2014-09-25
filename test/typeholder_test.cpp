@@ -31,10 +31,10 @@ TEST_F(typeholder_test, nothing) {
   table.emplace_back(3, "Another", 50);
   auto& row = table.front();
   auto sel = au::Select<PersonId, PersonAge>::from(row);
-  EXPECT_EQ(1, *au::get<PersonId>(sel));
+  EXPECT_EQ(1, au::get<PersonId>(sel));
   au::get<PersonAge>(sel) = 60;
-  EXPECT_EQ(60, *au::get<PersonAge>(sel));
-  EXPECT_EQ(60, *au::get<PersonAge>(row));
+  EXPECT_EQ(60, au::get<PersonAge>(sel));
+  EXPECT_EQ(60, au::get<PersonAge>(row));
 
   auto sel2 = au::Select<PersonAge, PersonId>::from(table);
   EXPECT_EQ(3, sel2.size());
@@ -44,9 +44,9 @@ TEST_F(typeholder_test, nothing) {
   };
 
   std::sort(std::begin(sel2), std::end(sel2), byAge);
-  EXPECT_EQ(40, *au::get<PersonAge>(sel2[0]));
-  EXPECT_EQ(50, *au::get<PersonAge>(sel2[1]));
-  EXPECT_EQ(60, *au::get<PersonAge>(sel2[2]));
+  EXPECT_EQ(40, au::get<PersonAge>(sel2[0]));
+  EXPECT_EQ(50, au::get<PersonAge>(sel2[1]));
+  EXPECT_EQ(60, au::get<PersonAge>(sel2[2]));
 
   PersonId id1(1), id2(2);
 
