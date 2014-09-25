@@ -29,6 +29,16 @@ namespace utils {
       }
       return output;
     }
+
+    template <typename Iterator>
+    static std::vector<Selection> from(Iterator first, Iterator last) {
+      std::vector<Selection> output;
+      output.reserve(std::distance(first, last));
+      while (first != last) {
+        output.emplace_back(std::get<Args>(*first++)...);
+      }
+      return output;
+    }
   };
 }
 }
