@@ -18,8 +18,9 @@ using TableType = Container<RowType<Columns...>>;
 #include <list>
 #include <archie/utils/select.h>
 #include <archie/utils/get.h>
+#include <algorithm>
 
-using Table = TableType<std::list, PersonId, PersonName, PersonAge>;
+using Table = TableType<std::vector, PersonId, PersonName, PersonAge>;
 namespace au = archie::utils;
 struct typeholder_test : ::testing::Test {};
 
@@ -27,15 +28,25 @@ TEST_F(typeholder_test, nothing) {
   Table table;
   table.emplace_back(1, "Name", 30);
   table.emplace_back(2, "Other", 40);
+  table.emplace_back(3, "Another", 50);
   auto& row = table.front();
   auto sel = au::Select<PersonId, PersonAge>::from(row);
   EXPECT_EQ(1, *au::get<PersonId>(sel));
-  au::get<PersonId>(sel) = 7;
-  EXPECT_EQ(7, *au::get<PersonId>(sel));
-  EXPECT_EQ(7, *au::get<PersonId>(row));
+  au::get<PersonAge>(sel) = 60;
+  EXPECT_EQ(60, *au::get<PersonAge>(sel));
+  EXPECT_EQ(60, *au::get<PersonAge>(row));
 
   auto sel2 = au::Select<PersonAge, PersonId>::from(table);
-  EXPECT_EQ(2, sel2.size());
+  EXPECT_EQ(3, sel2.size());
+
+  auto byAge = [](auto lhs, auto rhs) {
+    return au::get<PersonAge>(lhs) < au::get<PersonAge>(rhs);
+  };
+
+  std::sort(std::begin(sel2), std::end(sel2), byAge);
+  EXPECT_EQ(40, *au::get<PersonAge>(sel2[0]));
+  EXPECT_EQ(50, *au::get<PersonAge>(sel2[1]));
+  EXPECT_EQ(60, *au::get<PersonAge>(sel2[2]));
 
   PersonId id1(1), id2(2);
 

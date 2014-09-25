@@ -1,13 +1,32 @@
 #ifndef ARCHIE_UTILS_TYPE_HOLDER_H_INCLUDED
 #define ARCHIE_UTILS_TYPE_HOLDER_H_INCLUDED
 
-#include <experimental/optional>
+#include <boost/operators.hpp>
 
 namespace archie {
 namespace utils {
 
   template <typename Tp>
-  using TypeHolder = std::experimental::optional<Tp>;
+  struct TypeHolder : boost::totally_ordered<TypeHolder<Tp>> {
+    using value_type = Tp;
+    using type = TypeHolder<Tp>;
+
+    template <typename Up>
+    explicit TypeHolder(Up&& up)
+        : value(std::forward<Up>(up)) {}
+
+    value_type& operator*() { return value; }
+    value_type const& operator*() const { return value; }
+
+    friend bool operator<(type const& lhs, type const& rhs) {
+      return lhs.value < rhs.value;
+    }
+    friend bool operator==(type const& lhs, type const& rhs) {
+      return lhs.value == rhs.value;
+    }
+
+    value_type value;
+  };
 }
 }
 
@@ -17,11 +36,13 @@ namespace utils {
     using value_type = typename BaseType::value_type;                          \
     using BaseType::BaseType;                                                  \
     template <typename U>                                                      \
-    name(U&& u)                                                                \
-        : BaseType(std::forward<U>(u)) {}                                      \
+    name(const U& u)                                                           \
+        : BaseType(u) {}                                                       \
+    name(name&&) = default;                                                    \
+    name(name const&) = default;                                               \
+    name& operator=(name&&) = default;                                         \
+    name& operator=(name const&) = default;                                    \
     using BaseType::operator*;                                                 \
-    using BaseType::operator->;                                                \
-    using BaseType::operator bool;                                             \
   }
 
 #endif
