@@ -20,14 +20,8 @@ namespace utils {
     }
 
     template <template <class...> class Container, typename... Types>
-    static std::vector<Selection> from(
-        Container<UniqueTuple<Types...>>& input) {
-      std::vector<Selection> output;
-      output.reserve(input.size());
-      for (auto&& item : input) {
-        output.emplace_back(std::get<Args>(item)...);
-      }
-      return output;
+    static Selection from(Container<UniqueTuple<Types...>>& input) {
+      return SelfType::from(std::begin(input), std::end(input));
     }
 
     template <typename Iterator>
@@ -35,7 +29,20 @@ namespace utils {
       std::vector<Selection> output;
       output.reserve(std::distance(first, last));
       while (first != last) {
-        output.emplace_back(std::get<Args>(*first++)...);
+        output.emplace_back(std::get<Args>(*first)...);
+        ++first;
+      }
+      return output;
+    }
+
+    template <typename Iterator, typename Func>
+    static std::vector<Selection> from_if(Iterator first, Iterator last,
+                                          Func func) {
+      std::vector<Selection> output;
+      output.reserve(std::distance(first, last));
+      while (first != last) {
+        if (func(*first)) output.emplace_back(std::get<Args>(*first)...);
+        ++first;
       }
       return output;
     }
