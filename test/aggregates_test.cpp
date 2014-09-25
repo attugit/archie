@@ -36,6 +36,14 @@ struct PackedStruct : detail::PackedStruct::type {
 };
 
 namespace au = archie::utils;
+template <typename... Args>
+struct Apply {
+  template <typename Func, typename... Types>
+  static auto call(Func func, au::UniqueTuple<Types...> const& ut)
+      -> decltype(func(std::declval<Args>()...)) {
+    return func(au::get<Args>(ut)...);
+  }
+};
 
 namespace {
 
@@ -85,5 +93,11 @@ TEST_F(aggregates_test, canSelectCollectionIf) {
   ASSERT_EQ(2, select.size());
   EXPECT_EQ(1, au::get<PackedStruct::Id>(select[0]));
   EXPECT_EQ(3, au::get<PackedStruct::Id>(select[1]));
+}
+
+TEST_F(aggregates_test, canApply) {
+  PackedStruct pack(1, "Aqq", -20, 10);
+  auto func = [](auto&& value) { EXPECT_TRUE(value < 0); };
+  Apply<PackedStruct::Value>::call(func, pack);
 }
 }
