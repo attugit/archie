@@ -21,10 +21,10 @@ namespace utils {
     TypeHolder(Up&& up)
         : value(std::forward<Up>(up)) {}
 
-    reference operator*() { return value; }
-    const_reference operator*() const { return value; }
-    pointer operator->() { return &value; }
-    const_pointer operator->() const { return &value; }
+    reference operator*() noexcept { return value; }
+    const_reference operator*() const noexcept { return value; }
+    pointer operator->() noexcept { return &value; }
+    const_pointer operator->() const noexcept { return &value; }
 
     friend bool operator<(type const& lhs, type const& rhs) {
       return lhs.value < rhs.value;
