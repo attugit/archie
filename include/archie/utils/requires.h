@@ -32,7 +32,7 @@ namespace utils {
       using type = Boolean<detail::Not<Any<Conditions...>>::type::value>;
     };
 
-    struct enabler {};
+    struct enabler final : std::true_type {};
   }
 
   template <typename Condition>

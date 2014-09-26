@@ -19,20 +19,16 @@ namespace utils {
       using type = std::is_same<Tp, Up>;
     };
 
-    template <typename...>
-    struct IsUnique;
+    template <typename Tp, typename... Tail>
+    struct IsUnique {
+      using type = typename std::conditional<
+          detail::Contains<Tp, Tail...>::type::value, std::false_type,
+          typename IsUnique<Tail...>::type>::type;
+    };
 
     template <typename Tp>
     struct IsUnique<Tp> {
       using type = std::true_type;
-    };
-
-    template <typename Tp, typename... Tail>
-    struct IsUnique<Tp, Tail...> {
-      using self = typename detail::Contains<Tp, Tail...>::type;
-      using rest = typename detail::IsUnique<Tail...>::type;
-      using type = typename std::conditional<
-          (!self::value) && rest::value, std::true_type, std::false_type>::type;
     };
   }
 
