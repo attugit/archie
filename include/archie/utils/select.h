@@ -44,6 +44,7 @@ namespace utils {
         if (func(*first)) output.emplace_back(std::get<Args>(*first)...);
         ++first;
       }
+      output.shrink_to_fit();
       return output;
     }
   };

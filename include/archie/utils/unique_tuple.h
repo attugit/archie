@@ -7,19 +7,16 @@ namespace archie {
 namespace utils {
   namespace detail {
 
-    template <typename, typename...>
-    struct Contains;
+    template <typename Tp, typename Up, typename... Tail>
+    struct Contains {
+      using type =
+          typename std::conditional<std::is_same<Tp, Up>::value, std::true_type,
+                                    typename Contains<Tp, Tail...>::type>::type;
+    };
 
     template <typename Tp, typename Up>
     struct Contains<Tp, Up> {
       using type = std::is_same<Tp, Up>;
-    };
-
-    template <typename Tp, typename Up, typename... Tail>
-    struct Contains<Tp, Up, Tail...> {
-      using type =
-          typename std::conditional<std::is_same<Tp, Up>::value, std::true_type,
-                                    typename Contains<Tp, Tail...>::type>::type;
     };
 
     template <typename...>

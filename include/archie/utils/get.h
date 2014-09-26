@@ -8,7 +8,7 @@ namespace archie {
 namespace utils {
 
   template <typename Tp, typename... Types>
-  const Tp& get(UniqueTuple<Types...> const& ut) {
+  Tp const& get(UniqueTuple<Types...> const& ut) {
     return std::get<Tp>(ut);
   }
 
@@ -18,7 +18,7 @@ namespace utils {
   }
 
   template <typename Tp, typename... Types>
-  const Tp& get(UniqueTuple<std::reference_wrapper<Types>...> const& ut) {
+  Tp const& get(UniqueTuple<std::reference_wrapper<Types>...> const& ut) {
     return std::get<std::reference_wrapper<Tp>>(ut);
   }
 
