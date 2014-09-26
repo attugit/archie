@@ -85,6 +85,7 @@ struct Subset {
 template <typename... Sizes>
 struct Bitfields {
   using length = Sum<Sizes...>;
+  using fields = std::tuple<Sizes...>;
   detail::storage<length::value> storage;
 };
 

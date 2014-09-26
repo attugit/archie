@@ -39,8 +39,7 @@ namespace au = archie::utils;
 template <typename... Args>
 struct Apply {
   template <typename Func, typename... Types>
-  static auto call(Func func, au::UniqueTuple<Types...> const& ut)
-      -> decltype(func(std::declval<Args>()...)) {
+  static auto call(Func func, au::UniqueTuple<Types...> const& ut) {
     return func(au::get<Args>(ut)...);
   }
 };

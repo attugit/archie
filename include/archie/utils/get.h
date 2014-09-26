@@ -7,14 +7,37 @@
 namespace archie {
 namespace utils {
 
+  template <typename Tp>
+  struct UnwrapReference {
+    using type = Tp;
+  };
+
+  template <typename Tp>
+  struct UnwrapReference<Tp&> {
+    using type = Tp;
+  };
+
+  template <typename Tp>
+  struct UnwrapReference<Tp&&> {
+    using type = Tp;
+  };
+
+  template <typename Tp>
+  struct UnwrapReference<std::reference_wrapper<Tp>> {
+    using type = Tp;
+  };
+
+  template <typename Tp>
+  using UnwrapReferenceType = typename UnwrapReference<Tp>::type;
+
   template <typename Tp, typename... Types>
-  Tp const& get(UniqueTuple<Types...> const& ut) {
-    return std::get<Tp>(ut);
+  UnwrapReferenceType<Tp> const& get(UniqueTuple<Types...> const& ut) {
+    return std::get<UnwrapReferenceType<Tp>>(ut);
   }
 
   template <typename Tp, typename... Types>
-  Tp& get(UniqueTuple<Types...>& ut) {
-    return std::get<Tp>(ut);
+  UnwrapReferenceType<Tp>& get(UniqueTuple<Types...>& ut) {
+    return std::get<UnwrapReferenceType<Tp>>(ut);
   }
 
   template <typename Tp, typename... Types>
