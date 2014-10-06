@@ -8,7 +8,44 @@ namespace asio = boost::asio;
 namespace fusion = boost::fusion;
 
 namespace archie {
-namespace router {
+namespace utils {
+
+  template <typename Archive, typename Tp>
+  using ParamType = typename Archive::template ParamType<Tp>;
+
+  template <typename Tp, typename Enable = detail::enabler>
+  struct Serialize;
+
+  template <typename Archive, typename Tp>
+  Archive& serialize(Archive& ar, std::uint32_t version, Tp& tp) {
+    return Serialize<Tp>::exec(ar, version, tp);
+  }
+
+  template <typename Tp>
+  struct Serialize<Tp, Requires<std::is_integral<Tp>>> {
+    template <typename Archive>
+    static Archive& exec(Archive& ar, std::uint32_t, Tp& tp) {
+      ar& tp;
+      return ar;
+    }
+  };
+
+  template <typename Tp>
+  struct Serialize<Tp, Requires<fusion::traits::is_sequence<Tp>>> {
+    template <typename Archive>
+    static Archive& exec(Archive& ar, std::uint32_t version, Tp& tp) {
+      auto do_serialize = [&ar, version](auto&& tp) {
+        using type = std::remove_reference_t<decltype(tp)>;
+        Serialize<type>::exec(ar, version, tp);
+      };
+      fusion::for_each(tp, do_serialize);
+      return ar;
+    }
+  };
+
+  struct input {};
+  struct output {};
+  struct inout : input, output {};
 
   template <typename Tp>
   struct Router {
@@ -36,11 +73,14 @@ namespace router {
 
   struct Writer : Router<asio::mutable_buffer> {
     using BaseType = Router<asio::mutable_buffer>;
+    using Tag = output;
 
     using BaseType::BaseType;
+    template <typename Tp>
+    using ParamType = Tp const&;
 
     template <typename Tp>
-    Writer& operator&(Tp const& tp) {
+    Writer& operator&(ParamType<Tp> tp) {
       emplace_back(tp);
       return *this;
     }
@@ -69,11 +109,15 @@ namespace router {
 
   struct Reader : Router<asio::const_buffer> {
     using BaseType = Router<asio::const_buffer>;
+    using Tag = input;
 
     using BaseType::BaseType;
 
     template <typename Tp>
-    Reader& operator&(Tp& tp) {
+    using ParamType = Tp&;
+
+    template <typename Tp>
+    Reader& operator&(ParamType<Tp> tp) {
       get(tp);
       return *this;
     }
@@ -107,18 +151,31 @@ namespace router {
     writer(tp);
     return writer.size();
   }
+
+  template <typename Tp>
+  struct Serialize<std::vector<Tp>> {
+    template <
+        typename Archive,
+        typename = Requires<std::is_base_of<output, typename Archive::Tag>>>
+    static Archive& exec(Archive& ar, std::uint32_t version,
+                         ParamType<Archive, std::vector<Tp>>& tp) {
+      serialize(ar, version, tp.size());
+      for (auto&& t : tp) serialize(ar, version, t);
+      return ar;
+    }
+  };
 }
 }
 
 #include <boost/fusion/include/define_struct.hpp>
 #include <vector>
 
-BOOST_FUSION_DEFINE_STRUCT((archie)(router)(message), header,
+BOOST_FUSION_DEFINE_STRUCT((archie)(utils)(message), header,
                            (std::uint8_t, magic)(std::uint8_t, version)(
                                std::uint32_t, length)(std::uint32_t, type))
 
-BOOST_FUSION_DEFINE_STRUCT((archie)(router)(message), frame,
-                           (archie::router::message::header,
+BOOST_FUSION_DEFINE_STRUCT((archie)(utils)(message), frame,
+                           (archie::utils::message::header,
                             header)(std::vector<std::uint8_t>, data))
 
 #include <gtest/gtest.h>
@@ -129,8 +186,8 @@ struct message_test : ::testing::Test {};
 
 TEST_F(message_test, nothing) {
   std::vector<char> vec(128);
-  auto inframe = archie::router::message::frame();
-  auto outframe = archie::router::message::frame();
+  auto inframe = archie::utils::message::frame();
+  auto outframe = archie::utils::message::frame();
   {
     auto& header = inframe.header;
     auto& data = inframe.data;
@@ -142,11 +199,14 @@ TEST_F(message_test, nothing) {
 
     header.length = data.size();
 
-    auto writer = archie::router::Writer(std::begin(vec), std::end(vec));
+    auto writer = archie::utils::Writer(std::begin(vec), std::end(vec));
     writer& inframe;
+    archie::utils::serialize(writer, 0, header.magic);
+    archie::utils::serialize(writer, 0, header);
+    // archie::utils::serialize(writer, 0, data);
   }
   {
-    auto reader = archie::router::Reader(std::begin(vec), std::end(vec));
+    auto reader = archie::utils::Reader(std::begin(vec), std::end(vec));
     reader& outframe;
   }
 
