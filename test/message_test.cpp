@@ -60,8 +60,8 @@ namespace router {
       auto do_write = [this](auto&& t) { this->emplace_back(t); };
       boost::fusion::for_each(t, do_write);
     }
-    template <typename T>
-    void emplace_back(std::vector<T> const& v) {
+    template <typename Tp>
+    void emplace_back(std::vector<Tp> const& v) {
       emplace_back(v.size());
       for (auto&& t : v) emplace_back(t);
     }
@@ -72,9 +72,10 @@ namespace router {
 
     using BaseType::BaseType;
 
-    template <typename T>
-    void operator()(T& t) {
-      get(t);
+    template <typename Tp>
+    Reader& operator&(Tp& tp) {
+      get(tp);
+      return *this;
     }
 
   private:
@@ -90,6 +91,13 @@ namespace router {
     void get(T& t) {
       auto do_read = [this](auto&& t) { this->get(t); };
       boost::fusion::for_each(t, do_read);
+    }
+    template <typename Tp>
+    void get(std::vector<Tp>& v) {
+      auto size = v.size();
+      get(size);
+      v.resize(size);
+      for (auto&& t : v) get(t);
     }
   };
 
@@ -120,26 +128,32 @@ namespace {
 struct message_test : ::testing::Test {};
 
 TEST_F(message_test, nothing) {
-  auto frame = archie::router::message::frame();
-  auto& header = frame.header;
-  auto& data = frame.data;
-
   std::vector<char> vec(128);
+  auto inframe = archie::router::message::frame();
+  auto outframe = archie::router::message::frame();
+  {
+    auto& header = inframe.header;
+    auto& data = inframe.data;
 
-  header.magic = 3;
-  data = {7, 6, 5, 4, 3, 2, 1, 0};
+    header.magic = 3;
+    header.version = 7;
+    header.type = 0xdeadbeef;
+    data = {7, 6, 5, 4, 3, 2, 1, 0};
 
-  header.length = data.size();
+    header.length = data.size();
 
-  auto writer = archie::router::Writer(std::begin(vec), std::end(vec));
-  writer& header;
-  // auto size = archie::router::write(vec, header);
-  EXPECT_EQ(10, writer.size());
+    auto writer = archie::router::Writer(std::begin(vec), std::end(vec));
+    writer& inframe;
+  }
+  {
+    auto reader = archie::router::Reader(std::begin(vec), std::end(vec));
+    reader& outframe;
+  }
 
-  auto reader = archie::router::Reader(std::begin(vec), std::end(vec));
-  auto rhead = archie::router::message::header{};
-  reader(rhead);
-
-  EXPECT_EQ(header.magic, rhead.magic);
+  EXPECT_EQ(inframe.header.magic, outframe.header.magic);
+  EXPECT_EQ(inframe.header.version, outframe.header.version);
+  EXPECT_EQ(inframe.header.length, outframe.header.length);
+  EXPECT_EQ(inframe.header.type, outframe.header.type);
+  EXPECT_EQ(inframe.data, outframe.data);
 }
 }
