@@ -1,4 +1,4 @@
-.PHONY: configure all release debug clean distclean
+.PHONY: configure all release debug clean distclean run
 
 all: debug
 
@@ -16,4 +16,7 @@ clean:
 
 distclean:
 	rm -rf build/
+
+run: debug
+	./build/debug/bin/unittest
 

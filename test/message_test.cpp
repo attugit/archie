@@ -16,15 +16,31 @@ namespace utils {
   template <typename Tp, typename Enable = detail::enabler>
   struct Serialize;
 
+  struct input {};
+  struct output {};
+
+  template <typename Archive>
+  using ArchiveType = typename Archive::Tag;
+
+  template <typename Archive, typename Enable = detail::enabler>
+  struct isInputArchive : std::false_type {};
+
+  template <typename Archive>
+  struct isInputArchive<Archive,
+                        Requires<std::is_same<input, ArchiveType<Archive>>>>
+      : std::true_type {};
+
   template <typename Archive, typename Tp>
-  Archive& serialize(Archive& ar, std::uint32_t version, Tp& tp) {
-    return Serialize<Tp>::exec(ar, version, tp);
+  Archive& serialize(Archive& ar, std::uint32_t version, Tp&& tp) {
+    using type = std::remove_reference_t<Tp>;
+    return Serialize<type>::exec(ar, version, std::forward<Tp>(tp));
   }
 
   template <typename Tp>
   struct Serialize<Tp, Requires<std::is_integral<Tp>>> {
     template <typename Archive>
-    static Archive& exec(Archive& ar, std::uint32_t, Tp& tp) {
+    static Archive& exec(Archive& ar, std::uint32_t,
+                         ParamType<Archive, Tp> tp) {
       ar& tp;
       return ar;
     }
@@ -33,7 +49,8 @@ namespace utils {
   template <typename Tp>
   struct Serialize<Tp, Requires<fusion::traits::is_sequence<Tp>>> {
     template <typename Archive>
-    static Archive& exec(Archive& ar, std::uint32_t version, Tp& tp) {
+    static Archive& exec(Archive& ar, std::uint32_t version,
+                         ParamType<Archive, Tp> tp) {
       auto do_serialize = [&ar, version](auto&& tp) {
         using type = std::remove_reference_t<decltype(tp)>;
         Serialize<type>::exec(ar, version, tp);
@@ -43,9 +60,27 @@ namespace utils {
     }
   };
 
-  struct input {};
-  struct output {};
-  struct inout : input, output {};
+  template <typename Tp, typename Alloc>
+  struct Serialize<std::vector<Tp, Alloc>> {
+    template <typename Archive, Requires<Not<isInputArchive<Archive>>>...>
+    static Archive& exec(Archive& ar, std::uint32_t version,
+                         ParamType<Archive, std::vector<Tp, Alloc>> vec) {
+      serialize(ar, version, vec.size());
+      for (auto&& tp : vec) serialize(ar, version, tp);
+      return ar;
+    }
+    template <typename Archive, Requires<isInputArchive<Archive>>...>
+    static Archive& exec(Archive& ar, std::uint32_t version,
+                         ParamType<Archive, std::vector<Tp, Alloc>> vec) {
+      using vector_type = std::remove_reference_t<decltype(vec)>;
+      using size_type = decltype(std::declval<vector_type>().size());
+      auto size = size_type{0};
+      serialize(ar, version, size);
+      vec.resize(size);
+      for (auto&& tp : vec) serialize(ar, version, tp);
+      return ar;
+    }
+  };
 
   template <typename Tp>
   struct Router {
@@ -151,19 +186,6 @@ namespace utils {
     writer(tp);
     return writer.size();
   }
-
-  template <typename Tp>
-  struct Serialize<std::vector<Tp>> {
-    template <
-        typename Archive,
-        typename = Requires<std::is_base_of<output, typename Archive::Tag>>>
-    static Archive& exec(Archive& ar, std::uint32_t version,
-                         ParamType<Archive, std::vector<Tp>>& tp) {
-      serialize(ar, version, tp.size());
-      for (auto&& t : tp) serialize(ar, version, t);
-      return ar;
-    }
-  };
 }
 }
 
@@ -200,14 +222,15 @@ TEST_F(message_test, nothing) {
     header.length = data.size();
 
     auto writer = archie::utils::Writer(std::begin(vec), std::end(vec));
-    writer& inframe;
-    archie::utils::serialize(writer, 0, header.magic);
     archie::utils::serialize(writer, 0, header);
-    // archie::utils::serialize(writer, 0, data);
+    archie::utils::serialize(writer, 0, data);
   }
   {
     auto reader = archie::utils::Reader(std::begin(vec), std::end(vec));
-    reader& outframe;
+    auto& header = outframe.header;
+    auto& data = outframe.data;
+    archie::utils::serialize(reader, 0, header);
+    archie::utils::serialize(reader, 0, data);
   }
 
   EXPECT_EQ(inframe.header.magic, outframe.header.magic);
