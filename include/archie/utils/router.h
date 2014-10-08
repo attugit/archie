@@ -103,7 +103,6 @@ namespace utils {
       length += s;
     }
 
-  protected:
     buff_type& buffer() { return buffer_; }
 
   private:
@@ -116,53 +115,36 @@ namespace utils {
     using Tag = output;
     using BaseType::BaseType;
     using BaseType::advance;
+    using BaseType::buffer;
 
     template <typename Tp>
     using ParamType = Tp const&;
-
-    template <typename Tp>
-    Writer& operator&(ParamType<Tp> tp) {
-      emplace_back(tp);
-      return *this;
-    }
-
-  private:
-    template <typename Cond>
-    using requires = archie::utils::Requires<Cond>;
-
-    template <typename Tp, requires<std::is_integral<Tp>>...>
-    void emplace_back(Tp const& tp) {
-      *asio::buffer_cast<Tp*>(BaseType::buffer()) = tp;
-      advance<Tp>();
-    }
   };
+
+  template <typename Tp, Requires<std::is_integral<Tp>>...>
+  Writer& operator&(Writer& writer, Tp const& tp) {
+    *asio::buffer_cast<Tp*>(writer.buffer()) = tp;
+    writer.advance<Tp>();
+    return writer;
+  }
 
   struct Reader : Router<asio::const_buffer> {
     using BaseType = Router<asio::const_buffer>;
     using Tag = input;
-
     using BaseType::BaseType;
     using BaseType::advance;
+    using BaseType::buffer;
 
     template <typename Tp>
     using ParamType = Tp&;
-
-    template <typename Tp>
-    Reader& operator&(ParamType<Tp> tp) {
-      get(tp);
-      return *this;
-    }
-
-  private:
-    template <typename Cond>
-    using requires = archie::utils::Requires<Cond>;
-
-    template <typename Tp, requires<std::is_integral<Tp>>...>
-    void get(Tp& tp) {
-      tp = *asio::buffer_cast<Tp const*>(BaseType::buffer());
-      advance<Tp>();
-    }
   };
+
+  template <typename Tp, Requires<std::is_integral<Tp>>...>
+  Reader& operator&(Reader& reader, Tp& tp) {
+    tp = *asio::buffer_cast<Tp const*>(reader.buffer());
+    reader.advance<Tp>();
+    return reader;
+  }
 }
 }
 
