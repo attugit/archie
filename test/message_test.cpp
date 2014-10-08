@@ -22,7 +22,6 @@ TEST_F(message_test, nothing) {
 
   using archie::utils::message::frame;
   auto inframe = frame();
-  auto outframe = frame();
 
   using archie::utils::serialize;
   {
@@ -37,12 +36,7 @@ TEST_F(message_test, nothing) {
 
     using archie::utils::Writer;
     auto writer = Writer(std::begin(vec), std::end(vec));
-    serialize(writer, 0, inframe);
-  }
-  {
-    using archie::utils::Reader;
-    auto reader = Reader(std::begin(vec), std::end(vec));
-    serialize(reader, 0, outframe);
+    serialize(writer, inframe);
   }
 
   ASSERT_EQ(3, inframe.header.magic);
@@ -51,10 +45,17 @@ TEST_F(message_test, nothing) {
   ASSERT_EQ((std::vector<std::uint8_t>{7, 6, 5, 4, 3, 2, 1, 0}), inframe.data);
   ASSERT_EQ(inframe.data.size(), inframe.header.length);
 
-  EXPECT_EQ(inframe.header.magic, outframe.header.magic);
-  EXPECT_EQ(inframe.header.version, outframe.header.version);
-  EXPECT_EQ(inframe.header.length, outframe.header.length);
-  EXPECT_EQ(inframe.header.type, outframe.header.type);
-  EXPECT_EQ(inframe.data, outframe.data);
+  {
+    using archie::utils::Reader;
+    using archie::utils::deserialize;
+    auto reader = Reader(std::begin(vec), std::end(vec));
+    auto outframe = deserialize<frame>(reader);
+
+    EXPECT_EQ(inframe.header.magic, outframe.header.magic);
+    EXPECT_EQ(inframe.header.version, outframe.header.version);
+    EXPECT_EQ(inframe.header.length, outframe.header.length);
+    EXPECT_EQ(inframe.header.type, outframe.header.type);
+    EXPECT_EQ(inframe.data, outframe.data);
+  }
 }
 }
