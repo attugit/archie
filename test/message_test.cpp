@@ -52,7 +52,7 @@ namespace utils {
     static Archive& exec(Archive& ar, std::uint32_t version,
                          ParamType<Archive, Tp> tp) {
       auto do_serialize = [&ar, version](auto&& tp) {
-        using type = std::remove_reference_t<decltype(tp)>;
+        using type = std::remove_cv_t<std::remove_reference_t<decltype(tp)>>;
         Serialize<type>::exec(ar, version, tp);
       };
       fusion::for_each(tp, do_serialize);
@@ -69,7 +69,9 @@ namespace utils {
       for (auto&& tp : vec) serialize(ar, version, tp);
       return ar;
     }
-    template <typename Archive, Requires<isInputArchive<Archive>>...>
+    template <typename Archive,
+              RequiresAll<isInputArchive<Archive>,
+                          std::is_default_constructible<Tp>>...>
     static Archive& exec(Archive& ar, std::uint32_t version,
                          ParamType<Archive, std::vector<Tp, Alloc>> vec) {
       using vector_type = std::remove_reference_t<decltype(vec)>;
@@ -90,13 +92,13 @@ namespace utils {
     Router(Iterator first, Iterator last)
         : buffer_(&(*first), std::distance(first, last)), length(0) {}
 
+    std::uint32_t size() const { return length; }
+
     template <typename Up>
     void advance(std::uint32_t s = sizeof(Up)) {
       buffer_ = buffer_ + s;
       length += s;
     }
-
-    std::uint32_t size() const { return length; }
 
   protected:
     buff_type& buffer() { return buffer_; }
@@ -109,8 +111,9 @@ namespace utils {
   struct Writer : Router<asio::mutable_buffer> {
     using BaseType = Router<asio::mutable_buffer>;
     using Tag = output;
-
     using BaseType::BaseType;
+    using BaseType::advance;
+
     template <typename Tp>
     using ParamType = Tp const&;
 
@@ -124,21 +127,10 @@ namespace utils {
     template <typename Cond>
     using requires = archie::utils::Requires<Cond>;
 
-    template <typename T, requires<std::is_integral<T>>...>
-    void emplace_back(T const& t) {
-      *asio::buffer_cast<T*>(BaseType::buffer()) = t;
-      BaseType::advance<T>();
-    }
-
-    template <typename T, requires<fusion::traits::is_sequence<T>>...>
-    void emplace_back(T const& t) {
-      auto do_write = [this](auto&& t) { this->emplace_back(t); };
-      boost::fusion::for_each(t, do_write);
-    }
-    template <typename Tp>
-    void emplace_back(std::vector<Tp> const& v) {
-      emplace_back(v.size());
-      for (auto&& t : v) emplace_back(t);
+    template <typename Tp, requires<std::is_integral<Tp>>...>
+    void emplace_back(Tp const& tp) {
+      *asio::buffer_cast<Tp*>(BaseType::buffer()) = tp;
+      advance<Tp>();
     }
   };
 
@@ -147,6 +139,7 @@ namespace utils {
     using Tag = input;
 
     using BaseType::BaseType;
+    using BaseType::advance;
 
     template <typename Tp>
     using ParamType = Tp&;
@@ -161,31 +154,12 @@ namespace utils {
     template <typename Cond>
     using requires = archie::utils::Requires<Cond>;
 
-    template <typename T, requires<std::is_integral<T>>...>
-    void get(T& t) {
-      t = *asio::buffer_cast<T const*>(BaseType::buffer());
-      BaseType::advance<T>();
-    }
-    template <typename T, requires<fusion::traits::is_sequence<T>>...>
-    void get(T& t) {
-      auto do_read = [this](auto&& t) { this->get(t); };
-      boost::fusion::for_each(t, do_read);
-    }
-    template <typename Tp>
-    void get(std::vector<Tp>& v) {
-      auto size = v.size();
-      get(size);
-      v.resize(size);
-      for (auto&& t : v) get(t);
+    template <typename Tp, requires<std::is_integral<Tp>>...>
+    void get(Tp& tp) {
+      tp = *asio::buffer_cast<Tp const*>(BaseType::buffer());
+      advance<Tp>();
     }
   };
-
-  template <typename Container, typename Tp>
-  std::size_t write(Container& c, Tp const& tp) {
-    auto writer = Writer(std::begin(c), std::end(c));
-    writer(tp);
-    return writer.size();
-  }
 }
 }
 
@@ -207,9 +181,13 @@ namespace {
 struct message_test : ::testing::Test {};
 
 TEST_F(message_test, nothing) {
-  std::vector<char> vec(128);
-  auto inframe = archie::utils::message::frame();
-  auto outframe = archie::utils::message::frame();
+  auto vec = std::vector<char>(128);
+
+  using archie::utils::message::frame;
+  auto inframe = frame();
+  auto outframe = frame();
+
+  using archie::utils::serialize;
   {
     auto& header = inframe.header;
     auto& data = inframe.data;
@@ -218,20 +196,23 @@ TEST_F(message_test, nothing) {
     header.version = 7;
     header.type = 0xdeadbeef;
     data = {7, 6, 5, 4, 3, 2, 1, 0};
-
     header.length = data.size();
 
-    auto writer = archie::utils::Writer(std::begin(vec), std::end(vec));
-    archie::utils::serialize(writer, 0, header);
-    archie::utils::serialize(writer, 0, data);
+    using archie::utils::Writer;
+    auto writer = Writer(std::begin(vec), std::end(vec));
+    serialize(writer, 0, inframe);
   }
   {
-    auto reader = archie::utils::Reader(std::begin(vec), std::end(vec));
-    auto& header = outframe.header;
-    auto& data = outframe.data;
-    archie::utils::serialize(reader, 0, header);
-    archie::utils::serialize(reader, 0, data);
+    using archie::utils::Reader;
+    auto reader = Reader(std::begin(vec), std::end(vec));
+    serialize(reader, 0, outframe);
   }
+
+  ASSERT_EQ(3, inframe.header.magic);
+  ASSERT_EQ(7, inframe.header.version);
+  ASSERT_EQ(0xdeadbeef, inframe.header.type);
+  ASSERT_EQ((std::vector<std::uint8_t>{7, 6, 5, 4, 3, 2, 1, 0}), inframe.data);
+  ASSERT_EQ(inframe.data.size(), inframe.header.length);
 
   EXPECT_EQ(inframe.header.magic, outframe.header.magic);
   EXPECT_EQ(inframe.header.version, outframe.header.version);
