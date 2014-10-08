@@ -17,30 +17,7 @@ namespace utils {
   using ParamType = typename Archive::template ParamType<Tp>;
 
   template <typename Tp, typename Enable = detail::enabler>
-  struct Serialize;
-
-  struct input {};
-  struct output {};
-
-  template <typename Archive>
-  using ArchiveType = typename Archive::Tag;
-
-  template <typename Archive, typename Enable = detail::enabler>
-  struct isInputArchive : std::false_type {};
-
-  template <typename Archive>
-  struct isInputArchive<Archive,
-                        Requires<std::is_same<input, ArchiveType<Archive>>>>
-      : std::true_type {};
-
-  template <typename Archive, typename Tp>
-  Archive& serialize(Archive& ar, std::uint32_t version, Tp&& tp) {
-    using type = std::remove_reference_t<Tp>;
-    return Serialize<type>::exec(ar, version, std::forward<Tp>(tp));
-  }
-
-  template <typename Tp>
-  struct Serialize<Tp, Requires<std::is_integral<Tp>>> {
+  struct Serialize {
     template <typename Archive>
     static Archive& exec(Archive& ar, std::uint32_t,
                          ParamType<Archive, Tp> tp) {
@@ -49,43 +26,14 @@ namespace utils {
     }
   };
 
-  template <typename Tp>
-  struct Serialize<Tp, Requires<fusion::traits::is_sequence<Tp>>> {
-    template <typename Archive>
-    static Archive& exec(Archive& ar, std::uint32_t version,
-                         ParamType<Archive, Tp> tp) {
-      auto do_serialize = [&ar, version](auto&& tp) {
-        using type = std::remove_cv_t<std::remove_reference_t<decltype(tp)>>;
-        Serialize<type>::exec(ar, version, tp);
-      };
-      fusion::for_each(tp, do_serialize);
-      return ar;
-    }
-  };
+  struct input {};
+  struct output {};
 
-  template <typename Tp, typename Alloc>
-  struct Serialize<std::vector<Tp, Alloc>> {
-    template <typename Archive, Requires<Not<isInputArchive<Archive>>>...>
-    static Archive& exec(Archive& ar, std::uint32_t version,
-                         ParamType<Archive, std::vector<Tp, Alloc>> vec) {
-      serialize(ar, version, vec.size());
-      for (auto&& tp : vec) serialize(ar, version, tp);
-      return ar;
-    }
-    template <typename Archive,
-              RequiresAll<isInputArchive<Archive>,
-                          std::is_default_constructible<Tp>>...>
-    static Archive& exec(Archive& ar, std::uint32_t version,
-                         ParamType<Archive, std::vector<Tp, Alloc>> vec) {
-      using vector_type = std::remove_reference_t<decltype(vec)>;
-      using size_type = decltype(std::declval<vector_type>().size());
-      auto size = size_type{0};
-      serialize(ar, version, size);
-      vec.resize(size);
-      for (auto&& tp : vec) serialize(ar, version, tp);
-      return ar;
-    }
-  };
+  template <typename Archive, typename Tp>
+  Archive& serialize(Archive& ar, std::uint32_t version, Tp&& tp) {
+    using type = std::remove_reference_t<Tp>;
+    return Serialize<type>::exec(ar, version, std::forward<Tp>(tp));
+  }
 
   template <typename Tp>
   struct Router {
@@ -128,6 +76,20 @@ namespace utils {
     return writer;
   }
 
+  template <typename Tp, Requires<fusion::traits::is_sequence<Tp>>...>
+  Writer& operator&(Writer& writer, Tp const& tp) {
+    auto do_serialize = [&writer](auto&& tp) { writer& tp; };
+    fusion::for_each(tp, do_serialize);
+    return writer;
+  }
+
+  template <typename Tp, typename Alloc>
+  Writer& operator&(Writer& writer, std::vector<Tp, Alloc> const& vec) {
+    writer& vec.size();
+    for (auto&& tp : vec) writer& tp;
+    return writer;
+  }
+
   struct Reader : Router<asio::const_buffer> {
     using BaseType = Router<asio::const_buffer>;
     using Tag = input;
@@ -143,6 +105,23 @@ namespace utils {
   Reader& operator&(Reader& reader, Tp& tp) {
     tp = *asio::buffer_cast<Tp const*>(reader.buffer());
     reader.advance<Tp>();
+    return reader;
+  }
+
+  template <typename Tp, Requires<fusion::traits::is_sequence<Tp>>...>
+  Reader& operator&(Reader& reader, Tp& tp) {
+    auto do_serialize = [&reader](auto&& tp) { reader& tp; };
+    fusion::for_each(tp, do_serialize);
+    return reader;
+  }
+
+  template <typename Tp, typename Alloc>
+  Reader& operator&(Reader& reader, std::vector<Tp, Alloc>& vec) {
+    using size_type = decltype(std::declval<std::vector<Tp, Alloc>>().size());
+    auto size = size_type(0);
+    reader& size;
+    vec.resize(size);
+    for (auto&& tp : vec) reader& tp;
     return reader;
   }
 }
