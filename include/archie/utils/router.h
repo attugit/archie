@@ -76,7 +76,8 @@ namespace utils {
       : And<isArchive<Archive>, std::is_same<ArchiveType<Archive>, input>> {};
 
   template <typename Tp, typename Archive,
-            RequiresAll<isInputArchive<Archive>, std::is_destructible<Tp>>...>
+            RequiresAll<isInputArchive<Archive>,
+                        std::is_default_constructible<Tp>>...>
   Tp deserialize(Archive& ar) {
     auto tp = Tp{};
     serialize(ar, tp);
