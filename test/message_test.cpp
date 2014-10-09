@@ -18,9 +18,8 @@ namespace {
 struct message_test : ::testing::Test {};
 
 TEST_F(message_test, nothing) {
-  auto vec = std::vector<char>(128);
-
   using archie::utils::RawBuffer;
+  auto buff = RawBuffer(128);
 
   using archie::utils::message::frame;
   auto inframe = frame();
@@ -37,7 +36,7 @@ TEST_F(message_test, nothing) {
     header.length = data.size();
 
     using archie::utils::Writer;
-    auto writer = Writer(std::begin(vec), std::end(vec));
+    auto writer = Writer(buff.output_range());
     serialize(writer, inframe);
 
     auto raw = RawBuffer(16);
@@ -55,7 +54,7 @@ TEST_F(message_test, nothing) {
   {
     using archie::utils::Reader;
     using archie::utils::deserialize;
-    auto reader = Reader(std::begin(vec), std::end(vec));
+    auto reader = Reader(buff.input_range());
     auto outframe = deserialize<frame>(reader);
 
     EXPECT_EQ(inframe.header.magic, outframe.header.magic);

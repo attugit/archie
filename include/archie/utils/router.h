@@ -15,21 +15,19 @@ namespace utils {
   namespace fusion = boost::fusion;
 
   template <typename Tp>
-  using BuffType = typename Tp::buff_type;
+  using BuffType = typename Tp::BuffType;
 
   struct input {};
   struct output {};
 
-  template <typename, typename>
+  template <typename>
   struct Router;
 
   template <typename Archive>
   using ArchiveType = typename Archive::Tag;
 
   template <typename Archive>
-  struct isArchive
-      : std::is_base_of<Router<BuffType<Archive>, ArchiveType<Archive>>,
-                        Archive> {};
+  struct isArchive : std::is_base_of<Router<BuffType<Archive>>, Archive> {};
 
   template <typename Archive>
   struct isOutput : std::is_same<ArchiveType<Archive>, output> {};
@@ -89,40 +87,52 @@ namespace utils {
     return ar & std::forward<Tp>(tp);
   }
 
-  template <typename Tp, typename ArchiveTag>
+  template <typename Tp>
   struct Router {
-    using buff_type = Tp;
-    using Tag = ArchiveTag;
-
-    template <typename Iterator>
-    Router(Iterator first, Iterator last)
-        : Router(first, last, 0) {}
+    using BuffType = Tp;
+    using Tag = ArchiveType<BuffType>;
 
     template <typename Iterator>
     Router(Iterator first, Iterator last, std::uint32_t version)
-        : Router(&(*first), std::distance(first, last), version) {}
-
-    Router(void* first, std::uint32_t size, std::uint32_t version)
-        : buffer_(first, size), size_(0), version_(version) {}
+        : buffer_(first, last), version_(version) {}
 
     template <typename Up>
-    void advance(Up const&) {
-      buffer_ = buffer_ + sizeof(Up);
-      size_ += sizeof(Up);
+    Router(Up&& up, std::uint32_t version)
+        : buffer_(std::forward<Up>(up)), version_(version) {}
+
+    template <typename Up>
+    explicit Router(Up&& up)
+        : Router(std::forward<Up>(up), 0) {}
+
+    template <typename Up,
+              RequiresAll<std::is_integral<Up>, isOutput<BuffType>>...>
+    void push_back(Up const& up) {
+      buffer().push_back(up);
     }
 
-    buff_type& buffer() { return buffer_; }
-    std::uint32_t size() const { return size_; }
+    template <typename Up,
+              RequiresAll<std::is_integral<Up>, isInput<BuffType>>...>
+    void pop_front(Up& up) {
+      buffer().pop_front(up);
+    }
+
+    template <typename Up,
+              RequiresAll<std::is_integral<Up>, isInput<BuffType>>...>
+    Up pop() {
+      return buffer().pop<Up>();
+    }
+
+    BuffType& buffer() { return buffer_; }
+    std::uint32_t size() const { return buffer().size(); }
     std::uint32_t version() const { return version_; }
 
   private:
-    buff_type buffer_;
-    std::uint32_t size_;
+    BuffType buffer_;
     std::uint32_t version_;
   };
 
-  using Writer = Router<asio::mutable_buffer, output>;
-  using Reader = Router<asio::const_buffer, input>;
+  using Writer = Router<RawBuffer::OutputRange>;
+  using Reader = Router<RawBuffer::InputRange>;
 
   template <typename Tp, typename Archive,
             RequiresAll<isInputArchive<Archive>,
@@ -136,16 +146,14 @@ namespace utils {
   template <typename Archive, typename Tp,
             RequiresAll<isOutputArchive<Archive>, std::is_integral<Tp>>...>
   Archive& operator&(Archive& ar, Tp const& tp) {
-    *asio::buffer_cast<Tp*>(ar.buffer()) = tp;
-    ar.advance(tp);
+    ar.push_back(tp);
     return ar;
   }
 
   template <typename Archive, typename Tp,
             RequiresAll<isInputArchive<Archive>, std::is_integral<Tp>>...>
   Archive& operator&(Archive& ar, Tp& tp) {
-    tp = *asio::buffer_cast<Tp const*>(ar.buffer());
-    ar.advance(tp);
+    ar.pop_front(tp);
     return ar;
   }
 
@@ -176,7 +184,7 @@ namespace utils {
   template <typename Archive, Requires<isOutputArchive<Archive>>...>
   Archive& operator&(Archive& ar, RawBuffer const& buff) {
     ar& buff.size();
-    auto it = asio::buffer_cast<RawBuffer::pointer>(ar.buffer());
+    auto it = ar.buffer().begin();
     std::copy(std::begin(buff), std::end(buff), it);
     return ar;
   }
@@ -184,7 +192,7 @@ namespace utils {
   template <typename Archive, Requires<isInputArchive<Archive>>...>
   Archive& operator&(Archive& ar, RawBuffer& buff) {
     buff.resize(deserialize<RawBuffer::size_type>(ar));
-    auto it = asio::buffer_cast<RawBuffer::const_pointer>(ar.buffer());
+    auto it = ar.buffer().begin();
     std::copy(it, it + buff.size(), std::begin(buff));
     return ar;
   }
