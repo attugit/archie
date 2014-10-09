@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <boost/asio/buffer.hpp>
 #include <boost/fusion/include/for_each.hpp>
+#include <boost/range/iterator_range.hpp>
 #include <archie/utils/requires.h>
 #include <vector>
 
@@ -18,6 +19,70 @@ namespace utils {
 
   struct input {};
   struct output {};
+
+  template <typename, typename>
+  struct Router;
+
+  template <typename Archive>
+  using ArchiveType = typename Archive::Tag;
+
+  template <typename Archive>
+  struct isArchive
+      : std::is_base_of<Router<BuffType<Archive>, ArchiveType<Archive>>,
+                        Archive> {};
+
+  template <typename Archive>
+  struct isOutput : std::is_same<ArchiveType<Archive>, output> {};
+
+  template <typename Archive>
+  struct isInput : std::is_same<ArchiveType<Archive>, input> {};
+
+  template <typename Archive>
+  struct isOutputArchive : And<isArchive<Archive>, isOutput<Archive>> {};
+
+  template <typename Archive>
+  struct isInputArchive : And<isArchive<Archive>, isInput<Archive>> {};
+
+  using Byte = std::uint8_t;
+
+  struct RawBuffer : std::vector<Byte> {
+    using BaseType = std::vector<Byte>;
+    using BaseType::BaseType;
+    template <typename ArchiveTag>
+    struct BufferRange : boost::iterator_range<BaseType::pointer> {
+      using Tag = ArchiveTag;
+      using Range = boost::iterator_range<BaseType::pointer>;
+      using Range::Range;
+      using SelfType = BufferRange<Tag>;
+
+      template <typename Tp,
+                RequiresAll<std::is_integral<Tp>, isOutput<SelfType>>...>
+      void push_back(Tp const& tp) {
+        *((Tp*)begin()) = tp;
+        advance_begin(sizeof(Tp));
+      }
+
+      template <typename Tp,
+                RequiresAll<std::is_integral<Tp>, isInput<SelfType>>...>
+      void pop_front(Tp& tp) {
+        tp = *((Tp const*)begin());
+        advance_begin(sizeof(Tp));
+      }
+
+      template <typename Tp,
+                RequiresAll<std::is_integral<Tp>, isInput<SelfType>>...>
+      Tp pop() {
+        auto tp = Tp{};
+        pop_front(tp);
+        return tp;
+      }
+    };
+    using InputRange = BufferRange<input>;
+    using OutputRange = BufferRange<output>;
+
+    InputRange input_range() { return InputRange(&front(), &back() + 1); }
+    OutputRange output_range() { return OutputRange(&front(), &back() + 1); }
+  };
 
   template <typename Archive, typename Tp>
   Archive& serialize(Archive& ar, Tp&& tp) {
@@ -58,22 +123,6 @@ namespace utils {
 
   using Writer = Router<asio::mutable_buffer, output>;
   using Reader = Router<asio::const_buffer, input>;
-
-  template <typename Archive>
-  using ArchiveType = typename Archive::Tag;
-
-  template <typename Archive>
-  struct isArchive
-      : std::is_base_of<Router<BuffType<Archive>, ArchiveType<Archive>>,
-                        Archive> {};
-
-  template <typename Archive>
-  struct isOutputArchive
-      : And<isArchive<Archive>, std::is_same<ArchiveType<Archive>, output>> {};
-
-  template <typename Archive>
-  struct isInputArchive
-      : And<isArchive<Archive>, std::is_same<ArchiveType<Archive>, input>> {};
 
   template <typename Tp, typename Archive,
             RequiresAll<isInputArchive<Archive>,
@@ -121,6 +170,22 @@ namespace utils {
   Archive& operator&(Archive& ar, std::vector<Tp, Alloc>& vec) {
     vec.resize(deserialize<typename std::vector<Tp, Alloc>::size_type>(ar));
     for (auto&& tp : vec) ar& tp;
+    return ar;
+  }
+
+  template <typename Archive, Requires<isOutputArchive<Archive>>...>
+  Archive& operator&(Archive& ar, RawBuffer const& buff) {
+    ar& buff.size();
+    auto it = asio::buffer_cast<RawBuffer::pointer>(ar.buffer());
+    std::copy(std::begin(buff), std::end(buff), it);
+    return ar;
+  }
+
+  template <typename Archive, Requires<isInputArchive<Archive>>...>
+  Archive& operator&(Archive& ar, RawBuffer& buff) {
+    buff.resize(deserialize<RawBuffer::size_type>(ar));
+    auto it = asio::buffer_cast<RawBuffer::const_pointer>(ar.buffer());
+    std::copy(it, it + buff.size(), std::begin(buff));
     return ar;
   }
 }

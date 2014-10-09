@@ -20,6 +20,8 @@ struct message_test : ::testing::Test {};
 TEST_F(message_test, nothing) {
   auto vec = std::vector<char>(128);
 
+  using archie::utils::RawBuffer;
+
   using archie::utils::message::frame;
   auto inframe = frame();
 
@@ -37,6 +39,11 @@ TEST_F(message_test, nothing) {
     using archie::utils::Writer;
     auto writer = Writer(std::begin(vec), std::end(vec));
     serialize(writer, inframe);
+
+    auto raw = RawBuffer(16);
+    auto output = raw.output_range();
+    output.push_back(4);
+    serialize(writer, raw);
   }
 
   ASSERT_EQ(3, inframe.header.magic);
@@ -56,6 +63,10 @@ TEST_F(message_test, nothing) {
     EXPECT_EQ(inframe.header.length, outframe.header.length);
     EXPECT_EQ(inframe.header.type, outframe.header.type);
     EXPECT_EQ(inframe.data, outframe.data);
+
+    auto raw = deserialize<RawBuffer>(reader);
+    auto input = raw.input_range();
+    EXPECT_EQ(4, input.pop<int>());
   }
 }
 }
