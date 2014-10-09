@@ -9,7 +9,7 @@ BOOST_FUSION_DEFINE_STRUCT((archie)(utils)(message), header,
 
 BOOST_FUSION_DEFINE_STRUCT((archie)(utils)(message), frame,
                            (archie::utils::message::header,
-                            header)(std::vector<std::uint8_t>, data))
+                            header)(archie::utils::RawBuffer, data))
 
 #include <gtest/gtest.h>
 
@@ -32,23 +32,20 @@ TEST_F(message_test, nothing) {
     header.magic = 3;
     header.version = 7;
     header.type = 0xdeadbeef;
-    data = {7, 6, 5, 4, 3, 2, 1, 0};
-    header.length = data.size();
+    header.length = 16;
+    data.resize(header.length);
+    auto output = data.output_range();
+    output.push_back(4);
+    output.push_back(129U);
 
     using archie::utils::Writer;
     auto writer = Writer(buff.output_range());
     serialize(writer, inframe);
-
-    auto raw = RawBuffer(16);
-    auto output = raw.output_range();
-    output.push_back(4);
-    serialize(writer, raw);
   }
 
   ASSERT_EQ(3, inframe.header.magic);
   ASSERT_EQ(7, inframe.header.version);
   ASSERT_EQ(0xdeadbeef, inframe.header.type);
-  ASSERT_EQ((std::vector<std::uint8_t>{7, 6, 5, 4, 3, 2, 1, 0}), inframe.data);
   ASSERT_EQ(inframe.data.size(), inframe.header.length);
 
   {
@@ -61,11 +58,10 @@ TEST_F(message_test, nothing) {
     EXPECT_EQ(inframe.header.version, outframe.header.version);
     EXPECT_EQ(inframe.header.length, outframe.header.length);
     EXPECT_EQ(inframe.header.type, outframe.header.type);
-    EXPECT_EQ(inframe.data, outframe.data);
 
-    auto raw = deserialize<RawBuffer>(reader);
-    auto input = raw.input_range();
+    auto input = outframe.data.input_range();
     EXPECT_EQ(4, input.pop<int>());
+    EXPECT_EQ(129U, input.pop<unsigned>());
   }
 }
 }
