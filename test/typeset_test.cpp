@@ -7,16 +7,16 @@ struct typeset_test : ::testing::Test {};
 
 TEST_F(typeset_test, nothing) {
   au::TypeSet<unsigned> unary(1);
-  EXPECT_EQ(1, std::get<unsigned>(unary));
+  EXPECT_EQ(1u, std::get<unsigned>(unary));
 
   au::TypeSet<unsigned, float> binary(2, 3.0);
-  EXPECT_EQ(2, std::get<unsigned>(binary));
+  EXPECT_EQ(2u, std::get<unsigned>(binary));
   EXPECT_EQ(3.0, std::get<float>(binary));
 
   std::get<unsigned>(binary) = 4;
   std::get<float>(binary) = 5.0;
 
-  EXPECT_EQ(4, std::get<unsigned>(binary));
+  EXPECT_EQ(4u, std::get<unsigned>(binary));
   EXPECT_EQ(5.0, std::get<float>(binary));
 
   au::TypeSet<unsigned, double> lhs(1, 2.0);

@@ -2,12 +2,12 @@ local archie = solution "archie"
   location "build"
   configurations { "debug", "release" }
   buildoptions { "-Wall", "-Werror", "-pedantic", "-std=c++1y" }
+  includedirs { "." }
   language "C++"
 
 local gtest = project "gtest"
   kind "StaticLib"
   files { "gtest/src/*.cc" }
-  includedirs { "." }
   includedirs { "gtest/" }
   configuration "debug"
     defines { "DEBUG" }

@@ -38,7 +38,7 @@ TEST_F(typeholder_test, nothing) {
 
   auto sel2 =
       au::Select<PersonAge, PersonId>::from(std::begin(table), std::end(table));
-  EXPECT_EQ(3, sel2.size());
+  EXPECT_EQ(3u, sel2.size());
 
   auto byAge = [](auto lhs, auto rhs) {
     return au::get<PersonAge>(lhs) < au::get<PersonAge>(rhs);

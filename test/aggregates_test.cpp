@@ -73,7 +73,7 @@ TEST_F(aggregates_test, canSelectCollection) {
 
   auto select = au::Select<PackedStruct::Id>::from(std::begin(collection),
                                                    std::end(collection));
-  ASSERT_EQ(3, select.size());
+  ASSERT_EQ(3u, select.size());
   EXPECT_EQ(1, au::get<PackedStruct::Id>(select[0]));
   EXPECT_EQ(2, au::get<PackedStruct::Id>(select[1]));
   EXPECT_EQ(3, au::get<PackedStruct::Id>(select[2]));
@@ -89,7 +89,7 @@ TEST_F(aggregates_test, canSelectCollectionIf) {
       [](auto&& item) { return (*au::get<PackedStruct::Id>(item) % 2) != 0; };
   auto select = au::Select<PackedStruct::Id>::from_if(
       std::begin(collection), std::end(collection), isOdd);
-  ASSERT_EQ(2, select.size());
+  ASSERT_EQ(2u, select.size());
   EXPECT_EQ(1, au::get<PackedStruct::Id>(select[0]));
   EXPECT_EQ(3, au::get<PackedStruct::Id>(select[1]));
 }
