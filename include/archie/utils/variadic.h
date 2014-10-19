@@ -14,31 +14,33 @@ namespace utils {
     (void)Alias<int[]>{(func(std::forward<Args>(args)), 1)...};
   }
 
-  template <typename... Tp>
-  struct TypeSet {};
+  template <typename... Ts>
+  struct TypeSet {
+    constexpr static decltype(auto) size() { return sizeof...(Ts); };
+  };
 
-  template <typename... Tp>
+  template <typename... Ts>
   struct Tuple {
   private:
     template <typename... Args>
-    static decltype(auto) make_storage(Args&&... args) {
+    constexpr static decltype(auto) make_storage(Args&&... args) {
       return [args...](auto&& func) -> decltype(auto) {
         return std::forward<decltype(func)>(func)(args...);
       };
     }
-    using Storage = decltype(make_storage(std::declval<Tp>()...));
+    using Storage = decltype(make_storage(std::declval<Ts>()...));
     Storage storage;
 
   public:
-    using type = TypeSet<Tp...>;
+    using type = TypeSet<Ts...>;
 
     template <typename... Up>
-    explicit Tuple(Up&&... u)
+    constexpr explicit Tuple(Up&&... u)
         : storage(make_storage(std::forward<Up>(u)...)) {}
 
-    Tuple() : Tuple(Tp {}...) {}
+    constexpr Tuple() : Tuple(Ts {}...) {}
 
-    std::size_t size() const { return sizeof...(Tp); }
+    constexpr decltype(auto) size() const { return type::size(); }
 
     template <typename Func>
     decltype(auto) apply(Func&& func) {
@@ -48,9 +50,10 @@ namespace utils {
 
   namespace detail {
     struct at_impl {
-      struct any {
-        template <typename... Tp>
-        constexpr any(Tp&&...) {}
+      template <std::size_t Tp>
+      struct wrapper {
+        template <typename Up>
+        constexpr wrapper(Up&&) {}
       };
       template <std::size_t n, typename = std::make_index_sequence<n>>
       struct get;
@@ -58,8 +61,8 @@ namespace utils {
       template <std::size_t n, std::size_t... ignore>
       struct get<n, std::index_sequence<ignore...>> {
         template <typename Nth, typename...>
-        constexpr decltype(auto) operator()(decltype(ignore, any{})...,
-                                            Nth&& nth, ...) const {
+        constexpr decltype(auto) operator()(wrapper<ignore>..., Nth&& nth,
+                                            ...) const {
           return std::forward<Nth>(nth);
         }
       };
