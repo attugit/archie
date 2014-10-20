@@ -31,6 +31,13 @@ TEST_F(variadic_test, canCreateTuple) {
   EXPECT_EQ(2u, au::get<3>(t3));
 }
 
+TEST_F(variadic_test, reference_via_get) {
+  auto tuple = au::Tuple<char, int, float>('c', 7, 3.0f);
+  ASSERT_EQ('c', au::get<0>(tuple));
+  ASSERT_EQ(7, au::get<1>(tuple));
+  ASSERT_EQ(3.0f, au::get<2>(tuple));
+}
+
 TEST_F(variadic_test, for_each) {
   int idx = 0;
   au::for_each([&idx](auto&&) { ++idx; }, 7, 'c', std::string{});
@@ -46,5 +53,12 @@ TEST_F(variadic_test, type_index) {
   EXPECT_EQ('c', au::get<char>(tuple));
   EXPECT_EQ(7, au::get<int>(tuple));
   EXPECT_EQ(3.0f, au::get<float>(tuple));
+}
+
+TEST_F(variadic_test, has_member) {
+  using vec_t = std::vector<int>;
+  static_assert(au::HasValueType<vec_t>::value, "");
+  static_assert(!au::HasValueType<int>::value, "");
+  static_assert(!au::HasValueType<Aqq>::value, "");
 }
 }

@@ -6,12 +6,49 @@
 namespace archie {
 namespace utils {
 
+  template <std::size_t N>
+  using Number = std::integral_constant<std::size_t, N>;
+
   template <typename Tp>
   using Alias = Tp;
+
+  namespace detail {
+    template <typename Tp, typename...>
+    struct VariadicWrapper {
+      using type = Tp;
+    };
+  }
+
+  template <typename... Ts>
+  using Voider = typename detail::VariadicWrapper<void, Ts...>::type;
+
+  template <template <typename> class, typename, typename = void>
+  struct HasMember : std::false_type {};
+
+  template <template <typename> class Member, typename Tp>
+  struct HasMember<Member, Tp, Voider<Member<Tp>>> : std::true_type {};
+
+  template <typename Tp>
+  using ValueType = typename Tp::value_type;
+
+  template <typename Tp>
+  using VariadicType = typename std::remove_reference_t<Tp>::variadic;
+
+  template <typename Tp>
+  using HasValueType = HasMember<ValueType, Tp>;
+
+  template <typename Tp>
+  using HasVariadicType = HasMember<VariadicType, Tp>;
 
   template <typename Func, typename... Args>
   constexpr void for_each(Func&& func, Args&&... args) {
     (void)Alias<int[]>{(func(std::forward<Args>(args)), 1)...};
+  }
+
+  template <typename Func, typename... Ts>
+  constexpr decltype(auto) apply(Func&& func, Ts&&... ts) noexcept(
+      noexcept(std::declval<Func>()(std::declval<Ts>()...))) {
+    return std::forward<Func>(func)(std::forward<Ts>(ts)...);
   }
 
   template <typename... Ts>
@@ -34,7 +71,7 @@ namespace utils {
 
     template <typename Tp, std::size_t Idx>
     static constexpr decltype(auto) indexed(IndexedType<Tp, Idx> const&) {
-      return std::integral_constant<std::size_t, Idx>{};
+      return Number<Idx>{};
     }
 
   public:
@@ -47,9 +84,6 @@ namespace utils {
       return type::value;
     }
   };
-
-  template <typename Tp>
-  using VariadicType = typename std::remove_reference_t<Tp>::variadic;
 
   template <typename... Ts>
   struct Tuple {
@@ -111,8 +145,7 @@ namespace utils {
 
   template <typename Tp, typename TupleType>
   constexpr decltype(auto) get(TupleType&& tuple) noexcept {
-    using index = std::integral_constant<
-        std::size_t, VariadicType<TupleType>::template index_of<Tp>()>;
+    using index = Number<VariadicType<TupleType>::template index_of<Tp>()>;
     return get<index::value>(std::forward<TupleType>(tuple));
   }
 }
