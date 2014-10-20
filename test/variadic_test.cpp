@@ -41,5 +41,10 @@ TEST_F(variadic_test, type_index) {
   EXPECT_EQ(0u, (au::Variadic<char, int, float>::index_of<char>()));
   EXPECT_EQ(1u, (au::Variadic<char, int, float>::index_of<int>()));
   EXPECT_EQ(2u, (au::Variadic<char, int, float>::index_of<float>()));
+
+  auto tuple = au::Tuple<char, int, float>('c', 7, 3.0f);
+  EXPECT_EQ('c', au::get<char>(tuple));
+  EXPECT_EQ(7, au::get<int>(tuple));
+  EXPECT_EQ(3.0f, au::get<float>(tuple));
 }
 }

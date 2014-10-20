@@ -48,6 +48,9 @@ namespace utils {
     }
   };
 
+  template <typename Tp>
+  using VariadicType = typename std::remove_reference_t<Tp>::variadic;
+
   template <typename... Ts>
   struct Tuple {
   private:
@@ -101,9 +104,16 @@ namespace utils {
     };
   }
 
-  template <std::size_t n, typename Tp>
-  decltype(auto) get(Tp&& t) {
-    return std::forward<Tp>(t).apply(detail::at_impl::get<n>{});
+  template <std::size_t n, typename TupleType>
+  constexpr decltype(auto) get(TupleType&& t) noexcept {
+    return std::forward<TupleType>(t).apply(detail::at_impl::get<n>{});
+  }
+
+  template <typename Tp, typename TupleType>
+  constexpr decltype(auto) get(TupleType&& tuple) noexcept {
+    using index = std::integral_constant<
+        std::size_t, VariadicType<TupleType>::template index_of<Tp>()>;
+    return get<index::value>(std::forward<TupleType>(tuple));
   }
 }
 }
