@@ -36,4 +36,10 @@ TEST_F(variadic_test, for_each) {
   au::for_each([&idx](auto&&) { ++idx; }, 7, 'c', std::string{});
   EXPECT_EQ(3, idx);
 }
+
+TEST_F(variadic_test, type_index) {
+  EXPECT_EQ(0u, (au::Variadic<char, int, float>::index_of<char>()));
+  EXPECT_EQ(1u, (au::Variadic<char, int, float>::index_of<int>()));
+  EXPECT_EQ(2u, (au::Variadic<char, int, float>::index_of<float>()));
+}
 }

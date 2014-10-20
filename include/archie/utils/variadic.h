@@ -15,8 +15,37 @@ namespace utils {
   }
 
   template <typename... Ts>
-  struct TypeSet {
-    constexpr static decltype(auto) size() { return sizeof...(Ts); };
+  struct InheritAll : Ts... {};
+
+  template <typename Tp, std::size_t Idx>
+  struct IndexedType {};
+
+  template <typename... Ts>
+  struct Variadic {
+  public:
+    static constexpr decltype(auto) size() { return sizeof...(Ts); }
+
+  private:
+    template <std::size_t... Indexes>
+    static constexpr decltype(auto) make_indexed_variadic(
+        std::index_sequence<Indexes...>) {
+      return InheritAll<IndexedType<Ts, Indexes>...>{};
+    }
+
+    template <typename Tp, std::size_t Idx>
+    static constexpr decltype(auto) indexed(IndexedType<Tp, Idx> const&) {
+      return std::integral_constant<std::size_t, Idx>{};
+    }
+
+  public:
+    template <typename Tp>
+    static constexpr decltype(auto) index_of() {
+      using sequence = std::make_index_sequence<size()>;
+      using indicies =
+          decltype(make_indexed_variadic(std::declval<sequence>()));
+      using type = decltype(indexed<Tp>(std::declval<indicies>()));
+      return type::value;
+    }
   };
 
   template <typename... Ts>
@@ -32,7 +61,7 @@ namespace utils {
     Storage storage;
 
   public:
-    using type = TypeSet<Ts...>;
+    using variadic = Variadic<Ts...>;
 
     template <typename... Up>
     constexpr explicit Tuple(Up&&... u)
@@ -40,7 +69,7 @@ namespace utils {
 
     constexpr Tuple() : Tuple(Ts {}...) {}
 
-    constexpr decltype(auto) size() const { return type::size(); }
+    constexpr decltype(auto) size() const { return variadic::size(); }
 
     template <typename Func>
     decltype(auto) apply(Func&& func) {
@@ -50,11 +79,14 @@ namespace utils {
 
   namespace detail {
     struct at_impl {
+    private:
       template <std::size_t Tp>
       struct wrapper {
         template <typename Up>
         constexpr wrapper(Up&&) {}
       };
+
+    public:
       template <std::size_t n, typename = std::make_index_sequence<n>>
       struct get;
 
