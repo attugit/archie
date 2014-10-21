@@ -97,6 +97,9 @@ namespace utils {
       using type = decltype(indexed<Tp>(std::declval<indicies>()));
       return type::value;
     }
+
+    template <template <typename...> class MetaFunction>
+    using Apply = MetaFunction<Ts...>;
   };
 
   template <typename... Ts>
