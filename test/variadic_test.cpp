@@ -1,5 +1,7 @@
 #include <cstdint>
 #include <utility>
+#include <list>
+#include <memory>
 
 #include <archie/utils/variadic.h>
 
@@ -7,11 +9,6 @@
 namespace au = archie::utils;
 
 namespace {
-
-struct Aqq {
-  Aqq() = delete;
-  Aqq(int) {}
-};
 
 struct variadic_test : ::testing::Test {};
 
@@ -57,8 +54,18 @@ TEST_F(variadic_test, type_index) {
 
 TEST_F(variadic_test, has_member) {
   using vec_t = std::vector<int>;
+  using list_t = std::list<int>;
+  using ptr_t = std::unique_ptr<int>;
   static_assert(au::HasValueType<vec_t>::value, "");
   static_assert(!au::HasValueType<int>::value, "");
-  static_assert(!au::HasValueType<Aqq>::value, "");
+  static_assert(!au::HasValueType<ptr_t>::value, "");
+
+  static_assert(au::IsCopyAssignable<vec_t>::value, "");
+  static_assert(au::IsCopyAssignable<list_t>::value, "");
+  static_assert(!au::IsCopyAssignable<ptr_t>::value, "");
+
+  static_assert(au::HasReserve<vec_t>::value, "");
+  static_assert(!au::HasReserve<list_t>::value, "");
+  static_assert(!au::HasReserve<ptr_t>::value, "");
 }
 }

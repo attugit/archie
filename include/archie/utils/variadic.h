@@ -29,6 +29,20 @@ namespace utils {
   struct HasMember<Member, Tp, Voider<Member<Tp>>> : std::true_type {};
 
   template <typename Tp>
+  using InspectReserve =
+      decltype(std::declval<Tp>().reserve(std::declval<int>()));
+
+  template <typename Tp>
+  using InspectCopyAssignable =
+      decltype(std::declval<Tp>() = std::declval<Tp const&>());
+
+  template <typename Tp>
+  using HasReserve = HasMember<InspectReserve, Tp>;
+
+  template <typename Tp>
+  using IsCopyAssignable = HasMember<InspectCopyAssignable, Tp>;
+
+  template <typename Tp>
   using ValueType = typename Tp::value_type;
 
   template <typename Tp>
