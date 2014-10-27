@@ -80,4 +80,12 @@ TEST_F(variadic_test, meta_apply) {
   EXPECT_EQ(2u, (au::Variadic<char, int>::Apply<SizeOf>::value));
   EXPECT_EQ(3u, (au::Variadic<char, int, float>::Apply<SizeOf>::value));
 }
+
+TEST_F(variadic_test, tuple_for_each) {
+  auto tuple = au::Tuple<int, int, int>(1, 2, 3);
+  unsigned sum = 0;
+  auto func = [&sum](auto x) { sum += x; };
+  tuple.for_each(func);
+  EXPECT_EQ(6u, sum);
+}
 }

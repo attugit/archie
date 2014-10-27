@@ -129,6 +129,15 @@ namespace utils {
     decltype(auto) apply(Func&& func) {
       return storage(std::forward<Func>(func));
     }
+
+    template <typename Func>
+    decltype(auto) for_each(Func&& func) {
+      auto functor = [f = std::forward<Func>(func)](auto... xs) {
+        (void)Alias<int[]>{(f(xs), 0)...};
+        return std::move(f);
+      };
+      return storage(functor);
+    }
   };
 
   namespace detail {
