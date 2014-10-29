@@ -1,7 +1,7 @@
 local archie = solution "archie"
   location "build"
   configurations { "debug", "release" }
-  buildoptions { "-Wall", "-Werror", "-pedantic", "-std=c++1y" }
+  buildoptions { "-std=c++1y" }
   includedirs { "." }
   language "C++"
 
@@ -20,6 +20,7 @@ local gtest = project "gtest"
 
 local ut = project "unittest"
   includedirs { "include/" }
+  buildoptions { "-Wall", "-Wextra", "-Werror", "-pedantic", "-std=c++1y" }
   kind "ConsoleApp"
   links { "gtest", "pthread" }
   files { "test/*.cpp" }
