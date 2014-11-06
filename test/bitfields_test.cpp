@@ -40,12 +40,12 @@ namespace utils {
   };
 
   template <size_type I, size_type O, size_type S>
-  constexpr size_type offset_of(PackElement<I, O, S>) {
+  constexpr size_type offset_of(PackElement<I, O, S>) noexcept {
     return O;
   }
 
   template <size_type I, size_type O, size_type S>
-  constexpr size_type size_of(PackElement<I, O, S>) {
+  constexpr size_type size_of(PackElement<I, O, S>) noexcept {
     return S;
   }
 
@@ -79,10 +79,27 @@ namespace utils {
 
   template <size_type... S>
   struct Pack : detail::PackImpl<0, 0, S...> {
-    constexpr Pack() = default;
-    constexpr size_type size() { return Sum<S...>::value; }
-    constexpr size_type length() { return sizeof...(S); }
+    constexpr Pack() noexcept = default;
+    constexpr size_type size() noexcept { return Sum<S...>::value; }
+    constexpr size_type length() noexcept { return sizeof...(S); }
     using data_type = Storage<Sum<S...>::value>;
+
+    template <size_type I>
+    struct Field {
+      size_type offset() const noexcept { return offset_of<I>(Pack{}); }
+      size_type size() const noexcept { return size_of<I>(Pack{}); }
+      size_type index() const noexcept { return I; }
+      friend Pack;
+
+    private:
+      explicit Field(Pack::data_type& d) noexcept : data(d) {}
+      data_type& data;
+    };
+
+    template <size_type I>
+    Field<I> make_field() noexcept {
+      return Field<I>(data);
+    }
 
   private:
     data_type data = 0;
@@ -141,5 +158,11 @@ TEST_F(bitfields_test, pack_size) {
 TEST_F(bitfields_test, pack_length) {
   constexpr au::Pack<1, 2, 3> pack;
   static_assert(pack.length() == 3, "");
+}
+
+TEST_F(bitfields_test, pack_make_field) {
+  au::Pack<1, 2, 3> pack;
+  auto field = pack.make_field<0>();
+  EXPECT_EQ(0u, field.index());
 }
 }
