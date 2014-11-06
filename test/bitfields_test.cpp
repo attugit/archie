@@ -144,4 +144,37 @@ TEST_F(bitfields_test, pack_field_reset) {
   EXPECT_FALSE(field.test(1));
   EXPECT_EQ(0b010001, pack.get());
 }
+
+TEST_F(bitfields_test, pack_field_all) {
+  au::Pack<1, 2, 3> pack;
+  pack.set(0b010110);
+  auto f0 = pack.make_field<0>();
+  auto f1 = pack.make_field<1>();
+  auto f2 = pack.make_field<2>();
+  EXPECT_FALSE(f0.all());
+  EXPECT_TRUE(f1.all());
+  EXPECT_FALSE(f2.all());
+}
+
+TEST_F(bitfields_test, pack_field_any) {
+  au::Pack<1, 2, 3> pack;
+  pack.set(0b010110);
+  auto f0 = pack.make_field<0>();
+  auto f1 = pack.make_field<1>();
+  auto f2 = pack.make_field<2>();
+  EXPECT_FALSE(f0.any());
+  EXPECT_TRUE(f1.any());
+  EXPECT_TRUE(f2.any());
+}
+
+TEST_F(bitfields_test, pack_field_none) {
+  au::Pack<1, 2, 3> pack;
+  pack.set(0b010110);
+  auto f0 = pack.make_field<0>();
+  auto f1 = pack.make_field<1>();
+  auto f2 = pack.make_field<2>();
+  EXPECT_TRUE(f0.none());
+  EXPECT_FALSE(f1.none());
+  EXPECT_FALSE(f2.none());
+}
 }

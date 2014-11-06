@@ -116,6 +116,9 @@ namespace utils {
       Field& set(size_type at, bool value) noexcept {
         return value ? set(at) : reset(at);
       }
+      bool all() const noexcept { return (data & mask()) == mask(); }
+      bool any() const noexcept { return (data & mask()) != 0u; }
+      bool none() const noexcept { return !any(); }
 
       friend Pack;
 
