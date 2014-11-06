@@ -174,12 +174,34 @@ TEST_F(bitfields_test, pack_mask_of) {
   static_assert(pack_t::mask_of<2>() == 0b111000, "");
 }
 
-TEST_F(bitfields_test, pack_make_field) {
+TEST_F(bitfields_test, pack_make_single_field) {
   au::Pack<1, 2, 3> pack;
   auto field = pack.make_field<0>();
   EXPECT_EQ(0u, field.index());
   EXPECT_EQ(0u, field.offset());
   EXPECT_EQ(1u, field.size());
   EXPECT_EQ(0b000001, field.mask());
+}
+
+TEST_F(bitfields_test, pack_make_many_field) {
+  au::Pack<1, 2, 3> pack;
+  auto f0 = pack.make_field<0>();
+  auto f1 = pack.make_field<1>();
+  auto f2 = pack.make_field<2>();
+  EXPECT_EQ(0u, f0.index());
+  EXPECT_EQ(1u, f1.index());
+  EXPECT_EQ(2u, f2.index());
+
+  EXPECT_EQ(0u, f0.offset());
+  EXPECT_EQ(1u, f1.offset());
+  EXPECT_EQ(3u, f2.offset());
+
+  EXPECT_EQ(1u, f0.size());
+  EXPECT_EQ(2u, f1.size());
+  EXPECT_EQ(3u, f2.size());
+
+  EXPECT_EQ(0b000001, f0.mask());
+  EXPECT_EQ(0b000110, f1.mask());
+  EXPECT_EQ(0b111000, f2.mask());
 }
 }
