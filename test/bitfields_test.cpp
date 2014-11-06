@@ -104,6 +104,11 @@ namespace utils {
         return (value() & (1u << at)) != 0u;
       }
 
+      Field& set(size_type at) {
+        data = data | ((1u << (at + offset())) & mask());
+        return *this;
+      }
+
       friend Pack;
 
     private:
@@ -236,5 +241,20 @@ TEST_F(bitfields_test, pack_field_test) {
   EXPECT_FALSE(f2.test(0));
   EXPECT_TRUE(f2.test(1));
   EXPECT_FALSE(f2.test(2));
+}
+
+TEST_F(bitfields_test, pack_field_set) {
+  au::Pack<1, 2, 3> pack;
+  pack.set(0b010101);
+  auto field = pack.make_field<1>();
+  ASSERT_FALSE(field.test(0));
+  ASSERT_TRUE(field.test(1));
+  field.set(1);
+  EXPECT_FALSE(field.test(0));
+  EXPECT_TRUE(field.test(1));
+  field.set(0);
+  EXPECT_TRUE(field.test(0));
+  EXPECT_TRUE(field.test(1));
+  EXPECT_EQ(0b010111, pack.get());
 }
 }
