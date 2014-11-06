@@ -108,6 +108,10 @@ namespace utils {
         data = data | ((1u << (at + offset())) & mask());
         return *this;
       }
+      Field& reset(size_type at) {
+        data = data & (~((1u << (at + offset())) & mask()));
+        return *this;
+      }
 
       friend Pack;
 
@@ -256,5 +260,20 @@ TEST_F(bitfields_test, pack_field_set) {
   EXPECT_TRUE(field.test(0));
   EXPECT_TRUE(field.test(1));
   EXPECT_EQ(0b010111, pack.get());
+}
+
+TEST_F(bitfields_test, pack_field_reset) {
+  au::Pack<1, 2, 3> pack;
+  pack.set(0b010101);
+  auto field = pack.make_field<1>();
+  ASSERT_FALSE(field.test(0));
+  ASSERT_TRUE(field.test(1));
+  field.reset(0);
+  EXPECT_FALSE(field.test(0));
+  EXPECT_TRUE(field.test(1));
+  field.reset(1);
+  EXPECT_FALSE(field.test(0));
+  EXPECT_FALSE(field.test(1));
+  EXPECT_EQ(0b010001, pack.get());
 }
 }
