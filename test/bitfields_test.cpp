@@ -177,4 +177,12 @@ TEST_F(bitfields_test, pack_field_none) {
   EXPECT_FALSE(f1.none());
   EXPECT_FALSE(f2.none());
 }
+
+TEST_F(bitfields_test, pack_field_chain) {
+  au::Pack<1, 2, 3> pack;
+  pack.set(0b010101);
+  EXPECT_TRUE((pack.make_field<0>().all()));
+  EXPECT_TRUE((pack.make_field<1>().test(1)));
+  EXPECT_TRUE((pack.make_field<2>().reset(1).none()));
+}
 }
