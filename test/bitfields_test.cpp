@@ -12,7 +12,7 @@ namespace utils {
   template <size_type N>
   using Number = std::integral_constant<size_type, N>;
 
-  using ByteSize = std::integral_constant<size_type, 8>;
+  using ByteSize = Number<8u>;
 
   template <size_type Size>
   struct GetStorage {
@@ -58,7 +58,7 @@ namespace utils {
 
     template <size_type I, size_type O, size_type S, size_type... T>
     struct PackImpl<I, O, S, T...> : PackElement<I, O, S>,
-                                     PackImpl<I + 1, O + S, T...> {};
+                                     PackImpl<I + 1u, O + S, T...> {};
 
     template <size_type...>
     struct Sum;
@@ -78,15 +78,17 @@ namespace utils {
   using Sum = typename detail::Sum<N...>::type;
 
   template <size_type... S>
-  struct Pack : detail::PackImpl<0, 0, S...> {
+  struct Pack : detail::PackImpl<0u, 0u, S...> {
     constexpr Pack() noexcept = default;
     constexpr size_type size() noexcept { return Sum<S...>::value; }
     constexpr size_type length() noexcept { return sizeof...(S); }
     using data_type = Storage<Sum<S...>::value>;
+    void set(data_type val) noexcept { data = val; }
+    data_type get() const noexcept { return data; }
 
     template <size_type I>
     constexpr static data_type mask_of() noexcept {
-      return (((1u << size_of<I>(Pack{})) - 1) << offset_of<I>(Pack{}));
+      return (((1u << size_of<I>(Pack{})) - 1u) << offset_of<I>(Pack{}));
     }
 
     template <size_type I>
@@ -95,6 +97,12 @@ namespace utils {
       size_type size() const noexcept { return size_of<I>(Pack{}); }
       size_type index() const noexcept { return I; }
       data_type mask() const noexcept { return Pack::mask_of<I>(); }
+      using field_type = Storage<size_of<I>(Pack{})>;
+      field_type value() const noexcept { return (data & mask()) >> offset(); }
+
+      bool test(size_type at) const noexcept {
+        return (value() & (1u << at)) != 0u;
+      }
 
       friend Pack;
 
@@ -109,7 +117,7 @@ namespace utils {
     }
 
   private:
-    data_type data = 0;
+    data_type data = 0u;
   };
 }
 }
@@ -203,5 +211,30 @@ TEST_F(bitfields_test, pack_make_many_field) {
   EXPECT_EQ(0b000001, f0.mask());
   EXPECT_EQ(0b000110, f1.mask());
   EXPECT_EQ(0b111000, f2.mask());
+}
+
+TEST_F(bitfields_test, pack_field_value) {
+  au::Pack<1, 2, 3> pack;
+  pack.set(0b010101);
+  auto f0 = pack.make_field<0>();
+  auto f1 = pack.make_field<1>();
+  auto f2 = pack.make_field<2>();
+  EXPECT_EQ(0b1, f0.value());
+  EXPECT_EQ(0b10, f1.value());
+  EXPECT_EQ(0b10, f2.value());
+}
+
+TEST_F(bitfields_test, pack_field_test) {
+  au::Pack<1, 2, 3> pack;
+  pack.set(0b010101);
+  auto f0 = pack.make_field<0>();
+  auto f1 = pack.make_field<1>();
+  auto f2 = pack.make_field<2>();
+  EXPECT_TRUE(f0.test(0));
+  EXPECT_FALSE(f1.test(0));
+  EXPECT_TRUE(f1.test(1));
+  EXPECT_FALSE(f2.test(0));
+  EXPECT_TRUE(f2.test(1));
+  EXPECT_FALSE(f2.test(2));
 }
 }
