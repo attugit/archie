@@ -185,4 +185,14 @@ TEST_F(bitfields_test, pack_field_chain) {
   EXPECT_TRUE((pack.make_field<1>().test(1)));
   EXPECT_TRUE((pack.make_field<2>().reset(1).none()));
 }
+
+TEST_F(bitfields_test, pack_field_eq) {
+  au::Pack<1, 2, 1, 2> pack;
+  pack.set(0b010101);
+  auto field = pack.make_field<0>();
+  EXPECT_TRUE(field == pack.make_field<0>());
+  EXPECT_FALSE(field == pack.make_field<2>());
+  pack.make_field<2>().set(0);
+  EXPECT_TRUE(field == pack.make_field<2>());
+}
 }

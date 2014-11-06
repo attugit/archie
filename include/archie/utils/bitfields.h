@@ -120,9 +120,20 @@ namespace utils {
       bool any() const noexcept { return (data & mask()) != 0u; }
       bool none() const noexcept { return !any(); }
 
+      template <size_type Idx>
+      bool operator==(Field<Idx> const& rhs) const noexcept {
+        static_assert(Size::value == Field<Idx>::Size::value, "");
+        return value() == rhs.value();
+      }
+      template <size_type Idx>
+      bool operator!=(Field<Idx> const& rhs) const noexcept {
+        return !(*this == rhs);
+      }
+
       friend Pack;
 
     private:
+      using Size = Number<size_of<I>(Pack{})>;
       explicit Field(Pack::data_type& d) noexcept : data(d) {}
       data_type& data;
     };
