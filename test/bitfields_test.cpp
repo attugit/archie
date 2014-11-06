@@ -44,6 +44,11 @@ namespace utils {
     return O;
   }
 
+  template <size_type I, size_type O, size_type S>
+  constexpr size_type size_of(PackElement<I, O, S>) {
+    return S;
+  }
+
   namespace detail {
     template <size_type...>
     struct PackImpl;
@@ -54,11 +59,29 @@ namespace utils {
     template <size_type I, size_type O, size_type S, size_type... T>
     struct PackImpl<I, O, S, T...> : PackElement<I, O, S>,
                                      PackImpl<I + 1, O + S, T...> {};
+
+    template <size_type...>
+    struct Sum;
+
+    template <size_type N>
+    struct Sum<N> {
+      using type = Number<N>;
+    };
+
+    template <size_type N, size_type... T>
+    struct Sum<N, T...> {
+      using type = Number<N + Sum<T...>::type::value>;
+    };
   }
+
+  template <size_type... N>
+  using Sum = typename detail::Sum<N...>::type;
 
   template <size_type... S>
   struct Pack : detail::PackImpl<0, 0, S...> {
     constexpr Pack() = default;
+    constexpr size_type size() { return Sum<S...>::value; }
+    constexpr size_type length() { return sizeof...(S); }
   };
 }
 }
@@ -86,5 +109,22 @@ TEST_F(bitfields_test, pack_element_offset) {
   static_assert(au::offset_of<0>(pack) == 0, "");
   static_assert(au::offset_of<1>(pack) == 1, "");
   static_assert(au::offset_of<2>(pack) == 3, "");
+}
+
+TEST_F(bitfields_test, pack_element_size) {
+  constexpr au::Pack<1, 2, 3> pack;
+  static_assert(au::size_of<0>(pack) == 1, "");
+  static_assert(au::size_of<1>(pack) == 2, "");
+  static_assert(au::size_of<2>(pack) == 3, "");
+}
+
+TEST_F(bitfields_test, pack_size) {
+  constexpr au::Pack<1, 2, 3> pack;
+  static_assert(pack.size() == 6, "");
+}
+
+TEST_F(bitfields_test, pack_length) {
+  constexpr au::Pack<1, 2, 3> pack;
+  static_assert(pack.length() == 3, "");
 }
 }
