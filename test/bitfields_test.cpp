@@ -82,6 +82,10 @@ namespace utils {
     constexpr Pack() = default;
     constexpr size_type size() { return Sum<S...>::value; }
     constexpr size_type length() { return sizeof...(S); }
+    using data_type = Storage<Sum<S...>::value>;
+
+  private:
+    data_type data = 0;
   };
 }
 }
@@ -102,6 +106,17 @@ TEST_F(bitfields_test, storage) {
   static_assert(sizeof(au::Storage<32>) <= sizeof(std::uint32_t), "");
   static_assert(sizeof(au::Storage<33>) <= sizeof(std::uint64_t), "");
   static_assert(sizeof(au::Storage<64>) <= sizeof(std::uint64_t), "");
+}
+
+TEST_F(bitfields_test, pack) {
+  static_assert(sizeof(au::Pack<0>) <= sizeof(std::uint8_t), "");
+  static_assert(sizeof(au::Pack<3, 5>) <= sizeof(std::uint8_t), "");
+  static_assert(sizeof(au::Pack<4, 5>) <= sizeof(std::uint16_t), "");
+  static_assert(sizeof(au::Pack<3, 5, 8>) <= sizeof(std::uint16_t), "");
+  static_assert(sizeof(au::Pack<10, 5, 2>) <= sizeof(std::uint32_t), "");
+  static_assert(sizeof(au::Pack<15, 15, 2>) <= sizeof(std::uint32_t), "");
+  static_assert(sizeof(au::Pack<10, 10, 13>) <= sizeof(std::uint64_t), "");
+  static_assert(sizeof(au::Pack<30, 20, 10, 4>) <= sizeof(std::uint64_t), "");
 }
 
 TEST_F(bitfields_test, pack_element_offset) {
