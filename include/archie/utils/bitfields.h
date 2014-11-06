@@ -129,6 +129,23 @@ namespace utils {
       bool operator!=(Field<Idx> const& rhs) const noexcept {
         return !(*this == rhs);
       }
+      template <size_type Idx>
+      bool operator<(Field<Idx> const& rhs) const noexcept {
+        static_assert(Size::value == Field<Idx>::Size::value, "");
+        return value() < rhs.value();
+      }
+      template <size_type Idx>
+      bool operator>=(Field<Idx> const& rhs) const noexcept {
+        return !(*this < rhs);
+      }
+      template <size_type Idx>
+      bool operator>(Field<Idx> const& rhs) const noexcept {
+        return rhs < *this;
+      }
+      template <size_type Idx>
+      bool operator<=(Field<Idx> const& rhs) const noexcept {
+        return !(rhs < *this);
+      }
 
       friend Pack;
 
