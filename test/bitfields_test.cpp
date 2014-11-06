@@ -85,10 +85,17 @@ namespace utils {
     using data_type = Storage<Sum<S...>::value>;
 
     template <size_type I>
+    constexpr static data_type mask_of() noexcept {
+      return (((1u << size_of<I>(Pack{})) - 1) << offset_of<I>(Pack{}));
+    }
+
+    template <size_type I>
     struct Field {
       size_type offset() const noexcept { return offset_of<I>(Pack{}); }
       size_type size() const noexcept { return size_of<I>(Pack{}); }
       size_type index() const noexcept { return I; }
+      data_type mask() const noexcept { return Pack::mask_of<I>(); }
+
       friend Pack;
 
     private:
@@ -160,9 +167,19 @@ TEST_F(bitfields_test, pack_length) {
   static_assert(pack.length() == 3, "");
 }
 
+TEST_F(bitfields_test, pack_mask_of) {
+  using pack_t = au::Pack<1, 2, 3>;
+  static_assert(pack_t::mask_of<0>() == 0b000001, "");
+  static_assert(pack_t::mask_of<1>() == 0b000110, "");
+  static_assert(pack_t::mask_of<2>() == 0b111000, "");
+}
+
 TEST_F(bitfields_test, pack_make_field) {
   au::Pack<1, 2, 3> pack;
   auto field = pack.make_field<0>();
   EXPECT_EQ(0u, field.index());
+  EXPECT_EQ(0u, field.offset());
+  EXPECT_EQ(1u, field.size());
+  EXPECT_EQ(0b000001, field.mask());
 }
 }
