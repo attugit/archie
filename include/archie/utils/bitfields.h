@@ -78,6 +78,21 @@ namespace utils {
   template <size_type... N>
   using Sum = typename detail::Sum<N...>::type;
 
+  template <typename Integral>
+  struct IntegralWrapper {
+    using value_type = Integral;
+    constexpr IntegralWrapper() noexcept = default;
+    constexpr explicit IntegralWrapper(value_type v) noexcept : value(v) {}
+    constexpr operator value_type() const noexcept { return value; }
+
+  private:
+    value_type value = 0;
+  };
+
+  struct IndexType : IntegralWrapper<size_type> {
+    using IntegralWrapper::IntegralWrapper;
+  };
+
   template <size_type... S>
   struct Pack : detail::PackImpl<0u, 0u, S...> {
     constexpr Pack() noexcept = default;
@@ -101,19 +116,19 @@ namespace utils {
       using field_type = Storage<size_of<I>(Pack{})>;
       field_type value() const noexcept { return (data & mask()) >> offset(); }
 
-      bool test(size_type at) const noexcept {
+      bool test(IndexType at) const noexcept {
         return (value() & (1u << at)) != 0u;
       }
 
-      Field& set(size_type at) noexcept {
+      Field& set(IndexType at) noexcept {
         data = data | ((1u << (at + offset())) & mask());
         return *this;
       }
-      Field& reset(size_type at) noexcept {
+      Field& reset(IndexType at) noexcept {
         data = data & (~((1u << (at + offset())) & mask()));
         return *this;
       }
-      Field& set(size_type at, bool value) noexcept {
+      Field& set(IndexType at, bool value) noexcept {
         return value ? set(at) : reset(at);
       }
       bool all() const noexcept { return (data & mask()) == mask(); }
@@ -161,17 +176,17 @@ namespace utils {
     }
 
     template <typename FieldType>
-    Pack& set(size_type at) noexcept {
+    Pack& set(IndexType at) noexcept {
       FieldType(data).set(at);
       return *this;
     }
     template <typename FieldType>
-    Pack& reset(size_type at) noexcept {
+    Pack& reset(IndexType at) noexcept {
       FieldType(data).reset(at);
       return *this;
     }
     template <typename FieldType>
-    Pack& set(size_type at, bool value) noexcept {
+    Pack& set(IndexType at, bool value) noexcept {
       FieldType(data).set(at, value);
       return *this;
     }

@@ -4,7 +4,11 @@ namespace {
 
 namespace au = archie::utils;
 
-struct bitfields_test : public ::testing::Test {};
+struct bitfields_test : public ::testing::Test {
+  au::IndexType i0 = au::IndexType(0);
+  au::IndexType i1 = au::IndexType(1);
+  au::IndexType i2 = au::IndexType(2);
+};
 
 TEST_F(bitfields_test, storage) {
   static_assert(sizeof(au::Storage<0>) <= sizeof(std::uint8_t), "");
@@ -107,26 +111,26 @@ TEST_F(bitfields_test, pack_field_test) {
   auto f0 = pack.make_field<0>();
   auto f1 = pack.make_field<1>();
   auto f2 = pack.make_field<2>();
-  EXPECT_TRUE(f0.test(0));
-  EXPECT_FALSE(f1.test(0));
-  EXPECT_TRUE(f1.test(1));
-  EXPECT_FALSE(f2.test(0));
-  EXPECT_TRUE(f2.test(1));
-  EXPECT_FALSE(f2.test(2));
+  EXPECT_TRUE(f0.test(i0));
+  EXPECT_FALSE(f1.test(i0));
+  EXPECT_TRUE(f1.test(i1));
+  EXPECT_FALSE(f2.test(i0));
+  EXPECT_TRUE(f2.test(i1));
+  EXPECT_FALSE(f2.test(i2));
 }
 
 TEST_F(bitfields_test, pack_field_set) {
   au::Pack<1, 2, 3> pack;
   pack.set(0b010101);
   auto field = pack.make_field<1>();
-  ASSERT_FALSE(field.test(0));
-  ASSERT_TRUE(field.test(1));
-  field.set(1);
-  EXPECT_FALSE(field.test(0));
-  EXPECT_TRUE(field.test(1));
-  field.set(0);
-  EXPECT_TRUE(field.test(0));
-  EXPECT_TRUE(field.test(1));
+  ASSERT_FALSE(field.test(i0));
+  ASSERT_TRUE(field.test(i1));
+  field.set(i1);
+  EXPECT_FALSE(field.test(i0));
+  EXPECT_TRUE(field.test(i1));
+  field.set(i0);
+  EXPECT_TRUE(field.test(i0));
+  EXPECT_TRUE(field.test(i1));
   EXPECT_EQ(0b010111, pack.get());
 }
 
@@ -134,14 +138,14 @@ TEST_F(bitfields_test, pack_field_reset) {
   au::Pack<1, 2, 3> pack;
   pack.set(0b010101);
   auto field = pack.make_field<1>();
-  ASSERT_FALSE(field.test(0));
-  ASSERT_TRUE(field.test(1));
-  field.reset(0);
-  EXPECT_FALSE(field.test(0));
-  EXPECT_TRUE(field.test(1));
-  field.reset(1);
-  EXPECT_FALSE(field.test(0));
-  EXPECT_FALSE(field.test(1));
+  ASSERT_FALSE(field.test(i0));
+  ASSERT_TRUE(field.test(i1));
+  field.reset(i0);
+  EXPECT_FALSE(field.test(i0));
+  EXPECT_TRUE(field.test(i1));
+  field.reset(i1);
+  EXPECT_FALSE(field.test(i0));
+  EXPECT_FALSE(field.test(i1));
   EXPECT_EQ(0b010001, pack.get());
 }
 
@@ -182,8 +186,8 @@ TEST_F(bitfields_test, pack_field_chain) {
   au::Pack<1, 2, 3> pack;
   pack.set(0b010101);
   EXPECT_TRUE((pack.make_field<0>().all()));
-  EXPECT_TRUE((pack.make_field<1>().test(1)));
-  EXPECT_TRUE((pack.make_field<2>().reset(1).none()));
+  EXPECT_TRUE((pack.make_field<1>().test(i1)));
+  EXPECT_TRUE((pack.make_field<2>().reset(i1).none()));
 }
 
 TEST_F(bitfields_test, pack_field_eq) {
@@ -192,7 +196,7 @@ TEST_F(bitfields_test, pack_field_eq) {
   auto field = pack.make_field<0>();
   EXPECT_TRUE(field == pack.make_field<0>());
   EXPECT_FALSE(field == pack.make_field<2>());
-  pack.make_field<2>().set(0);
+  pack.make_field<2>().set(i0);
   EXPECT_TRUE(field == pack.make_field<2>());
 }
 
@@ -201,7 +205,7 @@ TEST_F(bitfields_test, pack_field_less) {
   pack.set(0b010101);
   auto field = pack.make_field<1>();
   EXPECT_FALSE(field < pack.make_field<3>());
-  pack.make_field<3>().set(1);
+  pack.make_field<3>().set(i1);
   EXPECT_TRUE(field < pack.make_field<3>());
 }
 
@@ -211,7 +215,7 @@ TEST_F(bitfields_test, pack_set) {
 
   pack_t pack;
   pack.set(0b010101);
-  pack.set<field_t>(0);
+  pack.set<field_t>(i0);
   EXPECT_EQ(0b010111, pack.get());
 }
 
@@ -221,7 +225,7 @@ TEST_F(bitfields_test, pack_reset) {
 
   pack_t pack;
   pack.set(0b010101);
-  pack.reset<field_t>(1);
+  pack.reset<field_t>(i1);
   EXPECT_EQ(0b010001, pack.get());
 }
 }
