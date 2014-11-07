@@ -160,6 +160,22 @@ namespace utils {
       return Field<I>(data);
     }
 
+    template <typename FieldType>
+    Pack& set(size_type at) noexcept {
+      FieldType(data).set(at);
+      return *this;
+    }
+    template <typename FieldType>
+    Pack& reset(size_type at) noexcept {
+      FieldType(data).reset(at);
+      return *this;
+    }
+    template <typename FieldType>
+    Pack& set(size_type at, bool value) noexcept {
+      FieldType(data).set(at, value);
+      return *this;
+    }
+
   private:
     data_type data = 0u;
   };

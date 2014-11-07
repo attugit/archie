@@ -204,4 +204,24 @@ TEST_F(bitfields_test, pack_field_less) {
   pack.make_field<3>().set(1);
   EXPECT_TRUE(field < pack.make_field<3>());
 }
+
+TEST_F(bitfields_test, pack_set) {
+  using pack_t = au::Pack<1, 2, 3>;
+  using field_t = decltype(std::declval<pack_t>().make_field<1>());
+
+  pack_t pack;
+  pack.set(0b010101);
+  pack.set<field_t>(0);
+  EXPECT_EQ(0b010111, pack.get());
+}
+
+TEST_F(bitfields_test, pack_reset) {
+  using pack_t = au::Pack<1, 2, 3>;
+  using field_t = decltype(std::declval<pack_t>().make_field<1>());
+
+  pack_t pack;
+  pack.set(0b010101);
+  pack.reset<field_t>(1);
+  EXPECT_EQ(0b010001, pack.get());
+}
 }
