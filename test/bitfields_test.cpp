@@ -8,6 +8,11 @@ struct bitfields_test : public ::testing::Test {
   au::IndexType i0 = au::IndexType(0);
   au::IndexType i1 = au::IndexType(1);
   au::IndexType i2 = au::IndexType(2);
+  using pack_t = au::Pack<1, 2, 3>;
+  using field_t = decltype(std::declval<pack_t>().make_field<1>());
+  pack_t pack;
+
+  void SetUp() { pack.set(0b010101); }
 };
 
 TEST_F(bitfields_test, storage) {
@@ -33,38 +38,36 @@ TEST_F(bitfields_test, pack) {
 }
 
 TEST_F(bitfields_test, pack_element_offset) {
-  constexpr au::Pack<1, 2, 3> pack;
+  constexpr pack_t pack;
   static_assert(au::offset_of<0>(pack) == 0, "");
   static_assert(au::offset_of<1>(pack) == 1, "");
   static_assert(au::offset_of<2>(pack) == 3, "");
 }
 
 TEST_F(bitfields_test, pack_element_size) {
-  constexpr au::Pack<1, 2, 3> pack;
+  constexpr pack_t pack;
   static_assert(au::size_of<0>(pack) == 1, "");
   static_assert(au::size_of<1>(pack) == 2, "");
   static_assert(au::size_of<2>(pack) == 3, "");
 }
 
 TEST_F(bitfields_test, pack_size) {
-  constexpr au::Pack<1, 2, 3> pack;
+  constexpr pack_t pack;
   static_assert(pack.size() == 6, "");
 }
 
 TEST_F(bitfields_test, pack_length) {
-  constexpr au::Pack<1, 2, 3> pack;
+  constexpr pack_t pack;
   static_assert(pack.length() == 3, "");
 }
 
 TEST_F(bitfields_test, pack_mask_of) {
-  using pack_t = au::Pack<1, 2, 3>;
   static_assert(pack_t::mask_of<0>() == 0b000001, "");
   static_assert(pack_t::mask_of<1>() == 0b000110, "");
   static_assert(pack_t::mask_of<2>() == 0b111000, "");
 }
 
 TEST_F(bitfields_test, pack_make_single_field) {
-  au::Pack<1, 2, 3> pack;
   auto field = pack.make_field<0>();
   EXPECT_EQ(0u, field.index());
   EXPECT_EQ(0u, field.offset());
@@ -73,7 +76,6 @@ TEST_F(bitfields_test, pack_make_single_field) {
 }
 
 TEST_F(bitfields_test, pack_make_many_field) {
-  au::Pack<1, 2, 3> pack;
   auto f0 = pack.make_field<0>();
   auto f1 = pack.make_field<1>();
   auto f2 = pack.make_field<2>();
@@ -95,8 +97,6 @@ TEST_F(bitfields_test, pack_make_many_field) {
 }
 
 TEST_F(bitfields_test, pack_field_value) {
-  au::Pack<1, 2, 3> pack;
-  pack.set(0b010101);
   auto f0 = pack.make_field<0>();
   auto f1 = pack.make_field<1>();
   auto f2 = pack.make_field<2>();
@@ -106,8 +106,6 @@ TEST_F(bitfields_test, pack_field_value) {
 }
 
 TEST_F(bitfields_test, pack_field_test) {
-  au::Pack<1, 2, 3> pack;
-  pack.set(0b010101);
   auto f0 = pack.make_field<0>();
   auto f1 = pack.make_field<1>();
   auto f2 = pack.make_field<2>();
@@ -120,8 +118,6 @@ TEST_F(bitfields_test, pack_field_test) {
 }
 
 TEST_F(bitfields_test, pack_field_set) {
-  au::Pack<1, 2, 3> pack;
-  pack.set(0b010101);
   auto field = pack.make_field<1>();
   ASSERT_FALSE(field.test(i0));
   ASSERT_TRUE(field.test(i1));
@@ -135,8 +131,6 @@ TEST_F(bitfields_test, pack_field_set) {
 }
 
 TEST_F(bitfields_test, pack_field_reset) {
-  au::Pack<1, 2, 3> pack;
-  pack.set(0b010101);
   auto field = pack.make_field<1>();
   ASSERT_FALSE(field.test(i0));
   ASSERT_TRUE(field.test(i1));
@@ -150,7 +144,6 @@ TEST_F(bitfields_test, pack_field_reset) {
 }
 
 TEST_F(bitfields_test, pack_field_all) {
-  au::Pack<1, 2, 3> pack;
   pack.set(0b010110);
   auto f0 = pack.make_field<0>();
   auto f1 = pack.make_field<1>();
@@ -161,7 +154,6 @@ TEST_F(bitfields_test, pack_field_all) {
 }
 
 TEST_F(bitfields_test, pack_field_any) {
-  au::Pack<1, 2, 3> pack;
   pack.set(0b010110);
   auto f0 = pack.make_field<0>();
   auto f1 = pack.make_field<1>();
@@ -172,7 +164,6 @@ TEST_F(bitfields_test, pack_field_any) {
 }
 
 TEST_F(bitfields_test, pack_field_none) {
-  au::Pack<1, 2, 3> pack;
   pack.set(0b010110);
   auto f0 = pack.make_field<0>();
   auto f1 = pack.make_field<1>();
@@ -183,8 +174,6 @@ TEST_F(bitfields_test, pack_field_none) {
 }
 
 TEST_F(bitfields_test, pack_field_chain) {
-  au::Pack<1, 2, 3> pack;
-  pack.set(0b010101);
   EXPECT_TRUE((pack.make_field<0>().all()));
   EXPECT_TRUE((pack.make_field<1>().test(i1)));
   EXPECT_TRUE((pack.make_field<2>().reset(i1).none()));
@@ -210,21 +199,11 @@ TEST_F(bitfields_test, pack_field_less) {
 }
 
 TEST_F(bitfields_test, pack_set) {
-  using pack_t = au::Pack<1, 2, 3>;
-  using field_t = decltype(std::declval<pack_t>().make_field<1>());
-
-  pack_t pack;
-  pack.set(0b010101);
   pack.set<field_t>(i0);
   EXPECT_EQ(0b010111, pack.get());
 }
 
 TEST_F(bitfields_test, pack_reset) {
-  using pack_t = au::Pack<1, 2, 3>;
-  using field_t = decltype(std::declval<pack_t>().make_field<1>());
-
-  pack_t pack;
-  pack.set(0b010101);
   pack.reset<field_t>(i1);
   EXPECT_EQ(0b010001, pack.get());
 }

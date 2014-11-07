@@ -93,6 +93,10 @@ namespace utils {
     using IntegralWrapper::IntegralWrapper;
   };
 
+  struct Boolean : IntegralWrapper<bool> {
+    using IntegralWrapper::IntegralWrapper;
+  };
+
   template <size_type... S>
   struct Pack : detail::PackImpl<0u, 0u, S...> {
     constexpr Pack() noexcept = default;
@@ -128,7 +132,7 @@ namespace utils {
         data = data & (~((1u << (at + offset())) & mask()));
         return *this;
       }
-      Field& set(IndexType at, bool value) noexcept {
+      Field& set(IndexType at, Boolean value) noexcept {
         return value ? set(at) : reset(at);
       }
       bool all() const noexcept { return (data & mask()) == mask(); }
@@ -186,7 +190,7 @@ namespace utils {
       return *this;
     }
     template <typename FieldType>
-    Pack& set(IndexType at, bool value) noexcept {
+    Pack& set(IndexType at, Boolean value) noexcept {
       FieldType(data).set(at, value);
       return *this;
     }
