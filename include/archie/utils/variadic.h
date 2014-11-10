@@ -6,12 +6,10 @@
 #include <archie/utils/for_each.h>
 #include <archie/utils/apply.h>
 #include <archie/utils/inherit_all.h>
+#include <archie/utils/number.h>
 
 namespace archie {
 namespace utils {
-
-  template <std::size_t N>
-  using Number = std::integral_constant<std::size_t, N>;
 
   template <typename Tp, std::size_t Idx>
   struct IndexedType {};

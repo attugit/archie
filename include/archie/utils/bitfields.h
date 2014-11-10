@@ -5,13 +5,12 @@
 #include <cstddef>
 #include <cstdint>
 
+#include <archie/utils/number.h>
+
 namespace archie {
 namespace utils {
 
   using size_type = std::uint8_t;
-
-  template <size_type N>
-  using Number = std::integral_constant<size_type, N>;
 
   using ByteSize = Number<8u>;
 

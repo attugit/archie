@@ -5,15 +5,14 @@
 #include <archie/utils/voider.h>
 
 namespace archie {
-  namespace utils {
+namespace utils {
 
   template <template <typename> class, typename, typename = void>
   struct HasMember : std::false_type {};
 
   template <template <typename> class Member, typename Tp>
   struct HasMember<Member, Tp, Voider<Member<Tp>>> : std::true_type {};
-
-  }
+}
 }
 
 #endif
