@@ -5,15 +5,13 @@
 #include <archie/utils/inspect.h>
 #include <archie/utils/for_each.h>
 #include <archie/utils/apply.h>
+#include <archie/utils/inherit_all.h>
 
 namespace archie {
 namespace utils {
 
   template <std::size_t N>
   using Number = std::integral_constant<std::size_t, N>;
-
-  template <typename... Ts>
-  struct InheritAll : Ts... {};
 
   template <typename Tp, std::size_t Idx>
   struct IndexedType {};
