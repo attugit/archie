@@ -3,20 +3,13 @@
 
 #include <utility>
 #include <archie/utils/inspect.h>
+#include <archie/utils/for_each.h>
 
 namespace archie {
 namespace utils {
 
   template <std::size_t N>
   using Number = std::integral_constant<std::size_t, N>;
-
-  template <typename Tp>
-  using Alias = Tp;
-
-  template <typename Func, typename... Args>
-  constexpr void for_each(Func&& func, Args&&... args) {
-    (void)Alias<int[]>{(func(std::forward<Args>(args)), 1)...};
-  }
 
   template <typename Func, typename... Ts>
   constexpr decltype(auto) apply(Func&& func, Ts&&... ts) noexcept(
