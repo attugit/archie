@@ -2,8 +2,7 @@
 #define ARCHIE_UTILS_VARIADIC_H_INCLUDED
 
 #include <utility>
-#include <archie/utils/voider.h>
-#include <archie/utils/has_member.h>
+#include <archie/utils/inspect.h>
 
 namespace archie {
 namespace utils {
@@ -13,32 +12,6 @@ namespace utils {
 
   template <typename Tp>
   using Alias = Tp;
-
-  template <typename Tp>
-  using InspectReserve =
-      decltype(std::declval<Tp>().reserve(std::declval<int>()));
-
-  template <typename Tp>
-  using InspectCopyAssignable =
-      decltype(std::declval<Tp>() = std::declval<Tp const&>());
-
-  template <typename Tp>
-  using HasReserve = HasMember<InspectReserve, Tp>;
-
-  template <typename Tp>
-  using IsCopyAssignable = HasMember<InspectCopyAssignable, Tp>;
-
-  template <typename Tp>
-  using ValueType = typename Tp::value_type;
-
-  template <typename Tp>
-  using VariadicType = typename std::remove_reference_t<Tp>::variadic;
-
-  template <typename Tp>
-  using HasValueType = HasMember<ValueType, Tp>;
-
-  template <typename Tp>
-  using HasVariadicType = HasMember<VariadicType, Tp>;
 
   template <typename Func, typename... Args>
   constexpr void for_each(Func&& func, Args&&... args) {
