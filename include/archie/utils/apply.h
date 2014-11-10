@@ -18,6 +18,12 @@ namespace utils {
       return func(archie::utils::get<Args>(ut)...);
     }
   };
+
+  template <typename Func, typename... Ts>
+  constexpr decltype(auto) apply(Func&& func, Ts&&... ts) noexcept(
+      noexcept(std::declval<Func>()(std::declval<Ts>()...))) {
+    return std::forward<Func>(func)(std::forward<Ts>(ts)...);
+  }
 }
 }
 

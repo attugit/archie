@@ -4,18 +4,13 @@
 #include <utility>
 #include <archie/utils/inspect.h>
 #include <archie/utils/for_each.h>
+#include <archie/utils/apply.h>
 
 namespace archie {
 namespace utils {
 
   template <std::size_t N>
   using Number = std::integral_constant<std::size_t, N>;
-
-  template <typename Func, typename... Ts>
-  constexpr decltype(auto) apply(Func&& func, Ts&&... ts) noexcept(
-      noexcept(std::declval<Func>()(std::declval<Ts>()...))) {
-    return std::forward<Func>(func)(std::forward<Ts>(ts)...);
-  }
 
   template <typename... Ts>
   struct InheritAll : Ts... {};
