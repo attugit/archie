@@ -2,6 +2,7 @@
 #define ARCHIE_UTILS_VARIADIC_H_INCLUDED
 
 #include <utility>
+#include <archie/utils/voider.h>
 
 namespace archie {
 namespace utils {
@@ -11,16 +12,6 @@ namespace utils {
 
   template <typename Tp>
   using Alias = Tp;
-
-  namespace detail {
-    template <typename Tp, typename...>
-    struct VariadicWrapper {
-      using type = Tp;
-    };
-  }
-
-  template <typename... Ts>
-  using Voider = typename detail::VariadicWrapper<void, Ts...>::type;
 
   template <template <typename> class, typename, typename = void>
   struct HasMember : std::false_type {};
