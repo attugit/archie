@@ -3,6 +3,7 @@
 
 #include <utility>
 #include <archie/utils/voider.h>
+#include <archie/utils/has_member.h>
 
 namespace archie {
 namespace utils {
@@ -12,12 +13,6 @@ namespace utils {
 
   template <typename Tp>
   using Alias = Tp;
-
-  template <template <typename> class, typename, typename = void>
-  struct HasMember : std::false_type {};
-
-  template <template <typename> class Member, typename Tp>
-  struct HasMember<Member, Tp, Voider<Member<Tp>>> : std::true_type {};
 
   template <typename Tp>
   using InspectReserve =
