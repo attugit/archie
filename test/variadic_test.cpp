@@ -4,6 +4,7 @@
 #include <memory>
 
 #include <archie/utils/variadic.h>
+#include <archie/utils/tuple.h>
 
 #include <gtest/gtest.h>
 namespace au = archie::utils;
