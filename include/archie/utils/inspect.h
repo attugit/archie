@@ -13,6 +13,9 @@ namespace utils {
     template <typename Tp>
     using InspectCopyAssignable =
         decltype(std::declval<Tp>() = std::declval<Tp const&>());
+
+    template <typename Tp>
+    using InspectDataProperty = decltype(std::declval<Tp>().data);
   }
   template <typename Tp>
   using HasReserve = HasMember<detail::InspectReserve, Tp>;
@@ -31,6 +34,9 @@ namespace utils {
 
   template <typename Tp>
   using HasVariadicType = HasMember<VariadicType, Tp>;
+
+  template <typename Tp>
+  using HasDataProperty = HasMember<detail::InspectDataProperty, Tp>;
 }
 }
 

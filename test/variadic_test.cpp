@@ -53,6 +53,10 @@ TEST_F(variadic_test, type_index) {
   EXPECT_EQ(3.0f, au::get<float>(tuple));
 }
 
+struct Aqq {
+  int data = 0;
+};
+
 TEST_F(variadic_test, has_member) {
   using vec_t = std::vector<int>;
   using list_t = std::list<int>;
@@ -68,6 +72,10 @@ TEST_F(variadic_test, has_member) {
   static_assert(au::HasReserve<vec_t>::value, "");
   static_assert(!au::HasReserve<list_t>::value, "");
   static_assert(!au::HasReserve<ptr_t>::value, "");
+
+  static_assert(au::HasDataProperty<Aqq>::value, "");
+  static_assert(!au::HasDataProperty<vec_t>::value, "");
+  static_assert(!au::HasDataProperty<int>::value, "");
 }
 
 template <typename... Ts>
