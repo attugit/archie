@@ -5,20 +5,20 @@
 
 namespace archie {
 namespace utils {
+  namespace detail {
+    template <typename Tp>
+    using InspectReserve = decltype(
+        std::declval<Tp>().reserve(std::declval<typename Tp::size_type>()));
+
+    template <typename Tp>
+    using InspectCopyAssignable =
+        decltype(std::declval<Tp>() = std::declval<Tp const&>());
+  }
+  template <typename Tp>
+  using HasReserve = HasMember<detail::InspectReserve, Tp>;
 
   template <typename Tp>
-  using InspectReserve =
-      decltype(std::declval<Tp>().reserve(std::declval<int>()));
-
-  template <typename Tp>
-  using InspectCopyAssignable =
-      decltype(std::declval<Tp>() = std::declval<Tp const&>());
-
-  template <typename Tp>
-  using HasReserve = HasMember<InspectReserve, Tp>;
-
-  template <typename Tp>
-  using IsCopyAssignable = HasMember<InspectCopyAssignable, Tp>;
+  using IsCopyAssignable = HasMember<detail::InspectCopyAssignable, Tp>;
 
   template <typename Tp>
   using ValueType = typename Tp::value_type;
