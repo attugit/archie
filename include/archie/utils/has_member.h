@@ -7,11 +7,11 @@
 namespace archie {
 namespace utils {
 
-  template <template <typename> class, typename, typename = void>
+  template <template <typename> class, typename, typename = void_t<>>
   struct HasMember : std::false_type {};
 
   template <template <typename> class Member, typename Tp>
-  struct HasMember<Member, Tp, Voider<Member<Tp>>> : std::true_type {};
+  struct HasMember<Member, Tp, void_t<Member<Tp>>> : std::true_type {};
 }
 }
 

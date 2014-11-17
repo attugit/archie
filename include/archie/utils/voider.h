@@ -8,13 +8,13 @@ namespace utils {
 
   namespace detail {
     template <typename...>
-    struct MakeVoid {
+    struct Voider {
       using type = void;
     };
   }
 
   template <typename... Ts>
-  using Voider = Apply<detail::MakeVoid, Ts...>;
+  using void_t = Apply<detail::Voider, Ts...>;
 }
 }
 
