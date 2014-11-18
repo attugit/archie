@@ -5,6 +5,7 @@
 #include <archie/utils/alias.h>
 #include <archie/utils/number.h>
 #include <archie/utils/variadic.h>
+#include <archie/utils/eat.h>
 
 namespace archie {
 namespace utils {
@@ -51,26 +52,31 @@ namespace utils {
 
   namespace detail {
     struct at_impl {
-    private:
-      template <std::size_t Tp>
-      struct wrapper {
-        template <typename Up>
-        constexpr wrapper(Up&&) {}
-      };
-
-    public:
       template <std::size_t n, typename = std::make_index_sequence<n>>
       struct get;
 
       template <std::size_t n, std::size_t... ignore>
       struct get<n, std::index_sequence<ignore...>> {
         template <typename Nth, typename...>
-        constexpr decltype(auto) operator()(wrapper<ignore>..., Nth&& nth,
+        constexpr decltype(auto) operator()(eat<Number<ignore>>..., Nth&& nth,
                                             ...) const {
           return std::forward<Nth>(nth);
         }
       };
     };
+    template <typename... Ts>
+    struct skip {
+      template <typename Up>
+      static constexpr decltype(auto) get(eat<Ts>..., Up&& u, ...) noexcept {
+        return std::forward<Up>(u);
+      }
+    };
+  }
+
+  template <typename Tp, typename... Ts>
+  constexpr decltype(auto) back(Tp&& t, Ts&&... ts) noexcept {
+    return detail::skip<Ts...>::get(std::forward<Tp>(t),
+                                    std::forward<Ts>(ts)...);
   }
 
   template <std::size_t n, typename TupleType>

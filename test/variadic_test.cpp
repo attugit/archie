@@ -97,4 +97,10 @@ TEST_F(variadic_test, tuple_for_each) {
   tuple.for_each(func);
   EXPECT_EQ(6u, sum);
 }
+
+TEST_F(variadic_test, back) {
+  EXPECT_EQ(1, au::back(3, 2, 1));
+  EXPECT_EQ(2u, au::back(4.0f, 3ul, 2u));
+  EXPECT_EQ(std::string("a"), au::back(1, std::cout, std::string("a")));
+}
 }
