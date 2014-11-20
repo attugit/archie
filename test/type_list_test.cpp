@@ -3,6 +3,26 @@
 namespace archie {
 namespace utils {
 
+  template <typename First, typename... Rest>
+  struct get_front {
+    using type = First;
+  };
+
+  template <template <typename...> class...>
+  struct compose;
+
+  template <template <typename...> class F>
+  struct compose<F> {
+    template <typename... Xs>
+    using apply = typename F<Xs...>::type;
+  };
+
+  template <template <typename...> class F, template <typename...> class... Gs>
+  struct compose<F, Gs...> {
+    template <typename... Xs>
+    using apply = typename F<compose<Gs...>>::template apply<Xs...>;
+  };
+
   template <typename... Ts>
   struct type_list {
     using size = Number<sizeof...(Ts)>;
@@ -12,6 +32,9 @@ namespace utils {
 
     template <template <typename> class Func>
     using transform = type_list<typename Func<Ts>::type...>;
+
+    template <typename... Us>
+    using append = type_list<Ts..., Us...>;
   };
 }
 }
@@ -28,6 +51,8 @@ struct utype {};
 
 using _0 = utype<0>;
 using _1 = utype<1>;
+using _2 = utype<2>;
+using _3 = utype<3>;
 
 template <typename... Ts>
 struct tuple_ {
@@ -71,5 +96,23 @@ TEST_F(type_list_test, canTransformAndApply) {
       std::is_same<std::tuple<std::unique_ptr<_0>, std::unique_ptr<_1>>,
                    type>::value,
       "");
+}
+
+TEST_F(type_list_test, canAppend) {
+  using type = list_::append<_2, _3>;
+  static_assert(std::is_same<au::type_list<_0, _1, _2, _3>, type>::value, "");
+}
+
+TEST_F(type_list_test, canGetFront) {
+  using type = list_::apply<au::get_front>;
+  static_assert(std::is_same<_0, type>::value, "");
+}
+
+template <typename... Xs>
+using foo = au::compose<uptr_>::apply<Xs...>;
+
+TEST_F(type_list_test, canComposeSingleFunction) {
+  using type = foo<_0>;
+  static_assert(std::is_same<std::unique_ptr<_0>, type>::value, "");
 }
 }
