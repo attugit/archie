@@ -4,8 +4,8 @@ compiler: gcc
 env:
   global:
     - GCC_VERSION="4.9"
-  matrix:
-    - BUILD_TYPE=debug
+#  matrix:
+#    - BUILD_TYPE=debug
     - BUILD_TYPE=release
 
 # Install dependencies
