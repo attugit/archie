@@ -20,7 +20,8 @@ namespace utils {
   template <template <typename...> class F, template <typename...> class... Gs>
   struct compose<F, Gs...> {
     template <typename... Xs>
-    using apply = typename F<compose<Gs...>>::template apply<Xs...>;
+    using apply =
+        typename F<typename compose<Gs...>::template apply<Xs...>>::type;
   };
 
   template <typename... Ts>
@@ -114,5 +115,18 @@ using foo = au::compose<uptr_>::apply<Xs...>;
 TEST_F(type_list_test, canComposeSingleFunction) {
   using type = foo<_0>;
   static_assert(std::is_same<std::unique_ptr<_0>, type>::value, "");
+}
+
+template <typename... Xs>
+struct size {
+  using type = au::Number<sizeof...(Xs)>;
+};
+
+template <typename... Xs>
+using goo = au::compose<uptr_, size>::apply<Xs...>;
+
+TEST_F(type_list_test, canComposeManyFunctions) {
+  using type = goo<_0, _1>;
+  static_assert(std::is_same<std::unique_ptr<au::Number<2>>, type>::value, "");
 }
 }
