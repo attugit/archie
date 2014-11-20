@@ -26,6 +26,9 @@ namespace {
 template <unsigned I>
 struct utype {};
 
+using _0 = utype<0>;
+using _1 = utype<1>;
+
 template <typename... Ts>
 struct tuple_ {
   using type = std::tuple<Ts...>;
@@ -42,22 +45,31 @@ struct type_list_test : testing::Test {};
 
 TEST_F(type_list_test, canGetTypeListSize) {
   static_assert(au::type_list<>::size::value == 0, "");
-  static_assert(au::type_list<utype<0>>::size::value == 1, "");
-  static_assert(au::type_list<utype<0>, utype<0>>::size::value == 2, "");
-  static_assert(au::type_list<utype<0>, utype<1>>::size::value == 2, "");
+  static_assert(au::type_list<_0>::size::value == 1, "");
+  static_assert(au::type_list<_0, _0>::size::value == 2, "");
+  static_assert(au::type_list<_0, _1>::size::value == 2, "");
 }
 
+using list_ = au::type_list<_0, _1>;
+
 TEST_F(type_list_test, canApply) {
-  using type = au::type_list<utype<0>, utype<1>>::apply<tuple_>;
-  static_assert(std::is_same<std::tuple<utype<0>, utype<1>>, type>::value, "");
+  using type = list_::apply<tuple_>;
+  static_assert(std::is_same<std::tuple<_0, _1>, type>::value, "");
 }
 
 TEST_F(type_list_test, canTransform) {
-  using type = au::type_list<utype<0>, utype<1>>::transform<uptr_>;
+  using type = list_::transform<uptr_>;
   static_assert(
-      std::is_same<
-          au::type_list<std::unique_ptr<utype<0>>, std::unique_ptr<utype<1>>>,
-          type>::value,
+      std::is_same<au::type_list<std::unique_ptr<_0>, std::unique_ptr<_1>>,
+                   type>::value,
+      "");
+}
+
+TEST_F(type_list_test, canTransformAndApply) {
+  using type = list_::transform<uptr_>::apply<tuple_>;
+  static_assert(
+      std::is_same<std::tuple<std::unique_ptr<_0>, std::unique_ptr<_1>>,
+                   type>::value,
       "");
 }
 }
