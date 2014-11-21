@@ -61,6 +61,10 @@ namespace utils {
     template <std::size_t I>
     using at = typename at<I>::template apply<Ts...>;
   };
+  namespace meta {
+    template <template <typename> class F, typename... Xs>
+    using transform = typename type_list<Xs...>::template transform<F>;
+  }
 }
 }
 
@@ -171,5 +175,15 @@ TEST_F(type_list_test, canUseTypeListAt) {
   static_assert(std::is_same<_2, list::at<1>>::value, "");
   static_assert(std::is_same<_1, list::at<2>>::value, "");
   static_assert(std::is_same<_0, list::at<3>>::value, "");
+}
+
+struct meta_test : ::testing::Test {};
+
+TEST_F(meta_test, canTransform) {
+  using uptrs = au::meta::transform<uptr_, _0, _1>;
+  static_assert(
+      std::is_same<au::type_list<std::unique_ptr<_0>, std::unique_ptr<_1>>,
+                   uptrs>::value,
+      "");
 }
 }
