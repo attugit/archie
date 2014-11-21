@@ -25,22 +25,22 @@ namespace utils {
         typename F<typename compose<Gs...>::template apply<Xs...>>::type;
   };
 
-  template <typename... Ts>
-  struct skip {
-  private:
-    template <typename Up>
-    static constexpr Up match(eat<Ts>..., Up, ...) noexcept;
-
-  public:
-    template <typename... Us>
-    using from = decltype(match(std::declval<Us>()...));
-  };
-
   template <std::size_t n, typename = std::make_index_sequence<n>>
   struct at;
 
   template <std::size_t n, std::size_t... ignore>
   struct at<n, std::index_sequence<ignore...>> {
+    template <typename... Ts>
+    struct skip {
+    private:
+      template <typename Up>
+      static constexpr Up match(eat<Ts>..., Up, ...) noexcept;
+
+    public:
+      template <typename... Us>
+      using from = decltype(match(std::declval<Us>()...));
+    };
+
     template <typename... Ts>
     using from = typename skip<Number<ignore>...>::template from<Ts...>;
   };
@@ -57,6 +57,9 @@ namespace utils {
 
     template <typename... Us>
     using append = type_list<Ts..., Us...>;
+
+    template <std::size_t I>
+    using at = typename at<I>::template from<Ts...>;
   };
 }
 }
@@ -151,12 +154,6 @@ TEST_F(type_list_test, canComposeManyFunctions) {
   static_assert(std::is_same<std::unique_ptr<au::Number<2>>, type>::value, "");
 }
 
-TEST_F(type_list_test, canSkipTypes) {
-  using skip = au::skip<_0, _1, _2>;
-  using type = skip::from<_3, _2, _1, _0>;
-  static_assert(std::is_same<_0, type>::value, "");
-}
-
 TEST_F(type_list_test, canUseAt) {
   using type_0 = au::at<0>::from<_3, _2, _1, _0>;
   using type_1 = au::at<1>::from<_3, _2, _1, _0>;
@@ -166,5 +163,13 @@ TEST_F(type_list_test, canUseAt) {
   static_assert(std::is_same<_2, type_1>::value, "");
   static_assert(std::is_same<_1, type_2>::value, "");
   static_assert(std::is_same<_0, type_3>::value, "");
+}
+
+TEST_F(type_list_test, canUseTypeListAt) {
+  using list = au::type_list<_3, _2, _1, _0>;
+  static_assert(std::is_same<_3, list::at<0>>::value, "");
+  static_assert(std::is_same<_2, list::at<1>>::value, "");
+  static_assert(std::is_same<_1, list::at<2>>::value, "");
+  static_assert(std::is_same<_0, list::at<3>>::value, "");
 }
 }
