@@ -38,11 +38,11 @@ namespace utils {
 
     public:
       template <typename... Us>
-      using from = decltype(match(std::declval<Us>()...));
+      using apply = decltype(match(std::declval<Us>()...));
     };
 
     template <typename... Ts>
-    using from = typename skip<Number<ignore>...>::template from<Ts...>;
+    using apply = typename skip<Number<ignore>...>::template apply<Ts...>;
   };
 
   template <typename... Ts>
@@ -59,7 +59,7 @@ namespace utils {
     using append = type_list<Ts..., Us...>;
 
     template <std::size_t I>
-    using at = typename at<I>::template from<Ts...>;
+    using at = typename at<I>::template apply<Ts...>;
   };
 }
 }
@@ -155,10 +155,10 @@ TEST_F(type_list_test, canComposeManyFunctions) {
 }
 
 TEST_F(type_list_test, canUseAt) {
-  using type_0 = au::at<0>::from<_3, _2, _1, _0>;
-  using type_1 = au::at<1>::from<_3, _2, _1, _0>;
-  using type_2 = au::at<2>::from<_3, _2, _1, _0>;
-  using type_3 = au::at<3>::from<_3, _2, _1, _0>;
+  using type_0 = au::at<0>::apply<_3, _2, _1, _0>;
+  using type_1 = au::at<1>::apply<_3, _2, _1, _0>;
+  using type_2 = au::at<2>::apply<_3, _2, _1, _0>;
+  using type_3 = au::at<3>::apply<_3, _2, _1, _0>;
   static_assert(std::is_same<_3, type_0>::value, "");
   static_assert(std::is_same<_2, type_1>::value, "");
   static_assert(std::is_same<_1, type_2>::value, "");
