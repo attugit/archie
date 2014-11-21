@@ -1,4 +1,5 @@
 #include <archie/utils/number.h>
+#include <archie/utils/eat.h>
 
 namespace archie {
 namespace utils {
@@ -22,6 +23,17 @@ namespace utils {
     template <typename... Xs>
     using apply =
         typename F<typename compose<Gs...>::template apply<Xs...>>::type;
+  };
+
+  template <typename... Ts>
+  struct skip {
+  private:
+    template <typename Up>
+    static constexpr Up match(eat<Ts>..., Up, ...) noexcept;
+
+  public:
+    template <typename... Us>
+    using from = decltype(match(std::declval<Us>()...));
   };
 
   template <typename... Ts>
@@ -128,5 +140,11 @@ using goo = au::compose<uptr_, size>::apply<Xs...>;
 TEST_F(type_list_test, canComposeManyFunctions) {
   using type = goo<_0, _1>;
   static_assert(std::is_same<std::unique_ptr<au::Number<2>>, type>::value, "");
+}
+
+TEST_F(type_list_test, canSkipTypes) {
+  using skip = au::skip<_0, _1, _2>;
+  using type = skip::from<_3, _2, _1, _0>;
+  static_assert(std::is_same<_0, type>::value, "");
 }
 }
