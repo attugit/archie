@@ -21,6 +21,7 @@ local gtest = project "gtest"
 local ut = project "unittest"
   includedirs { "include/" }
   buildoptions { "-Wall", "-Wextra", "-Werror", "-pedantic", "-std=c++1y" }
+  buildoptions { "-ftime-report" }
   kind "ConsoleApp"
   links { "gtest", "pthread" }
   files { "test/*.cpp" }
