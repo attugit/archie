@@ -36,6 +36,15 @@ namespace utils {
     using from = decltype(match(std::declval<Us>()...));
   };
 
+  template <std::size_t n, typename = std::make_index_sequence<n>>
+  struct at;
+
+  template <std::size_t n, std::size_t... ignore>
+  struct at<n, std::index_sequence<ignore...>> {
+    template <typename... Ts>
+    using from = typename skip<Number<ignore>...>::template from<Ts...>;
+  };
+
   template <typename... Ts>
   struct type_list {
     using size = Number<sizeof...(Ts)>;
@@ -146,5 +155,16 @@ TEST_F(type_list_test, canSkipTypes) {
   using skip = au::skip<_0, _1, _2>;
   using type = skip::from<_3, _2, _1, _0>;
   static_assert(std::is_same<_0, type>::value, "");
+}
+
+TEST_F(type_list_test, canUseAt) {
+  using type_0 = au::at<0>::from<_3, _2, _1, _0>;
+  using type_1 = au::at<1>::from<_3, _2, _1, _0>;
+  using type_2 = au::at<2>::from<_3, _2, _1, _0>;
+  using type_3 = au::at<3>::from<_3, _2, _1, _0>;
+  static_assert(std::is_same<_3, type_0>::value, "");
+  static_assert(std::is_same<_2, type_1>::value, "");
+  static_assert(std::is_same<_1, type_2>::value, "");
+  static_assert(std::is_same<_0, type_3>::value, "");
 }
 }
