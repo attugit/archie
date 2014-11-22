@@ -5,9 +5,15 @@
 
 namespace archie {
 namespace utils {
-  template <template <typename...> class MetaFunction, typename... Args>
-  using Apply = typename MetaFunction<Args...>::type;
+  namespace meta {
+    template <template <typename...> class MetaFunction, typename... Args>
+    struct apply {
+      using type = typename MetaFunction<Args...>::type;
+    };
 
+    template <template <typename...> class MetaFunction, typename... Args>
+    using apply_t = typename apply<MetaFunction, Args...>::type;
+  }
   template <typename Func, typename... Ts>
   constexpr decltype(auto) apply(Func&& func, Ts&&... ts) noexcept(
       noexcept(std::declval<Func>()(std::declval<Ts>()...))) {

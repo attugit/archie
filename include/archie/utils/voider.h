@@ -14,7 +14,7 @@ namespace utils {
   }
 
   template <typename... Ts>
-  using void_t = Apply<detail::Voider, Ts...>;
+  using void_t = meta::apply_t<detail::Voider, Ts...>;
 }
 }
 
