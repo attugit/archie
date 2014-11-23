@@ -3,6 +3,7 @@
 
 #include <archie/utils/number.h>
 #include <archie/utils/eat.h>
+#include <archie/utils/identity.h>
 #include <utility>
 
 namespace archie {
@@ -44,13 +45,16 @@ namespace utils {
 
       public:
         template <typename... Us>
-        using apply = decltype(match(std::declval<Us>()...));
+        using apply = identity<decltype(match(std::declval<Us>()...))>;
       };
 
     public:
       template <typename... Ts>
       using apply = typename skip<Number<ignore>...>::template apply<Ts...>;
     };
+
+    template <std::size_t n, typename... Ts>
+    using at_t = typename at<n>::template apply<Ts...>::type;
   }
 
   template <typename... Ts>
@@ -68,6 +72,9 @@ namespace utils {
 
     template <std::size_t I>
     using at = typename meta::at<I>::template apply<Ts...>;
+
+    template <std::size_t I>
+    using at_t = meta::at_t<I, Ts...>;
   };
   namespace meta {
     template <template <typename> class F, typename... Xs>
