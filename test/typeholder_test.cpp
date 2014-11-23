@@ -1,9 +1,9 @@
-#include <archie/utils/typeholder.h>
+#include <archie/utils/holder.h>
 #include <string>
 
-ARCHIE_UTILS_GENERATE_TYPE_HOLDER(PersonId, unsigned);
-ARCHIE_UTILS_GENERATE_TYPE_HOLDER(PersonName, std::string);
-ARCHIE_UTILS_GENERATE_TYPE_HOLDER(PersonAge, unsigned);
+ARCHIE_UTILS_GENERATE_HOLDER(PersonId, unsigned);
+ARCHIE_UTILS_GENERATE_HOLDER(PersonName, std::string);
+ARCHIE_UTILS_GENERATE_HOLDER(PersonAge, unsigned);
 
 #include <archie/utils/typeset.h>
 

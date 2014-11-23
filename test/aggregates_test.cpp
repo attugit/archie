@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <archie/utils/unique_tuple.h>
-#include <archie/utils/typeholder.h>
+#include <archie/utils/holder.h>
 #include <archie/utils/get.h>
 #include <archie/utils/select.h>
 #include <string>
@@ -9,17 +9,17 @@
 
 namespace detail {
 struct PackedStruct {
-  struct Id : archie::utils::TypeHolder<unsigned> {
-    using TypeHolder::TypeHolder;
+  struct Id : archie::utils::Holder<unsigned> {
+    using Holder::Holder;
   };
-  struct Name : archie::utils::TypeHolder<std::string> {
-    using TypeHolder::TypeHolder;
+  struct Name : archie::utils::Holder<std::string> {
+    using Holder::Holder;
   };
-  struct Value : archie::utils::TypeHolder<int> {
-    using TypeHolder::TypeHolder;
+  struct Value : archie::utils::Holder<int> {
+    using Holder::Holder;
   };
-  struct Amount : archie::utils::TypeHolder<unsigned> {
-    using TypeHolder::TypeHolder;
+  struct Amount : archie::utils::Holder<unsigned> {
+    using Holder::Holder;
   };
 
   using type = archie::utils::UniqueTuple<Id, Name, Value, Amount>;
