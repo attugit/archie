@@ -3,7 +3,7 @@
 
 #include <archie/utils/number.h>
 #include <archie/utils/eat.h>
-#include <archie/utils/identity.h>
+#include <archie/utils/returns.h>
 #include <utility>
 
 namespace archie {
@@ -45,7 +45,7 @@ namespace utils {
 
       public:
         template <typename... Us>
-        using apply = identity<decltype(match(std::declval<Us>()...))>;
+        using apply = returns<decltype(match(std::declval<Us>()...))>;
       };
 
     public:
@@ -65,7 +65,10 @@ namespace utils {
     using apply = typename Func<Ts...>::type;
 
     template <template <typename> class Func>
-    using transform = type_list<typename Func<Ts>::type...>;
+    using transform = meta::returns<type_list<typename Func<Ts>::type...>>;
+
+    template <template <typename> class Func>
+    using transform_t = typename transform<Func>::type;
 
     template <typename... Us>
     using append = type_list<Ts..., Us...>;
@@ -79,6 +82,9 @@ namespace utils {
   namespace meta {
     template <template <typename> class F, typename... Xs>
     using transform = typename type_list<Xs...>::template transform<F>;
+
+    template <template <typename> class F, typename... Xs>
+    using transform_t = typename transform<F, Xs...>::type;
   }
 }
 }

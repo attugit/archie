@@ -44,7 +44,7 @@ TEST_F(type_list_test, canApply) {
 }
 
 TEST_F(type_list_test, canTransform) {
-  using type = list_::transform<uptr_>;
+  using type = list_::transform<uptr_>::type;
   static_assert(
       std::is_same<au::type_list<std::unique_ptr<_0>, std::unique_ptr<_1>>,
                    type>::value,
@@ -52,7 +52,7 @@ TEST_F(type_list_test, canTransform) {
 }
 
 TEST_F(type_list_test, canTransformAndApply) {
-  using type = list_::transform<uptr_>::apply<tuple_>;
+  using type = list_::transform_t<uptr_>::apply<tuple_>;
   static_assert(
       std::is_same<std::tuple<std::unique_ptr<_0>, std::unique_ptr<_1>>,
                    type>::value,
@@ -131,7 +131,7 @@ TEST_F(type_list_test, canUseTypeListAtT) {
 struct meta_test : ::testing::Test {};
 
 TEST_F(meta_test, canTransform) {
-  using uptrs = au::meta::transform<uptr_, _0, _1>;
+  using uptrs = au::meta::transform_t<uptr_, _0, _1>;
   static_assert(
       std::is_same<au::type_list<std::unique_ptr<_0>, std::unique_ptr<_1>>,
                    uptrs>::value,
