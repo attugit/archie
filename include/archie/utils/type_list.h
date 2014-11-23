@@ -29,25 +29,29 @@ namespace utils {
         typename F<typename compose<Gs...>::template apply<Xs...>>::type;
   };
 
-  template <std::size_t n, typename = std::make_index_sequence<n>>
-  struct at;
+  namespace meta {
+    template <std::size_t n, typename = std::make_index_sequence<n>>
+    struct at;
 
-  template <std::size_t n, std::size_t... ignore>
-  struct at<n, std::index_sequence<ignore...>> {
-    template <typename... Ts>
-    struct skip {
+    template <std::size_t n, std::size_t... ignore>
+    struct at<n, std::index_sequence<ignore...>> {
     private:
-      template <typename Up>
-      static constexpr Up match(eat<Ts>..., Up, ...) noexcept;
+      template <typename... Ts>
+      struct skip {
+      private:
+        template <typename Up>
+        static constexpr Up match(eat<Ts>..., Up, ...) noexcept;
+
+      public:
+        template <typename... Us>
+        using apply = decltype(match(std::declval<Us>()...));
+      };
 
     public:
-      template <typename... Us>
-      using apply = decltype(match(std::declval<Us>()...));
+      template <typename... Ts>
+      using apply = typename skip<Number<ignore>...>::template apply<Ts...>;
     };
-
-    template <typename... Ts>
-    using apply = typename skip<Number<ignore>...>::template apply<Ts...>;
-  };
+  }
 
   template <typename... Ts>
   struct type_list {
@@ -63,7 +67,7 @@ namespace utils {
     using append = type_list<Ts..., Us...>;
 
     template <std::size_t I>
-    using at = typename at<I>::template apply<Ts...>;
+    using at = typename meta::at<I>::template apply<Ts...>;
   };
   namespace meta {
     template <template <typename> class F, typename... Xs>

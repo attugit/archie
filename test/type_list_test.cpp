@@ -91,10 +91,10 @@ TEST_F(type_list_test, canComposeManyFunctions) {
 }
 
 TEST_F(type_list_test, canUseAt) {
-  using type_0 = au::at<0>::apply<_3, _2, _1, _0>;
-  using type_1 = au::at<1>::apply<_3, _2, _1, _0>;
-  using type_2 = au::at<2>::apply<_3, _2, _1, _0>;
-  using type_3 = au::at<3>::apply<_3, _2, _1, _0>;
+  using type_0 = au::meta::at<0>::apply<_3, _2, _1, _0>;
+  using type_1 = au::meta::at<1>::apply<_3, _2, _1, _0>;
+  using type_2 = au::meta::at<2>::apply<_3, _2, _1, _0>;
+  using type_3 = au::meta::at<3>::apply<_3, _2, _1, _0>;
   static_assert(std::is_same<_3, type_0>::value, "");
   static_assert(std::is_same<_2, type_1>::value, "");
   static_assert(std::is_same<_1, type_2>::value, "");
