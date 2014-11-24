@@ -11,7 +11,7 @@ namespace utils {
     template <template <typename...> class F>
     struct compose<F> {
       template <typename... Xs>
-      using apply = typename F<Xs...>::type;
+      using apply = F<Xs...>;
     };
 
     template <template <typename...> class F,
@@ -19,7 +19,7 @@ namespace utils {
     struct compose<F, Gs...> {
       template <typename... Xs>
       using apply =
-          typename F<typename compose<Gs...>::template apply<Xs...>>::type;
+          F<typename compose<Gs...>::template apply<Xs...>::type>;
     };
   }
 }
