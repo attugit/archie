@@ -9,11 +9,6 @@
 namespace archie {
 namespace utils {
 
-  template <typename First, typename... Rest>
-  struct get_front {
-    using type = First;
-  };
-
   template <typename... Ts>
   struct type_list {
     using size = Number<sizeof...(Ts)>;
@@ -36,13 +31,6 @@ namespace utils {
     template <std::size_t I>
     using at_t = meta::at_t<I, Ts...>;
   };
-  namespace meta {
-    template <template <typename> class F, typename... Xs>
-    using transform = typename type_list<Xs...>::template transform<F>;
-
-    template <template <typename> class F, typename... Xs>
-    using transform_t = typename transform<F, Xs...>::type;
-  }
 }
 }
 

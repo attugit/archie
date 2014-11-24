@@ -1,4 +1,5 @@
 #include <archie/utils/type_list.h>
+#include <archie/utils/transform.h>
 
 #include <gtest/gtest.h>
 #include <tuple>
@@ -62,11 +63,6 @@ TEST_F(type_list_test, canTransformAndApply) {
 TEST_F(type_list_test, canAppend) {
   using type = list_::append<_2, _3>;
   static_assert(std::is_same<au::type_list<_0, _1, _2, _3>, type>::value, "");
-}
-
-TEST_F(type_list_test, canGetFront) {
-  using type = list_::apply<au::get_front>;
-  static_assert(std::is_same<_0, type>::value, "");
 }
 
 TEST_F(type_list_test, canUseAt) {

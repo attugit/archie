@@ -25,6 +25,6 @@ static_assert(std::is_same<std::unique_ptr<_0>, foo<_0>::type>::value, "");
 template <typename... Xs>
 using goo = au::meta::compose<uptr_, size>::apply<Xs...>;
 
-static_assert(std::is_same<std::unique_ptr<au::Number<2>>, goo<_0, _1>::type>::value,
-              "");
+static_assert(
+    std::is_same<std::unique_ptr<au::Number<2>>, goo<_0, _1>::type>::value, "");
 }
