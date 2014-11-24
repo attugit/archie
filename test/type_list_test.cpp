@@ -69,27 +69,6 @@ TEST_F(type_list_test, canGetFront) {
   static_assert(std::is_same<_0, type>::value, "");
 }
 
-template <typename... Xs>
-using foo = au::compose<uptr_>::apply<Xs...>;
-
-TEST_F(type_list_test, canComposeSingleFunction) {
-  using type = foo<_0>;
-  static_assert(std::is_same<std::unique_ptr<_0>, type>::value, "");
-}
-
-template <typename... Xs>
-struct size {
-  using type = au::Number<sizeof...(Xs)>;
-};
-
-template <typename... Xs>
-using goo = au::compose<uptr_, size>::apply<Xs...>;
-
-TEST_F(type_list_test, canComposeManyFunctions) {
-  using type = goo<_0, _1>;
-  static_assert(std::is_same<std::unique_ptr<au::Number<2>>, type>::value, "");
-}
-
 TEST_F(type_list_test, canUseAt) {
   using type_0 = au::meta::at<0>::apply<_3, _2, _1, _0>::type;
   using type_1 = au::meta::at<1>::apply<_3, _2, _1, _0>::type;
