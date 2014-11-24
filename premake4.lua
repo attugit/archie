@@ -7,7 +7,8 @@ local archie = solution "archie"
 
 local gtest = project "gtest"
   kind "StaticLib"
-  files { "gtest/src/*.cc" }
+  files { "gtest/src/gtest-all.cc" }
+  files { "gtest/src/gtest_main.cc" }
   includedirs { "gtest/" }
   configuration "debug"
     defines { "DEBUG" }
