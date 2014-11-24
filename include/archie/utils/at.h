@@ -17,11 +17,11 @@ namespace utils {
     private:
       template <typename... Ts>
       struct skip {
-      private:
         template <typename Up>
-        static constexpr Up match(eat<Ts>..., Up, ...) noexcept;
+        static constexpr Up match(eat<Ts>..., Up u, ...) noexcept {
+          return u;
+        }
 
-      public:
         template <typename... Us>
         using apply = returns<decltype(match(std::declval<Us>()...))>;
       };
@@ -29,6 +29,11 @@ namespace utils {
     public:
       template <typename... Ts>
       using apply = typename skip<Number<ignore>...>::template apply<Ts...>;
+
+      template <typename... Ts>
+      static constexpr decltype(auto) match(Ts&&... args) noexcept {
+        return *skip<Number<ignore>...>::match(&std::forward<Ts>(args)...);
+      }
     };
 
     template <std::size_t n, typename... Ts>
