@@ -3,7 +3,7 @@
 
 #include <utility>
 #include <archie/utils/alias.h>
-#include <archie/utils/number.h>
+#include <archie/utils/meta/number.h>
 #include <archie/utils/variadic.h>
 #include <archie/utils/eat.h>
 

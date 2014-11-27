@@ -1,7 +1,7 @@
 #ifndef ARCHIE_UTILS_TYPE_LIST_H_INCLUDED
 #define ARCHIE_UTILS_TYPE_LIST_H_INCLUDED
 
-#include <archie/utils/number.h>
+#include <archie/utils/meta/number.h>
 #include <archie/utils/meta/returns.h>
 #include <archie/utils/meta/at.h>
 #include <utility>

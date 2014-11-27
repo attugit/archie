@@ -4,7 +4,7 @@
 #include <utility>
 #include <archie/utils/eat.h>
 #include <archie/utils/meta/returns.h>
-#include <archie/utils/number.h>
+#include <archie/utils/meta/number.h>
 
 namespace archie {
 namespace utils {

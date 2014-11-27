@@ -5,7 +5,7 @@
 #include <cstddef>
 #include <cstdint>
 
-#include <archie/utils/number.h>
+#include <archie/utils/meta/number.h>
 
 namespace archie {
 namespace utils {

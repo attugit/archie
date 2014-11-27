@@ -1,5 +1,5 @@
 #include <archie/utils/meta/compose.h>
-#include <archie/utils/number.h>
+#include <archie/utils/meta/number.h>
 #include <memory>
 namespace {
 namespace au = archie::utils;
