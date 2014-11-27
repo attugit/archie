@@ -1,4 +1,4 @@
-#include <archie/utils/type_list.h>
+#include <archie/utils/meta/type_list.h>
 #include <archie/utils/meta/transform.h>
 
 #include <gtest/gtest.h>
@@ -30,14 +30,16 @@ namespace au = archie::utils;
 
 struct type_list_test : testing::Test {};
 
+using au::meta::type_list;
+
 TEST_F(type_list_test, canGetTypeListSize) {
-  static_assert(au::type_list<>::size::value == 0, "");
-  static_assert(au::type_list<_0>::size::value == 1, "");
-  static_assert(au::type_list<_0, _0>::size::value == 2, "");
-  static_assert(au::type_list<_0, _1>::size::value == 2, "");
+  static_assert(type_list<>::size::value == 0, "");
+  static_assert(type_list<_0>::size::value == 1, "");
+  static_assert(type_list<_0, _0>::size::value == 2, "");
+  static_assert(type_list<_0, _1>::size::value == 2, "");
 }
 
-using list_ = au::type_list<_0, _1>;
+using list_ = type_list<_0, _1>;
 
 TEST_F(type_list_test, canApply) {
   using type = list_::apply<tuple_>;
@@ -47,7 +49,7 @@ TEST_F(type_list_test, canApply) {
 TEST_F(type_list_test, canTransform) {
   using type = list_::transform<uptr_>::type;
   static_assert(
-      std::is_same<au::type_list<std::unique_ptr<_0>, std::unique_ptr<_1>>,
+      std::is_same<type_list<std::unique_ptr<_0>, std::unique_ptr<_1>>,
                    type>::value,
       "");
 }
@@ -62,7 +64,7 @@ TEST_F(type_list_test, canTransformAndApply) {
 
 TEST_F(type_list_test, canAppend) {
   using type = list_::append<_2, _3>;
-  static_assert(std::is_same<au::type_list<_0, _1, _2, _3>, type>::value, "");
+  static_assert(std::is_same<type_list<_0, _1, _2, _3>, type>::value, "");
 }
 
 TEST_F(type_list_test, canUseAt) {
@@ -88,7 +90,7 @@ TEST_F(type_list_test, canUseAtT) {
 }
 
 TEST_F(type_list_test, canUseTypeListAt) {
-  using list = au::type_list<_3, _2, _1, _0>;
+  using list = type_list<_3, _2, _1, _0>;
   static_assert(std::is_same<_3, list::at<0>::type>::value, "");
   static_assert(std::is_same<_2, list::at<1>::type>::value, "");
   static_assert(std::is_same<_1, list::at<2>::type>::value, "");
@@ -96,7 +98,7 @@ TEST_F(type_list_test, canUseTypeListAt) {
 }
 
 TEST_F(type_list_test, canUseTypeListAtT) {
-  using list = au::type_list<_3, _2, _1, _0>;
+  using list = type_list<_3, _2, _1, _0>;
   static_assert(std::is_same<_3, list::at_t<0>>::value, "");
   static_assert(std::is_same<_2, list::at_t<1>>::value, "");
   static_assert(std::is_same<_1, list::at_t<2>>::value, "");
@@ -108,7 +110,7 @@ struct meta_test : ::testing::Test {};
 TEST_F(meta_test, canTransform) {
   using uptrs = au::meta::transform_t<uptr_, _0, _1>;
   static_assert(
-      std::is_same<au::type_list<std::unique_ptr<_0>, std::unique_ptr<_1>>,
+      std::is_same<type_list<std::unique_ptr<_0>, std::unique_ptr<_1>>,
                    uptrs>::value,
       "");
 }
