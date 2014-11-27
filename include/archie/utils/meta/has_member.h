@@ -6,12 +6,14 @@
 
 namespace archie {
 namespace utils {
+  namespace meta {
 
   template <template <typename> class, typename, typename = meta::void_t<>>
-  struct HasMember : std::false_type {};
+  struct has_member : std::false_type {};
 
   template <template <typename> class Member, typename Tp>
-  struct HasMember<Member, Tp, meta::void_t<Member<Tp>>> : std::true_type {};
+  struct has_member<Member, Tp, meta::void_t<Member<Tp>>> : std::true_type {};
+  }
 }
 }
 

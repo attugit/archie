@@ -1,7 +1,7 @@
 #ifndef ARCHIE_UTILS_INSPECT_H_INCLUDED
 #define ARCHIE_UTILS_INSPECT_H_INCLUDED
 
-#include <archie/utils/has_member.h>
+#include <archie/utils/meta/has_member.h>
 
 namespace archie {
 namespace utils {
@@ -18,10 +18,10 @@ namespace utils {
     using InspectDataProperty = decltype(std::declval<Tp>().data);
   }
   template <typename Tp>
-  using HasReserve = HasMember<detail::InspectReserve, Tp>;
+  using HasReserve = meta::has_member<detail::InspectReserve, Tp>;
 
   template <typename Tp>
-  using IsCopyAssignable = HasMember<detail::InspectCopyAssignable, Tp>;
+  using IsCopyAssignable = meta::has_member<detail::InspectCopyAssignable, Tp>;
 
   template <typename Tp>
   using ValueType = typename Tp::value_type;
@@ -30,13 +30,13 @@ namespace utils {
   using VariadicType = typename std::remove_reference_t<Tp>::variadic;
 
   template <typename Tp>
-  using HasValueType = HasMember<ValueType, Tp>;
+  using HasValueType = meta::has_member<ValueType, Tp>;
 
   template <typename Tp>
-  using HasVariadicType = HasMember<VariadicType, Tp>;
+  using HasVariadicType = meta::has_member<VariadicType, Tp>;
 
   template <typename Tp>
-  using HasDataProperty = HasMember<detail::InspectDataProperty, Tp>;
+  using HasDataProperty = meta::has_member<detail::InspectDataProperty, Tp>;
 }
 }
 
