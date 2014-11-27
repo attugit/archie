@@ -10,6 +10,9 @@
 namespace archie {
 namespace utils {
 
+  template <typename Tp>
+  using VariadicType = typename std::remove_reference_t<Tp>::variadic;
+
   template <typename... Ts>
   struct Tuple {
   private:
