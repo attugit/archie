@@ -76,9 +76,6 @@ TEST_F(variadic_test, has_member) {
   using vec_t = std::vector<int>;
   using list_t = std::list<int>;
   using ptr_t = std::unique_ptr<int>;
-  static_assert(au::HasValueType<vec_t>::value, "");
-  static_assert(!au::HasValueType<int>::value, "");
-  static_assert(!au::HasValueType<ptr_t>::value, "");
 
   static_assert(au::IsCopyAssignable<vec_t>::value, "");
   static_assert(au::IsCopyAssignable<list_t>::value, "");

@@ -30,7 +30,7 @@ namespace utils {
   using VariadicType = typename std::remove_reference_t<Tp>::variadic;
 
   template <typename Tp>
-  using HasValueType = meta::has_member<ValueType, Tp>;
+  using has_value_type = meta::has_member<ValueType, Tp>;
 
   template <typename Tp>
   using HasVariadicType = meta::has_member<VariadicType, Tp>;
