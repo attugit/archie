@@ -28,11 +28,11 @@ namespace utils {
 
     public:
       template <typename... Ts>
-      using apply = typename skip<Number<ignore>...>::template apply<Ts...>;
+      using apply = typename skip<number<ignore>...>::template apply<Ts...>;
 
       template <typename... Ts>
       static constexpr decltype(auto) match(Ts&&... args) noexcept {
-        return *skip<Number<ignore>...>::match(&std::forward<Ts>(args)...);
+        return *skip<number<ignore>...>::match(&std::forward<Ts>(args)...);
       }
     };
 

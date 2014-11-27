@@ -11,7 +11,7 @@ namespace utils {
 
   template <typename... Ts>
   struct type_list {
-    using size = Number<sizeof...(Ts)>;
+    using size = meta::number<sizeof...(Ts)>;
 
     template <template <typename...> class Func>
     using apply = typename Func<Ts...>::type;

@@ -12,7 +12,7 @@ namespace utils {
 
   using size_type = std::uint8_t;
 
-  using ByteSize = Number<8u>;
+  using ByteSize = meta::number<8u>;
 
   template <size_type Size>
   struct GetStorage {
@@ -34,9 +34,9 @@ namespace utils {
 
   template <size_type I, size_type O, size_type S>
   struct PackElement {
-    using Index = Number<I>;
-    using Offset = Number<O>;
-    using Size = Number<S>;
+    using Index = meta::number<I>;
+    using Offset = meta::number<O>;
+    using Size = meta::number<S>;
   };
 
   template <size_type I, size_type O, size_type S>
@@ -65,12 +65,12 @@ namespace utils {
 
     template <size_type N>
     struct Sum<N> {
-      using type = Number<N>;
+      using type = meta::number<N>;
     };
 
     template <size_type N, size_type... T>
     struct Sum<N, T...> {
-      using type = Number<N + Sum<T...>::type::value>;
+      using type = meta::number<N + Sum<T...>::type::value>;
     };
   }
 
@@ -168,7 +168,7 @@ namespace utils {
       friend Pack;
 
     private:
-      using Size = Number<size_of<I>(Pack{})>;
+      using Size = meta::number<size_of<I>(Pack{})>;
       explicit Field(Pack::data_type& d) noexcept : data(d) {}
       data_type& data;
     };

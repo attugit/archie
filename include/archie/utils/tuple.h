@@ -58,8 +58,8 @@ namespace utils {
       template <std::size_t n, std::size_t... ignore>
       struct get<n, std::index_sequence<ignore...>> {
         template <typename Nth, typename...>
-        constexpr decltype(auto) operator()(eat<Number<ignore>>..., Nth&& nth,
-                                            ...) const {
+        constexpr decltype(auto) operator()(eat<meta::number<ignore>>...,
+                                            Nth&& nth, ...) const {
           return std::forward<Nth>(nth);
         }
       };
@@ -86,7 +86,8 @@ namespace utils {
 
   template <typename Tp, typename TupleType>
   constexpr decltype(auto) get(TupleType&& tuple) noexcept {
-    using index = Number<VariadicType<TupleType>::template index_of<Tp>()>;
+    using index =
+        meta::number<VariadicType<TupleType>::template index_of<Tp>()>;
     return get<index::value>(std::forward<TupleType>(tuple));
   }
 }

@@ -28,7 +28,7 @@ namespace utils {
 
     template <typename Tp, std::size_t Idx>
     static constexpr decltype(auto) indexed(IndexedType<Tp, Idx> const&) {
-      return Number<Idx>{};
+      return meta::number<Idx>{};
     }
 
   public:
