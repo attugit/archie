@@ -2,7 +2,7 @@
 #define ARCHIE_UTILS_HAS_MEMBER_H_INCLUDED
 
 #include <utility>
-#include <archie/utils/voider.h>
+#include <archie/utils/meta/voider.h>
 
 namespace archie {
 namespace utils {
