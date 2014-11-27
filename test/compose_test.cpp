@@ -1,4 +1,4 @@
-#include <archie/utils/compose.h>
+#include <archie/utils/meta/compose.h>
 #include <archie/utils/number.h>
 #include <memory>
 namespace {
