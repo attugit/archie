@@ -51,6 +51,8 @@ TEST_F(variadic_test, for_each) {
 
   func f;
   ASSERT_EQ(0, f.cnt);
+  au::for_each(f);
+  EXPECT_EQ(0, f.cnt);
   auto& ret = au::for_each(f, '7', 'c', std::string{});
   EXPECT_EQ(3, f.cnt);
   EXPECT_EQ(3, ret.cnt);

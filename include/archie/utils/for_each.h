@@ -9,7 +9,7 @@ namespace utils {
 
   template <typename Func, typename... Args>
   decltype(auto) for_each(Func&& func, Args&&... args) {
-    (void)Alias<int[]>{(func(std::forward<Args>(args)), 0)...};
+    (void)Alias<int[]>{0, (func(std::forward<Args>(args)), 0)...};
     return std::forward<Func>(func);
   }
 }
