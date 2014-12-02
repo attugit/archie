@@ -34,7 +34,7 @@ static_assert(!au::has_data_property<int>::value, "");
 
 static_assert(au::is_copy_assignable<vec_t>::value, "");
 static_assert(au::is_copy_assignable<pair_t>::value, "");
-//static_assert(au::is_copy_assignable<int>::value, "");
+// static_assert(au::is_copy_assignable<int>::value, "");
 static_assert(!au::is_copy_assignable<ptr_t>::value, "");
 
-//using int_t = decltype(std::declval<int>() = std::declval<int const&>());
+// using int_t = decltype(std::declval<int>() = std::declval<int const&>());
