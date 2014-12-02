@@ -14,7 +14,7 @@ TEST_F(at_test, canUseAt) {
                 "");
 }
 
-TEST_F(at_test, canUseNth) {
+TEST_F(at_test, canUseAtMatch) {
   char a = 0;
   int b = 1;
   float c = 2.0;
