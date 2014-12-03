@@ -43,5 +43,10 @@ TEST_F(tuple_test, canUseGetById) {
   EXPECT_EQ(1u, fused::get<0>(t));
   EXPECT_EQ(2.0, fused::get<1>(t));
   EXPECT_EQ('3', fused::get<2>(t));
+
+  auto const& x = fused::get<0>(t);
+  EXPECT_EQ(1u, x);
+  auto const& y = fused::get<0>(t);
+  EXPECT_EQ(&x, &y);
 }
 }
