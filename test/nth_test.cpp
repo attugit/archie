@@ -29,4 +29,16 @@ TEST_F(nth_test, canUseConstNth) {
   auto const& x = nth<0>(a, b, c);
   EXPECT_EQ(&a, &x);
 }
+
+TEST_F(nth_test, canWrapNthWithLambda) {
+  const char a = 0;
+  const int b = 1;
+  const float c = 2.0;
+
+  auto f = [](auto&&... args) -> decltype(auto) {
+    return nth<0>(std::forward<decltype(args)>(args)...);
+  };
+  auto const& x = f(a, b, c);
+  EXPECT_EQ(&a, &x);
+}
 }
