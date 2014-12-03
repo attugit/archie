@@ -24,7 +24,8 @@ static_assert(sizeof(tuple<int, char>) <= (2 * sizeof(int)), "");
 #include <gtest/gtest.h>
 
 namespace {
-using archie::utils::fused::make_tuple;
+namespace fused = archie::utils::fused;
+using fused::make_tuple;
 
 struct tuple_test : ::testing::Test {};
 
@@ -33,5 +34,14 @@ TEST_F(tuple_test, canCreateTupleWithMakeTuple) {
   auto t2 = make_tuple(1u, 2.0, 4, '3');
   EXPECT_EQ(3u, t1.size());
   EXPECT_EQ(4u, t2.size());
+}
+
+TEST_F(tuple_test, canUseGetById) {
+  auto t = make_tuple(1u, 2.0, '3');
+  EXPECT_EQ(3u, t.size());
+
+  EXPECT_EQ(1u, fused::get<0>(t));
+  EXPECT_EQ(2.0, fused::get<1>(t));
+  EXPECT_EQ('3', fused::get<2>(t));
 }
 }
