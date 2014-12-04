@@ -28,6 +28,8 @@ namespace utils {
       constexpr explicit tuple(Up&&... args)
           : storage(make_storage(std::forward<Up>(args)...)) {}
 
+      constexpr tuple() : tuple(Ts {}...) {}
+
       constexpr std::size_t size() noexcept { return sizeof...(Ts); }
 
       template <typename F>
