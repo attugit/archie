@@ -2,4 +2,6 @@
 
 ####archie::utils::fused
 
-* tuple& tuple::operator=(tuple const&)
+* fused::tuple tie
+* refactoring of fused::tuple copy-assign
+* refactoring of mutable storage

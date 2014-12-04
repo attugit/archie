@@ -81,4 +81,19 @@ TEST_F(tuple_test, canCopyCreateTuple) {
   EXPECT_NE(&fused::get<1>(orig), &fused::get<1>(copy));
   EXPECT_NE(&fused::get<2>(orig), &fused::get<2>(copy));
 }
+
+TEST_F(tuple_test, canCopyAssign) {
+  auto orig = fused::tuple<unsigned, double, char>(1u, 2.0, '3');
+  auto copy = fused::tuple<unsigned, double, char>(2u, 4.0, '6');
+
+  ASSERT_EQ(2u, fused::get<0>(copy));
+  ASSERT_EQ(4.0, fused::get<1>(copy));
+  ASSERT_EQ('6', fused::get<2>(copy));
+
+  copy = orig;
+
+  EXPECT_EQ(1u, fused::get<0>(copy));
+  EXPECT_EQ(2.0, fused::get<1>(copy));
+  EXPECT_EQ('3', fused::get<2>(copy));
+}
 }

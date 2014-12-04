@@ -19,7 +19,7 @@ namespace utils {
         };
       }
       using storage_type = decltype(make_storage(std::declval<Ts>()...));
-      storage_type storage;
+      mutable storage_type storage;
 
     public:
       using type_list = meta::type_list<Ts...>;
@@ -30,10 +30,12 @@ namespace utils {
 
       constexpr tuple() : tuple(Ts {}...) {}
 
+      tuple& operator=(tuple const&);
+
       constexpr std::size_t size() noexcept { return sizeof...(Ts); }
 
       template <typename F>
-      decltype(auto) apply(F&& f) {
+      decltype(auto) apply(F&& f) const {
         return storage(std::forward<F>(f));
       }
     };
@@ -49,6 +51,26 @@ namespace utils {
         return nth<N>(std::forward<decltype(args)>(args)...);
       };
       return tp.apply(f);
+    }
+
+    namespace detail {
+      template <std::size_t n, typename = std::make_index_sequence<n>>
+      struct copy_assign_tuple;
+
+      template <std::size_t n, std::size_t... idx>
+      struct copy_assign_tuple<n, std::index_sequence<idx...>> {
+        template <typename... Ts>
+        static void impl(tuple<Ts...>& lhs, tuple<Ts...> const& rhs) {
+          using alias = int[];
+          (void)alias{0, (fused::get<idx>(lhs) = fused::get<idx>(rhs), 0)...};
+        }
+      };
+    }
+
+    template <typename... Ts>
+    tuple<Ts...>& tuple<Ts...>::operator=(tuple<Ts...> const& orig) {
+      detail::copy_assign_tuple<sizeof...(Ts)>::impl(*this, orig);
+      return *this;
     }
   }
 }
