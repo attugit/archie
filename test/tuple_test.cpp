@@ -36,7 +36,7 @@ TEST_F(tuple_test, canCreateTupleWithMakeTuple) {
   EXPECT_EQ(4u, t2.size());
 }
 
-TEST_F(tuple_test, canUseGetById) {
+TEST_F(tuple_test, canUseGetByIdToRead) {
   auto t = make_tuple(1u, 2.0, '3');
   EXPECT_EQ(3u, t.size());
 
@@ -48,5 +48,21 @@ TEST_F(tuple_test, canUseGetById) {
   EXPECT_EQ(1u, x);
   auto const& y = fused::get<0>(t);
   EXPECT_EQ(&x, &y);
+}
+
+TEST_F(tuple_test, canUseGetByIdToWrite) {
+  auto t = make_tuple(1u, 2.0, '3');
+  ASSERT_EQ(3u, t.size());
+
+  ASSERT_EQ(1u, fused::get<0>(t));
+  ASSERT_EQ(2.0, fused::get<1>(t));
+  ASSERT_EQ('3', fused::get<2>(t));
+
+  auto& x = fused::get<0>(t);
+  ASSERT_EQ(1u, x);
+  auto& y = fused::get<0>(t);
+  ASSERT_EQ(&x, &y);
+  y = 4u;
+  EXPECT_EQ(4u, x);
 }
 }

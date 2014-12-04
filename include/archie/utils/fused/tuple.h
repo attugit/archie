@@ -13,8 +13,8 @@ namespace utils {
     struct tuple {
     private:
       template <typename... Us>
-      constexpr static decltype(auto) make_storage(Us const&... args) {
-        return [args...](auto&& func) -> decltype(auto) {
+      static decltype(auto) make_storage(Us&&... args) {
+        return [args...](auto&& func) mutable -> decltype(auto) {
           return std::forward<decltype(func)>(func)(args...);
         };
       }
