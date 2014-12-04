@@ -42,6 +42,22 @@ TEST_F(tuple_test, canCreateTupleWithMakeTuple) {
   EXPECT_EQ(4u, t2.size());
 }
 
+TEST_F(tuple_test, makeTupleTakesElementsByValue) {
+  unsigned a = 1u;
+  double b = 2.0;
+  char c = '3';
+
+  auto t = make_tuple(a, b, c);
+
+  EXPECT_EQ(a, fused::get<0>(t));
+  EXPECT_EQ(b, fused::get<1>(t));
+  EXPECT_EQ(c, fused::get<2>(t));
+
+  EXPECT_NE(&a, &fused::get<0>(t));
+  EXPECT_NE(&b, &fused::get<1>(t));
+  EXPECT_NE(&c, &fused::get<2>(t));
+}
+
 TEST_F(tuple_test, canUseGetByIdToRead) {
   auto t = make_tuple(1u, 2.0, '3');
 
