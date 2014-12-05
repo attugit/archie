@@ -19,7 +19,7 @@ namespace {
 
 struct tuple_test : ::testing::Test {};
 
-TEST_F(tuple_test, canCreteTuple) {
+TEST_F(tuple_test, canDefaultConstruct) {
   static_assert(
       std::is_default_constructible<tuple<unsigned, double, char>>::value, "");
   auto t = tuple<unsigned, double, char>();
@@ -28,7 +28,7 @@ TEST_F(tuple_test, canCreteTuple) {
   EXPECT_LE(sizeof(unsigned) + sizeof(double) + sizeof(char), sizeof(t));
 }
 
-TEST_F(tuple_test, canCreateTupleWithMakeTuple) {
+TEST_F(tuple_test, canConstruct) {
   static_assert(std::is_constructible<tuple<unsigned, double, char>, unsigned,
                                       double, char>::value,
                 "");
@@ -119,6 +119,23 @@ TEST_F(tuple_test, canMoveConstruct) {
   ASSERT_EQ('3', get<2>(orig));
 
   auto copy = tuple<unsigned, double, char>{std::move(orig)};
+
+  EXPECT_EQ(1u, get<0>(copy));
+  EXPECT_EQ(2.0, get<1>(copy));
+  EXPECT_EQ('3', get<2>(copy));
+}
+
+TEST_F(tuple_test, canMoveAssign) {
+  static_assert(std::is_move_assignable<tuple<unsigned, double, char>>::value,
+                "");
+  auto orig = tuple<unsigned, double, char>(1u, 2.0, '3');
+  auto copy = tuple<unsigned, double, char>(2u, 4.0, '6');
+
+  ASSERT_EQ(2u, get<0>(copy));
+  ASSERT_EQ(4.0, get<1>(copy));
+  ASSERT_EQ('6', get<2>(copy));
+
+  copy = std::move(orig);
 
   EXPECT_EQ(1u, get<0>(copy));
   EXPECT_EQ(2.0, get<1>(copy));

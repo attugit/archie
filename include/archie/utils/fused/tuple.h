@@ -33,6 +33,7 @@ namespace utils {
       tuple(tuple&&) = default;
       tuple(tuple const&) = default;
       tuple& operator=(tuple const&);
+      tuple& operator=(tuple&&) = default;
 
       constexpr std::size_t size() noexcept { return sizeof...(Ts); }
 
