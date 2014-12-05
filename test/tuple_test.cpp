@@ -12,26 +12,7 @@ using std::make_tuple;
 using std::get;
 using std::tuple;
 #endif
-/*
-using archie::utils::meta::type_list;
-namespace {
 
-template <std::size_t N>
-using tag = std::integral_constant<std::size_t, N>;
-
-static_assert(sizeof(tuple<>) != 0, "");
-
-static_assert(std::is_same<type_list<>, tuple<>::type_list>::value, "");
-static_assert(std::is_same<type_list<tag<0>>, tuple<tag<0>>::type_list>::value,
-              "");
-static_assert(std::is_same<type_list<tag<0>, tag<1>>,
-                           tuple<tag<0>, tag<1>>::type_list>::value,
-              "");
-
-static_assert(sizeof(tuple<int, char>) >= (sizeof(int) + sizeof(char)), "");
-static_assert(sizeof(tuple<int, char>) <= (2 * sizeof(int)), "");
-}
-*/
 #include <gtest/gtest.h>
 
 namespace {
@@ -97,6 +78,8 @@ TEST_F(tuple_test, canUseGetByIdToWrite) {
 }
 
 TEST_F(tuple_test, canCopyCreateTuple) {
+  static_assert(
+      std::is_copy_constructible<tuple<unsigned, double, char>>::value, "");
   auto orig = tuple<unsigned, double, char>(1u, 2.0, '3');
   auto copy = orig;
 
@@ -110,6 +93,8 @@ TEST_F(tuple_test, canCopyCreateTuple) {
 }
 
 TEST_F(tuple_test, canCopyAssign) {
+  static_assert(std::is_copy_assignable<tuple<unsigned, double, char>>::value,
+                "");
   auto orig = tuple<unsigned, double, char>(1u, 2.0, '3');
   auto copy = tuple<unsigned, double, char>(2u, 4.0, '6');
 
