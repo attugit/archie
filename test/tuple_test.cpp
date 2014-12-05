@@ -1,13 +1,19 @@
-#include <archie/utils/fused/tuple.h>
 #include <type_traits>
 
-using archie::utils::meta::type_list;
-
+#if 1
+#include <archie/utils/fused/tuple.h>
 namespace fused = archie::utils::fused;
 using fused::make_tuple;
 using fused::get;
 using fused::tuple;
-
+#else
+#include <tuple>
+using std::make_tuple;
+using std::get;
+using std::tuple;
+#endif
+/*
+using archie::utils::meta::type_list;
 namespace {
 
 template <std::size_t N>
@@ -25,7 +31,7 @@ static_assert(std::is_same<type_list<tag<0>, tag<1>>,
 static_assert(sizeof(tuple<int, char>) >= (sizeof(int) + sizeof(char)), "");
 static_assert(sizeof(tuple<int, char>) <= (2 * sizeof(int)), "");
 }
-
+*/
 #include <gtest/gtest.h>
 
 namespace {
@@ -33,16 +39,20 @@ namespace {
 struct tuple_test : ::testing::Test {};
 
 TEST_F(tuple_test, canCreteTuple) {
+  static_assert(
+      std::is_default_constructible<tuple<unsigned, double, char>>::value, "");
   auto t = tuple<unsigned, double, char>();
 
-  EXPECT_EQ(3u, t.size());
+  // EXPECT_EQ(3u, t.size());
+  EXPECT_LE(sizeof(unsigned) + sizeof(double) + sizeof(char), sizeof(t));
 }
 
 TEST_F(tuple_test, canCreateTupleWithMakeTuple) {
-  auto t1 = make_tuple(1u, 2.0, '3');
-  auto t2 = make_tuple(1u, 2.0, 4, '3');
-  EXPECT_EQ(3u, t1.size());
-  EXPECT_EQ(4u, t2.size());
+  static_assert(std::is_constructible<tuple<unsigned, double, char>, unsigned,
+                                      double, char>::value,
+                "");
+  auto t = tuple<unsigned, double, char>(1u, 2.0, '3');
+  EXPECT_LE(sizeof(unsigned) + sizeof(double) + sizeof(char), sizeof(t));
 }
 
 TEST_F(tuple_test, makeTupleTakesElementsByValue) {
@@ -89,7 +99,6 @@ TEST_F(tuple_test, canUseGetByIdToWrite) {
 TEST_F(tuple_test, canCopyCreateTuple) {
   auto orig = tuple<unsigned, double, char>(1u, 2.0, '3');
   auto copy = orig;
-  ASSERT_EQ(orig.size(), copy.size());
 
   EXPECT_EQ(get<0>(orig), get<0>(copy));
   EXPECT_EQ(get<1>(orig), get<1>(copy));
