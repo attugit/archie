@@ -4,6 +4,7 @@
 #include <archie/utils/meta/type_list.h>
 #include <archie/utils/fused/nth.h>
 #include <utility>
+#include <array>
 
 namespace archie {
 namespace utils {
@@ -35,6 +36,8 @@ namespace utils {
       tuple& operator=(tuple const&);
       tuple& operator=(tuple&&) = default;
 
+      bool operator==(tuple const&) const;
+
       constexpr std::size_t size() noexcept { return sizeof...(Ts); }
 
       template <typename F>
@@ -58,22 +61,33 @@ namespace utils {
 
     namespace detail {
       template <std::size_t n, typename = std::make_index_sequence<n>>
-      struct copy_assign_tuple;
+      struct tuple_internals;
 
       template <std::size_t n, std::size_t... idx>
-      struct copy_assign_tuple<n, std::index_sequence<idx...>> {
+      struct tuple_internals<n, std::index_sequence<idx...>> {
+        using alias = std::array<bool, sizeof...(idx)+1>;
         template <typename... Ts>
-        static void impl(tuple<Ts...>& lhs, tuple<Ts...> const& rhs) {
-          using alias = int[];
-          (void)alias{0, (fused::get<idx>(lhs) = fused::get<idx>(rhs), 0)...};
+        static void copy_assign(tuple<Ts...>& lhs, tuple<Ts...> const& rhs) {
+          (void)alias{false,
+                      (fused::get<idx>(lhs) = fused::get<idx>(rhs), false)...};
+        }
+        template <typename... Ts>
+        static bool equal(tuple<Ts...> const& lhs, tuple<Ts...> const& rhs) {
+          return alias{true, (get<idx>(lhs) == get<idx>(rhs))...} ==
+                 alias{true, ((void)idx, true)...};
         }
       };
     }
 
     template <typename... Ts>
     tuple<Ts...>& tuple<Ts...>::operator=(tuple<Ts...> const& orig) {
-      detail::copy_assign_tuple<sizeof...(Ts)>::impl(*this, orig);
+      detail::tuple_internals<sizeof...(Ts)>::copy_assign(*this, orig);
       return *this;
+    }
+
+    template <typename... Ts>
+    bool tuple<Ts...>::operator==(tuple<Ts...> const& rhs) const {
+      return detail::tuple_internals<sizeof...(Ts)>::equal(*this, rhs);
     }
   }
 }

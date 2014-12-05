@@ -141,4 +141,15 @@ TEST_F(tuple_test, canMoveAssign) {
   EXPECT_EQ(2.0, get<1>(copy));
   EXPECT_EQ('3', get<2>(copy));
 }
+
+TEST_F(tuple_test, canCompareEquality) {
+  auto t1 = make_tuple(1u, 2.0, '3');
+  auto t2 = make_tuple(1u, 2.0, '3');
+  auto t3 = make_tuple(0u, 2.0, '3');
+  auto t4 = make_tuple(1u, 2.0, '4');
+
+  EXPECT_TRUE(t1 == t2);
+  EXPECT_FALSE(t1 == t3);
+  EXPECT_FALSE(t1 == t4);
+}
 }
