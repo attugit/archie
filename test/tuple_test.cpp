@@ -77,7 +77,7 @@ TEST_F(tuple_test, canUseGetByIdToWrite) {
   EXPECT_EQ(5u, x);
 }
 
-TEST_F(tuple_test, canCopyCreateTuple) {
+TEST_F(tuple_test, canCopyConstruct) {
   static_assert(
       std::is_copy_constructible<tuple<unsigned, double, char>>::value, "");
   auto orig = tuple<unsigned, double, char>(1u, 2.0, '3');
@@ -103,6 +103,22 @@ TEST_F(tuple_test, canCopyAssign) {
   ASSERT_EQ('6', get<2>(copy));
 
   copy = orig;
+
+  EXPECT_EQ(1u, get<0>(copy));
+  EXPECT_EQ(2.0, get<1>(copy));
+  EXPECT_EQ('3', get<2>(copy));
+}
+
+TEST_F(tuple_test, canMoveConstruct) {
+  static_assert(
+      std::is_move_constructible<tuple<unsigned, double, char>>::value, "");
+  auto orig = tuple<unsigned, double, char>(1u, 2.0, '3');
+
+  ASSERT_EQ(1u, get<0>(orig));
+  ASSERT_EQ(2.0, get<1>(orig));
+  ASSERT_EQ('3', get<2>(orig));
+
+  auto copy = tuple<unsigned, double, char>{std::move(orig)};
 
   EXPECT_EQ(1u, get<0>(copy));
   EXPECT_EQ(2.0, get<1>(copy));
