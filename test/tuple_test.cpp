@@ -1,9 +1,14 @@
 #include <archie/utils/fused/tuple.h>
-#include <archie/utils/meta/type_list.h>
 #include <type_traits>
-namespace {
-using archie::utils::fused::tuple;
+
 using archie::utils::meta::type_list;
+
+namespace fused = archie::utils::fused;
+using fused::make_tuple;
+using fused::get;
+using fused::tuple;
+
+namespace {
 
 template <std::size_t N>
 using tag = std::integral_constant<std::size_t, N>;
@@ -24,13 +29,11 @@ static_assert(sizeof(tuple<int, char>) <= (2 * sizeof(int)), "");
 #include <gtest/gtest.h>
 
 namespace {
-namespace fused = archie::utils::fused;
-using fused::make_tuple;
 
 struct tuple_test : ::testing::Test {};
 
 TEST_F(tuple_test, canCreteTuple) {
-  auto t = fused::tuple<unsigned, double, char>();
+  auto t = tuple<unsigned, double, char>();
 
   EXPECT_EQ(3u, t.size());
 }
@@ -49,67 +52,66 @@ TEST_F(tuple_test, makeTupleTakesElementsByValue) {
 
   auto t = make_tuple(a, b, c);
 
-  EXPECT_EQ(a, fused::get<0>(t));
-  EXPECT_EQ(b, fused::get<1>(t));
-  EXPECT_EQ(c, fused::get<2>(t));
+  EXPECT_EQ(a, get<0>(t));
+  EXPECT_EQ(c, get<2>(t));
 
-  EXPECT_NE(&a, &fused::get<0>(t));
-  EXPECT_NE(&b, &fused::get<1>(t));
-  EXPECT_NE(&c, &fused::get<2>(t));
+  EXPECT_NE(&a, &get<0>(t));
+  EXPECT_NE(&b, &get<1>(t));
+  EXPECT_NE(&c, &get<2>(t));
 }
 
 TEST_F(tuple_test, canUseGetByIdToRead) {
   auto t = make_tuple(1u, 2.0, '3');
 
-  EXPECT_EQ(1u, fused::get<0>(t));
-  EXPECT_EQ(2.0, fused::get<1>(t));
-  EXPECT_EQ('3', fused::get<2>(t));
+  EXPECT_EQ(1u, get<0>(t));
+  EXPECT_EQ(2.0, get<1>(t));
+  EXPECT_EQ('3', get<2>(t));
 
-  auto const& x = fused::get<0>(t);
+  auto const& x = get<0>(t);
   EXPECT_EQ(1u, x);
-  auto const& y = fused::get<0>(t);
+  auto const& y = get<0>(t);
   EXPECT_EQ(&x, &y);
 }
 
 TEST_F(tuple_test, canUseGetByIdToWrite) {
   auto t = make_tuple(1u, 2.0, '3');
 
-  auto const& x = fused::get<0>(t);
+  auto const& x = get<0>(t);
   ASSERT_EQ(1u, x);
-  auto& y = fused::get<0>(t);
+  auto& y = get<0>(t);
   ASSERT_EQ(&x, &y);
   y = 4u;
   EXPECT_EQ(4u, x);
-  fused::get<0>(t) = 5u;
+  get<0>(t) = 5u;
   EXPECT_EQ(5u, x);
 }
 
 TEST_F(tuple_test, canCopyCreateTuple) {
-  auto orig = fused::tuple<unsigned, double, char>(1u, 2.0, '3');
+  auto orig = tuple<unsigned, double, char>(1u, 2.0, '3');
   auto copy = orig;
   ASSERT_EQ(orig.size(), copy.size());
 
-  EXPECT_EQ(fused::get<0>(orig), fused::get<0>(copy));
-  EXPECT_EQ(fused::get<1>(orig), fused::get<1>(copy));
-  EXPECT_EQ(fused::get<2>(orig), fused::get<2>(copy));
+  EXPECT_EQ(get<0>(orig), get<0>(copy));
+  EXPECT_EQ(get<1>(orig), get<1>(copy));
+  EXPECT_EQ(get<2>(orig), get<2>(copy));
 
-  EXPECT_NE(&fused::get<0>(orig), &fused::get<0>(copy));
-  EXPECT_NE(&fused::get<1>(orig), &fused::get<1>(copy));
-  EXPECT_NE(&fused::get<2>(orig), &fused::get<2>(copy));
+  EXPECT_NE(&get<0>(orig), &get<0>(copy));
+  EXPECT_NE(&get<1>(orig), &get<1>(copy));
+  EXPECT_NE(&get<2>(orig), &get<2>(copy));
 }
 
 TEST_F(tuple_test, canCopyAssign) {
-  auto orig = fused::tuple<unsigned, double, char>(1u, 2.0, '3');
-  auto copy = fused::tuple<unsigned, double, char>(2u, 4.0, '6');
+  auto orig = tuple<unsigned, double, char>(1u, 2.0, '3');
+  auto copy = tuple<unsigned, double, char>(2u, 4.0, '6');
 
-  ASSERT_EQ(2u, fused::get<0>(copy));
-  ASSERT_EQ(4.0, fused::get<1>(copy));
-  ASSERT_EQ('6', fused::get<2>(copy));
+  ASSERT_EQ(2u, get<0>(copy));
+  ASSERT_EQ(4.0, get<1>(copy));
+  ASSERT_EQ('6', get<2>(copy));
 
   copy = orig;
 
-  EXPECT_EQ(1u, fused::get<0>(copy));
-  EXPECT_EQ(2.0, fused::get<1>(copy));
-  EXPECT_EQ('3', fused::get<2>(copy));
+  EXPECT_EQ(1u, get<0>(copy));
+  EXPECT_EQ(2.0, get<1>(copy));
+  EXPECT_EQ('3', get<2>(copy));
 }
 }
