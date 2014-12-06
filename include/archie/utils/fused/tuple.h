@@ -38,6 +38,7 @@ namespace utils {
 
       bool operator==(tuple const&) const;
       bool operator!=(tuple const& rhs) const { return !(*this == rhs); }
+      bool operator<(tuple const&) const;
 
       constexpr std::size_t size() noexcept { return sizeof...(Ts); }
 
@@ -71,6 +72,10 @@ namespace utils {
         static bool impl(tuple<Ts...> const&, tuple<Ts...> const&) {
           return true;
         }
+        template <typename... Ts>
+        static bool less(tuple<Ts...> const&, tuple<Ts...> const&) {
+          return false;
+        }
       };
 
       template <std::size_t head, std::size_t... tail>
@@ -80,6 +85,12 @@ namespace utils {
           return get<head>(lhs) == get<head>(rhs)
                      ? tuple_equal<tail...>::impl(lhs, rhs)
                      : false;
+        }
+        template <typename... Ts>
+        static bool less(tuple<Ts...> const& lhs, tuple<Ts...> const& rhs) {
+          return get<head>(lhs) == get<head>(rhs)
+                     ? tuple_equal<tail...>::less(lhs, rhs)
+                     : get<head>(lhs) < get<head>(rhs);
         }
       };
 
@@ -98,6 +109,10 @@ namespace utils {
         static bool equal(tuple<Ts...> const& lhs, tuple<Ts...> const& rhs) {
           return tuple_equal<idx...>::impl(lhs, rhs);
         }
+        template <typename... Ts>
+        static bool less(tuple<Ts...> const& lhs, tuple<Ts...> const& rhs) {
+          return tuple_equal<idx...>::less(lhs, rhs);
+        }
       };
     }
 
@@ -110,6 +125,11 @@ namespace utils {
     template <typename... Ts>
     bool tuple<Ts...>::operator==(tuple<Ts...> const& rhs) const {
       return detail::tuple_internals<sizeof...(Ts)>::equal(*this, rhs);
+    }
+
+    template <typename... Ts>
+    bool tuple<Ts...>::operator<(tuple<Ts...> const& rhs) const {
+      return detail::tuple_internals<sizeof...(Ts)>::less(*this, rhs);
     }
   }
 }

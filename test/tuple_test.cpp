@@ -148,6 +148,7 @@ TEST_F(tuple_test, canCompareEquality) {
   auto t3 = make_tuple(0u, 2.0, '3');
   auto t4 = make_tuple(1u, 2.0, '4');
 
+  EXPECT_TRUE(t1 == t1);
   EXPECT_TRUE(t1 == t2);
   EXPECT_FALSE(t1 == t3);
   EXPECT_FALSE(t1 == t4);
@@ -159,8 +160,30 @@ TEST_F(tuple_test, canCompareInequality) {
   auto t3 = make_tuple(0u, 2.0, '3');
   auto t4 = make_tuple(1u, 2.0, '4');
 
+  EXPECT_FALSE(t1 != t1);
   EXPECT_FALSE(t1 != t2);
   EXPECT_TRUE(t1 != t3);
   EXPECT_TRUE(t1 != t4);
+}
+
+TEST_F(tuple_test, canLexicographicalCompareLess) {
+  auto t1 = make_tuple(1u, 2.0, '3');
+  auto t2 = make_tuple(1u, 2.0, '3');
+  auto t3 = make_tuple(0u, 2.0, '3');
+  auto t4 = make_tuple(1u, 2.0, '4');
+  auto t5 = make_tuple(2u, 2.0, '1');
+
+  EXPECT_FALSE(t1 < t1);
+  EXPECT_FALSE(t1 < t2);
+  EXPECT_FALSE(t2 < t1);
+
+  EXPECT_FALSE(t1 < t3);
+  EXPECT_TRUE(t3 < t1);
+
+  EXPECT_TRUE(t1 < t4);
+  EXPECT_FALSE(t4 < t1);
+
+  EXPECT_TRUE(t1 < t5);
+  EXPECT_FALSE(t5 < t1);
 }
 }
