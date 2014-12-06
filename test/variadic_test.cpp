@@ -45,10 +45,11 @@ struct func {
 };
 
 TEST_F(variadic_test, for_each) {
-  int idx = 0;
-  au::for_each([&idx](auto&&) { ++idx; }, 7, 'c', std::string{});
-  EXPECT_EQ(3, idx);
-
+  /*
+    int idx = 0;
+    au::for_each([&idx](auto&&) { ++idx; }, 7, 'c', std::string{});
+    EXPECT_EQ(3, idx);
+  */
   func f;
   ASSERT_EQ(0, f.cnt);
   au::for_each(f);
