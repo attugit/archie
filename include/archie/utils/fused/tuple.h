@@ -64,12 +64,12 @@ namespace utils {
     namespace detail {
 
       template <std::size_t...>
-      struct tuple_equal;
+      struct tuple_recursion;
 
       template <>
-      struct tuple_equal<> {
+      struct tuple_recursion<> {
         template <typename... Ts>
-        static bool impl(tuple<Ts...> const&, tuple<Ts...> const&) {
+        static bool equal(tuple<Ts...> const&, tuple<Ts...> const&) {
           return true;
         }
         template <typename... Ts>
@@ -79,17 +79,17 @@ namespace utils {
       };
 
       template <std::size_t head, std::size_t... tail>
-      struct tuple_equal<head, tail...> {
+      struct tuple_recursion<head, tail...> {
         template <typename... Ts>
-        static bool impl(tuple<Ts...> const& lhs, tuple<Ts...> const& rhs) {
+        static bool equal(tuple<Ts...> const& lhs, tuple<Ts...> const& rhs) {
           return get<head>(lhs) == get<head>(rhs)
-                     ? tuple_equal<tail...>::impl(lhs, rhs)
+                     ? tuple_recursion<tail...>::equal(lhs, rhs)
                      : false;
         }
         template <typename... Ts>
         static bool less(tuple<Ts...> const& lhs, tuple<Ts...> const& rhs) {
           return get<head>(lhs) == get<head>(rhs)
-                     ? tuple_equal<tail...>::less(lhs, rhs)
+                     ? tuple_recursion<tail...>::less(lhs, rhs)
                      : get<head>(lhs) < get<head>(rhs);
         }
       };
@@ -107,11 +107,11 @@ namespace utils {
         }
         template <typename... Ts>
         static bool equal(tuple<Ts...> const& lhs, tuple<Ts...> const& rhs) {
-          return tuple_equal<idx...>::impl(lhs, rhs);
+          return tuple_recursion<idx...>::equal(lhs, rhs);
         }
         template <typename... Ts>
         static bool less(tuple<Ts...> const& lhs, tuple<Ts...> const& rhs) {
-          return tuple_equal<idx...>::less(lhs, rhs);
+          return tuple_recursion<idx...>::less(lhs, rhs);
         }
       };
     }
