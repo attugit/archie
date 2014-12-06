@@ -61,6 +61,28 @@ namespace utils {
     }
 
     namespace detail {
+
+      template <std::size_t...>
+      struct tuple_equal;
+
+      template <>
+      struct tuple_equal<> {
+        template <typename... Ts>
+        static bool impl(tuple<Ts...> const&, tuple<Ts...> const&) {
+          return true;
+        }
+      };
+
+      template <std::size_t head, std::size_t... tail>
+      struct tuple_equal<head, tail...> {
+        template <typename... Ts>
+        static bool impl(tuple<Ts...> const& lhs, tuple<Ts...> const& rhs) {
+          return get<head>(lhs) == get<head>(rhs)
+                     ? tuple_equal<tail...>::impl(lhs, rhs)
+                     : false;
+        }
+      };
+
       template <std::size_t n, typename = std::make_index_sequence<n>>
       struct tuple_internals;
 
@@ -74,8 +96,7 @@ namespace utils {
         }
         template <typename... Ts>
         static bool equal(tuple<Ts...> const& lhs, tuple<Ts...> const& rhs) {
-          return alias{true, (get<idx>(lhs) == get<idx>(rhs))...} ==
-                 alias{true, ((void)idx, true)...};
+          return tuple_equal<idx...>::impl(lhs, rhs);
         }
       };
     }
