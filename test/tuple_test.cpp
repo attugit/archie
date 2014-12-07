@@ -17,59 +17,9 @@ using std::tuple;
 
 namespace {
 
-struct CustomClass {
-  static std::size_t instances;
-  static std::size_t population;
-
-  CustomClass() : id(++population) {
-    ++def_ctor;
-    ++instances;
-  }
-  template <typename... Ts>
-  CustomClass(Ts&&...)
-      : id(++population) {
-    ++ctor;
-    ++instances;
-  }
-  CustomClass(CustomClass const&) : id(++population) {
-    ++copy_ctor;
-    ++instances;
-  }
-  CustomClass(CustomClass&& rhs) : id(rhs.id) { ++move_ctor; }
-  CustomClass& operator=(CustomClass const&) {
-    ++copy_assign;
-    return *this;
-  }
-  CustomClass& operator=(CustomClass&& rhs) {
-    id = rhs.id;
-    ++move_assign;
-    return *this;
-  }
-  ~CustomClass() { --instances; }
-  bool operator==(CustomClass const& rhs) const { return this == &rhs; }
-  bool operator<(CustomClass const& rhs) const { return this < &rhs; }
-
-  std::size_t id = 0;
-  std::size_t def_ctor = 0;
-  std::size_t ctor = 0;
-  std::size_t copy_ctor = 0;
-  std::size_t move_ctor = 0;
-  std::size_t copy_assign = 0;
-  std::size_t move_assign = 0;
-};
-
-std::size_t CustomClass::instances = 0;
-std::size_t CustomClass::population = 0;
-
 struct tuple_test : ::testing::Test {
-  void SetUp() {
-    ASSERT_EQ(0u, CustomClass::instances);
-    ASSERT_EQ(0u, CustomClass::population);
-  }
-  void TearDown() {
-    ASSERT_EQ(0u, CustomClass::instances);
-    CustomClass::population = 0;
-  }
+  void SetUp() {}
+  void TearDown() {}
 };
 
 TEST_F(tuple_test, canDefaultConstruct) {
