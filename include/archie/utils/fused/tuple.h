@@ -37,8 +37,12 @@ namespace utils {
       tuple& operator=(tuple&&) = default;
 
       bool operator==(tuple const&) const;
-      bool operator!=(tuple const& rhs) const { return !(*this == rhs); }
       bool operator<(tuple const&) const;
+
+      bool operator!=(tuple const& rhs) const { return !(*this == rhs); }
+      bool operator>(tuple const& rhs) const { return rhs < *this; }
+      bool operator>=(tuple const& rhs) const { return !(*this < rhs); }
+      bool operator<=(tuple const& rhs) const { return !(*this > rhs); }
 
       constexpr std::size_t size() noexcept { return sizeof...(Ts); }
 
