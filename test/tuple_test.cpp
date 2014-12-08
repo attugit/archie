@@ -129,6 +129,9 @@ TEST_F(tuple_test, canUseGetByIdToWrite) {
 }
 
 TEST_F(tuple_test, canCopyConstruct) {
+  static_assert(!std::is_copy_constructible<
+                    tuple<unsigned, std::unique_ptr<double>, char>>::value,
+                "");
   static_assert(
       std::is_copy_constructible<tuple<unsigned, double, char>>::value, "");
   auto orig = tuple<unsigned, double, char>(1u, 2.0, '3');
