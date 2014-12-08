@@ -3,7 +3,6 @@
 
 #include <utility>
 #include <archie/utils/inspect.h>
-#include <archie/utils/for_each.h>
 #include <archie/utils/meta/apply.h>
 #include <archie/utils/inherit_all.h>
 #include <archie/utils/meta/number.h>

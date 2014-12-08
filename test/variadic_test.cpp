@@ -36,30 +36,6 @@ TEST_F(variadic_test, reference_via_get) {
   ASSERT_EQ(3.0f, au::get<2>(tuple));
 }
 
-struct func {
-  int cnt = 0;
-  template <typename Tp>
-  void operator()(Tp&&) noexcept {
-    ++cnt;
-  }
-};
-
-TEST_F(variadic_test, for_each) {
-  /*
-    int idx = 0;
-    au::for_each([&idx](auto&&) { ++idx; }, 7, 'c', std::string{});
-    EXPECT_EQ(3, idx);
-  */
-  func f;
-  ASSERT_EQ(0, f.cnt);
-  au::for_each(f);
-  EXPECT_EQ(0, f.cnt);
-  auto& ret = au::for_each(f, '7', 'c', std::string{});
-  EXPECT_EQ(3, f.cnt);
-  EXPECT_EQ(3, ret.cnt);
-  EXPECT_EQ(&f, &ret);
-}
-
 TEST_F(variadic_test, type_index) {
   EXPECT_EQ(0u, (au::Variadic<char, int, float>::index_of<char>()));
   EXPECT_EQ(1u, (au::Variadic<char, int, float>::index_of<int>()));
