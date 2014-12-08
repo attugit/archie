@@ -136,6 +136,12 @@ namespace utils {
     bool tuple<Ts...>::operator<(tuple<Ts...> const& rhs) const {
       return detail::tuple_internals<sizeof...(Ts)>::less(*this, rhs);
     }
+
+    template <typename Tp>
+    struct tuple_size;
+
+    template <typename... Ts>
+    struct tuple_size<tuple<Ts...>> : meta::number<sizeof...(Ts)> {};
   }
 }
 }
