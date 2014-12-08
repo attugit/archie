@@ -1,4 +1,4 @@
-.PHONY: configure all release debug clean distclean run
+.PHONY: configure all release debug clean distclean run format
 
 all: debug
 
@@ -20,3 +20,5 @@ distclean:
 run: debug
 	./build/debug/bin/unittest
 
+format:
+	clang-format -i `find test/ -name *.cpp` `find include/ -name *.h`
