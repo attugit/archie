@@ -7,12 +7,14 @@ using fused::make_tuple;
 using fused::get;
 using fused::tuple;
 using fused::tuple_size;
+namespace test = archie::utils::fused;
 #else
 #include <tuple>
 using std::make_tuple;
 using std::get;
 using std::tuple;
 using std::tuple_size;
+namespace test = std;
 #endif
 
 #include <gtest/gtest.h>
@@ -80,6 +82,16 @@ TEST_F(tuple_test, makeTupleTakesElementsByValue) {
   EXPECT_NE(&a, &get<0>(t));
   EXPECT_NE(&b, &get<1>(t));
   EXPECT_NE(&c, &get<2>(t));
+}
+
+TEST_F(tuple_test, makeTupleTakesElementsByRValue) {
+  auto ptr = std::make_unique<char>('3');
+  auto t = test::make_tuple(1u, std::make_unique<double>(2.0), std::move(ptr));
+
+  ASSERT_EQ(3u, tuple_size<decltype(t)>::value);
+
+  EXPECT_EQ(2.0, *get<1>(t));
+  EXPECT_EQ('3', *get<2>(t));
 }
 
 TEST_F(tuple_test, canUseGetByIdToRead) {

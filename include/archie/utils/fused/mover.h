@@ -18,6 +18,10 @@ namespace utils {
       mover(mover& other) : value(std::move(other.value)) {}
       operator const_reference() const { return value; }
       operator reference() { return value; }
+      decltype(auto) operator*() const { return value.operator*(); }
+      decltype(auto) operator*() { return value.operator*(); }
+      decltype(auto) operator -> () const { return value.operator->(); }
+      decltype(auto) operator -> () { return value.operator->(); }
       value_type value;
     };
 
