@@ -2,7 +2,7 @@
 #define ARCHIE_UTILS_TUPLE_H_INCLUDED
 
 #include <utility>
-#include <archie/utils/alias.h>
+#include <archie/utils/meta/alias.h>
 #include <archie/utils/meta/number.h>
 #include <archie/utils/variadic.h>
 #include <archie/utils/meta/eat.h>
@@ -44,7 +44,7 @@ namespace utils {
     template <typename Func>
     decltype(auto) for_each(Func&& func) {
       auto functor = [f = std::forward<Func>(func)](auto&&... xs) {
-        (void)Alias<int[]>{
+        (void)meta::alias<int[]>{
             (std::forward<decltype(f)>(f)(std::forward<decltype(xs)>(xs)),
              0)...};
         return std::move(f);
