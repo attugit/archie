@@ -3,6 +3,7 @@
 
 #include <archie/utils/meta/type_list.h>
 #include <archie/utils/fused/nth.h>
+#include <archie/utils/mover.h>
 #include <utility>
 #include <array>
 
@@ -14,20 +15,20 @@ namespace utils {
     struct tuple {
     private:
       template <typename... Us>
-      static decltype(auto) make_storage(Us&&... args) {
+      static decltype(auto) make_storage(move_t<Us>... args) {
         return [args...](auto&& func) mutable -> decltype(auto) {
           return std::forward<decltype(func)>(func)(args...);
         };
       }
-      using storage_type = decltype(make_storage(std::declval<Ts>()...));
+      using storage_type = decltype(make_storage<Ts...>(std::declval<Ts>()...));
       mutable storage_type storage;
 
     public:
       using type_list = meta::type_list<Ts...>;
 
-      template <typename... Up>
-      constexpr explicit tuple(Up&&... args)
-          : storage(make_storage(std::forward<Up>(args)...)) {}
+      template <typename... Us>
+      constexpr explicit tuple(Us&&... args)
+          : storage(make_storage<Us...>(std::forward<Us>(args)...)) {}
 
       constexpr tuple() : tuple(Ts {}...) {}
 

@@ -14,13 +14,11 @@ using std::tuple;
 #endif
 
 #include <gtest/gtest.h>
+#include <memory>
 
 namespace {
 
-struct tuple_test : ::testing::Test {
-  void SetUp() {}
-  void TearDown() {}
-};
+struct tuple_test : ::testing::Test {};
 
 TEST_F(tuple_test, canDefaultConstruct) {
   static_assert(
@@ -29,6 +27,16 @@ TEST_F(tuple_test, canDefaultConstruct) {
 
   // EXPECT_EQ(3u, t.size());
   EXPECT_LE(sizeof(unsigned) + sizeof(double) + sizeof(char), sizeof(t));
+}
+
+TEST_F(tuple_test, canDefaultConstructTupleWithUncopyableElement) {
+  static_assert(std::is_default_constructible<
+                    tuple<unsigned, std::unique_ptr<double>, char>>::value,
+                "");
+
+  auto t = tuple<unsigned, std::unique_ptr<double>, char>{};
+  EXPECT_LE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char),
+            sizeof(t));
 }
 
 TEST_F(tuple_test, canConstruct) {
