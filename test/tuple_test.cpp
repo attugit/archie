@@ -47,6 +47,16 @@ TEST_F(tuple_test, canConstruct) {
   EXPECT_LE(sizeof(unsigned) + sizeof(double) + sizeof(char), sizeof(t));
 }
 
+TEST_F(tuple_test, canConstructTupleWithUncopyableElement) {
+  static_assert(std::is_constructible <
+                    tuple<unsigned, std::unique_ptr<double>, char>,
+                unsigned, std::unique_ptr<double>&&, char > ::value, "");
+  auto t = tuple<unsigned, std::unique_ptr<double>, char>(
+      1u, std::make_unique<double>(2.0), '3');
+  EXPECT_LE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char),
+            sizeof(t));
+}
+
 TEST_F(tuple_test, makeTupleTakesElementsByValue) {
   unsigned a = 1u;
   double b = 2.0;
