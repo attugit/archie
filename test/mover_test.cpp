@@ -1,9 +1,9 @@
-#include <archie/utils/mover.h>
+#include <archie/utils/fused/mover.h>
 
 #include <type_traits>
 
 namespace {
-namespace au = archie::utils;
+namespace fused = archie::utils::fused;
 
 struct empty {};
 struct def {
@@ -21,10 +21,12 @@ struct noncopyable {
   noncopyable(noncopyable const&) = delete;
 };
 
-static_assert(std::is_same<au::move_t<int>, int>::value, "");
-static_assert(std::is_same<au::move_t<empty>, empty>::value, "");
-static_assert(std::is_same<au::move_t<def>, def>::value, "");
-static_assert(std::is_same<au::move_t<nondef>, au::mover<nondef>>::value, "");
+static_assert(std::is_same<fused::move_t<int>, int>::value, "");
+static_assert(std::is_same<fused::move_t<empty>, empty>::value, "");
+static_assert(std::is_same<fused::move_t<def>, def>::value, "");
+static_assert(std::is_same<fused::move_t<nondef>, fused::mover<nondef>>::value,
+              "");
 static_assert(
-    std::is_same<au::move_t<noncopyable>, au::mover<noncopyable>>::value, "");
+    std::is_same<fused::move_t<noncopyable>, fused::mover<noncopyable>>::value,
+    "");
 }
