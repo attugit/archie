@@ -5,7 +5,7 @@
 #include <archie/utils/alias.h>
 #include <archie/utils/meta/number.h>
 #include <archie/utils/variadic.h>
-#include <archie/utils/eat.h>
+#include <archie/utils/meta/eat.h>
 
 namespace archie {
 namespace utils {
@@ -61,7 +61,7 @@ namespace utils {
       template <std::size_t n, std::size_t... ignore>
       struct get<n, std::index_sequence<ignore...>> {
         template <typename Nth, typename...>
-        constexpr decltype(auto) operator()(eat<meta::number<ignore>>...,
+        constexpr decltype(auto) operator()(meta::eat<meta::number<ignore>>...,
                                             Nth&& nth, ...) const {
           return std::forward<Nth>(nth);
         }
@@ -70,7 +70,8 @@ namespace utils {
     template <typename... Ts>
     struct skip {
       template <typename Up>
-      static constexpr decltype(auto) get(eat<Ts>..., Up&& u, ...) noexcept {
+      static constexpr decltype(auto) get(meta::eat<Ts>..., Up&& u,
+                                          ...) noexcept {
         return std::forward<Up>(u);
       }
     };

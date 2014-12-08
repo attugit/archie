@@ -2,7 +2,7 @@
 #define ARCHIE_UTILS_META_AT_H_INCLUDED
 
 #include <utility>
-#include <archie/utils/eat.h>
+#include <archie/utils/meta/eat.h>
 #include <archie/utils/meta/returns.h>
 #include <archie/utils/meta/number.h>
 
