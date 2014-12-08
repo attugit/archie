@@ -95,7 +95,7 @@ TEST_F(tuple_test, makeTupleTakesElementsByRValue) {
 }
 
 TEST_F(tuple_test, canUseGetByIdToRead) {
-  auto t = make_tuple(1u, 2.0, '3');
+  auto t = test::make_tuple(1u, 2.0, '3');
 
   ASSERT_EQ(3u, tuple_size<decltype(t)>::value);
 
@@ -110,7 +110,7 @@ TEST_F(tuple_test, canUseGetByIdToRead) {
 }
 
 TEST_F(tuple_test, canUseGetByIdToWrite) {
-  auto t = make_tuple(1u, 2.0, '3');
+  auto t = test::make_tuple(1u, std::make_unique<double>(2.0), '3');
 
   ASSERT_EQ(3u, tuple_size<decltype(t)>::value);
 
@@ -122,6 +122,10 @@ TEST_F(tuple_test, canUseGetByIdToWrite) {
   EXPECT_EQ(4u, x);
   get<0>(t) = 5u;
   EXPECT_EQ(5u, x);
+
+  ASSERT_EQ(2.0, *get<1>(t));
+  get<1>(t) = std::move(std::make_unique<double>(3.0));
+  EXPECT_EQ(3.0, *get<1>(t));
 }
 
 TEST_F(tuple_test, canCopyConstruct) {
