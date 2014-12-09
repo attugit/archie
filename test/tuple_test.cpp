@@ -257,4 +257,13 @@ TEST_F(tuple_test, canLexicographicalCompareLess) {
   EXPECT_TRUE(t1 < t5);
   EXPECT_FALSE(t5 < t1);
 }
+
+TEST_F(tuple_test, canAssignSimilarTuples) {
+  auto t = test::make_tuple(1ul, 2ul, 3ul);
+  t = test::make_tuple(4, 5, 6);
+
+  EXPECT_EQ(4u, test::get<0>(t));
+  EXPECT_EQ(5u, test::get<1>(t));
+  EXPECT_EQ(6u, test::get<2>(t));
+}
 }

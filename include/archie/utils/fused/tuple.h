@@ -37,6 +37,9 @@ namespace utils {
       tuple& operator=(tuple const&);
       tuple& operator=(tuple&&) = default;
 
+      template <typename... Us>
+      tuple& operator=(tuple<Us...> const&);
+
       bool operator==(tuple const&) const;
       bool operator<(tuple const&) const;
 
@@ -105,8 +108,8 @@ namespace utils {
       template <std::size_t n, std::size_t... idx>
       struct tuple_internals<n, std::index_sequence<idx...>> {
         using alias = std::array<bool, sizeof...(idx)+1>;
-        template <typename... Ts>
-        static void copy_assign(tuple<Ts...>& lhs, tuple<Ts...> const& rhs) {
+        template <typename... Ts, typename... Us>
+        static void copy_assign(tuple<Ts...>& lhs, tuple<Us...> const& rhs) {
           (void)alias{false,
                       (fused::get<idx>(lhs) = fused::get<idx>(rhs), false)...};
         }
@@ -123,6 +126,14 @@ namespace utils {
 
     template <typename... Ts>
     tuple<Ts...>& tuple<Ts...>::operator=(tuple<Ts...> const& orig) {
+      detail::tuple_internals<sizeof...(Ts)>::copy_assign(*this, orig);
+      return *this;
+    }
+
+    template <typename... Ts>
+    template <typename... Us>
+    tuple<Ts...>& tuple<Ts...>::operator=(tuple<Us...> const& orig) {
+      static_assert(sizeof...(Ts) <= sizeof...(Us), "");
       detail::tuple_internals<sizeof...(Ts)>::copy_assign(*this, orig);
       return *this;
     }
