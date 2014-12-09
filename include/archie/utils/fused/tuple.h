@@ -17,7 +17,7 @@ namespace utils {
       template <typename... Us>
       static decltype(auto) make_storage(move_t<Us>... args) {
         return [args...](auto&& func) mutable -> decltype(auto) {
-          return std::forward<decltype(func)>(func)(args...);
+          return std::forward<decltype(func)>(func)(static_cast<Us&>(args)...);
         };
       }
       using storage_type = decltype(make_storage<Ts...>(std::declval<Ts>()...));

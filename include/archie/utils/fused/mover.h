@@ -16,20 +16,7 @@ namespace utils {
       mover(mover&&) = default;
       mover(mover const& other) = default;
       mover(mover& other) : value(std::move(other.value)) {}
-      mover& operator=(const_reference v) {
-        value = v;
-        return *this;
-      }
-      mover& operator=(value_type&& v) {
-        value = std::move(v);
-        return *this;
-      }
-      operator const_reference() const { return value; }
       operator reference() { return value; }
-      decltype(auto) operator*() const { return value.operator*(); }
-      decltype(auto) operator*() { return value.operator*(); }
-      decltype(auto) operator -> () const { return value.operator->(); }
-      decltype(auto) operator -> () { return value.operator->(); }
       value_type value;
     };
 
