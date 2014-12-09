@@ -8,16 +8,16 @@ namespace utils {
   namespace fused {
     template <typename Tp>
     struct mover {
-      using value_type = Tp;
-      using reference = Tp&;
-      using const_reference = Tp const&;
-      mover(const_reference v) : value(v) {}
-      mover(value_type&& v) : value(std::move(v)) {}
+      using value_type = std::decay_t<Tp>;
+      using reference = value_type&;
+      template <typename Up>
+      mover(Up&& u)
+          : value(std::forward<Up>(u)) {}
       mover(mover&&) = default;
-      mover(mover const& other) = default;
-      mover(mover& other) : value(std::move(other.value)) {}
+      mover(mover const&) = default;
+      mover(mover& other) : value(std::forward<Tp>(other.value)) {}
       operator reference() { return value; }
-      value_type value;
+      Tp value;
     };
 
     template <typename Tp>
