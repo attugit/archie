@@ -20,7 +20,8 @@ namespace utils {
           return std::forward<decltype(func)>(func)(static_cast<Us&>(args)...);
         };
       }
-      using storage_type = decltype(make_storage<Ts...>(std::declval<Ts>()...));
+      using storage_type = decltype(
+          make_storage<std::remove_reference_t<Ts>...>(std::declval<Ts>()...));
       mutable storage_type storage;
 
     public:
@@ -28,7 +29,8 @@ namespace utils {
 
       template <typename... Us>
       constexpr explicit tuple(Us&&... args)
-          : storage(make_storage<Us...>(std::forward<Us>(args)...)) {}
+          : storage(make_storage<std::remove_reference_t<Us>...>(
+                std::forward<Us>(args)...)) {}
 
       constexpr tuple() : tuple(Ts {}...) {}
 
@@ -58,7 +60,7 @@ namespace utils {
 
     template <typename... Ts>
     decltype(auto) make_tuple(Ts&&... args) {
-      return tuple<Ts...>(std::forward<Ts>(args)...);
+      return tuple<std::remove_reference_t<Ts>...>(std::forward<Ts>(args)...);
     }
 
     template <std::size_t N, typename Tp>
