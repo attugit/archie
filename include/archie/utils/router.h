@@ -36,10 +36,10 @@ namespace utils {
   struct isInput : std::is_same<ArchiveType<Archive>, input> {};
 
   template <typename Archive>
-  struct isOutputArchive : meta::And<isArchive<Archive>, isOutput<Archive>> {};
+  struct isOutputArchive : meta::all<isArchive<Archive>, isOutput<Archive>> {};
 
   template <typename Archive>
-  struct isInputArchive : meta::And<isArchive<Archive>, isInput<Archive>> {};
+  struct isInputArchive : meta::all<isArchive<Archive>, isInput<Archive>> {};
 
   using Byte = std::uint8_t;
 
@@ -54,21 +54,21 @@ namespace utils {
       using SelfType = BufferRange<Tag>;
 
       template <typename Tp,
-                meta::RequiresAll<std::is_integral<Tp>, isOutput<SelfType>>...>
+                meta::requires_all<std::is_integral<Tp>, isOutput<SelfType>>...>
       void push_back(Tp const& tp) {
         *((Tp*)begin()) = tp;
         advance_begin(sizeof(Tp));
       }
 
       template <typename Tp,
-                meta::RequiresAll<std::is_integral<Tp>, isInput<SelfType>>...>
+                meta::requires_all<std::is_integral<Tp>, isInput<SelfType>>...>
       void pop_front(Tp& tp) {
         tp = *((Tp const*)begin());
         advance_begin(sizeof(Tp));
       }
 
       template <typename Tp,
-                meta::RequiresAll<std::is_integral<Tp>, isInput<SelfType>>...>
+                meta::requires_all<std::is_integral<Tp>, isInput<SelfType>>...>
       Tp pop() {
         auto tp = Tp{};
         pop_front(tp);
@@ -105,19 +105,19 @@ namespace utils {
         : Router(std::forward<Up>(up), 0) {}
 
     template <typename Up,
-              meta::RequiresAll<std::is_integral<Up>, isOutput<BuffType>>...>
+              meta::requires_all<std::is_integral<Up>, isOutput<BuffType>>...>
     void push_back(Up const& up) {
       buffer().push_back(up);
     }
 
     template <typename Up,
-              meta::RequiresAll<std::is_integral<Up>, isInput<BuffType>>...>
+              meta::requires_all<std::is_integral<Up>, isInput<BuffType>>...>
     void pop_front(Up& up) {
       buffer().pop_front(up);
     }
 
     template <typename Up,
-              meta::RequiresAll<std::is_integral<Up>, isInput<BuffType>>...>
+              meta::requires_all<std::is_integral<Up>, isInput<BuffType>>...>
     Up pop() {
       return buffer().template pop<Up>();
     }
@@ -135,8 +135,8 @@ namespace utils {
   using Reader = Router<RawBuffer::InputRange>;
 
   template <typename Tp, typename Archive,
-            meta::RequiresAll<isInputArchive<Archive>,
-                              std::is_default_constructible<Tp>>...>
+            meta::requires_all<isInputArchive<Archive>,
+                               std::is_default_constructible<Tp>>...>
   Tp deserialize(Archive& ar) {
     auto tp = Tp{};
     serialize(ar, tp);
@@ -145,22 +145,23 @@ namespace utils {
 
   template <
       typename Archive, typename Tp,
-      meta::RequiresAll<isOutputArchive<Archive>, std::is_integral<Tp>>...>
+      meta::requires_all<isOutputArchive<Archive>, std::is_integral<Tp>>...>
   Archive& operator&(Archive& ar, Tp const& tp) {
     ar.push_back(tp);
     return ar;
   }
 
-  template <typename Archive, typename Tp,
-            meta::RequiresAll<isInputArchive<Archive>, std::is_integral<Tp>>...>
+  template <
+      typename Archive, typename Tp,
+      meta::requires_all<isInputArchive<Archive>, std::is_integral<Tp>>...>
   Archive& operator&(Archive& ar, Tp& tp) {
     ar.pop_front(tp);
     return ar;
   }
 
-  template <
-      typename Archive, typename Tp,
-      meta::RequiresAll<isArchive<Archive>, fusion::traits::is_sequence<Tp>>...>
+  template <typename Archive, typename Tp,
+            meta::requires_all<isArchive<Archive>,
+                               fusion::traits::is_sequence<Tp>>...>
   Archive& operator&(Archive& ar, Tp& tp) {
     auto do_serialize = [&ar](auto&& tp) { ar& tp; };
     fusion::for_each(tp, do_serialize);
@@ -168,7 +169,7 @@ namespace utils {
   }
 
   template <typename Archive, typename Tp, typename Alloc,
-            meta::Requires<isOutputArchive<Archive>>...>
+            meta::requires<isOutputArchive<Archive>>...>
   Archive& operator&(Archive& ar, std::vector<Tp, Alloc> const& vec) {
     ar& vec.size();
     for (auto&& tp : vec) ar& tp;
@@ -176,14 +177,14 @@ namespace utils {
   }
 
   template <typename Archive, typename Tp, typename Alloc,
-            meta::Requires<isInputArchive<Archive>>...>
+            meta::requires<isInputArchive<Archive>>...>
   Archive& operator&(Archive& ar, std::vector<Tp, Alloc>& vec) {
     vec.resize(deserialize<typename std::vector<Tp, Alloc>::size_type>(ar));
     for (auto&& tp : vec) ar& tp;
     return ar;
   }
 
-  template <typename Archive, meta::Requires<isOutputArchive<Archive>>...>
+  template <typename Archive, meta::requires<isOutputArchive<Archive>>...>
   Archive& operator&(Archive& ar, RawBuffer const& buff) {
     ar& buff.size();
     auto it = ar.buffer().begin();
@@ -191,7 +192,7 @@ namespace utils {
     return ar;
   }
 
-  template <typename Archive, meta::Requires<isInputArchive<Archive>>...>
+  template <typename Archive, meta::requires<isInputArchive<Archive>>...>
   Archive& operator&(Archive& ar, RawBuffer& buff) {
     buff.resize(deserialize<RawBuffer::size_type>(ar));
     auto it = ar.buffer().begin();

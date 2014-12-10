@@ -11,49 +11,40 @@ namespace utils {
     using Boolean = std::integral_constant<bool, B>;
 
     template <typename... Conditions>
-    using And = std::__and_<Conditions...>;
+    using all = std::__and_<Conditions...>;
 
     template <typename... Conditions>
-    using All = And<Conditions...>;
-
-    template <typename... Conditions>
-    using Or = std::__or_<Conditions...>;
-
-    template <typename... Conditions>
-    using Any = Or<Conditions...>;
+    using any = std::__or_<Conditions...>;
 
     namespace detail {
       template <typename Condition>
-      struct Not {
+      struct __not_ {
         using type = Boolean<!Condition::value>;
       };
 
       template <typename... Conditions>
-      struct None {
-        using type = Boolean<detail::Not<Any<Conditions...>>::type::value>;
+      struct none {
+        using type = Boolean<detail::__not_<any<Conditions...>>::type::value>;
       };
 
       struct enabler final : std::true_type {};
     }
 
-    template <typename Condition>
-    struct Not : public detail::Not<Condition>::type {};
-
     template <typename... Conditions>
-    struct None : public detail::None<Conditions...>::type {};
+    struct none : public detail::none<Conditions...>::type {};
 
     template <typename Condition>
-    using Requires =
+    using requires =
         typename std::enable_if<Condition::value, detail::enabler>::type;
 
     template <typename... Conditions>
-    using RequiresAll = Requires<All<Conditions...>>;
+    using requires_all = requires<all<Conditions...>>;
 
     template <typename... Conditions>
-    using RequiresAny = Requires<Any<Conditions...>>;
+    using requires_any = requires<any<Conditions...>>;
 
     template <typename... Conditions>
-    using RequiresNone = Requires<None<Conditions...>>;
+    using requires_none = requires<none<Conditions...>>;
   }
 }
 }

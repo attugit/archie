@@ -2,12 +2,11 @@
 #include <gtest/gtest.h>
 #include <type_traits>
 
-using archie::utils::meta::Requires;
+using archie::utils::meta::requires;
 using archie::utils::meta::Boolean;
-using archie::utils::meta::All;
-using archie::utils::meta::Any;
-using archie::utils::meta::None;
-using archie::utils::meta::Not;
+using archie::utils::meta::all;
+using archie::utils::meta::any;
+using archie::utils::meta::none;
 
 struct requires_test : public ::testing::Test {};
 
@@ -29,35 +28,30 @@ TEST_F(requires_test, canUseBoolean) {
 }
 
 TEST_F(requires_test, canUseAll) {
-  static_assert(All<std::is_integral<int>>::value, "");
-  static_assert(All<std::is_integral<int>, std::is_unsigned<unsigned>>::value,
+  static_assert(all<std::is_integral<int>>::value, "");
+  static_assert(all<std::is_integral<int>, std::is_unsigned<unsigned>>::value,
                 "");
-  static_assert(!All<std::is_integral<int>, std::is_unsigned<int>>::value, "");
+  static_assert(!all<std::is_integral<int>, std::is_unsigned<int>>::value, "");
 }
 
 TEST_F(requires_test, canUseAny) {
-  static_assert(Any<std::is_integral<int>>::value, "");
-  static_assert(!Any<std::is_integral<float>>::value, "");
-  static_assert(Any<std::is_integral<int>, std::is_unsigned<unsigned>>::value,
+  static_assert(any<std::is_integral<int>>::value, "");
+  static_assert(!any<std::is_integral<float>>::value, "");
+  static_assert(any<std::is_integral<int>, std::is_unsigned<unsigned>>::value,
                 "");
-  static_assert(Any<std::is_integral<int>, std::is_unsigned<int>>::value, "");
-  static_assert(!Any<std::is_integral<float>, std::is_unsigned<int>>::value,
+  static_assert(any<std::is_integral<int>, std::is_unsigned<int>>::value, "");
+  static_assert(!any<std::is_integral<float>, std::is_unsigned<int>>::value,
                 "");
 }
 
 TEST_F(requires_test, canUseNone) {
-  static_assert(!None<std::is_integral<int>>::value, "");
-  static_assert(None<std::is_integral<float>>::value, "");
-  static_assert(!None<std::is_integral<int>, std::is_unsigned<unsigned>>::value,
+  static_assert(!none<std::is_integral<int>>::value, "");
+  static_assert(none<std::is_integral<float>>::value, "");
+  static_assert(!none<std::is_integral<int>, std::is_unsigned<unsigned>>::value,
                 "");
-  static_assert(!None<std::is_integral<int>, std::is_unsigned<int>>::value, "");
-  static_assert(None<std::is_integral<float>, std::is_unsigned<int>>::value,
+  static_assert(!none<std::is_integral<int>, std::is_unsigned<int>>::value, "");
+  static_assert(none<std::is_integral<float>, std::is_unsigned<int>>::value,
                 "");
-}
-
-TEST_F(requires_test, canUseNot) {
-  static_assert(!Not<std::is_integral<int>>::value, "");
-  static_assert(Not<std::is_integral<float>>::value, "");
 }
 
 TEST_F(requires_test, canUseRequires) {
