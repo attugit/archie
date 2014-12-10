@@ -77,9 +77,8 @@ namespace utils {
 
     template <typename Tp, typename Up>
     decltype(auto) get(Up&& u) {
-      using type = std::decay_t<Up>;
-      using list = typename type::type_list;
-      return get<list::template index_of<Tp>::value>(std::forward<Up>(u));
+      using idx = typename std::decay_t<Up>::type_list::template index_of<Tp>;
+      return get<idx::value>(std::forward<Up>(u));
     }
 
     template <std::size_t I, typename Tp>
