@@ -147,6 +147,10 @@ TEST_F(tuple_test, canCopyConstruct) {
 
 TEST_F(tuple_test, canCopyAssign) {
   static_assert(
+      std::is_copy_assignable<
+          test::tuple<unsigned, std::unique_ptr<double>, char>>::value,
+      "");
+  static_assert(
       std::is_copy_assignable<test::tuple<unsigned, double, char>>::value, "");
   auto orig = test::tuple<unsigned, double, char>(1u, 2.0, '3');
   auto copy = test::tuple<unsigned, double, char>(2u, 4.0, '6');
@@ -169,6 +173,10 @@ TEST_F(tuple_test, canCopyAssign) {
 
 TEST_F(tuple_test, canMoveConstruct) {
   static_assert(
+      std::is_move_constructible<
+          test::tuple<unsigned, std::unique_ptr<double>, char>>::value,
+      "");
+  static_assert(
       std::is_move_constructible<test::tuple<unsigned, double, char>>::value,
       "");
   auto orig = test::tuple<unsigned, double, char>(1u, 2.0, '3');
@@ -189,6 +197,10 @@ TEST_F(tuple_test, canMoveConstruct) {
 }
 
 TEST_F(tuple_test, canMoveAssign) {
+  static_assert(
+      std::is_move_assignable<
+          test::tuple<unsigned, std::unique_ptr<double>, char>>::value,
+      "");
   static_assert(
       std::is_move_assignable<test::tuple<unsigned, double, char>>::value, "");
   auto orig = test::tuple<unsigned, double, char>(1u, 2.0, '3');
@@ -289,6 +301,9 @@ TEST_F(tuple_test, canStoreValuesInTuple) {
 }
 
 TEST_F(tuple_test, canStoreReferencesInTuple) {
+  static_assert(std::is_constructible<test::tuple<unsigned, double, char&>,
+                                      unsigned, double, char&>::value,
+                "");
   unsigned a = 1u;
   double b = 2.0;
   char c = '3';
