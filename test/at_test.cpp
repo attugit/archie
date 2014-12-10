@@ -12,6 +12,8 @@ TEST_F(at_test, canUseAt) {
       "");
   static_assert(std::is_same<int, au::meta::at_t<1, char, int, float>>::value,
                 "");
+  static_assert(
+      std::is_same<int&, au::meta::at_t<1, unsigned, int&, char>>::value, "");
 }
 
 TEST_F(at_test, canUseAtMatch) {

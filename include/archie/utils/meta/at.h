@@ -18,8 +18,8 @@ namespace utils {
       template <typename... Ts>
       struct skip {
         template <typename Up>
-        static constexpr Up match(eat<Ts>..., Up u, ...) noexcept {
-          return u;
+        static constexpr Up match(eat<Ts>..., Up&& u, ...) noexcept {
+          return std::forward<Up>(u);
         }
 
         template <typename... Us>
