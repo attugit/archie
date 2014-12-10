@@ -4,11 +4,32 @@
 #include <archie/utils/meta/number.h>
 #include <archie/utils/meta/returns.h>
 #include <archie/utils/meta/at.h>
+#include <archie/utils/meta/inherit_all.h>
 #include <utility>
 
 namespace archie {
 namespace utils {
   namespace meta {
+    namespace detail {
+      template <typename Tp, std::size_t N>
+      struct element_index {};
+
+      template <std::size_t n, typename = std::make_index_sequence<n>>
+      struct index_table;
+
+      template <std::size_t n, std::size_t... idx>
+      struct index_table<n, std::index_sequence<idx...>> {
+        template <typename... Ts>
+        using type = inherit_all<element_index<Ts, idx>...>;
+      };
+
+      template <typename... Ts>
+      using build_index_table =
+          typename index_table<sizeof...(Ts)>::template type<Ts...>;
+
+      template <typename Tp, std::size_t N>
+      constexpr number<N> index_of(element_index<Tp, N>) noexcept;
+    }
 
     template <typename... Ts>
     struct type_list {
@@ -31,6 +52,10 @@ namespace utils {
 
       template <std::size_t I>
       using at_t = meta::at_t<I, Ts...>;
+
+      template <typename Up>
+      using index_of = decltype(detail::index_of<Up>(
+          std::declval<detail::build_index_table<Ts...>>()));
     };
   }
 }

@@ -114,4 +114,10 @@ TEST_F(meta_test, canTransform) {
                    uptrs>::value,
       "");
 }
+
+TEST_F(meta_test, canGetIndexOfListItem) {
+  using list = type_list<_3, _2, _1, _0>;
+  static_assert(list::index_of<_0>::value == 3, "");
+  static_assert(list::index_of<_1>::value == 2, "");
+}
 }

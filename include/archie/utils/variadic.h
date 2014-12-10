@@ -4,7 +4,7 @@
 #include <utility>
 #include <archie/utils/inspect.h>
 #include <archie/utils/meta/apply.h>
-#include <archie/utils/inherit_all.h>
+#include <archie/utils/meta/inherit_all.h>
 #include <archie/utils/meta/number.h>
 
 namespace archie {
@@ -22,7 +22,7 @@ namespace utils {
     template <std::size_t... Indexes>
     static constexpr decltype(auto) make_indexed_variadic(
         std::index_sequence<Indexes...>) {
-      return InheritAll<IndexedType<Ts, Indexes>...>{};
+      return meta::inherit_all<IndexedType<Ts, Indexes>...>{};
     }
 
     template <typename Tp, std::size_t Idx>
