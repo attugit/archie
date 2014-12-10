@@ -358,4 +358,13 @@ TEST_F(tuple_test, canTieElements) {
   EXPECT_EQ(8.0, b);
   EXPECT_EQ('9', c);
 }
+
+TEST_F(tuple_test, canUseTupleElement) {
+  using t = test::tuple<unsigned, std::unique_ptr<double>, char&>;
+  static_assert(std::is_same<test::tuple_element_t<0, t>, unsigned>::value, "");
+  static_assert(
+      std::is_same<test::tuple_element_t<1, t>, std::unique_ptr<double>>::value,
+      "");
+  static_assert(std::is_same<test::tuple_element_t<2, t>, char&>::value, "");
+}
 }

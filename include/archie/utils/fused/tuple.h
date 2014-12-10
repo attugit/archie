@@ -75,6 +75,17 @@ namespace utils {
       return tp.apply(f);
     }
 
+    template <std::size_t I, typename Tp>
+    struct tuple_element;
+
+    template <std::size_t I, typename... Ts>
+    struct tuple_element<I, tuple<Ts...>> {
+      using type = meta::at_t<I, Ts...>;
+    };
+
+    template <std::size_t I, typename Tp>
+    using tuple_element_t = typename tuple_element<I, Tp>::type;
+
     namespace detail {
 
       template <std::size_t...>
