@@ -12,7 +12,7 @@ namespace utils {
 
     template <typename Tp>
     using InspectCopyAssignable =
-        decltype(std::declval<Tp>() = std::declval<Tp const&>());
+        decltype(std::declval<Tp&>() = std::declval<Tp const&>());
 
     template <typename Tp>
     using InspectDataProperty = decltype(std::declval<Tp>().data);
