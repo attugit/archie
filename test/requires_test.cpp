@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <type_traits>
 
+namespace {
 using archie::utils::meta::requires;
 using archie::utils::meta::Boolean;
 using archie::utils::meta::all;
@@ -11,15 +12,15 @@ using archie::utils::meta::none;
 struct requires_test : public ::testing::Test {};
 
 struct test {
-  /*  template <typename T, Requires<std::is_unsigned<T>>...>
-    int func(T) {
-      return 0;
-    }
+  template <typename T, requires<std::is_unsigned<T>>...>
+  int func(T) {
+    return 0;
+  }
 
-    template <typename T, Requires<std::is_floating_point<T>>...>
-    int func(T) {
-      return 1;
-    }*/
+  template <typename T, requires<std::is_floating_point<T>>...>
+  int func(T) {
+    return 1;
+  }
 };
 
 TEST_F(requires_test, canUseBoolean) {
@@ -55,7 +56,8 @@ TEST_F(requires_test, canUseNone) {
 }
 
 TEST_F(requires_test, canUseRequires) {
-  //  unsigned a = 0;
-  //  test t;
-  // EXPECT_EQ(0, t.func(a));
+  test t;
+  EXPECT_EQ(0, t.func(0u));
+  EXPECT_EQ(1, t.func(0.0));
+}
 }
