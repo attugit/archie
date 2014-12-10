@@ -1,13 +1,13 @@
-#include "archie/utils/requires.h"
+#include "archie/utils/meta/requires.h"
 #include <gtest/gtest.h>
 #include <type_traits>
 
-using archie::utils::Requires;
-using archie::utils::Boolean;
-using archie::utils::All;
-using archie::utils::Any;
-using archie::utils::None;
-using archie::utils::Not;
+using archie::utils::meta::Requires;
+using archie::utils::meta::Boolean;
+using archie::utils::meta::All;
+using archie::utils::meta::Any;
+using archie::utils::meta::None;
+using archie::utils::meta::Not;
 
 struct requires_test : public ::testing::Test {};
 
