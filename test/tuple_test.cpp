@@ -367,4 +367,20 @@ TEST_F(tuple_test, canUseTupleElement) {
       "");
   static_assert(std::is_same<test::tuple_element_t<2, t>, char&>::value, "");
 }
+
+TEST_F(tuple_test, canGetElementByType) {
+  auto t = test::make_tuple(1u, 2.0, '3');
+
+  EXPECT_EQ(1u, test::get<unsigned>(t));
+  EXPECT_EQ(2.0, test::get<double>(t));
+  EXPECT_EQ('3', test::get<char>(t));
+
+  test::get<unsigned>(t) = 4u;
+  test::get<double>(t) = 5.0;
+  test::get<char>(t) = '6';
+
+  EXPECT_EQ(4u, test::get<unsigned>(t));
+  EXPECT_EQ(5.0, test::get<double>(t));
+  EXPECT_EQ('6', test::get<char>(t));
+}
 }
