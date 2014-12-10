@@ -23,6 +23,7 @@ namespace utils {
     template <typename Tp>
     using move_t = typename std::conditional<
         std::is_move_constructible<Tp>::value&&(
+            std::is_reference<Tp>::value ||
             !std::is_copy_constructible<Tp>::value ||
             !std::has_trivial_copy_constructor<Tp>::value),
         mover<Tp>, Tp>::type;

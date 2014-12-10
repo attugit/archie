@@ -72,7 +72,7 @@ TEST_F(tuple_test, makeTupleTakesElementsByValue) {
   double b = 2.0;
   char c = '3';
 
-  auto t = make_tuple(a, b, c);
+  auto t = test::make_tuple(a, b, c);
 
   ASSERT_EQ(3u, tuple_size<decltype(t)>::value);
 
@@ -265,5 +265,13 @@ TEST_F(tuple_test, canAssignSimilarTuples) {
   EXPECT_EQ(4u, test::get<0>(t));
   EXPECT_EQ(5u, test::get<1>(t));
   EXPECT_EQ(6u, test::get<2>(t));
+}
+
+TEST_F(tuple_test, canStoreReferencesInTuple) {
+  unsigned a = 1u;
+
+  auto t = test::tuple<unsigned&>(a);
+
+  EXPECT_EQ(&a, &test::get<0>(t));
 }
 }
