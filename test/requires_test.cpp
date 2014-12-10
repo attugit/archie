@@ -4,7 +4,7 @@
 
 namespace {
 using archie::utils::meta::requires;
-using archie::utils::meta::Boolean;
+using archie::utils::meta::boolean;
 using archie::utils::meta::all;
 using archie::utils::meta::any;
 using archie::utils::meta::none;
@@ -24,8 +24,8 @@ struct test {
 };
 
 TEST_F(requires_test, canUseBoolean) {
-  static_assert(Boolean<true>::value, "");
-  static_assert(!Boolean<false>::value, "");
+  static_assert(boolean<true>::value, "");
+  static_assert(!boolean<false>::value, "");
 }
 
 TEST_F(requires_test, canUseAll) {

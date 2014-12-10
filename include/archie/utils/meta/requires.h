@@ -8,7 +8,7 @@ namespace archie {
 namespace utils {
   namespace meta {
     template <bool B>
-    using Boolean = std::integral_constant<bool, B>;
+    using boolean = std::integral_constant<bool, B>;
 
     template <typename... Conditions>
     using all = std::__and_<Conditions...>;
@@ -19,12 +19,12 @@ namespace utils {
     namespace detail {
       template <typename Condition>
       struct __not_ {
-        using type = Boolean<!Condition::value>;
+        using type = boolean<!Condition::value>;
       };
 
       template <typename... Conditions>
       struct none {
-        using type = Boolean<detail::__not_<any<Conditions...>>::type::value>;
+        using type = boolean<detail::__not_<any<Conditions...>>::type::value>;
       };
 
       struct enabler final : std::true_type {};
