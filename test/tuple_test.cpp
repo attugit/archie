@@ -313,4 +313,34 @@ TEST_F(tuple_test, canStoreReferencesInTuple) {
   EXPECT_EQ(8.0, b);
   EXPECT_EQ('9', c);
 }
+
+TEST_F(tuple_test, canTieElements) {
+  unsigned a = 1u;
+  double b = 2.0;
+  char c = '3';
+
+  auto t = test::tie(a, b, c);
+
+  ASSERT_EQ(1u, test::get<0>(t));
+  ASSERT_EQ(2.0, test::get<1>(t));
+  ASSERT_EQ('3', test::get<2>(t));
+
+  EXPECT_EQ(&a, &test::get<0>(t));
+  EXPECT_EQ(&b, &test::get<1>(t));
+  EXPECT_EQ(&c, &test::get<2>(t));
+
+  test::get<0>(t) = 4u;
+  test::get<1>(t) = 5.0;
+  test::get<2>(t) = '6';
+
+  EXPECT_EQ(4u, a);
+  EXPECT_EQ(5.0, b);
+  EXPECT_EQ('6', c);
+
+  t = test::make_tuple(7u, 8.0, '9');
+
+  EXPECT_EQ(7u, a);
+  EXPECT_EQ(8.0, b);
+  EXPECT_EQ('9', c);
+}
 }

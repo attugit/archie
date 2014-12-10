@@ -62,6 +62,11 @@ namespace utils {
       return tuple<std::remove_reference_t<Ts>...>(std::forward<Ts>(args)...);
     }
 
+    template <typename... Ts>
+    decltype(auto) tie(Ts&... args) {
+      return tuple<Ts&...>(args...);
+    }
+
     template <std::size_t N, typename Tp>
     decltype(auto) get(Tp&& tp) {
       auto f = [](auto&&... args) -> decltype(auto) {
