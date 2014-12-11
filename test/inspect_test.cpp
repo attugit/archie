@@ -36,3 +36,26 @@ static_assert(au::is_copy_assignable<vec_t>::value, "");
 static_assert(au::is_copy_assignable<pair_t>::value, "");
 static_assert(au::is_copy_assignable<int>::value, "");
 static_assert(!au::is_copy_assignable<ptr_t>::value, "");
+
+namespace {
+struct callable {
+  void operator()(unsigned&, double&, char&) {}
+  void operator()(const unsigned&, const char&) {}
+  void operator()(unsigned) {}
+};
+
+static_assert(!au::is_callable<callable, unsigned, double, char>::value, "");
+static_assert(!au::is_callable<callable, const unsigned&, const double&,
+                               const char&>::value,
+              "");
+static_assert(
+    !au::is_callable<callable, unsigned&, const double&, char&>::value, "");
+static_assert(au::is_callable<callable, unsigned&, double&, char&>::value, "");
+
+static_assert(au::is_callable<callable, const unsigned&, const char&>::value,
+              "");
+static_assert(!au::is_callable<callable, double, std::string&>::value, "");
+
+static_assert(au::is_callable<callable, unsigned>::value, "");
+static_assert(!au::is_callable<callable, std::string>::value, "");
+}

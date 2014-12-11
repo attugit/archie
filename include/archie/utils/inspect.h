@@ -16,6 +16,9 @@ namespace utils {
 
     template <typename Tp>
     using InspectDataProperty = decltype(std::declval<Tp>().data);
+
+    template <typename F, typename... Ts>
+    using InspectCallable = decltype(std::declval<F>()(std::declval<Ts>()...));
   }
   template <typename Tp>
   using has_reserve =
@@ -34,6 +37,10 @@ namespace utils {
   template <typename Tp>
   using has_data_property =
       meta::has_member<detail::InspectDataProperty, meta::type_list<Tp>>;
+
+  template <typename F, typename... Ts>
+  using is_callable =
+      meta::has_member<detail::InspectCallable, meta::type_list<F, Ts...>>;
 }
 }
 
