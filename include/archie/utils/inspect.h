@@ -18,20 +18,22 @@ namespace utils {
     using InspectDataProperty = decltype(std::declval<Tp>().data);
   }
   template <typename Tp>
-  using has_reserve = meta::has_member<detail::InspectReserve, Tp>;
+  using has_reserve =
+      meta::has_member<detail::InspectReserve, meta::type_list<Tp>>;
 
   template <typename Tp>
   using is_copy_assignable =
-      meta::has_member<detail::InspectCopyAssignable, Tp>;
+      meta::has_member<detail::InspectCopyAssignable, meta::type_list<Tp>>;
 
   template <typename Tp>
   using ValueType = typename Tp::value_type;
 
   template <typename Tp>
-  using has_value_type = meta::has_member<ValueType, Tp>;
+  using has_value_type = meta::has_member<ValueType, meta::type_list<Tp>>;
 
   template <typename Tp>
-  using has_data_property = meta::has_member<detail::InspectDataProperty, Tp>;
+  using has_data_property =
+      meta::has_member<detail::InspectDataProperty, meta::type_list<Tp>>;
 }
 }
 
