@@ -6,9 +6,9 @@
 
 namespace traits = archie::utils::traits;
 
-// using vec_t = std::vector<int>;
-// using pair_t = std::pair<int, int>;
-// using ptr_t = std::unique_ptr<int>;
+using vec_t = std::vector<int>;
+using pair_t = std::pair<int, int>;
+using ptr_t = std::unique_ptr<int>;
 
 // struct TypeWithPublicData {
 //  int data;
@@ -32,10 +32,10 @@ namespace traits = archie::utils::traits;
 // static_assert(!au::has_data_property<TypeWithPrivateData>::value, "");
 // static_assert(!au::has_data_property<int>::value, "");
 
-// static_assert(au::is_copy_assignable<vec_t>::value, "");
-// static_assert(au::is_copy_assignable<pair_t>::value, "");
-// static_assert(au::is_copy_assignable<int>::value, "");
-// static_assert(!au::is_copy_assignable<ptr_t>::value, "");
+static_assert(traits::is_copy_assignable<vec_t>::value, "");
+static_assert(traits::is_copy_assignable<pair_t>::value, "");
+static_assert(traits::is_copy_assignable<int>::value, "");
+static_assert(!traits::is_copy_assignable<ptr_t>::value, "");
 
 namespace {
 struct callable {
