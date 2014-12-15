@@ -130,18 +130,22 @@ TEST_F(tuple_view_test, canSelectWithChangedOrder) {
   EXPECT_EQ(4u, fused::get<1>(view1));
 }
 
-/*
 TEST_F(tuple_view_test, canStoreItemManyTimes) {
   auto view = fused::select<0, 0, 1, 1, 2, 2>(t);
 
-  EXPECT_EQ(&fused::get<0>(t), &fused::get<0>(view));
-  EXPECT_EQ(&fused::get<0>(t), &fused::get<1>(view));
+  EXPECT_EQ(fused::get<0>(t), fused::get<0>(view));
+  EXPECT_EQ(fused::get<0>(t), fused::get<1>(view));
 
-  EXPECT_EQ(&fused::get<1>(t), &fused::get<2>(view));
-  EXPECT_EQ(&fused::get<1>(t), &fused::get<3>(view));
+  EXPECT_EQ(fused::get<1>(t), fused::get<2>(view));
+  EXPECT_EQ(fused::get<1>(t), fused::get<3>(view));
 
-  EXPECT_EQ(&fused::get<2>(t), &fused::get<4>(view));
-  EXPECT_EQ(&fused::get<2>(t), &fused::get<5>(view));
+  EXPECT_EQ(fused::get<2>(t), fused::get<4>(view));
+  EXPECT_EQ(fused::get<2>(t), fused::get<5>(view));
+
+  fused::get<2>(view) = 4.0;
+
+  EXPECT_EQ(4.0, fused::get<1>(t));
+  EXPECT_EQ(4.0, fused::get<3>(view));
 }
 
 TEST_F(tuple_view_test, canUseValueView) {
@@ -151,20 +155,22 @@ TEST_F(tuple_view_test, canUseValueView) {
   fused::value_view<unsigned> x = a;
   fused::value_view<unsigned> y = b;
 
-  EXPECT_EQ(&a, &x);
-  EXPECT_EQ(&b, &y);
+  EXPECT_EQ(a, x);
+  EXPECT_EQ(b, y);
 
   auto z = std::move(x);
   x = std::move(y);
   y = std::move(z);
 
-  EXPECT_EQ(&a, &y);
-  EXPECT_EQ(&b, &x);
+  ASSERT_NE(a, b);
+  EXPECT_EQ(a, y);
+  EXPECT_EQ(b, x);
 
   std::swap(x, y);
 
-  EXPECT_EQ(&a, &x);
-  EXPECT_EQ(&b, &y);
+  ASSERT_NE(a, b);
+  EXPECT_EQ(a, x);
+  EXPECT_EQ(b, y);
 }
 
 TEST_F(tuple_view_test, canUseTupleView) {
@@ -174,17 +180,25 @@ TEST_F(tuple_view_test, canUseTupleView) {
   fused::tuple_view<unsigned> x(a);
   fused::tuple_view<unsigned> y(b);
 
-  EXPECT_EQ(&a, &fused::get<0>(x));
-  EXPECT_EQ(&b, &fused::get<0>(y));
+  EXPECT_EQ(a, fused::get<0>(x));
+  EXPECT_EQ(b, fused::get<0>(y));
 
   auto z = std::move(x);
-  EXPECT_EQ(&a, &fused::get<0>(z));
-  x = std::move(y);
-  EXPECT_EQ(&b, &fused::get<0>(x));
-  y = std::move(z);
+  ASSERT_EQ(3u, a);
+  ASSERT_EQ(1u, b);
+  EXPECT_EQ(a, fused::get<0>(z));
 
-  //EXPECT_EQ(&a, &fused::get<0>(y));
-  //EXPECT_EQ(&b, &fused::get<0>(x));
+  x = std::move(y);
+  ASSERT_EQ(3u, a);
+  ASSERT_EQ(1u, b);
+  EXPECT_EQ(b, fused::get<0>(x));
+
+  y = std::move(z);
+  ASSERT_EQ(3u, a);
+  ASSERT_EQ(1u, b);
+
+  EXPECT_EQ(a, fused::get<0>(y));
+  EXPECT_EQ(b, fused::get<0>(x));
 }
 
 TEST_F(tuple_view_test, canStoreViewInContainer) {
@@ -204,5 +218,4 @@ TEST_F(tuple_view_test, canStoreViewInContainer) {
   EXPECT_EQ('3', fused::get<0>(vec[1]));
   EXPECT_EQ('4', fused::get<0>(vec[2]));
 }
-*/
 }

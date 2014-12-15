@@ -36,7 +36,7 @@ namespace utils {
       tuple(tuple&&) = default;
       tuple(tuple const&) = default;
       tuple& operator=(tuple const&);
-      tuple& operator=(tuple&&) = default;
+      tuple& operator=(tuple&&);
 
       template <typename... Us>
       tuple& operator=(tuple<Us...> const&);
@@ -136,6 +136,12 @@ namespace utils {
           (void)alias{false,
                       (fused::get<idx>(lhs) = fused::get<idx>(rhs), false)...};
         }
+        template <typename... Ts, typename... Us>
+        static void move_assign(tuple<Ts...>& lhs, tuple<Us...>&& rhs) {
+          (void)alias{false,
+                      (fused::get<idx>(lhs) = std::move(fused::get<idx>(rhs)),
+                       false)...};
+        }
         template <typename... Ts>
         static bool equal(tuple<Ts...> const& lhs, tuple<Ts...> const& rhs) {
           return tuple_recursion<idx...>::equal(lhs, rhs);
@@ -150,6 +156,13 @@ namespace utils {
     template <typename... Ts>
     tuple<Ts...>& tuple<Ts...>::operator=(tuple<Ts...> const& orig) {
       detail::tuple_internals<sizeof...(Ts)>::copy_assign(*this, orig);
+      return *this;
+    }
+
+    template <typename... Ts>
+    tuple<Ts...>& tuple<Ts...>::operator=(tuple<Ts...>&& orig) {
+      detail::tuple_internals<sizeof...(Ts)>::move_assign(*this,
+                                                          std::move(orig));
       return *this;
     }
 
