@@ -6,26 +6,14 @@ namespace utils {
   namespace fused {
 
     template <typename Tp>
-    struct value_view {
-      using type = std::decay_t<Tp>;
-      using reference = type&;
-      using const_reference = type const&;
-      value_view(type& ref) noexcept : ptr(&ref) {}
-      value_view(type&&) = delete;
-      value_view(value_view const&) noexcept = default;
-      value_view& operator=(value_view&&) noexcept = default;
-      value_view& operator=(value_view const&) noexcept = default;
-
+    struct value_view : std::reference_wrapper<Tp> {
+      using base_t = std::reference_wrapper<Tp>;
+      using base_t::base_t;
       template <typename Up>
       value_view& operator=(Up&& u) {
-        *ptr = u;
+        this->get() = u;
         return *this;
       }
-      operator const_reference() const { return *ptr; }
-      operator reference() { return *ptr; }
-
-    private:
-      type* ptr;
     };
 
     template <typename... Ts>
