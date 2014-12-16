@@ -39,6 +39,9 @@ namespace utils {
       constexpr number<A> index_of(otherwise, number<A>) noexcept;
     }
 
+    template <bool B>
+    using boolean = std::integral_constant<bool, B>;
+
     template <typename... Ts>
     struct type_list {
       using size = meta::number<sizeof...(Ts)>;
@@ -64,6 +67,9 @@ namespace utils {
       template <typename Up>
       using index_of = decltype(detail::index_of<Up>(
           std::declval<detail::build_index_table<Ts...>>(), size{}));
+
+      template <typename Up>
+      using contains = boolean<index_of<Up>::value != size::value>;
     };
   }
 }
