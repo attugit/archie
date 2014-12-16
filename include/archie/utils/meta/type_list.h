@@ -12,6 +12,10 @@
 namespace archie {
 namespace utils {
   namespace meta {
+
+    template <typename...>
+    struct type_list;
+
     namespace detail {
 
       template <typename Tp, std::size_t N>
@@ -35,6 +39,26 @@ namespace utils {
 
       template <typename, std::size_t A>
       constexpr number<A> index_of(otherwise, number<A>) noexcept;
+
+      template <typename...>
+      struct is_distinct;
+
+      template <typename Tp, typename... Ts>
+      struct is_distinct<Tp, Ts...> {
+        using type = typename std::conditional<
+            type_list<Ts...>::template contains<Tp>::value, std::false_type,
+            typename is_distinct<Ts...>::type>::type;
+      };
+
+      template <typename Tp>
+      struct is_distinct<Tp> {
+        using type = std::true_type;
+      };
+
+      template <>
+      struct is_distinct<> {
+        using type = std::true_type;
+      };
     }
 
     template <typename... Ts>
@@ -65,6 +89,8 @@ namespace utils {
 
       template <typename Up>
       using contains = boolean<index_of<Up>::value != size::value>;
+
+      using is_distinct = typename detail::is_distinct<Ts...>::type;
     };
   }
 }
