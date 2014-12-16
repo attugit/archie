@@ -2,6 +2,7 @@
 #define ARCHIE_UTILS_TYPE_LIST_H_INCLUDED
 
 #include <archie/utils/meta/number.h>
+#include <archie/utils/meta/boolean.h>
 #include <archie/utils/meta/returns.h>
 #include <archie/utils/meta/at.h>
 #include <archie/utils/meta/inherit_all.h>
@@ -38,9 +39,6 @@ namespace utils {
       template <typename, std::size_t A>
       constexpr number<A> index_of(otherwise, number<A>) noexcept;
     }
-
-    template <bool B>
-    using boolean = std::integral_constant<bool, B>;
 
     template <typename... Ts>
     struct type_list {
