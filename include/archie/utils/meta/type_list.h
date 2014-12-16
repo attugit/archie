@@ -6,16 +6,13 @@
 #include <archie/utils/meta/returns.h>
 #include <archie/utils/meta/at.h>
 #include <archie/utils/meta/inherit_all.h>
+#include <archie/utils/meta/otherwise.h>
 #include <utility>
 
 namespace archie {
 namespace utils {
   namespace meta {
     namespace detail {
-
-      struct otherwise {
-        otherwise(...) {}
-      };
 
       template <typename Tp, std::size_t N>
       struct element_index {};
