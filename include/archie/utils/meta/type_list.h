@@ -11,6 +11,11 @@ namespace archie {
 namespace utils {
   namespace meta {
     namespace detail {
+
+      struct otherwise {
+        otherwise(...) {}
+      };
+
       template <typename Tp, std::size_t N>
       struct element_index {};
 
@@ -27,8 +32,11 @@ namespace utils {
       using build_index_table =
           typename index_table<sizeof...(Ts)>::template type<Ts...>;
 
-      template <typename Tp, std::size_t N>
-      constexpr number<N> index_of(element_index<Tp, N>) noexcept;
+      template <typename Tp, std::size_t N, std::size_t A>
+      constexpr number<N> index_of(element_index<Tp, N>, number<A>) noexcept;
+
+      template <typename, std::size_t A>
+      constexpr number<A> index_of(otherwise, number<A>) noexcept;
     }
 
     template <typename... Ts>
@@ -55,7 +63,7 @@ namespace utils {
 
       template <typename Up>
       using index_of = decltype(detail::index_of<Up>(
-          std::declval<detail::build_index_table<Ts...>>()));
+          std::declval<detail::build_index_table<Ts...>>(), size{}));
     };
   }
 }

@@ -15,6 +15,8 @@ using _0 = utype<0>;
 using _1 = utype<1>;
 using _2 = utype<2>;
 using _3 = utype<3>;
+using _4 = utype<4>;
+using _5 = utype<5>;
 
 template <typename... Ts>
 struct tuple_ {
@@ -121,5 +123,7 @@ TEST_F(meta_test, canGetIndexOfListItem) {
   static_assert(list::index_of<_1>::value == 2, "");
   static_assert(list::index_of<_2>::value == 1, "");
   static_assert(list::index_of<_3>::value == 0, "");
+  static_assert(list::index_of<_4>::value == 4, "");
+  static_assert(list::index_of<_5>::value == 4, "");
 }
 }
