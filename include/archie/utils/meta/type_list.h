@@ -18,6 +18,23 @@ namespace utils {
 
     namespace detail {
 
+      template <typename Tp>
+      struct no_convert {};
+
+      template <std::size_t I, std::size_t T, typename...>
+      struct element;
+
+      template <std::size_t I, std::size_t T>
+      struct element<I, T> {
+        number<T> match(otherwise) const;
+      };
+
+      template <std::size_t I, std::size_t T, typename Tp, typename... Ts>
+      struct element<I, T, Tp, Ts...> : element<I + 1, T, Ts...> {
+        using element<I + 1, T, Ts...>::match;
+        number<I> match(no_convert<Tp>) const;
+      };
+
       template <typename Tp, std::size_t N>
       struct element_index {};
 
@@ -86,6 +103,10 @@ namespace utils {
       template <typename Up>
       using index_of = decltype(detail::index_of<Up>(
           std::declval<detail::build_index_table<Ts...>>(), size{}));
+
+      template <typename Up>
+      using find = decltype(detail::element<0, size::value, Ts...>{}.match(
+          detail::no_convert<Up>{}));
 
       template <typename Up>
       using contains = boolean<index_of<Up>::value != size::value>;

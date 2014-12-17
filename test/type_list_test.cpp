@@ -107,9 +107,7 @@ TEST_F(type_list_test, canUseTypeListAtT) {
   static_assert(std::is_same<_0, list::at_t<3>>::value, "");
 }
 
-struct meta_test : ::testing::Test {};
-
-TEST_F(meta_test, canTransform) {
+TEST_F(type_list_test, canTransformStandalone) {
   using uptrs = au::meta::transform_t<uptr_, _0, _1>;
   static_assert(
       std::is_same<type_list<std::unique_ptr<_0>, std::unique_ptr<_1>>,
@@ -117,9 +115,9 @@ TEST_F(meta_test, canTransform) {
       "");
 }
 
-TEST_F(meta_test, canGetIndexOfListItem) {
+TEST_F(type_list_test, canGetIndexOfListItem) {
   using list = type_list<_3, _2, _1, _0, _0>;
-  //static_assert(list::index_of<_0>::value == 3, "");
+  //  static_assert(list::index_of<_0>::value == 3, "");
   static_assert(list::index_of<_1>::value == 2, "");
   static_assert(list::index_of<_2>::value == 1, "");
   static_assert(list::index_of<_3>::value == 0, "");
@@ -127,13 +125,18 @@ TEST_F(meta_test, canGetIndexOfListItem) {
   static_assert(list::index_of<_5>::value == list::size::value, "");
 }
 
-TEST_F(meta_test, canCheckIfListContainsItem) {
+TEST_F(type_list_test, canCheckIfListContainsItem) {
   using list = type_list<_3, _2, _1, _0, _0>;
-  //static_assert(list::contains<_0>::value, "");
+  // static_assert(list::contains<_0>::value, "");
   static_assert(list::contains<_1>::value, "");
   static_assert(list::contains<_2>::value, "");
   static_assert(list::contains<_3>::value, "");
   static_assert(!list::contains<_4>::value, "");
   static_assert(!list::contains<_5>::value, "");
+}
+
+TEST_F(type_list_test, canFindType) {
+  using list = type_list<_3, _2, _1, _0, _0>;
+  static_assert(list::find<_3>::value == 0, "");
 }
 }
