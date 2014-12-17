@@ -136,7 +136,12 @@ TEST_F(type_list_test, canCheckIfListContainsItem) {
 }
 
 TEST_F(type_list_test, canFindType) {
-  using list = type_list<_3, _2, _1, _0, _0>;
+  using list = type_list<_3, _2, _1, _0, _0, _1, _2, _3>;
   static_assert(list::find<_3>::value == 0, "");
+  static_assert(list::find<_2>::value == 1, "");
+  static_assert(list::find<_1>::value == 2, "");
+  static_assert(list::find<_0>::value == 3, "");
+  static_assert(list::find<_4>::value == list::size::value, "");
+  static_assert(list::find<_5>::value == list::size::value, "");
 }
 }
