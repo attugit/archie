@@ -51,11 +51,8 @@ namespace utils {
       using build_index_table =
           typename index_table<sizeof...(Ts)>::template type<Ts...>;
 
-      template <typename Tp, std::size_t N, std::size_t A>
-      constexpr number<N> index_of(element_index<Tp, N>, number<A>) noexcept;
-
-      template <typename, std::size_t A>
-      constexpr number<A> index_of(otherwise, number<A>) noexcept;
+      template <typename Tp, std::size_t N>
+      constexpr number<N> index_of(element_index<Tp, N>) noexcept;
 
       template <typename...>
       struct is_distinct;
@@ -102,7 +99,7 @@ namespace utils {
 
       template <typename Up>
       using index_of = decltype(detail::index_of<Up>(
-          std::declval<detail::build_index_table<Ts...>>(), size{}));
+          std::declval<detail::build_index_table<Ts...>>()));
 
       template <typename Up>
       using find = decltype(detail::element<0, size::value, Ts...>{}.match(

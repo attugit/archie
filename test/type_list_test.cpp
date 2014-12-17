@@ -121,8 +121,6 @@ TEST_F(type_list_test, canGetIndexOfListItem) {
   static_assert(list::index_of<_1>::value == 2, "");
   static_assert(list::index_of<_2>::value == 1, "");
   static_assert(list::index_of<_3>::value == 0, "");
-  static_assert(list::index_of<_4>::value == list::size::value, "");
-  static_assert(list::index_of<_5>::value == list::size::value, "");
 }
 
 TEST_F(type_list_test, canCheckIfListContainsItem) {
