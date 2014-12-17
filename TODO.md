@@ -1,7 +1,5 @@
 ##TODO list
 
-####archie::utils::fused
+####archie::utils::meta
 
-* refactoring of fused::tuple copy-assign
-* refactoring of mutable storage
-* refactoring of fused::tuple equal
+* Fix meta::type_list::index_of when element is more than once
