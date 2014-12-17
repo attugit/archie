@@ -109,7 +109,7 @@ namespace utils {
           detail::no_convert<Up>{}));
 
       template <typename Up>
-      using contains = boolean<index_of<Up>::value != size::value>;
+      using contains = boolean<find<Up>::value != size::value>;
 
       using is_distinct = typename detail::is_distinct<Ts...>::type;
     };
