@@ -41,14 +41,15 @@ def build(bld):
     source=gtest)
 
   src = bld.path.ant_glob('test/*.cpp')
-  bld(
-    target='unittest',
-    features='cxx cxxprogram test',
-    includes=inc,
-    use='gtest',
-    lib=['pthread'],
-    cxxflags=['-std=c++1y'],
-    source=src)
+  for f in src:
+    bld(
+      target=str(f)[:-len('.cpp')],
+      features='cxx cxxprogram test',
+      includes=inc,
+      use='gtest',
+      lib=['pthread'],
+      cxxflags=['-std=c++1y'],
+      source=f)
 
   bld.add_post_fun(summary)
 
