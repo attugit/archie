@@ -30,3 +30,5 @@ static_assert(
     std::is_same<fused::move_t<noncopyable>, fused::mover<noncopyable>>::value,
     "");
 }
+
+int main() { return 0; }

@@ -55,3 +55,5 @@ static_assert(!has_data_property<vec_t>::value, "");
 static_assert(!has_data_property<TypeWithPrivateData>::value, "");
 static_assert(!has_data_property<int>::value, "");
 }
+
+int main() { return 0; }

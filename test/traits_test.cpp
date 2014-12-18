@@ -10,28 +10,6 @@ using vec_t = std::vector<int>;
 using pair_t = std::pair<int, int>;
 using ptr_t = std::unique_ptr<int>;
 
-// struct TypeWithPublicData {
-//  int data;
-//};
-
-// struct TypeWithPrivateData {
-// private:
-//  int data;
-//};
-
-// static_assert(au::has_value_type<vec_t>::value, "");
-// static_assert(!au::has_value_type<pair_t>::value, "");
-// static_assert(!au::has_value_type<int>::value, "");
-
-// static_assert(au::has_reserve<vec_t>::value, "");
-// static_assert(!au::has_reserve<pair_t>::value, "");
-// static_assert(!au::has_reserve<int>::value, "");
-
-// static_assert(au::has_data_property<TypeWithPublicData>::value, "");
-// static_assert(!au::has_data_property<vec_t>::value, "");
-// static_assert(!au::has_data_property<TypeWithPrivateData>::value, "");
-// static_assert(!au::has_data_property<int>::value, "");
-
 static_assert(traits::is_copy_assignable<vec_t>::value, "");
 static_assert(traits::is_copy_assignable<pair_t>::value, "");
 static_assert(traits::is_copy_assignable<int>::value, "");
@@ -59,3 +37,5 @@ static_assert(!traits::is_callable<callable, double, std::string&>::value, "");
 static_assert(traits::is_callable<callable, unsigned>::value, "");
 static_assert(!traits::is_callable<callable, std::string>::value, "");
 }
+
+int main() { return 0; }

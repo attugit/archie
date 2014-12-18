@@ -29,3 +29,5 @@ static_assert(std::is_same<std::unique_ptr<au::meta::number<2>>,
                            goo<_0, _1>::type>::value,
               "");
 }
+
+int main() { return 0; }

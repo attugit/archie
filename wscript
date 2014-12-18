@@ -36,6 +36,30 @@ def summary(bld):
         if out: Logs.pprint('RED', 'out: %r' % out)
         if err: Logs.pprint('RED', 'err: %r' % err)
 
+oldtets = [
+'test/aggregates_test.cpp',
+'test/at_test.cpp',
+'test/back_test.cpp',
+'test/bitfields_test.cpp',
+'test/for_each_test.cpp',
+'test/front_test.cpp',
+'test/message_test.cpp',
+'test/nth_test.cpp',
+'test/requires_test.cpp',
+'test/tuple_test.cpp',
+'test/tuple_view_test.cpp',
+'test/typeholder_test.cpp',
+'test/type_list_test.cpp',
+'test/typeset_test.cpp']
+
+tests = [
+'test/compose_test.cpp',
+'test/inspect_test.cpp',
+'test/is_distinct_test.cpp',
+'test/meta_identity.cpp',
+'test/mover_test.cpp',
+'test/traits_test.cpp']
+
 def build(bld):
   inc = ['.', 'gtest', 'include']
   gtest = ['gtest/src/gtest-all.cc', 'gtest/src/gtest_main.cc']
@@ -50,14 +74,21 @@ def build(bld):
   else:
     cxxflags = buildflags
 
-  src = bld.path.ant_glob('test/*.cpp')
-  for f in src:
+  #src = bld.path.ant_glob('test/*.cpp')
+  for f in oldtets:
     bld(
       target=str(f)[:-len('.cpp')],
       features='cxx cxxprogram test',
       includes=inc,
       use='gtest',
       lib=['pthread'],
+      cxxflags=cxxflags,
+      source=f)
+  for f in tests:
+    bld(
+      target=str(f)[:-len('.cpp')],
+      features='cxx cxxprogram test',
+      includes=inc,
       cxxflags=cxxflags,
       source=f)
 
