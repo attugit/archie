@@ -1,2 +1,4 @@
 build/
 gmon.out
+.waf*
+.lock-waf*
