@@ -6,10 +6,10 @@ configure:
 	./waf configure
 
 debug:
-	./waf build
+	./waf debug
 
 release:
-	./waf build
+	./waf release
 
 clean:
 	./waf clean

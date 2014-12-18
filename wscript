@@ -6,6 +6,7 @@ APPNAME='archie'
 
 top = '.'
 out = 'build'
+buildflags = ['-std=c++1y', '-Wall', '-Wextra', '-pedantic', '-Werror']
 
 def options(opt):
   opt.load('compiler_cxx')
@@ -44,6 +45,11 @@ def build(bld):
     cxxflags=['-std=c++1y'],
     source=gtest)
 
+  if bld.variant in ('debug', 'release'):
+    cxxflags = bld.cxxflags
+  else:
+    cxxflags = buildflags
+
   src = bld.path.ant_glob('test/*.cpp')
   for f in src:
     bld(
@@ -52,8 +58,18 @@ def build(bld):
       includes=inc,
       use='gtest',
       lib=['pthread'],
-      cxxflags=['-std=c++1y'],
+      cxxflags=cxxflags,
       source=f)
 
   bld.add_post_fun(summary)
 
+from waflib.Build import BuildContext
+class debug(BuildContext):
+  cmd = 'debug'
+  variant = 'debug'
+  cxxflags = buildflags + ['-g', '-O0']
+
+class release(BuildContext):
+  cmd = 'release'
+  variant = 'release'
+  cxxflags = buildflags + ['-O2']
