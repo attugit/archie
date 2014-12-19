@@ -41,10 +41,9 @@ def summary(bld):
 def build(bld):
   inc = ['.', 'include']
 
-  if bld.variant in ('debug', 'release'):
-    cxxflags = bld.cxxflags
-  else:
-    cxxflags = buildflags
+  cxxflags = getattr(bld, 'cxxflags', buildflags)
+  linkflags = getattr(bld, 'linkflags', [])
+  lib = getattr(bld, 'lib', [])
 
   tests = bld.path.ant_glob('test/*.cpp')
   for f in tests:
@@ -53,6 +52,8 @@ def build(bld):
       features='cxx cxxprogram test',
       includes=inc,
       cxxflags=cxxflags,
+      linkflags=linkflags,
+      lib=lib,
       source=f)
 
   bld.add_post_fun(summary)
@@ -62,6 +63,14 @@ class debug(BuildContext):
   cmd = 'debug'
   variant = 'debug'
   cxxflags = buildflags + ['-g', '-O0']
+
+class coverage(BuildContext):
+  cmd = 'coverage'
+  variant = 'coverage'
+  cxxflags = buildflags + ['-g', '-O0']
+  cxxflags += ['-fprofile-arcs', '-ftest-coverage', '-pg']
+  lib = ['gcov']
+  linkflags = ['-pg']
 
 class release(BuildContext):
   cmd = 'release'
