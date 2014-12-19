@@ -1,11 +1,10 @@
 #include <archie/utils/typeset.h>
 #include <archie/utils/get.h>
+#include <test/assert.h>
 
-#include <gtest/gtest.h>
 namespace au = archie::utils;
-struct typeset_test : ::testing::Test {};
 
-TEST_F(typeset_test, nothing) {
+void testing() {
   au::TypeSet<unsigned> unary(1);
   EXPECT_EQ(1u, std::get<unsigned>(unary));
 
@@ -31,4 +30,9 @@ TEST_F(typeset_test, nothing) {
   EXPECT_FALSE(third < lhs);
   EXPECT_TRUE(lhs == lhs);
   EXPECT_TRUE(third == fourth);
+}
+
+int main() {
+  testing();
+  return 0;
 }
