@@ -13,18 +13,17 @@ using RowType = archie::utils::TypeSet<Columns...>;
 template <template <class...> class Container, typename... Columns>
 using TableType = Container<RowType<Columns...>>;
 
-#include <gtest/gtest.h>
 #include <vector>
 #include <list>
 #include <archie/utils/select.h>
 #include <archie/utils/get.h>
 #include <algorithm>
+#include <test/assert.h>
 
 using Table = TableType<std::vector, PersonId, PersonName, PersonAge>;
 namespace au = archie::utils;
-struct typeholder_test : ::testing::Test {};
 
-TEST_F(typeholder_test, nothing) {
+void testing() {
   Table table;
   table.emplace_back(1, "Name", 30);
   table.emplace_back(2, "Other", 40);
@@ -64,4 +63,9 @@ TEST_F(typeholder_test, nothing) {
   EXPECT_FALSE(id1 >= id2);
   EXPECT_FALSE(id1 == id2);
   EXPECT_FALSE(id2 != id2);
+}
+
+int main() {
+  testing();
+  return 0;
 }
