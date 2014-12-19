@@ -1,22 +1,18 @@
-#include <gtest/gtest.h>
 #include <archie/utils/meta/at.h>
+#include "test/assert.h"
 #include <type_traits>
 
-namespace {
 namespace au = archie::utils;
-struct at_test : ::testing::Test {};
 
-TEST_F(at_test, canUseAt) {
-  static_assert(
-      std::is_same<int, au::meta::at<1>::apply<char, int, float>::type>::value,
-      "");
-  static_assert(std::is_same<int, au::meta::at_t<1, char, int, float>>::value,
-                "");
-  static_assert(
-      std::is_same<int&, au::meta::at_t<1, unsigned, int&, char>>::value, "");
-}
+static_assert(
+    std::is_same<int, au::meta::at<1>::apply<char, int, float>::type>::value,
+    "");
+static_assert(std::is_same<int, au::meta::at_t<1, char, int, float>>::value,
+              "");
+static_assert(
+    std::is_same<int&, au::meta::at_t<1, unsigned, int&, char>>::value, "");
 
-TEST_F(at_test, canUseAtMatch) {
+void canUseAtMatch() {
   char a = 0;
   int b = 1;
   float c = 2.0;
@@ -33,4 +29,8 @@ TEST_F(at_test, canUseAtMatch) {
   EXPECT_EQ(&b, &y);
   EXPECT_EQ(&c, &z);
 }
+
+int main() {
+  canUseAtMatch();
+  return 0;
 }
