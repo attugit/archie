@@ -1,11 +1,9 @@
-#include <gtest/gtest.h>
 #include <archie/utils/fused/nth.h>
+#include <test/assert.h>
 
-namespace {
 using archie::utils::fused::nth;
-struct nth_test : ::testing::Test {};
 
-TEST_F(nth_test, canUseNth) {
+void canUseNth() {
   char a = 0;
   int b = 1;
   float c = 2.0;
@@ -21,7 +19,7 @@ TEST_F(nth_test, canUseNth) {
   EXPECT_EQ(7, a);
 }
 
-TEST_F(nth_test, canUseConstNth) {
+void canUseConstNth() {
   const char a = 0;
   const int b = 1;
   const float c = 2.0;
@@ -30,7 +28,7 @@ TEST_F(nth_test, canUseConstNth) {
   EXPECT_EQ(&a, &x);
 }
 
-TEST_F(nth_test, canWrapNthWithLambda) {
+void canWrapNthWithLambda() {
   const char a = 0;
   const int b = 1;
   const float c = 2.0;
@@ -41,4 +39,10 @@ TEST_F(nth_test, canWrapNthWithLambda) {
   auto const& x = f(a, b, c);
   EXPECT_EQ(&a, &x);
 }
+
+int main() {
+  canUseNth();
+  canUseConstNth();
+  canWrapNthWithLambda();
+  return 0;
 }
