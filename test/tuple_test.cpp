@@ -8,14 +8,10 @@ namespace test = archie::utils::fused;
 namespace test = std;
 #endif
 
-#include <gtest/gtest.h>
+#include <test/assert.h>
 #include <memory>
 
-namespace {
-
-struct tuple_test : ::testing::Test {};
-
-TEST_F(tuple_test, canDefaultConstruct) {
+void canDefaultConstruct() {
   static_assert(
       std::is_default_constructible<test::tuple<unsigned, double, char>>::value,
       "");
@@ -25,7 +21,7 @@ TEST_F(tuple_test, canDefaultConstruct) {
   EXPECT_LE(sizeof(unsigned) + sizeof(double) + sizeof(char), sizeof(t));
 }
 
-TEST_F(tuple_test, canDefaultConstructTupleWithUncopyableElement) {
+void canDefaultConstructTupleWithUncopyableElement() {
   static_assert(
       std::is_default_constructible<
           test::tuple<unsigned, std::unique_ptr<double>, char>>::value,
@@ -38,7 +34,7 @@ TEST_F(tuple_test, canDefaultConstructTupleWithUncopyableElement) {
             sizeof(t));
 }
 
-TEST_F(tuple_test, canConstruct) {
+void canConstruct() {
   static_assert(std::is_constructible<test::tuple<unsigned, double, char>,
                                       unsigned, double, char>::value,
                 "");
@@ -48,7 +44,7 @@ TEST_F(tuple_test, canConstruct) {
   EXPECT_LE(sizeof(unsigned) + sizeof(double) + sizeof(char), sizeof(t));
 }
 
-TEST_F(tuple_test, canConstructTupleWithUncopyableElement) {
+void canConstructTupleWithUncopyableElement() {
   static_assert(std::is_constructible <
                     test::tuple<unsigned, std::unique_ptr<double>, char>,
                 unsigned, std::unique_ptr<double>&&, char > ::value, "");
@@ -60,7 +56,7 @@ TEST_F(tuple_test, canConstructTupleWithUncopyableElement) {
             sizeof(t));
 }
 
-TEST_F(tuple_test, makeTupleTakesElementsByValue) {
+void makeTupleTakesElementsByValue() {
   unsigned a = 1u;
   double b = 2.0;
   char c = '3';
@@ -78,7 +74,7 @@ TEST_F(tuple_test, makeTupleTakesElementsByValue) {
   EXPECT_NE(&c, &test::get<2>(t));
 }
 
-TEST_F(tuple_test, makeTupleTakesElementsByRValue) {
+void makeTupleTakesElementsByRValue() {
   auto ptr = std::make_unique<char>('3');
   auto t = test::make_tuple(1u, std::make_unique<double>(2.0), std::move(ptr));
 
@@ -88,7 +84,7 @@ TEST_F(tuple_test, makeTupleTakesElementsByRValue) {
   EXPECT_EQ('3', *test::get<2>(t));
 }
 
-TEST_F(tuple_test, canUseGetByIdToRead) {
+void canUseGetByIdToRead() {
   auto t = test::make_tuple(1u, 2.0, '3');
 
   ASSERT_EQ(3u, test::tuple_size<decltype(t)>::value);
@@ -103,7 +99,7 @@ TEST_F(tuple_test, canUseGetByIdToRead) {
   EXPECT_EQ(&x, &y);
 }
 
-TEST_F(tuple_test, canUseGetByIdToWrite) {
+void canUseGetByIdToWrite() {
   auto t = test::make_tuple(1u, std::make_unique<double>(2.0), '3');
 
   ASSERT_EQ(3u, test::tuple_size<decltype(t)>::value);
@@ -122,7 +118,7 @@ TEST_F(tuple_test, canUseGetByIdToWrite) {
   EXPECT_EQ(3.0, *test::get<1>(t));
 }
 
-TEST_F(tuple_test, canCopyConstruct) {
+void canCopyConstruct() {
   static_assert(
       !std::is_copy_constructible<
           test::tuple<unsigned, std::unique_ptr<double>, char>>::value,
@@ -145,7 +141,7 @@ TEST_F(tuple_test, canCopyConstruct) {
   EXPECT_NE(&test::get<2>(orig), &test::get<2>(copy));
 }
 
-TEST_F(tuple_test, canCopyAssign) {
+void canCopyAssign() {
   static_assert(
       std::is_copy_assignable<
           test::tuple<unsigned, std::unique_ptr<double>, char>>::value,
@@ -171,7 +167,7 @@ TEST_F(tuple_test, canCopyAssign) {
   EXPECT_EQ('3', test::get<2>(copy));
 }
 
-TEST_F(tuple_test, canMoveConstruct) {
+void canMoveConstruct() {
   static_assert(
       std::is_move_constructible<
           test::tuple<unsigned, std::unique_ptr<double>, char>>::value,
@@ -196,7 +192,7 @@ TEST_F(tuple_test, canMoveConstruct) {
   EXPECT_EQ('3', test::get<2>(copy));
 }
 
-TEST_F(tuple_test, canMoveAssign) {
+void canMoveAssign() {
   static_assert(
       std::is_move_assignable<
           test::tuple<unsigned, std::unique_ptr<double>, char>>::value,
@@ -222,7 +218,7 @@ TEST_F(tuple_test, canMoveAssign) {
   EXPECT_EQ('3', test::get<2>(copy));
 }
 
-TEST_F(tuple_test, canCompareEquality) {
+void canCompareEquality() {
   auto t1 = test::make_tuple(1u, 2.0, '3');
   auto t2 = test::make_tuple(1u, 2.0, '3');
   auto t3 = test::make_tuple(0u, 2.0, '3');
@@ -234,7 +230,7 @@ TEST_F(tuple_test, canCompareEquality) {
   EXPECT_FALSE(t1 == t4);
 }
 
-TEST_F(tuple_test, canCompareInequality) {
+void canCompareInequality() {
   auto t1 = test::make_tuple(1u, 2.0, '3');
   auto t2 = test::make_tuple(1u, 2.0, '3');
   auto t3 = test::make_tuple(0u, 2.0, '3');
@@ -246,7 +242,7 @@ TEST_F(tuple_test, canCompareInequality) {
   EXPECT_TRUE(t1 != t4);
 }
 
-TEST_F(tuple_test, canLexicographicalCompareLess) {
+void canLexicographicalCompareLess() {
   auto t1 = test::make_tuple(1u, 2.0, '3');
   auto t2 = test::make_tuple(1u, 2.0, '3');
   auto t3 = test::make_tuple(0u, 2.0, '3');
@@ -267,7 +263,7 @@ TEST_F(tuple_test, canLexicographicalCompareLess) {
   EXPECT_FALSE(t5 < t1);
 }
 
-TEST_F(tuple_test, canAssignSimilarTuples) {
+void canAssignSimilarTuples() {
   auto t = test::make_tuple(1ul, 2ul, 3ul);
   t = test::make_tuple(4, 5, 6);
 
@@ -276,7 +272,7 @@ TEST_F(tuple_test, canAssignSimilarTuples) {
   EXPECT_EQ(6u, test::get<2>(t));
 }
 
-TEST_F(tuple_test, canStoreValuesInTuple) {
+void canStoreValuesInTuple() {
   unsigned a = 1u;
   double b = 2.0;
   char c = '3';
@@ -300,7 +296,7 @@ TEST_F(tuple_test, canStoreValuesInTuple) {
   EXPECT_EQ('3', c);
 }
 
-TEST_F(tuple_test, canStoreReferencesInTuple) {
+void canStoreReferencesInTuple() {
   static_assert(std::is_constructible<test::tuple<unsigned, double, char&>,
                                       unsigned, double, char&>::value,
                 "");
@@ -329,7 +325,7 @@ TEST_F(tuple_test, canStoreReferencesInTuple) {
   EXPECT_EQ('9', c);
 }
 
-TEST_F(tuple_test, canTieElements) {
+void canTieElements() {
   unsigned a = 1u;
   double b = 2.0;
   char c = '3';
@@ -359,7 +355,7 @@ TEST_F(tuple_test, canTieElements) {
   EXPECT_EQ('9', c);
 }
 
-TEST_F(tuple_test, canUseTupleElement) {
+void canUseTupleElement() {
   using t = test::tuple<unsigned, std::unique_ptr<double>, char&>;
   static_assert(std::is_same<test::tuple_element_t<0, t>, unsigned>::value, "");
   static_assert(
@@ -368,7 +364,7 @@ TEST_F(tuple_test, canUseTupleElement) {
   static_assert(std::is_same<test::tuple_element_t<2, t>, char&>::value, "");
 }
 
-TEST_F(tuple_test, canGetElementByType) {
+void canGetElementByType() {
   auto t = test::make_tuple(1u, 2.0, '3');
 
   EXPECT_EQ(1u, test::get<unsigned>(t));
@@ -383,4 +379,29 @@ TEST_F(tuple_test, canGetElementByType) {
   EXPECT_EQ(5.0, test::get<double>(t));
   EXPECT_EQ('6', test::get<char>(t));
 }
+
+int main() {
+  canDefaultConstruct();
+  canDefaultConstructTupleWithUncopyableElement();
+  canConstruct();
+  canConstructTupleWithUncopyableElement();
+  makeTupleTakesElementsByValue();
+  makeTupleTakesElementsByRValue();
+  canUseGetByIdToRead();
+  canUseGetByIdToWrite();
+  canCopyConstruct();
+  canCopyAssign();
+  canMoveConstruct();
+  canMoveAssign();
+  canCompareEquality();
+  canCompareInequality();
+  canLexicographicalCompareLess();
+  canAssignSimilarTuples();
+  canStoreValuesInTuple();
+  canStoreReferencesInTuple();
+  canTieElements();
+  canUseTupleElement();
+  canGetElementByType();
+
+  return 0;
 }

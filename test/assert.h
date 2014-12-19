@@ -7,5 +7,6 @@
 
 #define ASSERT_EQ(x, y) EXPECT_EQ(x, y)
 #define ASSERT_NE(x, y) assert((x) != (y));
+#define EXPECT_NE(x, y) ASSERT_NE(x, y)
 
 #define TEST_F(x, y) void y()
