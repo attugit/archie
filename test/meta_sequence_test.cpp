@@ -1,4 +1,4 @@
-#include <archie/utils/meta/type_list.h>
+#include <archie/utils/meta/sequence.h>
 #include <archie/utils/meta/transform.h>
 #include <tuple>
 #include <type_traits>
@@ -26,14 +26,14 @@ struct uptr_ {
 
 namespace au = archie::utils;
 
-using au::meta::type_list;
+using au::meta::sequence;
 
-static_assert(type_list<>::size::value == 0, "");
-static_assert(type_list<_0>::size::value == 1, "");
-static_assert(type_list<_0, _0>::size::value == 2, "");
-static_assert(type_list<_0, _1>::size::value == 2, "");
+static_assert(sequence<>::size::value == 0, "");
+static_assert(sequence<_0>::size::value == 1, "");
+static_assert(sequence<_0, _0>::size::value == 2, "");
+static_assert(sequence<_0, _1>::size::value == 2, "");
 
-using list_ = type_list<_0, _1>;
+using list_ = sequence<_0, _1>;
 
 void canApply() {
   using type = list_::apply<tuple_>;
@@ -42,10 +42,9 @@ void canApply() {
 
 void canTransform() {
   using type = list_::transform<uptr_>::type;
-  static_assert(
-      std::is_same<type_list<std::unique_ptr<_0>, std::unique_ptr<_1>>,
-                   type>::value,
-      "");
+  static_assert(std::is_same<sequence<std::unique_ptr<_0>, std::unique_ptr<_1>>,
+                             type>::value,
+                "");
 }
 
 void canTransformAndApply() {
@@ -58,7 +57,7 @@ void canTransformAndApply() {
 
 void canAppend() {
   using type = list_::append<_2, _3>;
-  static_assert(std::is_same<type_list<_0, _1, _2, _3>, type>::value, "");
+  static_assert(std::is_same<sequence<_0, _1, _2, _3>, type>::value, "");
 }
 
 void canUseAt() {
@@ -84,7 +83,7 @@ void canUseAtT() {
 }
 
 void canUseTypeListAt() {
-  using list = type_list<_3, _2, _1, _0>;
+  using list = sequence<_3, _2, _1, _0>;
   static_assert(std::is_same<_3, list::at<0>::type>::value, "");
   static_assert(std::is_same<_2, list::at<1>::type>::value, "");
   static_assert(std::is_same<_1, list::at<2>::type>::value, "");
@@ -92,7 +91,7 @@ void canUseTypeListAt() {
 }
 
 void canUseTypeListAtT() {
-  using list = type_list<_3, _2, _1, _0>;
+  using list = sequence<_3, _2, _1, _0>;
   static_assert(std::is_same<_3, list::at_t<0>>::value, "");
   static_assert(std::is_same<_2, list::at_t<1>>::value, "");
   static_assert(std::is_same<_1, list::at_t<2>>::value, "");
@@ -101,14 +100,13 @@ void canUseTypeListAtT() {
 
 void canTransformStandalone() {
   using uptrs = au::meta::transform_t<uptr_, _0, _1>;
-  static_assert(
-      std::is_same<type_list<std::unique_ptr<_0>, std::unique_ptr<_1>>,
-                   uptrs>::value,
-      "");
+  static_assert(std::is_same<sequence<std::unique_ptr<_0>, std::unique_ptr<_1>>,
+                             uptrs>::value,
+                "");
 }
 
 void canGetIndexOfListItem() {
-  using list = type_list<_3, _2, _1, _0>;
+  using list = sequence<_3, _2, _1, _0>;
   static_assert(list::index_of<_0>::value == 3, "");
   static_assert(list::index_of<_1>::value == 2, "");
   static_assert(list::index_of<_2>::value == 1, "");
@@ -116,7 +114,7 @@ void canGetIndexOfListItem() {
 }
 
 void canCheckIfListContainsItem() {
-  using list = type_list<_3, _2, _1, _0, _0>;
+  using list = sequence<_3, _2, _1, _0, _0>;
   static_assert(list::contains<_0>::value, "");
   static_assert(list::contains<_1>::value, "");
   static_assert(list::contains<_2>::value, "");
@@ -126,7 +124,7 @@ void canCheckIfListContainsItem() {
 }
 
 void canFindType() {
-  using list = type_list<_3, _2, _1, _0, _0, _1, _2, _3>;
+  using list = sequence<_3, _2, _1, _0, _0, _1, _2, _3>;
   static_assert(list::find<_3>::value == 0, "");
   static_assert(list::find<_2>::value == 1, "");
   static_assert(list::find<_1>::value == 2, "");

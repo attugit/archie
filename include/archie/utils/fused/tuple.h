@@ -1,7 +1,7 @@
 #ifndef ARCHIE_UTILS_FUSED_TUPLE_H_INCLUDED
 #define ARCHIE_UTILS_FUSED_TUPLE_H_INCLUDED
 
-#include <archie/utils/meta/type_list.h>
+#include <archie/utils/meta/sequence.h>
 #include <archie/utils/fused/nth.h>
 #include <archie/utils/fused/mover.h>
 #include <utility>
@@ -25,7 +25,7 @@ namespace utils {
       mutable storage_type storage;
 
     public:
-      using type_list = meta::type_list<Ts...>;
+      using sequence = meta::sequence<Ts...>;
 
       template <typename... Us>
       constexpr explicit tuple(Us&&... args)
@@ -77,7 +77,7 @@ namespace utils {
 
     template <typename Tp, typename Up>
     decltype(auto) get(Up&& u) {
-      using idx = typename std::decay_t<Up>::type_list::template index_of<Tp>;
+      using idx = typename std::decay_t<Up>::sequence::template index_of<Tp>;
       return get<idx::value>(std::forward<Up>(u));
     }
 
