@@ -1,4 +1,3 @@
-#include <gtest/gtest.h>
 #include <archie/utils/unique_tuple.h>
 #include <archie/utils/holder.h>
 #include <archie/utils/get.h>
@@ -6,6 +5,7 @@
 #include <string>
 #include <memory>
 #include <list>
+#include <test/assert.h>
 
 namespace detail {
 struct PackedStruct {
@@ -44,28 +44,22 @@ struct Apply {
   }
 };
 
-namespace {
-
-struct aggregates_test : ::testing::Test {
-  std::unique_ptr<PackedStruct> pack;
-};
-
-TEST_F(aggregates_test, canCreate) {
-  pack = std::make_unique<PackedStruct>(1, "Aqq", -20, 10);
+void canCreate() {
+  auto pack = std::make_unique<PackedStruct>(1, "Aqq", -20, 10);
   EXPECT_EQ(1, au::get<PackedStruct::Id>(*pack));
   EXPECT_EQ("Aqq", *au::get<PackedStruct::Name>(*pack));
   EXPECT_EQ(-20, au::get<PackedStruct::Value>(*pack));
   pack.reset();
 }
 
-TEST_F(aggregates_test, canSelect) {
-  pack = std::make_unique<PackedStruct>(1, "Aqq", -20, 10);
+void canSelect() {
+  auto pack = std::make_unique<PackedStruct>(1, "Aqq", -20, 10);
   auto select = au::Select<PackedStruct::Id, PackedStruct::Value>::from(*pack);
   EXPECT_EQ(1, au::get<PackedStruct::Id>(select));
   EXPECT_EQ(-20, au::get<PackedStruct::Value>(select));
 }
 
-TEST_F(aggregates_test, canSelectCollection) {
+void canSelectCollection() {
   std::list<PackedStruct> collection;
   collection.emplace_back(1, "Aqq", -20, 10);
   collection.emplace_back(2, "Bqq", -10, 20);
@@ -79,7 +73,7 @@ TEST_F(aggregates_test, canSelectCollection) {
   EXPECT_EQ(3, au::get<PackedStruct::Id>(select[2]));
 }
 
-TEST_F(aggregates_test, canSelectCollectionIf) {
+void canSelectCollectionIf() {
   std::list<PackedStruct> collection;
   collection.emplace_back(1, "Aqq", -20, 10);
   collection.emplace_back(2, "Bqq", -10, 20);
@@ -94,9 +88,17 @@ TEST_F(aggregates_test, canSelectCollectionIf) {
   EXPECT_EQ(3, au::get<PackedStruct::Id>(select[1]));
 }
 
-TEST_F(aggregates_test, canApply) {
+void canApply() {
   PackedStruct pack(1, "Aqq", -20, 10);
   auto func = [](auto&& value) { EXPECT_TRUE(value < 0); };
   Apply<PackedStruct::Value>::call(func, pack);
 }
+
+int main() {
+  canCreate();
+  canSelect();
+  canSelectCollection();
+  canSelectCollectionIf();
+  canApply();
+  return 0;
 }
