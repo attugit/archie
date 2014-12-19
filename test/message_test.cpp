@@ -11,13 +11,9 @@ BOOST_FUSION_DEFINE_STRUCT((archie)(utils)(message), frame,
                            (archie::utils::message::header,
                             header)(archie::utils::RawBuffer, data))
 
-#include <gtest/gtest.h>
+#include <test/assert.h>
 
-namespace {
-
-struct message_test : ::testing::Test {};
-
-TEST_F(message_test, nothing) {
+void testing() {
   using archie::utils::RawBuffer;
   auto buff = RawBuffer(128);
 
@@ -64,4 +60,8 @@ TEST_F(message_test, nothing) {
     EXPECT_EQ(129U, input.pop<unsigned>());
   }
 }
+
+int main() {
+  testing();
+  return 0;
 }
