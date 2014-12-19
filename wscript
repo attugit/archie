@@ -16,7 +16,7 @@ def configure(conf):
   conf.load('compiler_cxx')
   conf.load('waf_unit_test')
 
-from waflib import Logs
+from waflib import Logs, Errors
 def summary(bld):
   lst = getattr(bld, 'utest_results', [])
   if lst:
@@ -35,6 +35,8 @@ def summary(bld):
         Logs.pprint('RED', 'status: %r' % code)
         if out: Logs.pprint('RED', 'out: %r' % out)
         if err: Logs.pprint('RED', 'err: %r' % err)
+    if tfail != 0:
+      raise Errors.WafError("Unit tests failed!")
 
 def build(bld):
   inc = ['.', 'include']
