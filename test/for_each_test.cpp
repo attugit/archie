@@ -1,10 +1,8 @@
 #include <archie/utils/fused/for_each.h>
-#include <gtest/gtest.h>
+#include <string>
+#include <test/assert.h>
 
-namespace {
 namespace fused = archie::utils::fused;
-
-struct for_each_test : ::testing::Test {};
 
 struct func {
   int cnt = 0;
@@ -14,7 +12,7 @@ struct func {
   }
 };
 
-TEST_F(for_each_test, canCallForEachWithFunctionObject) {
+void canCallForEachWithFunctionObject() {
   func f;
   ASSERT_EQ(0, f.cnt);
   fused::for_each(f);
@@ -25,11 +23,16 @@ TEST_F(for_each_test, canCallForEachWithFunctionObject) {
   EXPECT_EQ(&f, &ret);
 }
 
-TEST_F(for_each_test, canCallForEachWithLambda) {
+void canCallForEachWithLambda() {
   int idx = 0;
   auto f = [&idx](auto&&) { ++idx; };
   ASSERT_EQ(0, idx);
   fused::for_each(f, 7, 'c', 2.0);
   EXPECT_EQ(3, idx);
 }
+
+int main() {
+  canCallForEachWithFunctionObject();
+  canCallForEachWithLambda();
+  return 0;
 }
