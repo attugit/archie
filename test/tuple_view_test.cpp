@@ -1,17 +1,12 @@
 #include <archie/utils/fused/tuple_view.h>
-#include <gtest/gtest.h>
+#include <test/assert.h>
 #include <algorithm>
 #include <vector>
 
-namespace {
 namespace fused = archie::utils::fused;
 
-struct tuple_view_test : ::testing::Test {
-  fused::tuple<unsigned, double, char> t;
-  void SetUp() { t = fused::make_tuple(1u, 2.0, '3'); }
-};
-
-TEST_F(tuple_view_test, canSelectAllNotChangingOrder) {
+void canSelectAllNotChangingOrder() {
+  auto t = fused::make_tuple(1u, 2.0, '3');
   auto view = fused::select<0, 1, 2>(t);
 
   ASSERT_EQ(fused::get<0>(t), fused::get<0>(view));
@@ -27,7 +22,8 @@ TEST_F(tuple_view_test, canSelectAllNotChangingOrder) {
   EXPECT_EQ('6', fused::get<2>(t));
 }
 
-TEST_F(tuple_view_test, canSelectContinousSubsetWithSameOrder) {
+void canSelectContinousSubsetWithSameOrder() {
+  auto t = fused::make_tuple(1u, 2.0, '3');
   auto view1 = fused::select<0, 1>(t);
   auto view2 = fused::select<1, 2>(t);
 
@@ -45,7 +41,8 @@ TEST_F(tuple_view_test, canSelectContinousSubsetWithSameOrder) {
   EXPECT_EQ(4.0, fused::get<0>(view2));
 }
 
-TEST_F(tuple_view_test, canSelectNonContinousSubsetWithSameOrder) {
+void canSelectNonContinousSubsetWithSameOrder() {
+  auto t = fused::make_tuple(1u, 2.0, '3');
   auto view1 = fused::select<0, 2>(t);
   auto view2 = fused::select<1, 2>(t);
 
@@ -63,7 +60,8 @@ TEST_F(tuple_view_test, canSelectNonContinousSubsetWithSameOrder) {
   EXPECT_EQ('4', fused::get<1>(view2));
 }
 
-TEST_F(tuple_view_test, canSelectWithChangedOrder) {
+void canSelectWithChangedOrder() {
+  auto t = fused::make_tuple(1u, 2.0, '3');
   auto view1 = fused::select<1, 0>(t);
   auto view2 = fused::select<2, 1, 0>(t);
 
@@ -85,7 +83,8 @@ TEST_F(tuple_view_test, canSelectWithChangedOrder) {
   EXPECT_EQ(4u, fused::get<1>(view1));
 }
 
-TEST_F(tuple_view_test, canStoreItemManyTimes) {
+void canStoreItemManyTimes() {
+  auto t = fused::make_tuple(1u, 2.0, '3');
   auto view = fused::select<0, 0, 1, 1, 2, 2>(t);
 
   EXPECT_EQ(fused::get<0>(t), fused::get<0>(view));
@@ -103,7 +102,7 @@ TEST_F(tuple_view_test, canStoreItemManyTimes) {
   EXPECT_EQ(4.0, fused::get<3>(view));
 }
 
-TEST_F(tuple_view_test, canUseValueView) {
+void canUseValueView() {
   unsigned a = 3u;
   unsigned b = 1u;
 
@@ -128,7 +127,7 @@ TEST_F(tuple_view_test, canUseValueView) {
   EXPECT_EQ(b, y);
 }
 
-TEST_F(tuple_view_test, canUseTupleView) {
+void canUseTupleView() {
   unsigned a = 3u;
   unsigned b = 1u;
 
@@ -156,7 +155,8 @@ TEST_F(tuple_view_test, canUseTupleView) {
   EXPECT_EQ(b, fused::get<0>(x));
 }
 
-TEST_F(tuple_view_test, canStoreViewInContainer) {
+void canStoreViewInContainer() {
+  auto t = fused::make_tuple(1u, 2.0, '3');
   std::vector<fused::tuple_view<char, unsigned>> vec;
   auto t2 = fused::make_tuple('4', 5u, 6.0);
   auto view1 = fused::select<2, 0>(t);
@@ -173,4 +173,15 @@ TEST_F(tuple_view_test, canStoreViewInContainer) {
   EXPECT_EQ('3', fused::get<0>(vec[1]));
   EXPECT_EQ('4', fused::get<0>(vec[2]));
 }
+
+int main() {
+  canSelectAllNotChangingOrder();
+  canSelectContinousSubsetWithSameOrder();
+  canSelectNonContinousSubsetWithSameOrder();
+  canSelectWithChangedOrder();
+  canStoreItemManyTimes();
+  canUseValueView();
+  canUseTupleView();
+  canStoreViewInContainer();
+  return 0;
 }
