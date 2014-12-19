@@ -1,16 +1,14 @@
-#include <gtest/gtest.h>
+#include <test/assert.h>
 #include <archie/utils/fused/back.h>
 
-namespace {
 namespace fused = archie::utils::fused;
-struct back_test : ::testing::Test {};
 
-TEST_F(back_test, canUseBackWithRValue) {
+void canUseBackWithRValue() {
   auto a = fused::back(1u, 2.0, '3');
   EXPECT_EQ('3', a);
 }
 
-TEST_F(back_test, canUseBackWithLValue) {
+void canUseBackWithLValue() {
   unsigned a = 1u;
   double b = 2.0;
   char c = '3';
@@ -18,4 +16,9 @@ TEST_F(back_test, canUseBackWithLValue) {
   EXPECT_EQ('3', x);
   EXPECT_EQ(&c, &x);
 }
+
+int main() {
+  canUseBackWithRValue();
+  canUseBackWithLValue();
+  return 0;
 }
