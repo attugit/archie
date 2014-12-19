@@ -1,12 +1,8 @@
 #include <archie/utils/meta/type_list.h>
 #include <archie/utils/meta/transform.h>
-
-#include <gtest/gtest.h>
 #include <tuple>
 #include <type_traits>
 #include <memory>
-
-namespace {
 
 template <unsigned I>
 struct utype {};
@@ -30,25 +26,21 @@ struct uptr_ {
 
 namespace au = archie::utils;
 
-struct type_list_test : testing::Test {};
-
 using au::meta::type_list;
 
-TEST_F(type_list_test, canGetTypeListSize) {
-  static_assert(type_list<>::size::value == 0, "");
-  static_assert(type_list<_0>::size::value == 1, "");
-  static_assert(type_list<_0, _0>::size::value == 2, "");
-  static_assert(type_list<_0, _1>::size::value == 2, "");
-}
+static_assert(type_list<>::size::value == 0, "");
+static_assert(type_list<_0>::size::value == 1, "");
+static_assert(type_list<_0, _0>::size::value == 2, "");
+static_assert(type_list<_0, _1>::size::value == 2, "");
 
 using list_ = type_list<_0, _1>;
 
-TEST_F(type_list_test, canApply) {
+void canApply() {
   using type = list_::apply<tuple_>;
   static_assert(std::is_same<std::tuple<_0, _1>, type>::value, "");
 }
 
-TEST_F(type_list_test, canTransform) {
+void canTransform() {
   using type = list_::transform<uptr_>::type;
   static_assert(
       std::is_same<type_list<std::unique_ptr<_0>, std::unique_ptr<_1>>,
@@ -56,7 +48,7 @@ TEST_F(type_list_test, canTransform) {
       "");
 }
 
-TEST_F(type_list_test, canTransformAndApply) {
+void canTransformAndApply() {
   using type = list_::transform_t<uptr_>::apply<tuple_>;
   static_assert(
       std::is_same<std::tuple<std::unique_ptr<_0>, std::unique_ptr<_1>>,
@@ -64,12 +56,12 @@ TEST_F(type_list_test, canTransformAndApply) {
       "");
 }
 
-TEST_F(type_list_test, canAppend) {
+void canAppend() {
   using type = list_::append<_2, _3>;
   static_assert(std::is_same<type_list<_0, _1, _2, _3>, type>::value, "");
 }
 
-TEST_F(type_list_test, canUseAt) {
+void canUseAt() {
   using type_0 = au::meta::at<0>::apply<_3, _2, _1, _0>::type;
   using type_1 = au::meta::at<1>::apply<_3, _2, _1, _0>::type;
   using type_2 = au::meta::at<2>::apply<_3, _2, _1, _0>::type;
@@ -80,7 +72,7 @@ TEST_F(type_list_test, canUseAt) {
   static_assert(std::is_same<_0, type_3>::value, "");
 }
 
-TEST_F(type_list_test, canUseAtT) {
+void canUseAtT() {
   using type_0 = au::meta::at_t<0, _3, _2, _1, _0>;
   using type_1 = au::meta::at_t<1, _3, _2, _1, _0>;
   using type_2 = au::meta::at_t<2, _3, _2, _1, _0>;
@@ -91,7 +83,7 @@ TEST_F(type_list_test, canUseAtT) {
   static_assert(std::is_same<_0, type_3>::value, "");
 }
 
-TEST_F(type_list_test, canUseTypeListAt) {
+void canUseTypeListAt() {
   using list = type_list<_3, _2, _1, _0>;
   static_assert(std::is_same<_3, list::at<0>::type>::value, "");
   static_assert(std::is_same<_2, list::at<1>::type>::value, "");
@@ -99,7 +91,7 @@ TEST_F(type_list_test, canUseTypeListAt) {
   static_assert(std::is_same<_0, list::at<3>::type>::value, "");
 }
 
-TEST_F(type_list_test, canUseTypeListAtT) {
+void canUseTypeListAtT() {
   using list = type_list<_3, _2, _1, _0>;
   static_assert(std::is_same<_3, list::at_t<0>>::value, "");
   static_assert(std::is_same<_2, list::at_t<1>>::value, "");
@@ -107,7 +99,7 @@ TEST_F(type_list_test, canUseTypeListAtT) {
   static_assert(std::is_same<_0, list::at_t<3>>::value, "");
 }
 
-TEST_F(type_list_test, canTransformStandalone) {
+void canTransformStandalone() {
   using uptrs = au::meta::transform_t<uptr_, _0, _1>;
   static_assert(
       std::is_same<type_list<std::unique_ptr<_0>, std::unique_ptr<_1>>,
@@ -115,7 +107,7 @@ TEST_F(type_list_test, canTransformStandalone) {
       "");
 }
 
-TEST_F(type_list_test, canGetIndexOfListItem) {
+void canGetIndexOfListItem() {
   using list = type_list<_3, _2, _1, _0>;
   static_assert(list::index_of<_0>::value == 3, "");
   static_assert(list::index_of<_1>::value == 2, "");
@@ -123,7 +115,7 @@ TEST_F(type_list_test, canGetIndexOfListItem) {
   static_assert(list::index_of<_3>::value == 0, "");
 }
 
-TEST_F(type_list_test, canCheckIfListContainsItem) {
+void canCheckIfListContainsItem() {
   using list = type_list<_3, _2, _1, _0, _0>;
   static_assert(list::contains<_0>::value, "");
   static_assert(list::contains<_1>::value, "");
@@ -133,7 +125,7 @@ TEST_F(type_list_test, canCheckIfListContainsItem) {
   static_assert(!list::contains<_5>::value, "");
 }
 
-TEST_F(type_list_test, canFindType) {
+void canFindType() {
   using list = type_list<_3, _2, _1, _0, _0, _1, _2, _3>;
   static_assert(list::find<_3>::value == 0, "");
   static_assert(list::find<_2>::value == 1, "");
@@ -142,4 +134,19 @@ TEST_F(type_list_test, canFindType) {
   static_assert(list::find<_4>::value == list::size::value, "");
   static_assert(list::find<_5>::value == list::size::value, "");
 }
+
+int main() {
+  canApply();
+  canTransform();
+  canTransformAndApply();
+  canAppend();
+  canUseAt();
+  canUseAtT();
+  canUseTypeListAt();
+  canUseTypeListAtT();
+  canTransformStandalone();
+  canGetIndexOfListItem();
+  canCheckIfListContainsItem();
+  canFindType();
+  return 0;
 }
