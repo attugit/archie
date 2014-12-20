@@ -14,6 +14,7 @@ static_assert(traits::is_copy_assignable<vec_t>::value, "");
 static_assert(traits::is_copy_assignable<pair_t>::value, "");
 static_assert(traits::is_copy_assignable<int>::value, "");
 static_assert(!traits::is_copy_assignable<ptr_t>::value, "");
+static_assert(traits::is_copy_assignable<ptr_t, decltype(nullptr)>::value, "");
 
 namespace {
 struct callable {

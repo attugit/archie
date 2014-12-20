@@ -7,14 +7,14 @@ namespace archie {
 namespace utils {
   namespace traits {
     namespace detail {
-      template <typename Tp>
+      template <typename Tp, typename Up>
       using inspect_copy_assignable =
-          decltype(std::declval<Tp&>() = std::declval<Tp const&>());
+          decltype(std::declval<Tp&>() = std::declval<Up const&>());
     }
 
-    template <typename Tp>
-    using is_copy_assignable =
-        meta::has_member<detail::inspect_copy_assignable, meta::type_list<Tp>>;
+    template <typename Tp, typename Up = Tp>
+    using is_copy_assignable = meta::has_member<detail::inspect_copy_assignable,
+                                                meta::type_list<Tp, Up>>;
   }
 }
 }
