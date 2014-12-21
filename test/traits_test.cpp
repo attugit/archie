@@ -13,6 +13,8 @@ using ptr_t = std::unique_ptr<int>;
 struct tester {
   tester& operator=(tester&&) = delete;
   tester& operator=(tester const&) = default;
+  bool operator==(tester const&) const;
+  bool operator==(int) const;
 };
 
 static_assert(traits::is_copy_assignable<vec_t>::value, "");
@@ -23,6 +25,9 @@ static_assert(traits::is_assignable<ptr_t, decltype(nullptr)>::value, "");
 static_assert(traits::is_move_assignable<ptr_t>::value, "");
 static_assert(traits::is_copy_assignable<tester>::value, "");
 static_assert(!traits::is_move_assignable<tester>::value, "");
+static_assert(traits::is_equality_comparable<tester, tester>::value, "");
+static_assert(traits::is_equality_comparable<tester, int>::value, "");
+static_assert(!traits::is_equality_comparable<tester, ptr_t>::value, "");
 
 namespace {
 struct callable {

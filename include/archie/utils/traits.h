@@ -3,5 +3,6 @@
 
 #include <archie/utils/traits/is_callable.h>
 #include <archie/utils/traits/is_assignable.h>
+#include <archie/utils/traits/is_comparable.h>
 
 #endif
