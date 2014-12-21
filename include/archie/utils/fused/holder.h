@@ -7,35 +7,58 @@
 
 namespace archie {
 namespace utils {
+  namespace pure {
+    template <typename Tp>
+    using value_type_t = std::decay_t<Tp>;
+
+    template <typename Tp>
+    using reference_t = value_type_t<Tp>&;
+
+    template <typename Tp>
+    using const_reference_t = value_type_t<Tp> const&;
+
+    template <typename Tp>
+    using pointer_t = value_type_t<Tp>*;
+
+    template <typename Tp>
+    using const_pointer_t = value_type_t<Tp> const*;
+
+    template <typename Tp>
+    using rvalue_t = value_type_t<Tp>&&;
+  }
+
   namespace fused {
 
     template <typename Tp>
     struct holder {
-      using value_type = std::decay_t<Tp>;
-      using reference = value_type&;
-      using const_reference = value_type const&;
+      using value_type = pure::value_type_t<Tp>;
+      using reference = pure::reference_t<Tp>;
+      using const_reference = pure::const_reference_t<Tp>;
 
       template <typename... Us>
       explicit holder(Us&&... u)
           : value(std::forward<Us>(u)...) {}
 
-      template <typename Up,
-                meta::requires_any<
-                    traits::is_assignable<reference, std::decay_t<Up> const&>,
-                    traits::is_assignable<reference, std::decay_t<Up>&&>>...>
+      template <
+          typename Up,
+          meta::requires_any<
+              traits::is_assignable<reference, pure::const_reference_t<Up>>,
+              traits::is_assignable<reference, pure::rvalue_t<Up>>>...>
       holder& operator=(Up&& u) {
         value = std::forward<Up>(u);
         return *this;
       }
 
-      template <typename Up, meta::requires<traits::is_equality_comparable<
-                                 const_reference, std::decay_t<Up> const&>>...>
+      template <typename Up,
+                meta::requires<traits::is_equality_comparable<
+                    const_reference, pure::const_reference_t<Up>>>...>
       decltype(auto) operator==(Up const& u) const {
         return value == u;
       }
 
-      template <typename Up, meta::requires<traits::is_less_than_comparable<
-                                 const_reference, std::decay_t<Up> const&>>...>
+      template <typename Up,
+                meta::requires<traits::is_less_than_comparable<
+                    const_reference, pure::const_reference_t<Up>>>...>
       decltype(auto) operator<(Up const& u) const {
         return value < u;
       }
