@@ -15,6 +15,7 @@ struct tester {
   tester& operator=(tester const&) = default;
   bool operator==(tester const&) const;
   bool operator==(int) const;
+  bool operator<(int) const;
 };
 
 static_assert(traits::is_copy_assignable<vec_t>::value, "");
@@ -28,6 +29,8 @@ static_assert(!traits::is_move_assignable<tester>::value, "");
 static_assert(traits::is_equality_comparable<tester, tester>::value, "");
 static_assert(traits::is_equality_comparable<tester, int>::value, "");
 static_assert(!traits::is_equality_comparable<tester, ptr_t>::value, "");
+static_assert(!traits::is_less_than_comparable<tester, tester>::value, "");
+static_assert(traits::is_less_than_comparable<tester, int>::value, "");
 
 namespace {
 struct callable {
