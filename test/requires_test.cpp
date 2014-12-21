@@ -1,5 +1,5 @@
 #include <archie/utils/meta/requires.h>
-#include <test/assert.h>
+#include <archie/utils/test.h>
 #include <type_traits>
 
 using archie::utils::meta::requires;

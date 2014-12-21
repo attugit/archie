@@ -8,7 +8,7 @@ namespace test = archie::utils::fused;
 namespace test = std;
 #endif
 
-#include <test/assert.h>
+#include <archie/utils/test.h>
 #include <memory>
 
 void canDefaultConstruct() {

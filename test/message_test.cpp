@@ -11,7 +11,7 @@ BOOST_FUSION_DEFINE_STRUCT((archie)(utils)(message), frame,
                            (archie::utils::message::header,
                             header)(archie::utils::RawBuffer, data))
 
-#include <test/assert.h>
+#include <archie/utils/test.h>
 
 void testing() {
   using archie::utils::RawBuffer;

@@ -5,7 +5,7 @@
 #include <string>
 #include <memory>
 #include <list>
-#include <test/assert.h>
+#include <archie/utils/test.h>
 
 namespace detail {
 struct PackedStruct {

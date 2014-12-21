@@ -1,5 +1,5 @@
 #include <archie/utils/fused/nth.h>
-#include <test/assert.h>
+#include <archie/utils/test.h>
 
 using archie::utils::fused::nth;
 

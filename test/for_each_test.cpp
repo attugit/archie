@@ -1,6 +1,6 @@
 #include <archie/utils/fused/for_each.h>
 #include <string>
-#include <test/assert.h>
+#include <archie/utils/test.h>
 
 namespace fused = archie::utils::fused;
 

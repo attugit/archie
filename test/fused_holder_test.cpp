@@ -1,5 +1,5 @@
 #include <archie/utils/fused/holder.h>
-#include <test/assert.h>
+#include <archie/utils/test.h>
 
 namespace fused = archie::utils::fused;
 

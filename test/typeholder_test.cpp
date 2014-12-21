@@ -18,7 +18,7 @@ using TableType = Container<RowType<Columns...>>;
 #include <archie/utils/select.h>
 #include <archie/utils/get.h>
 #include <algorithm>
-#include <test/assert.h>
+#include <archie/utils/test.h>
 
 using Table = TableType<std::vector, PersonId, PersonName, PersonAge>;
 namespace au = archie::utils;

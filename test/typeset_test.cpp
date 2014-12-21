@@ -1,6 +1,6 @@
 #include <archie/utils/typeset.h>
 #include <archie/utils/get.h>
-#include <test/assert.h>
+#include <archie/utils/test.h>
 
 namespace au = archie::utils;
 

@@ -1,5 +1,5 @@
 #include <archie/utils/bitfields.h>
-#include <test/assert.h>
+#include <archie/utils/test.h>
 
 namespace au = archie::utils;
 using pack_t = au::Pack<1, 2, 3>;

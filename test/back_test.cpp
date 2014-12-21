@@ -1,4 +1,4 @@
-#include <test/assert.h>
+#include <archie/utils/test.h>
 #include <archie/utils/fused/back.h>
 
 namespace fused = archie::utils::fused;

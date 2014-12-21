@@ -1,5 +1,5 @@
 #include <archie/utils/meta/at.h>
-#include "test/assert.h"
+#include <archie/utils/test.h>
 #include <type_traits>
 
 namespace au = archie::utils;
