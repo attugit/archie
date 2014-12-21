@@ -19,13 +19,25 @@ namespace utils {
       explicit holder(Us&&... u)
           : value(std::forward<Us>(u)...) {}
 
-      template <
-          typename Up,
-          meta::requires_any<traits::is_assignable<Tp, std::decay_t<Up> const&>,
-                             traits::is_assignable<Tp, std::decay_t<Up>&&>>...>
-      holder& operator=(Up&& v) {
-        value = std::forward<Up>(v);
+      template <typename Up,
+                meta::requires_any<
+                    traits::is_assignable<reference, std::decay_t<Up> const&>,
+                    traits::is_assignable<reference, std::decay_t<Up>&&>>...>
+      holder& operator=(Up&& u) {
+        value = std::forward<Up>(u);
         return *this;
+      }
+
+      template <typename Up, meta::requires<traits::is_equality_comparable<
+                                 const_reference, std::decay_t<Up> const&>>...>
+      decltype(auto) operator==(Up const& u) const {
+        return value == u;
+      }
+
+      template <typename Up, meta::requires<traits::is_less_than_comparable<
+                                 const_reference, std::decay_t<Up> const&>>...>
+      decltype(auto) operator<(Up const& u) const {
+        return value < u;
       }
 
       operator reference() { return get(); }
