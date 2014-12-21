@@ -2,6 +2,8 @@
 #define ARCHIE_UTILS_FUSED_HOLDER_H_INCLUDED
 #include <utility>
 #include <type_traits>
+#include <archie/utils/meta/requires.h>
+#include <archie/utils/traits.h>
 
 namespace archie {
 namespace utils {
@@ -17,17 +19,20 @@ namespace utils {
       explicit holder(Us&&... u)
           : value(std::forward<Us>(u)...) {}
 
-      holder& operator=(const_reference v) {
-        value = v;
-        return *this;
-      }
-      holder& operator=(value_type&& v) {
-        value = std::move(v);
+      template <
+          typename Up,
+          meta::requires_any<traits::is_assignable<Tp, std::decay_t<Up> const&>,
+                             traits::is_assignable<Tp, std::decay_t<Up>&&>>...>
+      holder& operator=(Up&& v) {
+        value = std::forward<Up>(v);
         return *this;
       }
 
-      operator reference() { return value; }
-      operator const_reference() const { return value; }
+      operator reference() { return get(); }
+      operator const_reference() const { return get(); }
+
+      reference get() { return value; }
+      const_reference get() const { return value; }
 
     private:
       value_type value;
