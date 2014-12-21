@@ -10,11 +10,19 @@ using vec_t = std::vector<int>;
 using pair_t = std::pair<int, int>;
 using ptr_t = std::unique_ptr<int>;
 
+struct tester {
+  tester& operator=(tester&&) = delete;
+  tester& operator=(tester const&) = default;
+};
+
 static_assert(traits::is_copy_assignable<vec_t>::value, "");
 static_assert(traits::is_copy_assignable<pair_t>::value, "");
 static_assert(traits::is_copy_assignable<int>::value, "");
 static_assert(!traits::is_copy_assignable<ptr_t>::value, "");
 static_assert(traits::is_assignable<ptr_t, decltype(nullptr)>::value, "");
+static_assert(traits::is_move_assignable<ptr_t>::value, "");
+static_assert(traits::is_copy_assignable<tester>::value, "");
+static_assert(!traits::is_move_assignable<tester>::value, "");
 
 namespace {
 struct callable {
