@@ -15,7 +15,7 @@ namespace utils {
 
       template <typename... Us>
       explicit holder(Us&&... u)
-          : value(u...) {}
+          : value(std::forward<Us>(u)...) {}
 
       holder& operator=(const_reference v) {
         value = v;

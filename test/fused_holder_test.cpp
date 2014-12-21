@@ -20,9 +20,13 @@ void canCreateHolder() {
 
 void canAssignValueToHolder() {
   auto h = fused::holder<type_>{3u};
+  auto t = type_{5u};
   EXPECT_EQ(3u, static_cast<type_ const&>(h).v);
-  h = type_{5u};
+  h = t;
   EXPECT_EQ(5u, static_cast<type_ const&>(h).v);
+  t.v = 6u;
+  h = std::move(t);
+  EXPECT_EQ(6u, static_cast<type_ const&>(h).v);
 }
 
 int main() {
