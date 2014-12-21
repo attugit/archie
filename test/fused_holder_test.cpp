@@ -31,5 +31,6 @@ void canAssignValueToHolder() {
 
 int main() {
   canCreateHolder();
+  canAssignValueToHolder();
   return 0;
 }
