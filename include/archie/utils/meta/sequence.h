@@ -3,38 +3,13 @@
 
 #include <archie/utils/meta/number.h>
 #include <archie/utils/meta/boolean.h>
-#include <archie/utils/meta/returns.h>
 #include <archie/utils/meta/at.h>
-#include <archie/utils/meta/inherit_all.h>
-#include <archie/utils/meta/otherwise.h>
+#include <archie/utils/meta/index_of.h>
 #include <utility>
 
 namespace archie {
 namespace utils {
   namespace meta {
-
-    template <typename...>
-    struct sequence;
-
-    namespace detail {
-
-      template <typename Tp>
-      struct no_convert {};
-
-      template <std::size_t I, std::size_t T, typename...>
-      struct element;
-
-      template <std::size_t I, std::size_t T>
-      struct element<I, T> {
-        number<T> match(otherwise) const;
-      };
-
-      template <std::size_t I, std::size_t T, typename Tp, typename... Ts>
-      struct element<I, T, Tp, Ts...> : element<I + 1, T, Ts...> {
-        using element<I + 1, T, Ts...>::match;
-        number<I> match(no_convert<Tp>) const;
-      };
-    }
 
     template <typename... Ts>
     struct sequence {
