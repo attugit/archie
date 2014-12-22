@@ -5,7 +5,7 @@ namespace archie {
 namespace utils {
   namespace meta {
 
-    template <typename = void>
+    template <typename>
     struct eat {
       eat(...) {}
     };
