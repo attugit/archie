@@ -10,9 +10,7 @@ void canUseFrontWithRValue() {
 
 void canUseBackWithLValue() {
   unsigned a = 1u;
-  double b = 2.0;
-  char c = '3';
-  auto const& x = fused::front(a, b, c);
+  auto const& x = fused::front(a, 2.0, '3');
   EXPECT_EQ(1u, x);
   EXPECT_EQ(&a, &x);
 }
