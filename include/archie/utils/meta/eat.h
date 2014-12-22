@@ -9,6 +9,8 @@ namespace utils {
     struct eat {
       eat(...) {}
     };
+
+    using ignore = eat<void>;
   }
 }
 }

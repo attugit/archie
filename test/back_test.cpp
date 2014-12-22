@@ -4,7 +4,7 @@
 namespace meta = archie::utils::meta;
 
 template <typename Tp>
-decltype(auto) second(meta::eat<void>, Tp&& t, ...) {
+decltype(auto) second(meta::ignore, Tp&& t, ...) {
   return std::forward<Tp>(t);
 }
 
