@@ -7,7 +7,7 @@ namespace archie {
 namespace utils {
   namespace meta {
 
-    using otherwise = eat<void>;
+    using otherwise = ignore;
   }
 }
 }
