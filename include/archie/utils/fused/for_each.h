@@ -10,7 +10,7 @@ namespace utils {
 
     template <typename Func, typename... Args>
     decltype(auto) for_each(Func&& func, Args&&... args) {
-      meta::eat<void>{(func(std::forward<Args>(args)), 0)...};
+      meta::ignore{(func(std::forward<Args>(args)), 0)...};
       return func;
     }
   }
