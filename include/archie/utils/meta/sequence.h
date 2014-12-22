@@ -34,26 +34,6 @@ namespace utils {
         using element<I + 1, T, Ts...>::match;
         number<I> match(no_convert<Tp>) const;
       };
-
-      template <typename...>
-      struct is_distinct;
-
-      template <typename Tp, typename... Ts>
-      struct is_distinct<Tp, Ts...> {
-        using type = typename std::conditional<
-            sequence<Ts...>::template contains<Tp>::value, std::false_type,
-            typename is_distinct<Ts...>::type>::type;
-      };
-
-      template <typename Tp>
-      struct is_distinct<Tp> {
-        using type = std::true_type;
-      };
-
-      template <>
-      struct is_distinct<> {
-        using type = std::true_type;
-      };
     }
 
     template <typename... Ts>
@@ -87,8 +67,6 @@ namespace utils {
 
       template <typename Up>
       using contains = boolean<find<Up>::value != size::value>;
-
-      using is_distinct = typename detail::is_distinct<Ts...>::type;
     };
   }
 }
