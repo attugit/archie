@@ -2,7 +2,7 @@
 #define ARCHIE_UTILS_META_INDEX_OF_H_INCLUDED
 
 #include <utility>
-#include <archie/utils/meta/otherwise.h>
+#include <archie/utils/meta/ignore.h>
 #include <archie/utils/meta/number.h>
 
 namespace archie {
@@ -18,7 +18,7 @@ namespace utils {
 
       template <std::size_t I, std::size_t T>
       struct element<I, T> {
-        number<T> match(otherwise) const;
+        number<T> match(ignore) const;
       };
 
       template <std::size_t I, std::size_t T, typename Tp, typename... Ts>
