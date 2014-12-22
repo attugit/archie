@@ -11,8 +11,8 @@ namespace utils {
       template <typename... Ts>
       struct back_impl {
         template <typename Up>
-        static constexpr decltype(auto) match(meta::eat<Ts>..., Up&& u,
-                                              ...) noexcept {
+        static constexpr decltype(auto) match(meta::eat<Ts>...,
+                                              Up&& u) noexcept {
           return std::forward<Up>(u);
         }
       };
