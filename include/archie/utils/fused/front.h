@@ -7,8 +7,8 @@ namespace archie {
 namespace utils {
   namespace fused {
 
-    template <typename Tp, typename... Ts>
-    constexpr decltype(auto) front(Tp&& t, Ts&&...) noexcept {
+    template <typename Tp>
+    constexpr decltype(auto) front(Tp&& t, ...) noexcept {
       return std::forward<Tp>(t);
     }
   }
