@@ -5,12 +5,12 @@ namespace archie {
 namespace utils {
   namespace meta {
 
-    template <typename>
-    struct eat {
-      eat(...) {}
+    struct ignore {
+      ignore(...) {}
     };
 
-    using ignore = eat<void>;
+    template <typename>
+    using eat = ignore;
   }
 }
 }
