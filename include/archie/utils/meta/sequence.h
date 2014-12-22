@@ -35,25 +35,6 @@ namespace utils {
         number<I> match(no_convert<Tp>) const;
       };
 
-      template <typename Tp, std::size_t N>
-      struct element_index {};
-
-      template <std::size_t n, typename = std::make_index_sequence<n>>
-      struct index_table;
-
-      template <std::size_t n, std::size_t... idx>
-      struct index_table<n, std::index_sequence<idx...>> {
-        template <typename... Ts>
-        using type = inherit_all<element_index<Ts, idx>...>;
-      };
-
-      template <typename... Ts>
-      using build_index_table =
-          typename index_table<sizeof...(Ts)>::template type<Ts...>;
-
-      template <typename Tp, std::size_t N>
-      constexpr number<N> index_of(element_index<Tp, N>) noexcept;
-
       template <typename...>
       struct is_distinct;
 
@@ -98,12 +79,11 @@ namespace utils {
       using at_t = meta::at_t<I, Ts...>;
 
       template <typename Up>
-      using index_of = decltype(detail::index_of<Up>(
-          std::declval<detail::build_index_table<Ts...>>()));
-
-      template <typename Up>
       using find = decltype(detail::element<0, size::value, Ts...>{}.match(
           detail::no_convert<Up>{}));
+
+      template <typename Up>
+      using index_of = find<Up>;
 
       template <typename Up>
       using contains = boolean<find<Up>::value != size::value>;
