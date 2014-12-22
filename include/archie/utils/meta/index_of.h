@@ -1,7 +1,9 @@
 #ifndef ARCHIE_UTILS_META_INDEX_OF_H_INCLUDED
 #define ARCHIE_UTILS_META_INDEX_OF_H_INCLUDED
 
+#include <utility>
 #include <archie/utils/meta/otherwise.h>
+#include <archie/utils/meta/number.h>
 
 namespace archie {
 namespace utils {
