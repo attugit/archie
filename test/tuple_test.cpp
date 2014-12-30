@@ -355,6 +355,18 @@ void canTieElements() {
   EXPECT_EQ('9', c);
 }
 
+#include <archie/utils/fused/ignore.h>
+
+void canTieWithIgnore() {
+  unsigned a = 0;
+  char c = 0;
+
+  test::tie(a, test::ignore, c) = test::make_tuple(1u, 2.0, '3');
+
+  EXPECT_EQ(1u, a);
+  EXPECT_EQ('3', c);
+}
+
 void canUseTupleElement() {
   using t = test::tuple<unsigned, std::unique_ptr<double>, char&>;
   static_assert(std::is_same<test::tuple_element_t<0, t>, unsigned>::value, "");
@@ -400,6 +412,7 @@ int main() {
   canStoreValuesInTuple();
   canStoreReferencesInTuple();
   canTieElements();
+  canTieWithIgnore();
   canUseTupleElement();
   canGetElementByType();
 
