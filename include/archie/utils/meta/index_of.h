@@ -4,6 +4,7 @@
 #include <utility>
 #include <archie/utils/meta/ignore.h>
 #include <archie/utils/meta/number.h>
+#include <archie/utils/meta/type_list.h>
 
 namespace archie {
 namespace utils {
@@ -29,10 +30,15 @@ namespace utils {
     }
 
     template <typename Tp, typename... Ts>
-    constexpr decltype(auto) index_of(Ts...) noexcept {
+    constexpr decltype(auto) index_of(type_list<Ts...>) noexcept {
       using type = decltype(detail::element<0, sizeof...(Ts), Ts...>{}.match(
           detail::no_convert<Tp>{}));
       return type{};
+    }
+
+    template <typename Tp, typename... Ts>
+    constexpr decltype(auto) type_index(Ts...) noexcept {
+      return index_of<Tp>(type_list<Ts...>{});
     }
   }
 }

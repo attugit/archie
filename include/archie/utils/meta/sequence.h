@@ -34,8 +34,7 @@ namespace utils {
       using at_t = meta::at_t<I, Ts...>;
 
       template <typename Up>
-      using find = decltype(detail::element<0, size::value, Ts...>{}.match(
-          detail::no_convert<Up>{}));
+      using find = decltype(index_of<Up>(type_list<Ts...>{}));
 
       template <typename Up>
       using index_of = find<Up>;
