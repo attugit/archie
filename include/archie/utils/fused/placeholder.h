@@ -10,6 +10,11 @@ namespace utils {
     template <std::size_t n>
     using placeholder = meta::at<n>;
 
+    template <typename F, std::size_t... ids>
+    decltype(auto) reorder(F f, placeholder<ids>... xs) {
+      return [f, xs...](auto&&... ys) { return f(xs(ys...)...); };
+    }
+
     inline namespace placeholders {
       auto _0 = fused::placeholder<0>{};
       auto _1 = fused::placeholder<1>{};

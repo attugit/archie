@@ -19,17 +19,13 @@ void canAccessArgumentWithPlaceholder() {
 }
 
 void canBindPlaceHolders() {
-  auto make_bind = [](auto f, auto... xs) {
-    return [f, xs...](auto&&... ys) { return f(xs(ys...)...); };
-  };
-
   auto inc = [](auto&& x, auto&& y, auto&& z) {
     x += 1;
     y += 2;
     z += 3;
   };
 
-  auto func = make_bind(inc, _1, _2, _0);
+  auto func = fused::reorder(inc, _1, _2, _0);
 
   auto a = 1u;
   auto b = 2.0;
