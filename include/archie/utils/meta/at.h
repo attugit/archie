@@ -15,16 +15,8 @@ namespace utils {
     template <std::size_t n, std::size_t... other>
     struct at<n, std::index_sequence<other...>> {
     private:
-      template <typename... Ts>
-      struct skip {
-        template <typename Up>
-        static constexpr Up match(eat<Ts>..., Up&& u, ...) noexcept {
-          return std::forward<Up>(u);
-        }
-
-        template <typename... Us>
-        using apply = returns<decltype(match(std::declval<Us>()...))>;
-      };
+      template <typename Tp>
+      static constexpr Tp skip(eat<number<other>>..., Tp&&, ...) noexcept;
 
     public:
       constexpr at() noexcept = default;
@@ -36,7 +28,7 @@ namespace utils {
       }
 
       template <typename... Ts>
-      using apply = typename skip<number<other>...>::template apply<Ts...>;
+      using apply = returns<decltype(skip(std::declval<Ts>()...))>;
 
       template <typename... Ts>
       static constexpr decltype(auto) match(Ts&&... args) noexcept {
