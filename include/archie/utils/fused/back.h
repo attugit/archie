@@ -7,21 +7,12 @@
 namespace archie {
 namespace utils {
   namespace fused {
-    namespace detail {
-      template <typename... Ts>
-      struct back_impl {
-        template <typename Up>
-        static constexpr decltype(auto) match(meta::eat<Ts>...,
-                                              Up&& u) noexcept {
-          return std::forward<Up>(u);
-        }
-      };
-    }
 
     template <typename Tp, typename... Ts>
     constexpr decltype(auto) back(Tp&& t, Ts&&... ts) noexcept {
-      return detail::back_impl<Ts...>::match(std::forward<Tp>(t),
-                                             std::forward<Ts>(ts)...);
+      return [](meta::eat<Ts>..., auto&& x) -> decltype(x) {
+        return std::forward<decltype(x)>(x);
+      }(std::forward<Tp>(t), std::forward<Ts>(ts)...);
     }
   }
 }
