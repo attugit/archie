@@ -22,18 +22,13 @@ namespace utils {
       constexpr at() noexcept = default;
       template <typename... Ts>
       constexpr decltype(auto) operator()(Ts&&... ts) noexcept {
-        return [](eat<number<other>>..., auto&& x, ...) -> decltype(x) {
+        return *([](eat<number<other>>..., auto&& x, ...) -> decltype(x) {
           return std::forward<decltype(x)>(x);
-        }(std::forward<Ts>(ts)...);
+        }(&std::forward<Ts>(ts)...));
       }
 
       template <typename... Ts>
       using apply = returns<decltype(skip(std::declval<Ts>()...))>;
-
-      template <typename... Ts>
-      static constexpr decltype(auto) match(Ts&&... args) noexcept {
-        return *at{}(&std::forward<Ts>(args)...);
-      }
     };
 
     template <std::size_t n, typename... Ts>

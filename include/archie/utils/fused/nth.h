@@ -8,7 +8,7 @@ namespace utils {
   namespace fused {
     template <std::size_t n, typename... Ts>
     decltype(auto) nth(Ts&&... args) {
-      return meta::at<n>::match(std::forward<Ts>(args)...);
+      return meta::at<n>{}(std::forward<Ts>(args)...);
     }
   }
 }
