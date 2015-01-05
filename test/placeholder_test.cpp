@@ -2,14 +2,12 @@
 namespace fused = archie::utils::fused;
 #include <archie/utils/test.h>
 
+using namespace fused::placeholders;
+
 void canAccessArgumentWithPlaceholder() {
   auto a = 1u;
   auto b = 2.0;
   auto c = '3';
-
-  auto _0 = fused::placeholder<0>{};
-  auto _1 = fused::placeholder<1>{};
-  auto _2 = fused::placeholder<2>{};
 
   auto const& x = _0(a, b, c);
   auto const& y = _1(a, b, c);
@@ -20,7 +18,32 @@ void canAccessArgumentWithPlaceholder() {
   EXPECT_EQ(&c, &z);
 }
 
+void canBindPlaceHolders() {
+  auto make_bind = [](auto f, auto... xs) {
+    return [f, xs...](auto&&... ys) { return f(xs(ys...)...); };
+  };
+
+  auto inc = [](auto&& x, auto&& y, auto&& z) {
+    x += 1;
+    y += 2;
+    z += 3;
+  };
+
+  auto func = make_bind(inc, _1, _2, _0);
+
+  auto a = 1u;
+  auto b = 2.0;
+  auto c = '3';
+
+  func(a, b, c);
+
+  EXPECT_EQ(4u, a);
+  EXPECT_EQ(3.0, b);
+  EXPECT_EQ('5', c);
+}
+
 int main() {
   canAccessArgumentWithPlaceholder();
+  canBindPlaceHolders();
   return 0;
 }
