@@ -1,7 +1,7 @@
 #ifndef ARCHIE_UTILS_FUSED_TUPLE_H_INCLUDED
 #define ARCHIE_UTILS_FUSED_TUPLE_H_INCLUDED
 
-#include <archie/utils/meta/sequence.h>
+#include <archie/utils/meta/index_of.h>
 #include <archie/utils/fused/nth.h>
 #include <archie/utils/fused/mover.h>
 #include <utility>
@@ -25,8 +25,6 @@ namespace utils {
       mutable storage_type storage;
 
     public:
-      using sequence = meta::sequence<Ts...>;
-
       template <typename... Us>
       constexpr explicit tuple(Us&&... args)
           : storage(make_storage<move_t<Ts>...>(std::forward<Us>(args)...)) {}
