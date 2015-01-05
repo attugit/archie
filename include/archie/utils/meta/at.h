@@ -28,6 +28,13 @@ namespace utils {
 
     public:
       template <typename... Ts>
+      constexpr decltype(auto) operator()(Ts&&... ts) noexcept {
+        return [](eat<number<ignore>>..., auto&& x, ...) -> decltype(x) {
+          return std::forward<decltype(x)>(x);
+        }(std::forward<Ts>(ts)...);
+      }
+
+      template <typename... Ts>
       using apply = typename skip<number<ignore>...>::template apply<Ts...>;
 
       template <typename... Ts>
