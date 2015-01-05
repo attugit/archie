@@ -12,8 +12,8 @@ namespace utils {
     template <std::size_t n, typename = std::make_index_sequence<n>>
     struct at;
 
-    template <std::size_t n, std::size_t... ignore>
-    struct at<n, std::index_sequence<ignore...>> {
+    template <std::size_t n, std::size_t... other>
+    struct at<n, std::index_sequence<other...>> {
     private:
       template <typename... Ts>
       struct skip {
@@ -27,19 +27,20 @@ namespace utils {
       };
 
     public:
+      constexpr at() noexcept = default;
       template <typename... Ts>
       constexpr decltype(auto) operator()(Ts&&... ts) noexcept {
-        return [](eat<number<ignore>>..., auto&& x, ...) -> decltype(x) {
+        return [](eat<number<other>>..., auto&& x, ...) -> decltype(x) {
           return std::forward<decltype(x)>(x);
         }(std::forward<Ts>(ts)...);
       }
 
       template <typename... Ts>
-      using apply = typename skip<number<ignore>...>::template apply<Ts...>;
+      using apply = typename skip<number<other>...>::template apply<Ts...>;
 
       template <typename... Ts>
       static constexpr decltype(auto) match(Ts&&... args) noexcept {
-        return *skip<number<ignore>...>::match(&std::forward<Ts>(args)...);
+        return *at{}(&std::forward<Ts>(args)...);
       }
     };
 
