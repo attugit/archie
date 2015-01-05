@@ -130,17 +130,14 @@ namespace utils {
 
       template <std::size_t n, std::size_t... idx>
       struct tuple_internals<n, std::index_sequence<idx...>> {
-        using alias = std::array<bool, sizeof...(idx)+1>;
         template <typename... Ts, typename... Us>
         static void copy_assign(tuple<Ts...>& lhs, tuple<Us...> const& rhs) {
-          (void)alias{false,
-                      (fused::get<idx>(lhs) = fused::get<idx>(rhs), false)...};
+          meta::ignore{(fused::get<idx>(lhs) = fused::get<idx>(rhs), false)...};
         }
         template <typename... Ts, typename... Us>
         static void move_assign(tuple<Ts...>& lhs, tuple<Us...>&& rhs) {
-          (void)alias{false,
-                      (fused::get<idx>(lhs) = std::move(fused::get<idx>(rhs)),
-                       false)...};
+          meta::ignore{(fused::get<idx>(lhs) = std::move(fused::get<idx>(rhs)),
+                        false)...};
         }
         template <typename... Ts>
         static bool equal(tuple<Ts...> const& lhs, tuple<Ts...> const& rhs) {
