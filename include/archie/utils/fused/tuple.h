@@ -75,10 +75,10 @@ namespace utils {
       return tp.apply(f);
     }
 
-    template <typename Tp, typename Up>
-    decltype(auto) get(Up&& u) {
-      using idx = typename std::decay_t<Up>::sequence::template index_of<Tp>;
-      return get<idx::value>(std::forward<Up>(u));
+    template <typename Tp, typename... Us>
+    decltype(auto) get(tuple<Us...>& u) {
+      constexpr auto idx = meta::index_of<Tp>(meta::type_list<Us...>{});
+      return get<idx>(u);
     }
 
     template <std::size_t I, typename Tp>
