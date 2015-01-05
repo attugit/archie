@@ -23,10 +23,22 @@ void canGetIndexOfSimpleType() {
 
 void canUseIndexOfWithTypeLists() {
   EXPECT_EQ(0, meta::index_of<char>(meta::type_list<char, int, float>{}));
+  EXPECT_EQ(1, meta::index_of<int>(meta::type_list<char, int, float>{}));
+}
+
+#include <array>
+void canUseIndexOfInConsexpr() {
+  constexpr auto idx =
+      meta::index_of<char>(meta::type_list<char, int, float>{});
+  EXPECT_EQ(0, idx);
+  constexpr auto cnt = meta::index_of<int>(meta::type_list<char, int, float>{});
+  std::array<int, cnt> arr;
+  EXPECT_EQ(sizeof(int), sizeof(arr));
 }
 
 int main() {
   canGetIndexOfSimpleType();
   canUseIndexOfWithTypeLists();
+  canUseIndexOfInConsexpr();
   return 0;
 }
