@@ -19,10 +19,9 @@ namespace utils {
       static constexpr Tp skip(eat<number<other>>..., Tp&&, ...) noexcept;
 
     public:
-      constexpr at() noexcept = default;
       template <typename... Ts>
       constexpr decltype(auto) operator()(Ts&&... ts) noexcept {
-        return *([](eat<number<other>>..., auto&& x, ...) -> decltype(x) {
+        return *([](eat<number<other>>..., auto&& x, ...) {
           return std::forward<decltype(x)>(x);
         }(&std::forward<Ts>(ts)...));
       }
