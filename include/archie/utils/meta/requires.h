@@ -9,21 +9,8 @@ namespace archie {
 namespace utils {
   namespace meta {
     namespace detail {
-      template <typename Condition>
-      struct __not_ {
-        using type = boolean<!Condition::value>;
-      };
-
-      template <typename... Conditions>
-      struct none {
-        using type = boolean<detail::__not_<any<Conditions...>>::type::value>;
-      };
-
       struct enabler final : std::true_type {};
     }
-
-    template <typename... Conditions>
-    struct none : public detail::none<Conditions...>::type {};
 
     template <typename Condition>
     using requires =
