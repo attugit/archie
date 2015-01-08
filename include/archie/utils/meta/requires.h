@@ -3,19 +3,11 @@
 
 #include <utility>
 #include <type_traits>
+#include <archie/utils/meta/logic.h>
 
 namespace archie {
 namespace utils {
   namespace meta {
-    template <bool B>
-    using boolean = std::integral_constant<bool, B>;
-
-    template <typename... Conditions>
-    using all = std::__and_<Conditions...>;
-
-    template <typename... Conditions>
-    using any = std::__or_<Conditions...>;
-
     namespace detail {
       template <typename Condition>
       struct __not_ {
