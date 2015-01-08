@@ -5,7 +5,7 @@ namespace archie {
 namespace utils {
   namespace meta {
 
-    struct ignore {
+    struct ignore final {
       ignore(...) {}
     };
 

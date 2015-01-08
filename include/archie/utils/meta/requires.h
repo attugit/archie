@@ -2,19 +2,17 @@
 #define ARCHIE_UTILS_META_REQUIRES_H_INCLUDED
 
 #include <utility>
-#include <type_traits>
 #include <archie/utils/meta/logic.h>
+#include <archie/utils/meta/ignore.h>
 
 namespace archie {
 namespace utils {
   namespace meta {
-    namespace detail {
-      struct enabler final : std::true_type {};
-    }
+
+    using enabler = ignore;
 
     template <typename Condition>
-    using requires =
-        typename std::enable_if<Condition::value, detail::enabler>::type;
+    using requires = typename std::enable_if<Condition::value, enabler>::type;
 
     template <typename... Conditions>
     using requires_all = requires<all<Conditions...>>;
