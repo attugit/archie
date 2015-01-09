@@ -1,5 +1,5 @@
-#ifndef ARCHIE_UTILS_APPLY_H_INCLUDED
-#define ARCHIE_UTILS_APPLY_H_INCLUDED
+#ifndef ARCHIE_UTILS_META_APPLY_H_INCLUDED
+#define ARCHIE_UTILS_META_APPLY_H_INCLUDED
 
 #include <utility>
 
@@ -13,11 +13,6 @@ namespace utils {
 
     template <template <typename...> class MetaFunction, typename... Args>
     using apply_t = typename apply<MetaFunction, Args...>::type;
-  }
-  template <typename Func, typename... Ts>
-  constexpr decltype(auto) apply(Func&& func, Ts&&... ts) noexcept(
-      noexcept(std::declval<Func>()(std::declval<Ts>()...))) {
-    return std::forward<Func>(func)(std::forward<Ts>(ts)...);
   }
 }
 }
