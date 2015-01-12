@@ -1,5 +1,5 @@
 ##TODO list
 
-####archie::utils::meta
+####archie::utils::fused
 
-* Fix meta::type_list::index_of when element is more than once
+* tuple ctor with explicit conversions
