@@ -51,6 +51,13 @@ namespace utils {
         return value < u;
       }
 
+      template <typename Up,
+                meta::requires<traits::is_less_than_comparable<
+                    traits::pure::const_reference_t<Up>, const_reference>>...>
+      decltype(auto) operator>(Up const& u) const {
+        return u < value;
+      }
+
       operator reference() { return get(); }
       operator const_reference() const { return get(); }
 
