@@ -57,6 +57,17 @@ static_assert(!traits::is_callable<callable, std::string>::value, "");
 static_assert(!traits::is_type_list<int>::value, "");
 static_assert(traits::is_type_list<archie::utils::meta::type_list<int>>::value,
               "");
+
+struct conv {
+  explicit conv(int);
+  conv(std::vector<int>);
+  operator int();
+};
+
+static_assert(traits::is_convertible<short, int>::value, "");
+static_assert(!traits::is_convertible<int, conv>::value, "");
+static_assert(traits::is_convertible<std::vector<int>, conv>::value, "");
+static_assert(traits::is_convertible<conv, int>::value, "");
 }
 
 int main() { return 0; }
