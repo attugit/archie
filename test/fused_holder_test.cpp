@@ -38,7 +38,7 @@ void canAssignValueToHolder() {
   EXPECT_EQ(6u, h.get().v);
 }
 
-void canCompareHolders() {
+void canEqCompareHolders() {
   static_assert(traits::is_equality_comparable<fused::holder<type_>,
                                                fused::holder<type_>>::value,
                 "");
@@ -57,9 +57,23 @@ void canCompareHolders() {
   EXPECT_FALSE(a == e);
 }
 
+void canNeCompareHolders() {
+  auto a = fused::holder<type_>{1u};
+  auto b = fused::holder<type_>{1u};
+  auto c = fused::holder<type_>{2u};
+  auto d = type_{1u};
+  auto e = type_{0u};
+
+  EXPECT_FALSE(a != b);
+  EXPECT_TRUE(a != c);
+  EXPECT_FALSE(a != d);
+  EXPECT_TRUE(a != e);
+}
+
 int main() {
   canCreateHolder();
   canAssignValueToHolder();
-  canCompareHolders();
+  canEqCompareHolders();
+  canNeCompareHolders();
   return 0;
 }
