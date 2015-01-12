@@ -100,9 +100,11 @@ void canUseTypeListAtT() {
 
 void canTransformStandalone() {
   using uptrs = au::meta::transform_t<uptr_, _0, _1>;
-  static_assert(std::is_same<sequence<std::unique_ptr<_0>, std::unique_ptr<_1>>,
-                             uptrs>::value,
-                "");
+  static_assert(
+      std::is_same<
+          au::meta::type_list<std::unique_ptr<_0>, std::unique_ptr<_1>>,
+          uptrs>::value,
+      "");
 }
 
 void canGetIndexOfListItem() {
