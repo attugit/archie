@@ -14,6 +14,8 @@ namespace utils {
       using value_type = traits::pure::value_type_t<Tp>;
       using reference = traits::pure::reference_t<Tp>;
       using const_reference = traits::pure::const_reference_t<Tp>;
+      using pointer = traits::pure::pointer_t<Tp>;
+      using const_pointer = traits::pure::const_pointer_t<Tp>;
 
       template <typename... Us>
       explicit holder(Us&&... u)
@@ -77,6 +79,12 @@ namespace utils {
 
       reference get() { return value; }
       const_reference get() const { return value; }
+
+      reference operator*() { return get(); }
+      const_reference operator*() const { return get(); }
+
+      pointer operator->() { return &get(); }
+      const_pointer operator->() const { return &get(); }
 
     private:
       value_type value;
