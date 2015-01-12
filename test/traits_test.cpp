@@ -53,6 +53,10 @@ static_assert(
 static_assert(!traits::is_callable<callable, double, std::string&>::value, "");
 static_assert(traits::is_callable<callable, unsigned>::value, "");
 static_assert(!traits::is_callable<callable, std::string>::value, "");
+
+static_assert(!traits::is_type_list<int>::value, "");
+static_assert(traits::is_type_list<archie::utils::meta::type_list<int>>::value,
+              "");
 }
 
 int main() { return 0; }

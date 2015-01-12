@@ -2,7 +2,6 @@
 #define ARCHIE_UTILS_ROUTER_H_INCLUDED
 
 #include <cstdint>
-#include <boost/asio/buffer.hpp>
 #include <boost/fusion/include/for_each.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <archie/utils/meta/requires.h>
@@ -11,7 +10,6 @@
 namespace archie {
 namespace utils {
 
-  namespace asio = boost::asio;
   namespace fusion = boost::fusion;
 
   template <typename Tp>
