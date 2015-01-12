@@ -109,6 +109,19 @@ void canLeCompareHolders() {
   EXPECT_FALSE(a <= e);
 }
 
+void canGeCompareHolders() {
+  auto a = fused::holder<type_>{1u};
+  auto b = fused::holder<type_>{1u};
+  auto c = fused::holder<type_>{2u};
+  auto d = type_{1u};
+  auto e = type_{0u};
+
+  EXPECT_TRUE(a >= b);
+  EXPECT_FALSE(a >= c);
+  EXPECT_TRUE(a >= d);
+  EXPECT_TRUE(a >= e);
+}
+
 int main() {
   canCreateHolder();
   canAssignValueToHolder();
@@ -117,5 +130,6 @@ int main() {
   canLtCompareHolders();
   canGtCompareHolders();
   canLeCompareHolders();
+  canGeCompareHolders();
   return 0;
 }
