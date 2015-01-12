@@ -2,6 +2,8 @@
 #define ARCHIE_UTILS_FUSED_TUPLE_H_INCLUDED
 
 #include <archie/utils/meta/index_of.h>
+#include <archie/utils/meta/requires.h>
+#include <archie/utils/traits.h>
 #include <archie/utils/fused/nth.h>
 #include <archie/utils/fused/mover.h>
 #include <utility>
@@ -25,7 +27,8 @@ namespace utils {
       mutable storage_type storage;
 
     public:
-      template <typename... Us>
+      template <typename... Us,
+                meta::requires_all<traits::is_convertible<Us, Ts>...>...>
       constexpr explicit tuple(Us&&... args)
           : storage(make_storage<move_t<Ts>...>(std::forward<Us>(args)...)) {}
 
