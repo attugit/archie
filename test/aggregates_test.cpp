@@ -1,28 +1,26 @@
-#include <archie/utils/unique_tuple.h>
-#include <archie/utils/holder.h>
-#include <archie/utils/get.h>
-#include <archie/utils/select.h>
+#include <archie/utils/fused/holder.h>
+#include <archie/utils/fused/tuple.h>
+#include <archie/utils/fused/tuple_view.h>
 #include <string>
 #include <memory>
-#include <list>
 #include <archie/utils/test.h>
 
 namespace detail {
 struct PackedStruct {
-  struct Id : archie::utils::Holder<unsigned> {
-    using Holder::Holder;
+  struct Id : archie::utils::fused::holder<unsigned> {
+    using holder::holder;
   };
-  struct Name : archie::utils::Holder<std::string> {
-    using Holder::Holder;
+  struct Name : archie::utils::fused::holder<std::string> {
+    using holder::holder;
   };
-  struct Value : archie::utils::Holder<int> {
-    using Holder::Holder;
+  struct Value : archie::utils::fused::holder<int> {
+    using holder::holder;
   };
-  struct Amount : archie::utils::Holder<unsigned> {
-    using Holder::Holder;
+  struct Amount : archie::utils::fused::holder<unsigned> {
+    using holder::holder;
   };
 
-  using type = archie::utils::UniqueTuple<Id, Name, Value, Amount>;
+  using type = archie::utils::fused::tuple<Id, Name, Value, Amount>;
 };
 }
 
@@ -35,70 +33,25 @@ struct PackedStruct : detail::PackedStruct::type {
   using BaseType::BaseType;
 };
 
-namespace au = archie::utils;
-template <typename... Args>
-struct Apply {
-  template <typename Func, typename... Types>
-  static auto call(Func func, au::UniqueTuple<Types...> const& ut) {
-    return func(au::get<Args>(ut)...);
-  }
-};
+namespace fused = archie::utils::fused;
 
 void canCreate() {
   auto pack = std::make_unique<PackedStruct>(1, "Aqq", -20, 10);
-  EXPECT_EQ(1, au::get<PackedStruct::Id>(*pack));
-  EXPECT_EQ("Aqq", *au::get<PackedStruct::Name>(*pack));
-  EXPECT_EQ(-20, au::get<PackedStruct::Value>(*pack));
+  EXPECT_EQ(1, fused::get<PackedStruct::Id>(*pack));
+  EXPECT_EQ("Aqq", fused::get<PackedStruct::Name>(*pack).get());
+  EXPECT_EQ(-20, fused::get<PackedStruct::Value>(*pack));
   pack.reset();
 }
 
 void canSelect() {
   auto pack = std::make_unique<PackedStruct>(1, "Aqq", -20, 10);
-  auto select = au::Select<PackedStruct::Id, PackedStruct::Value>::from(*pack);
-  EXPECT_EQ(1, au::get<PackedStruct::Id>(select));
-  EXPECT_EQ(-20, au::get<PackedStruct::Value>(select));
-}
-
-void canSelectCollection() {
-  std::list<PackedStruct> collection;
-  collection.emplace_back(1, "Aqq", -20, 10);
-  collection.emplace_back(2, "Bqq", -10, 20);
-  collection.emplace_back(3, "Cqq", -30, 400);
-
-  auto select = au::Select<PackedStruct::Id>::from(std::begin(collection),
-                                                   std::end(collection));
-  ASSERT_EQ(3u, select.size());
-  EXPECT_EQ(1, au::get<PackedStruct::Id>(select[0]));
-  EXPECT_EQ(2, au::get<PackedStruct::Id>(select[1]));
-  EXPECT_EQ(3, au::get<PackedStruct::Id>(select[2]));
-}
-
-void canSelectCollectionIf() {
-  std::list<PackedStruct> collection;
-  collection.emplace_back(1, "Aqq", -20, 10);
-  collection.emplace_back(2, "Bqq", -10, 20);
-  collection.emplace_back(3, "Cqq", -30, 400);
-
-  auto isOdd =
-      [](auto&& item) { return (*au::get<PackedStruct::Id>(item) % 2) != 0; };
-  auto select = au::Select<PackedStruct::Id>::from_if(
-      std::begin(collection), std::end(collection), isOdd);
-  ASSERT_EQ(2u, select.size());
-  EXPECT_EQ(1, au::get<PackedStruct::Id>(select[0]));
-  EXPECT_EQ(3, au::get<PackedStruct::Id>(select[1]));
-}
-
-void canApply() {
-  PackedStruct pack(1, "Aqq", -20, 10);
-  auto func = [](auto&& value) { EXPECT_TRUE(value < 0); };
-  Apply<PackedStruct::Value>::call(func, pack);
+  auto select = fused::select<PackedStruct::Id, PackedStruct::Value>(*pack);
+  EXPECT_EQ(1, fused::get<PackedStruct::Id>(select));
+  EXPECT_EQ(-20, fused::get<PackedStruct::Value>(select));
 }
 
 int main() {
   canCreate();
   canSelect();
-  canSelectCollection();
-  canSelectCollectionIf();
-  canApply();
   return 0;
 }

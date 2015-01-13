@@ -31,6 +31,23 @@ namespace utils {
     decltype(auto) select(tuple<Ts...>& t) {
       return make_view(get<idx>(t)...);
     }
+
+    template <typename... Ts, typename... Us>
+    decltype(auto) select(tuple<Us...>& t) {
+      return make_view(get<Ts>(t)...);
+    }
+
+    template <typename Tp, typename... Us>
+    decltype(auto) get(tuple<value_view<Us>...>& t) {
+      constexpr auto idx = meta::index_of<Tp>(meta::type_list<Us...>{});
+      return get<idx>(t).get();
+    }
+
+    template <typename Tp, typename... Us>
+    decltype(auto) get(tuple<value_view<Us>...> const& t) {
+      constexpr auto idx = meta::index_of<Tp>(meta::type_list<Us...>{});
+      return get<idx>(t).get();
+    }
   }
 }
 }

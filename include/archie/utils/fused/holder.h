@@ -80,12 +80,6 @@ namespace utils {
       reference get() { return value; }
       const_reference get() const { return value; }
 
-      reference operator*() { return get(); }
-      const_reference operator*() const { return get(); }
-
-      pointer operator->() { return &get(); }
-      const_pointer operator->() const { return &get(); }
-
     private:
       value_type value;
     };
