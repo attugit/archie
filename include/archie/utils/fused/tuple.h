@@ -32,6 +32,11 @@ namespace utils {
       constexpr explicit tuple(Us&&... args)
           : storage(make_storage<move_t<Ts>...>(std::forward<Us>(args)...)) {}
 
+      template <typename... Us, meta::requires_any<meta::opposite_t<
+                                    traits::is_convertible<Us, Ts>>...>...>
+      constexpr explicit tuple(Us&&... args)
+          : tuple(Ts { std::forward<Us>(args) }...) {}
+
       constexpr tuple() : tuple(Ts {}...) {}
 
       tuple(tuple&&) = default;

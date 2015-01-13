@@ -3,9 +3,11 @@
 #if 1
 #include <archie/utils/fused/tuple.h>
 namespace test = archie::utils::fused;
+namespace traits = archie::utils::traits;
 #else
 #include <tuple>
 namespace test = std;
+namespace traits = std;
 #endif
 
 #include <archie/utils/test.h>
@@ -392,6 +394,24 @@ void canGetElementByType() {
   EXPECT_EQ('6', test::get<char>(t));
 }
 
+struct conv {
+  explicit conv(std::string s) : value(s.size()) {}
+  conv(unsigned i) : value(i) {}
+  operator unsigned() const { return value; }
+  unsigned value = 0;
+};
+
+void canConstructTupleWithExplicitElementCtor() {
+  static_assert(traits::is_convertible<unsigned, conv>::value, "");
+  static_assert(!traits::is_convertible<std::string&, conv>::value, "");
+
+  std::string a{"abc"};
+  auto t1 = test::tuple<conv>(1u);
+  auto t2 = test::tuple<conv>(a);
+  EXPECT_EQ(1u, test::get<0>(t1));
+  EXPECT_EQ(3u, test::get<0>(t2));
+}
+
 int main() {
   canDefaultConstruct();
   canDefaultConstructTupleWithUncopyableElement();
@@ -415,6 +435,7 @@ int main() {
   canTieWithIgnore();
   canUseTupleElement();
   canGetElementByType();
+  canConstructTupleWithExplicitElementCtor();
 
   return 0;
 }
