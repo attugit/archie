@@ -39,6 +39,15 @@ namespace utils {
         return h.value == u;
       }
 
+      friend bool operator==(holder<Tp> const& lhs, holder<Tp> const& rhs) {
+        return lhs.value == rhs.value;
+      }
+
+      template <typename Up>
+      friend bool operator==(Up const& u, holder<Tp> const& h) {
+        return h == u;
+      }
+
       template <typename Up,
                 meta::requires<traits::is_equality_comparable<
                     const_reference, traits::pure::const_reference_t<Up>>>...>

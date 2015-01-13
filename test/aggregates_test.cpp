@@ -37,8 +37,8 @@ namespace fused = archie::utils::fused;
 
 void canCreate() {
   auto pack = std::make_unique<PackedStruct>(1, "Aqq", -20, 10);
-  EXPECT_EQ(1, fused::get<PackedStruct::Id>(*pack));
-  EXPECT_EQ("Aqq", fused::get<PackedStruct::Name>(*pack).get());
+  EXPECT_EQ(1u, fused::get<PackedStruct::Id>(*pack));
+  EXPECT_EQ("Aqq", fused::get<PackedStruct::Name>(*pack));
   EXPECT_EQ(-20, fused::get<PackedStruct::Value>(*pack));
   pack.reset();
 }
@@ -46,7 +46,7 @@ void canCreate() {
 void canSelect() {
   auto pack = std::make_unique<PackedStruct>(1, "Aqq", -20, 10);
   auto select = fused::select<PackedStruct::Id, PackedStruct::Value>(*pack);
-  EXPECT_EQ(1, fused::get<PackedStruct::Id>(select));
+  EXPECT_EQ(1u, fused::get<PackedStruct::Id>(select));
   EXPECT_EQ(-20, fused::get<PackedStruct::Value>(select));
 }
 
