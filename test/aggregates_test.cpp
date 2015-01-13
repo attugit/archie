@@ -2,7 +2,6 @@
 #include <archie/utils/fused/tuple.h>
 #include <archie/utils/fused/tuple_view.h>
 #include <string>
-#include <memory>
 #include <archie/utils/test.h>
 
 namespace detail {
@@ -36,16 +35,15 @@ struct PackedStruct : detail::PackedStruct::type {
 namespace fused = archie::utils::fused;
 
 void canCreate() {
-  auto pack = std::make_unique<PackedStruct>(1, "Aqq", -20, 10);
-  EXPECT_EQ(1u, fused::get<PackedStruct::Id>(*pack));
-  EXPECT_EQ("Aqq", fused::get<PackedStruct::Name>(*pack));
-  EXPECT_EQ(-20, fused::get<PackedStruct::Value>(*pack));
-  pack.reset();
+  PackedStruct pack{1, "Aqq", -20, 10};
+  EXPECT_EQ(1u, fused::get<PackedStruct::Id>(pack));
+  EXPECT_EQ("Aqq", fused::get<PackedStruct::Name>(pack));
+  EXPECT_EQ(-20, fused::get<PackedStruct::Value>(pack));
 }
 
 void canSelect() {
-  auto pack = std::make_unique<PackedStruct>(1, "Aqq", -20, 10);
-  auto select = fused::select<PackedStruct::Id, PackedStruct::Value>(*pack);
+  PackedStruct pack{1, "Aqq", -20, 10};
+  auto select = fused::select<PackedStruct::Id, PackedStruct::Value>(pack);
   EXPECT_EQ(1u, fused::get<PackedStruct::Id>(select));
   EXPECT_EQ(-20, fused::get<PackedStruct::Value>(select));
 }
