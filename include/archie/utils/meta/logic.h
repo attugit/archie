@@ -43,10 +43,16 @@ namespace utils {
     using disjunction_t = typename disjunction<Xs...>::type;
 
     template <bool B>
-    struct negation : boolean<!B> {};
+    using negation = boolean<!B>;
 
     template <bool B>
     using negation_t = typename negation<B>::type;
+
+    template <typename Tp>
+    using opposite = negation<Tp::value>;
+
+    template <typename Tp>
+    using opposite_t = negation_t<Tp::value>;
 
     template <typename... Ts>
     using all = conjunction_t<Ts::value...>;
@@ -55,7 +61,7 @@ namespace utils {
     using any = disjunction_t<Ts::value...>;
 
     template <typename... Ts>
-    using none = negation_t<any<Ts...>::value>;
+    using none = opposite_t<any<Ts...>>;
   }
 }
 }
