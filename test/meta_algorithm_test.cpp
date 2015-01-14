@@ -2,6 +2,7 @@
 #include <archie/utils/meta/transform.h>
 #include <archie/utils/meta/apply.h>
 #include <archie/utils/meta/append.h>
+#include <archie/utils/meta/identity.h>
 #include <type_traits>
 
 namespace meta = archie::utils::meta;
@@ -66,6 +67,9 @@ static_assert(
         meta::append_t<meta::type_list<char>, meta::type_list<int, float>>,
         meta::type_list<char, int, float>>::value,
     "");
+
+static_assert(std::is_same<meta::identity<int>::type, int>::value, "");
+static_assert(std::is_same<meta::identity_t<int>, int>::value, "");
 }
 
 int main() { return 0; }

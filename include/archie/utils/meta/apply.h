@@ -2,14 +2,13 @@
 #define ARCHIE_UTILS_META_APPLY_H_INCLUDED
 
 #include <archie/utils/meta/type_list.h>
+#include <archie/utils/meta/returns.h>
 
 namespace archie {
 namespace utils {
   namespace meta {
     template <template <typename...> class F, typename... Args>
-    struct apply {
-      using type = typename F<Args...>::type;
-    };
+    struct apply : returns<typename F<Args...>::type> {};
 
     template <template <typename...> class F, typename... Args>
     struct apply<F, type_list<Args...>> : apply<F, Args...> {};

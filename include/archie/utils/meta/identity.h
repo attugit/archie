@@ -2,6 +2,7 @@
 #define ARCHIE_UTILS_META_IDENTITY_H_INCLUDED
 
 #include <archie/utils/meta/returns.h>
+#include <archie/utils/meta/apply.h>
 
 namespace archie {
 namespace utils {
@@ -11,7 +12,7 @@ namespace utils {
     using identity = returns<Tp>;
 
     template <typename Tp>
-    using identity_t = typename identity<Tp>::type;
+    using identity_t = apply_t<identity, Tp>;
   }
 }
 }
