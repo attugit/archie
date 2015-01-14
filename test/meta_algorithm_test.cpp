@@ -1,6 +1,7 @@
 #include <archie/utils/meta/returns.h>
 #include <archie/utils/meta/transform.h>
 #include <archie/utils/meta/apply.h>
+#include <archie/utils/meta/append.h>
 #include <type_traits>
 
 namespace meta = archie::utils::meta;
@@ -53,6 +54,18 @@ static_assert(meta::apply_t<vsize, meta::type_list<int>>::value == 1, "");
 static_assert(meta::apply_t<vsize, meta::type_list<int, char>>::value == 2, "");
 static_assert(meta::apply_t<vsize, meta::type_list<int, char, int>>::value == 3,
               "");
+
+static_assert(std::is_same<meta::append_t<meta::type_list<>, int>,
+                           meta::type_list<int>>::value,
+              "");
+static_assert(std::is_same<meta::append_t<meta::type_list<char>, int>,
+                           meta::type_list<char, int>>::value,
+              "");
+static_assert(
+    std::is_same<
+        meta::append_t<meta::type_list<char>, meta::type_list<int, float>>,
+        meta::type_list<char, int, float>>::value,
+    "");
 }
 
 int main() { return 0; }
