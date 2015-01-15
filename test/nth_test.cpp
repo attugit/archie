@@ -40,9 +40,26 @@ void canWrapNthWithLambda() {
   EXPECT_EQ(&a, &x);
 }
 
+#include <memory>
+
+void canUseNthWithNonCopyable() {
+  auto a = std::make_unique<unsigned>(1u);
+  auto b = std::make_unique<int>(2);
+  auto c = std::make_unique<char>('3');
+
+  auto const& x = nth<0>(a, b, c);
+  auto const& y = nth<1>(a, b, c);
+  auto const& z = nth<2>(a, b, c);
+
+  EXPECT_EQ(*a, *x);
+  EXPECT_EQ(*b, *y);
+  EXPECT_EQ(*c, *z);
+}
+
 int main() {
   canUseNth();
   canUseConstNth();
   canWrapNthWithLambda();
+  canUseNthWithNonCopyable();
   return 0;
 }
