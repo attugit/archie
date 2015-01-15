@@ -84,6 +84,30 @@ static_assert(meta::find_t<int, meta::type_list<int, char>>::value == 0, "");
 static_assert(meta::find_t<int, meta::type_list<char, int>>::value == 1, "");
 static_assert(meta::find_t<int, meta::type_list<char, int, int>>::value == 1,
               "");
+
+template <unsigned I>
+struct utype {};
+
+template <typename Tp>
+using is_0 = std::is_same<utype<0>, Tp>;
+
+template <typename Tp>
+using is_1 = std::is_same<utype<1>, Tp>;
+
+static_assert(meta::find_if_t<is_0, utype<0>>::value == 0, "");
+static_assert(meta::find_if_t<is_1, utype<0>>::value == 1, "");
+static_assert(meta::find_if_t<is_1, utype<0>, utype<1>>::value == 1, "");
+static_assert(meta::find_if_t<is_1, utype<0>, utype<1>, utype<1>>::value == 1,
+              "");
+
+static_assert(meta::find_if_t<is_0, meta::type_list<utype<0>>>::value == 0, "");
+static_assert(meta::find_if_t<is_1, meta::type_list<utype<0>>>::value == 1, "");
+static_assert(
+    meta::find_if_t<is_1, meta::type_list<utype<0>, utype<1>>>::value == 1, "");
+static_assert(meta::find_if_t<
+                  is_1, meta::type_list<utype<0>, utype<1>, utype<1>>>::value ==
+                  1,
+              "");
 }
 
 int main() { return 0; }
