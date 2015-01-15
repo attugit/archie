@@ -3,6 +3,7 @@
 #include <archie/utils/meta/apply.h>
 #include <archie/utils/meta/append.h>
 #include <archie/utils/meta/identity.h>
+#include <archie/utils/meta/find.h>
 #include <type_traits>
 
 namespace meta = archie::utils::meta;
@@ -70,6 +71,19 @@ static_assert(
 
 static_assert(std::is_same<meta::identity<int>::type, int>::value, "");
 static_assert(std::is_same<meta::identity_t<int>, int>::value, "");
+
+static_assert(meta::find_t<int>::value == 0, "");
+static_assert(meta::find_t<int, int>::value == 0, "");
+static_assert(meta::find_t<int, int, char>::value == 0, "");
+static_assert(meta::find_t<int, char, int>::value == 1, "");
+static_assert(meta::find_t<int, char, int, int>::value == 1, "");
+
+static_assert(meta::find_t<int, meta::type_list<>>::value == 0, "");
+static_assert(meta::find_t<int, meta::type_list<int>>::value == 0, "");
+static_assert(meta::find_t<int, meta::type_list<int, char>>::value == 0, "");
+static_assert(meta::find_t<int, meta::type_list<char, int>>::value == 1, "");
+static_assert(meta::find_t<int, meta::type_list<char, int, int>>::value == 1,
+              "");
 }
 
 int main() { return 0; }
