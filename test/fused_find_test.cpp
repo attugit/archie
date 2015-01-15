@@ -15,6 +15,11 @@ void canUseFusedFind() {
   auto y = fused::find<double&>(a, b, c, d, e);
   EXPECT_EQ(a, x);
   EXPECT_EQ(d, y);
+
+  EXPECT_EQ(1, fused::find<int>(1, 2u, 3.0, '4'));
+  EXPECT_EQ(2u, fused::find<unsigned>(1, 2u, 3.0, '4'));
+  EXPECT_EQ(3.0, fused::find<double>(1, 2u, 3.0, '4'));
+  EXPECT_EQ('4', fused::find<char>(1, 2u, 3.0, '4'));
 }
 
 template <typename Tp>
