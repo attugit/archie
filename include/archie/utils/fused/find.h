@@ -9,9 +9,12 @@ namespace utils {
 
     template <typename Tp, typename... Us>
     decltype(auto) find(Us&&... us) noexcept {
-      using idx = meta::find_t<Tp, Us...>;
-      static_assert(idx::value < sizeof...(Us), "");
-      return nth<idx::value>(std::forward<Us>(us)...);
+      return nth<meta::find_t<Tp, Us...>::value>(std::forward<Us>(us)...);
+    }
+
+    template <template <typename> class F, typename... Us>
+    decltype(auto) find_if(Us&&... us) noexcept {
+      return nth<meta::find_if_t<F, Us...>::value>(std::forward<Us>(us)...);
     }
   }
 }
