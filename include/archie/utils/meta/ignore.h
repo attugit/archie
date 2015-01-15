@@ -6,7 +6,8 @@ namespace utils {
   namespace meta {
 
     struct ignore final {
-      ignore(...) {}
+      template <typename... Ts>
+      ignore(Ts&&...) {}
     };
 
     template <typename>

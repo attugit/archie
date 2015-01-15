@@ -56,10 +56,21 @@ void canUseNthWithNonCopyable() {
   EXPECT_EQ(*c, *z);
 }
 
+void canUseNthWithRValues() {
+  auto x = nth<0>(1u, 2.0, '3');
+  auto y = nth<1>(1u, 2.0, '3');
+  auto z = nth<2>(1u, 2.0, '3');
+
+  EXPECT_EQ(1u, x);
+  EXPECT_EQ(2.0, y);
+  EXPECT_EQ('3', z);
+}
+
 int main() {
   canUseNth();
   canUseConstNth();
   canWrapNthWithLambda();
   canUseNthWithNonCopyable();
+  canUseNthWithRValues();
   return 0;
 }
