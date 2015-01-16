@@ -1,5 +1,4 @@
-#ifndef ARCHIE_UTILS_FUSED_HOLDER_H_INCLUDED
-#define ARCHIE_UTILS_FUSED_HOLDER_H_INCLUDED
+#pragma once
 #include <utility>
 #include <type_traits>
 #include <archie/utils/meta/requires.h>
@@ -95,10 +94,3 @@ namespace utils {
   }
 }
 }
-
-#define GENERATE_HOLDER(n, t)                                                  \
-  struct n : archie::utils::fused::holder<t> {                                 \
-    using type = archie::utils::fused::holder<t>;                              \
-    using type::type;                                                          \
-  }
-#endif

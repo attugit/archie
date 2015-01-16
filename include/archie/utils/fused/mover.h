@@ -2,6 +2,8 @@
 #define ARCHIE_UTILS_FUSED_MOVER_H_INCLUDED
 
 #include <utility>
+#include <archie/utils/meta/functional.h>
+#include <archie/utils/meta/logic.h>
 
 namespace archie {
 namespace utils {
@@ -21,12 +23,13 @@ namespace utils {
     };
 
     template <typename Tp>
-    using move_t = typename std::conditional<
-        std::is_move_constructible<Tp>::value&&(
-            std::is_reference<Tp>::value ||
-            !std::is_copy_constructible<Tp>::value ||
-            !std::has_trivial_copy_constructor<Tp>::value),
-        mover<Tp>, Tp>::type;
+    using move_t = meta::if_t<
+        meta::all<
+            std::is_move_constructible<Tp>,
+            meta::any<std::is_reference<Tp>,
+                      meta::opposite_t<std::is_copy_constructible<Tp>>,
+                      meta::opposite_t<std::has_trivial_copy_constructor<Tp>>>>,
+        mover<Tp>, Tp>;
   }
 }
 }
