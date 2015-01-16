@@ -13,7 +13,6 @@ before_install:
   - export CHECKOUT_PATH=`pwd`;
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   - sudo apt-get update -qq
-  - sudo apt-get install -qq libboost-all-dev
   - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-${GCC_VERSION}; fi
   - if [ "$CXX" = "g++" ]; then export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}"; fi
   - if [ -z "$BUILD_TYPE" ]; then export BUILD_TYPE=release; fi
