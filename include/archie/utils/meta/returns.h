@@ -11,7 +11,7 @@ namespace utils {
     using returns = type_holder<Tp>;
 
     template <typename Tp>
-    using returns_t = typename returns<Tp>::type;
+    using eval = typename Tp::type;
   }
 }
 }
