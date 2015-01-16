@@ -96,7 +96,7 @@ namespace utils {
     };
 
     template <std::size_t I, typename Tp>
-    using tuple_element_t = typename tuple_element<I, Tp>::type;
+    using tuple_element_t = meta::eval<tuple_element<I, Tp>>;
 
     namespace detail {
 

@@ -11,7 +11,7 @@ namespace utils {
   namespace meta {
 
     template <typename Condition, typename Tp, typename Up>
-    using if_t = typename std::conditional<Condition::value, Tp, Up>::type;
+    using if_t = eval<std::conditional<Condition::value, Tp, Up>>;
 
     template <typename Lhs, typename Rhs>
     using less_t = if_t<boolean<(Lhs::value < Rhs::value)>, true_t, false_t>;
@@ -20,7 +20,7 @@ namespace utils {
     using greater_t = less_t<Rhs, Lhs>;
 
     template <typename Tp, typename... Us>
-    struct sum : returns<number<Tp::value + sum<Us...>::type::value>> {};
+    struct sum : returns<number<Tp::value + eval<sum<Us...>>::value>> {};
 
     template <typename Tp>
     struct sum<Tp> : returns<number<Tp::value>> {};
@@ -29,7 +29,7 @@ namespace utils {
     struct sum<type_list<Tp, Us...>> : sum<Tp, Us...> {};
 
     template <typename... Ts>
-    using sum_t = typename sum<Ts...>::type;
+    using sum_t = eval<sum<Ts...>>;
 
     template <unsigned... N>
     using usum_t = sum_t<number<N>...>;

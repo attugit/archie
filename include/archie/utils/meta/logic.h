@@ -3,6 +3,7 @@
 
 #include <type_traits>
 #include <archie/utils/meta/boolean.h>
+#include <archie/utils/meta/returns.h>
 
 namespace archie {
 namespace utils {
@@ -18,12 +19,11 @@ namespace utils {
       static boolean<false> test(Ts...);
 
     public:
-      using type =
-          decltype(test(typename std::conditional<Xs, int*, int>::type {}...));
+      using type = decltype(test(eval<std::conditional<Xs, int*, int>> {}...));
     };
 
     template <bool... Xs>
-    using conjunction_t = typename conjunction<Xs...>::type;
+    using conjunction_t = eval<conjunction<Xs...>>;
 
     template <bool... Xs>
     struct disjunction {
@@ -35,18 +35,17 @@ namespace utils {
       static boolean<true> test(Ts...);
 
     public:
-      using type =
-          decltype(test(typename std::conditional<Xs, int, int*>::type {}...));
+      using type = decltype(test(eval<std::conditional<Xs, int, int*>> {}...));
     };
 
     template <bool... Xs>
-    using disjunction_t = typename disjunction<Xs...>::type;
+    using disjunction_t = eval<disjunction<Xs...>>;
 
     template <bool B>
     using negation = boolean<!B>;
 
     template <bool B>
-    using negation_t = typename negation<B>::type;
+    using negation_t = eval<negation<B>>;
 
     template <typename Tp>
     using opposite = negation<Tp::value>;

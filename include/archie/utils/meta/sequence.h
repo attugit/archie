@@ -16,13 +16,13 @@ namespace utils {
       using size = meta::number<sizeof...(Ts)>;
 
       template <template <typename...> class Func>
-      using apply = typename Func<Ts...>::type;
+      using apply = eval<Func<Ts...>>;
 
       template <template <typename> class Func>
-      using transform = meta::returns<sequence<typename Func<Ts>::type...>>;
+      using transform = meta::returns<sequence<eval<Func<Ts>>...>>;
 
       template <template <typename> class Func>
-      using transform_t = typename transform<Func>::type;
+      using transform_t = eval<transform<Func>>;
 
       template <typename... Us>
       using append = sequence<Ts..., Us...>;

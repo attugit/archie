@@ -4,6 +4,7 @@
 #include <archie/utils/meta/index_of.h>
 #include <archie/utils/meta/apply.h>
 #include <archie/utils/meta/boolean.h>
+#include <archie/utils/meta/returns.h>
 
 namespace archie {
 namespace utils {
@@ -29,7 +30,7 @@ namespace utils {
     struct find_if<F, type_list<Ts...>> : find_if<F, Ts...> {};
 
     template <template <typename> class F, typename... Ts>
-    using find_if_t = typename find_if<F, Ts...>::type;
+    using find_if_t = eval<find_if<F, Ts...>>;
   }
 }
 }

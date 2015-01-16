@@ -16,7 +16,7 @@ namespace utils {
     struct transform<F, type_list<Xs...>> : transform<F, Xs...> {};
 
     template <template <typename> class F, typename... Xs>
-    using transform_t = typename transform<F, Xs...>::type;
+    using transform_t = eval<transform<F, Xs...>>;
   }
 }
 }
