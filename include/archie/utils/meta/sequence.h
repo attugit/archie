@@ -28,7 +28,7 @@ namespace utils {
       using append = sequence<Ts..., Us...>;
 
       template <std::size_t I>
-      using at = typename meta::at<I>::template apply<Ts...>;
+      using at = meta::at<I, Ts...>;
 
       template <std::size_t I>
       using at_t = meta::at_t<I, Ts...>;

@@ -8,7 +8,7 @@ namespace utils {
   namespace fused {
 
     template <std::size_t n>
-    using placeholder = meta::at<n>;
+    using placeholder = meta::placeholder<n>;
 
     template <typename F, std::size_t... ids>
     decltype(auto) reorder(F f, placeholder<ids>... xs) {
