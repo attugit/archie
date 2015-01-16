@@ -4,6 +4,7 @@
 #include <archie/utils/meta/boolean.h>
 #include <archie/utils/meta/number.h>
 #include <archie/utils/meta/returns.h>
+#include <archie/utils/meta/type_list.h>
 
 namespace archie {
 namespace utils {
@@ -23,6 +24,9 @@ namespace utils {
 
     template <typename Tp>
     struct sum<Tp> : returns<number<Tp::value>> {};
+
+    template <typename Tp, typename... Us>
+    struct sum<type_list<Tp, Us...>> : sum<Tp, Us...> {};
 
     template <typename... Ts>
     using sum_t = typename sum<Ts...>::type;
