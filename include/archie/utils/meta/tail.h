@@ -9,22 +9,30 @@
 namespace archie {
 namespace utils {
   namespace meta {
-    template <std::size_t n, typename = std::make_index_sequence<n>>
-    struct tail;
+    namespace detail {
+      template <std::size_t n, typename = std::make_index_sequence<n>>
+      struct tail;
 
-    template <std::size_t n, std::size_t... other>
-    struct tail<n, std::index_sequence<other...>> {
-    private:
-      template <typename... Ts>
-      static constexpr type_list<Ts...> slice(eat<number<other>>..., Ts...);
+      template <std::size_t n, std::size_t... other>
+      struct tail<n, std::index_sequence<other...>> {
+      private:
+        template <typename... Ts>
+        static constexpr type_list<Ts...> slice(eat<number<other>>..., Ts...);
 
-    public:
-      template <typename... Ts>
-      using apply = returns<decltype(slice(std::declval<Ts>()...))>;
-    };
+      public:
+        template <typename... Ts>
+        using apply = returns<decltype(slice(std::declval<Ts>()...))>;
+      };
+    }
 
     template <std::size_t n, typename... Ts>
-    using tail_t = typename tail<n>::template apply<Ts...>::type;
+    struct tail : detail::tail<n>::template apply<Ts...> {};
+
+    template <std::size_t n, typename... Ts>
+    struct tail<n, type_list<Ts...>> : tail<n, Ts...> {};
+
+    template <std::size_t n, typename... Ts>
+    using tail_t = eval<tail<n, Ts...>>;
   }
 }
 }
