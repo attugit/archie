@@ -8,18 +8,25 @@
 namespace archie {
 namespace utils {
   namespace meta {
-    template <std::size_t n, typename = std::make_index_sequence<n>>
-    struct take;
+    namespace detail {
+      template <std::size_t n, typename = std::make_index_sequence<n>>
+      struct take;
 
-    template <std::size_t n, std::size_t... other>
-    struct take<n, std::index_sequence<other...>> {
-    public:
-      template <typename... Us>
-      using apply = returns<type_list<at_t<other, Us...>...>>;
-    };
+      template <std::size_t n, std::size_t... other>
+      struct take<n, std::index_sequence<other...>> {
+      public:
+        template <typename... Us>
+        using apply = returns<type_list<at_t<other, Us...>...>>;
+      };
+    }
+    template <std::size_t n, typename... Ts>
+    struct take : detail::take<n>::template apply<Ts...> {};
 
     template <std::size_t n, typename... Ts>
-    using take_t = typename take<n>::template apply<Ts...>::type;
+    struct take<n, type_list<Ts...>> : take<n, Ts...> {};
+
+    template <std::size_t n, typename... Ts>
+    using take_t = eval<take<n, Ts...>>;
   }
 }
 }
