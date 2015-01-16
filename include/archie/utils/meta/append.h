@@ -2,6 +2,7 @@
 
 #include <archie/utils/meta/type_list.h>
 #include <archie/utils/meta/returns.h>
+#include <archie/utils/meta/functional.h>
 
 namespace archie {
 namespace utils {
@@ -19,6 +20,17 @@ namespace utils {
 
     template <typename Tp, typename Up>
     using append_t = typename append<Tp, Up>::type;
+
+    template <template <typename> class, typename...>
+    struct append_if;
+
+    template <template <typename> class F, typename Tp, typename... Us>
+    struct append_if<F, type_list<Us...>, Tp>
+        : returns<if_t<typename F<Tp>::type, append_t<type_list<Us...>, Tp>,
+                       type_list<Us...>>> {};
+
+    template <template <typename> class F, typename... Ts>
+    using append_if_t = typename append_if<F, Ts...>::type;
   }
 }
 }

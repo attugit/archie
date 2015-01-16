@@ -110,4 +110,15 @@ static_assert(meta::find_if_t<
               "");
 }
 
+namespace {
+using _0 = utype<0>;
+using _1 = utype<1>;
+static_assert(std::is_same<meta::append_if_t<is_0, meta::type_list<_0, _1>, _1>,
+                           meta::type_list<_0, _1>>::value,
+              "");
+static_assert(std::is_same<meta::append_if_t<is_0, meta::type_list<_0, _1>, _0>,
+                           meta::type_list<_0, _1, _0>>::value,
+              "");
+}
+
 int main() { return 0; }
