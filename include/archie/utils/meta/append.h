@@ -3,6 +3,7 @@
 #include <archie/utils/meta/type_list.h>
 #include <archie/utils/meta/returns.h>
 #include <archie/utils/meta/functional.h>
+#include <archie/utils/meta/logic.h>
 
 namespace archie {
 namespace utils {
@@ -31,6 +32,17 @@ namespace utils {
 
     template <template <typename> class F, typename... Ts>
     using append_if_t = eval<append_if<F, Ts...>>;
+
+    template <template <typename> class, typename...>
+    struct append_if_not;
+
+    template <template <typename> class F, typename Tp, typename... Us>
+    struct append_if_not<F, type_list<Us...>, Tp>
+        : returns<if_t<opposite_t<eval<F<Tp>>>, append_t<type_list<Us...>, Tp>,
+                       type_list<Us...>>> {};
+
+    template <template <typename> class F, typename... Ts>
+    using append_if_not_t = eval<append_if_not<F, Ts...>>;
   }
 }
 }
