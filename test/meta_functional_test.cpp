@@ -21,4 +21,11 @@ static_assert(!meta::greater_t<meta::number<1>, meta::number<2>>::value, "");
 static_assert(meta::greater_t<meta::number<2>, meta::number<1>>::value, "");
 }
 
+namespace {
+static_assert(meta::usum_t<0>::value == 0, "");
+static_assert(meta::usum_t<0, 1>::value == 1, "");
+static_assert(meta::usum_t<0, 1, 2>::value == 3, "");
+static_assert(meta::usum_t<0, 1, 2, 3>::value == 6, "");
+}
+
 int main() { return 0; }
