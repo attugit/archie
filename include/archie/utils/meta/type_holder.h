@@ -1,5 +1,4 @@
-#ifndef ARCHIE_UTILS_META_TYPE_HOLDER_H_INCLUDED
-#define ARCHIE_UTILS_META_TYPE_HOLDER_H_INCLUDED
+#pragma once
 
 namespace archie {
 namespace utils {
@@ -12,5 +11,3 @@ namespace utils {
   }
 }
 }
-
-#endif

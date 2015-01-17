@@ -1,5 +1,4 @@
-#ifndef ARCHIE_UTILS_TRAITS_PURE_H_INCLUDED
-#define ARCHIE_UTILS_TRAITS_PURE_H_INCLUDED
+#pragma once
 
 #include <type_traits>
 
@@ -28,5 +27,3 @@ namespace utils {
   }
 }
 }
-
-#endif

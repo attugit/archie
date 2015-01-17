@@ -1,5 +1,4 @@
-#ifndef ARCHIE_UTILS_FUSED_TUPLE_H_INCLUDED
-#define ARCHIE_UTILS_FUSED_TUPLE_H_INCLUDED
+#pragma once
 
 #include <archie/utils/meta/index_of.h>
 #include <archie/utils/meta/requires.h>
@@ -195,5 +194,3 @@ namespace utils {
   }
 }
 }
-
-#endif

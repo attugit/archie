@@ -1,5 +1,4 @@
-#ifndef ARCHIE_UTILS_TRAITS_IS_COMPARABLE_H_INCLUDED
-#define ARCHIE_UTILS_TRAITS_IS_COMPARABLE_H_INCLUDED
+#pragma once
 
 #include <archie/utils/meta/has_member.h>
 
@@ -28,5 +27,3 @@ namespace utils {
   }
 }
 }
-
-#endif

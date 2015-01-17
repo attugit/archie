@@ -1,5 +1,4 @@
-#ifndef ARCHIE_UTILS_TRAITS_IS_TYPE_LIST_H_INCLUDED
-#define ARCHIE_UTILS_TRAITS_IS_TYPE_LIST_H_INCLUDED
+#pragma once
 
 #include <archie/utils/meta/type_list.h>
 #include <archie/utils/meta/boolean.h>
@@ -16,5 +15,3 @@ namespace utils {
   }
 }
 }
-
-#endif

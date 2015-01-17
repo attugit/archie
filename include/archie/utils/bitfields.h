@@ -1,5 +1,4 @@
-#ifndef ARCHIE_UTILS_BITFIELDS_H_INCLUDED
-#define ARCHIE_UTILS_BITFIELDS_H_INCLUDED
+#pragma once
 
 #include <utility>
 #include <cstddef>
@@ -199,5 +198,3 @@ namespace utils {
   };
 }
 }
-
-#endif

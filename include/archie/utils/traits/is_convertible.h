@@ -1,5 +1,4 @@
-#ifndef ARCHIE_UTILS_TRAITS_IS_CONVERTIBLE_H_INCLUDED
-#define ARCHIE_UTILS_TRAITS_IS_CONVERTIBLE_H_INCLUDED
+#pragma once
 
 namespace archie {
 namespace utils {
@@ -20,5 +19,3 @@ namespace utils {
   }
 }
 }
-
-#endif

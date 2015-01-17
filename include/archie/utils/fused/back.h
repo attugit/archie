@@ -1,5 +1,4 @@
-#ifndef ARCHIE_UTILS_FUSED_BACK_H_INCLUDED
-#define ARCHIE_UTILS_FUSED_BACK_H_INCLUDED
+#pragma once
 
 #include <utility>
 #include <archie/utils/meta/ignore.h>
@@ -17,5 +16,3 @@ namespace utils {
   }
 }
 }
-
-#endif

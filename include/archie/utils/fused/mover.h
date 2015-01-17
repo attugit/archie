@@ -1,5 +1,4 @@
-#ifndef ARCHIE_UTILS_FUSED_MOVER_H_INCLUDED
-#define ARCHIE_UTILS_FUSED_MOVER_H_INCLUDED
+#pragma once
 
 #include <utility>
 #include <archie/utils/meta/functional.h>
@@ -33,5 +32,3 @@ namespace utils {
   }
 }
 }
-
-#endif

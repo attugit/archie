@@ -1,5 +1,4 @@
-#ifndef ARCHIE_UTILS_META_REQUIRES_H_INCLUDED
-#define ARCHIE_UTILS_META_REQUIRES_H_INCLUDED
+#pragma once
 
 #include <utility>
 #include <archie/utils/meta/logic.h>
@@ -26,4 +25,3 @@ namespace utils {
   }
 }
 }
-#endif

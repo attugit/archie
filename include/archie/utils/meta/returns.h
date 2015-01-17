@@ -1,5 +1,4 @@
-#ifndef ARCHIE_UTILS_META_RETURNS_H_INCLUDED
-#define ARCHIE_UTILS_META_RETURNS_H_INCLUDED
+#pragma once
 
 #include <archie/utils/meta/type_holder.h>
 
@@ -15,5 +14,3 @@ namespace utils {
   }
 }
 }
-
-#endif

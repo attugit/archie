@@ -1,5 +1,4 @@
-#ifndef ARCHIE_UTILS_VOIDER_H_INCLUDED
-#define ARCHIE_UTILS_VOIDER_H_INCLUDED
+#pragma once
 
 #include <archie/utils/meta/apply.h>
 
@@ -18,5 +17,3 @@ namespace utils {
   }
 }
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ARCHIE_UTILS_META_LOGIC_H_INCLUDED
-#define ARCHIE_UTILS_META_LOGIC_H_INCLUDED
+#pragma once
 
 #include <type_traits>
 #include <archie/utils/meta/boolean.h>
@@ -64,5 +63,3 @@ namespace utils {
   }
 }
 }
-
-#endif

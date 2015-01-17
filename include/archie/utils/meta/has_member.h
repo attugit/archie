@@ -1,5 +1,4 @@
-#ifndef ARCHIE_UTILS_HAS_MEMBER_H_INCLUDED
-#define ARCHIE_UTILS_HAS_MEMBER_H_INCLUDED
+#pragma once
 
 #include <archie/utils/meta/boolean.h>
 #include <archie/utils/meta/well_formed.h>
@@ -19,5 +18,3 @@ namespace utils {
   }
 }
 }
-
-#endif

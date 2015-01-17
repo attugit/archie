@@ -1,5 +1,4 @@
-#ifndef ARCHIE_UTILS_FUSED_NTH_H_INCLUDED
-#define ARCHIE_UTILS_FUSED_NTH_H_INCLUDED
+#pragma once
 
 #include <archie/utils/fused/placeholder.h>
 
@@ -14,5 +13,3 @@ namespace utils {
   }
 }
 }
-
-#endif

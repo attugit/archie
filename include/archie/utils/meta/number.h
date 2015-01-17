@@ -1,5 +1,4 @@
-#ifndef ARCHIE_UTILS_NUMBER_H_INCLUDED
-#define ARCHIE_UTILS_NUMBER_H_INCLUDED
+#pragma once
 
 #include <utility>
 
@@ -12,5 +11,3 @@ namespace utils {
   }
 }
 }
-
-#endif

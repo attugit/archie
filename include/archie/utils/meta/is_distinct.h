@@ -1,5 +1,4 @@
-#ifndef ARCHIE_UTILS_META_IS_DISTINCT_H_INCLUDED
-#define ARCHIE_UTILS_META_IS_DISTINCT_H_INCLUDED
+#pragma once
 
 #include <type_traits>
 #include <archie/utils/meta/sequence.h>
@@ -28,5 +27,3 @@ namespace utils {
   }
 }
 }
-
-#endif
