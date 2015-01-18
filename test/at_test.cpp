@@ -16,25 +16,4 @@ static_assert(
         au::meta::at_t<1, au::meta::type_list<unsigned, int&, char>>>::value,
     "");
 
-void canCallAt() {
-  auto a = 1u;
-  auto b = 2.0;
-  auto c = '3';
-
-  auto _0 = au::meta::placeholder<0>{};
-  auto _1 = au::meta::placeholder<1>{};
-  auto _2 = au::meta::placeholder<2>{};
-
-  auto const& x = _0(a, b, c);
-  auto const& y = _1(a, b, c);
-  auto const& z = _2(a, b, c);
-
-  EXPECT_EQ(&a, &x);
-  EXPECT_EQ(&b, &y);
-  EXPECT_EQ(&c, &z);
-}
-
-int main() {
-  canCallAt();
-  return 0;
-}
+int main() { return 0; }

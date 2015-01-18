@@ -19,18 +19,7 @@ namespace utils {
         template <typename Tp>
         static constexpr Tp skip(eat<number<other>>..., Tp&&, ...) noexcept;
 
-        template <typename Tp, typename... Us>
-        constexpr auto impl(eat<number<other>>..., Tp&& x,
-                            Us&&...) noexcept -> decltype(x) {
-          return std::forward<Tp>(x);
-        }
-
       public:
-        template <typename... Ts>
-        constexpr decltype(auto) operator()(Ts&&... ts) noexcept {
-          return impl(std::forward<Ts>(ts)...);
-        }
-
         template <typename... Ts>
         using apply = returns<decltype(skip(std::declval<Ts>()...))>;
       };

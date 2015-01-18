@@ -1,13 +1,13 @@
 #pragma once
 
-#include <archie/utils/meta/at.h>
+#include <archie/utils/fused/nth.h>
 
 namespace archie {
 namespace utils {
   namespace fused {
 
     template <std::size_t n>
-    using placeholder = meta::placeholder<n>;
+    using placeholder = detail::nth<n>;
 
     template <typename F, std::size_t... ids>
     decltype(auto) reorder(F f, placeholder<ids>... xs) {

@@ -2,6 +2,7 @@
 
 #include <archie/utils/meta/index_of.h>
 #include <archie/utils/meta/requires.h>
+#include <archie/utils/meta/at.h>
 #include <archie/utils/traits.h>
 #include <archie/utils/fused/nth.h>
 #include <archie/utils/fused/mover.h>
