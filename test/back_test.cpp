@@ -15,13 +15,15 @@ void canUseEatToTakeSecondArgument() {
 
 namespace fused = archie::utils::fused;
 
+#include <memory>
+
 void canUseBackWithRValue() {
-  auto a = fused::back(1u, 2.0, '3');
+  auto a = fused::back(std::make_unique<unsigned>(1u), 2.0, '3');
   EXPECT_EQ('3', a);
 }
 
 void canUseBackWithLValue() {
-  unsigned a = 1u;
+  auto a = std::make_unique<unsigned>(1u);
   double b = 2.0;
   char c = '3';
   auto const& x = fused::back(a, b, c);
