@@ -22,8 +22,7 @@ namespace utils {
     template <std::size_t n, typename... Ts>
     decltype(auto) nth(Ts&&... args) {
       static_assert(n < sizeof...(Ts), "");
-      using impl = meta::indexable_t<detail::nth, n>;
-      return impl{}(std::forward<Ts>(args)...);
+      return meta::indexable_t<detail::nth, n>{}(std::forward<Ts>(args)...);
     }
   }
 }
