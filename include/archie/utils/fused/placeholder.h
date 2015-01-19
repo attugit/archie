@@ -1,13 +1,14 @@
 #pragma once
 
 #include <archie/utils/fused/nth.h>
+#include <archie/utils/meta/indexable.h>
 
 namespace archie {
 namespace utils {
   namespace fused {
 
     template <std::size_t n>
-    using placeholder = detail::nth<n>;
+    struct placeholder : meta::indexable_t<detail::nth, n> {};
 
     template <typename F, std::size_t... ids>
     decltype(auto) reorder(F f, placeholder<ids>... xs) {

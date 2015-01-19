@@ -3,16 +3,14 @@
 #include <utility>
 #include <archie/utils/meta/ignore.h>
 #include <archie/utils/meta/number.h>
+#include <archie/utils/meta/indexable.h>
 
 namespace archie {
 namespace utils {
   namespace fused {
     namespace detail {
-      template <std::size_t n, typename = std::make_index_sequence<n>>
-      struct nth;
-
-      template <std::size_t n, std::size_t... other>
-      struct nth<n, std::index_sequence<other...>> {
+      template <std::size_t... other>
+      struct nth {
         template <typename Tp, typename... Us>
         constexpr auto operator()(meta::eat<meta::number<other>>..., Tp&& x,
                                   Us&&...) noexcept -> decltype(x) {
@@ -24,7 +22,8 @@ namespace utils {
     template <std::size_t n, typename... Ts>
     decltype(auto) nth(Ts&&... args) {
       static_assert(n < sizeof...(Ts), "");
-      return detail::nth<n>{}(std::forward<Ts>(args)...);
+      using impl = meta::indexable_t<detail::nth, n>;
+      return impl{}(std::forward<Ts>(args)...);
     }
   }
 }
