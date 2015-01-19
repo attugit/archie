@@ -5,16 +5,14 @@
 #include <archie/utils/meta/type_list.h>
 #include <archie/utils/meta/ignore.h>
 #include <archie/utils/meta/number.h>
+#include <archie/utils/meta/indexable.h>
 
 namespace archie {
 namespace utils {
   namespace meta {
     namespace detail {
-      template <std::size_t n, typename = std::make_index_sequence<n>>
-      struct tail;
-
-      template <std::size_t n, std::size_t... other>
-      struct tail<n, std::index_sequence<other...>> {
+      template <std::size_t... other>
+      struct tail {
       private:
         template <typename... Ts>
         static constexpr type_list<Ts...> slice(eat<number<other>>..., Ts...);
@@ -26,7 +24,7 @@ namespace utils {
     }
 
     template <std::size_t n, typename... Ts>
-    struct tail : detail::tail<n>::template apply<Ts...> {};
+    struct tail : indexable_t<detail::tail, n>::template apply<Ts...> {};
 
     template <std::size_t n, typename... Ts>
     struct tail<n, type_list<Ts...>> : tail<n, Ts...> {};

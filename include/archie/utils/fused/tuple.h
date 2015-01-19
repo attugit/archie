@@ -3,6 +3,7 @@
 #include <archie/utils/meta/index_of.h>
 #include <archie/utils/meta/requires.h>
 #include <archie/utils/meta/at.h>
+#include <archie/utils/meta/indexable.h>
 #include <archie/utils/traits.h>
 #include <archie/utils/fused/nth.h>
 #include <archie/utils/fused/mover.h>
@@ -131,11 +132,8 @@ namespace utils {
         }
       };
 
-      template <std::size_t n, typename = std::make_index_sequence<n>>
-      struct tuple_internals;
-
-      template <std::size_t n, std::size_t... idx>
-      struct tuple_internals<n, std::index_sequence<idx...>> {
+      template <std::size_t... idx>
+      struct tuple_internals {
         template <typename... Ts, typename... Us>
         static void copy_assign(tuple<Ts...>& lhs, tuple<Us...> const& rhs) {
           meta::ignore{(fused::get<idx>(lhs) = fused::get<idx>(rhs), false)...};
@@ -158,14 +156,15 @@ namespace utils {
 
     template <typename... Ts>
     tuple<Ts...>& tuple<Ts...>::operator=(tuple<Ts...> const& orig) {
-      detail::tuple_internals<sizeof...(Ts)>::copy_assign(*this, orig);
+      meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::copy_assign(
+          *this, orig);
       return *this;
     }
 
     template <typename... Ts>
     tuple<Ts...>& tuple<Ts...>::operator=(tuple<Ts...>&& orig) {
-      detail::tuple_internals<sizeof...(Ts)>::move_assign(*this,
-                                                          std::move(orig));
+      meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::move_assign(
+          *this, std::move(orig));
       return *this;
     }
 
@@ -173,18 +172,21 @@ namespace utils {
     template <typename... Us>
     tuple<Ts...>& tuple<Ts...>::operator=(tuple<Us...> const& orig) {
       static_assert(sizeof...(Ts) <= sizeof...(Us), "");
-      detail::tuple_internals<sizeof...(Ts)>::copy_assign(*this, orig);
+      meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::copy_assign(
+          *this, orig);
       return *this;
     }
 
     template <typename... Ts>
     bool tuple<Ts...>::operator==(tuple<Ts...> const& rhs) const {
-      return detail::tuple_internals<sizeof...(Ts)>::equal(*this, rhs);
+      return meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::equal(
+          *this, rhs);
     }
 
     template <typename... Ts>
     bool tuple<Ts...>::operator<(tuple<Ts...> const& rhs) const {
-      return detail::tuple_internals<sizeof...(Ts)>::less(*this, rhs);
+      return meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::less(
+          *this, rhs);
     }
 
     template <typename Tp>

@@ -5,16 +5,14 @@
 #include <archie/utils/meta/returns.h>
 #include <archie/utils/meta/number.h>
 #include <archie/utils/meta/type_list.h>
+#include <archie/utils/meta/indexable.h>
 
 namespace archie {
 namespace utils {
   namespace meta {
     namespace detail {
-      template <std::size_t n, typename = std::make_index_sequence<n>>
-      struct at;
-
-      template <std::size_t n, std::size_t... other>
-      struct at<n, std::index_sequence<other...>> {
+      template <std::size_t... other>
+      struct at {
       private:
         template <typename Tp>
         static constexpr Tp skip(eat<number<other>>..., Tp&&, ...) noexcept;
@@ -26,10 +24,10 @@ namespace utils {
     }
 
     template <std::size_t n>
-    using placeholder = detail::at<n>;
+    using placeholder = indexable_t<detail::at, n>;
 
     template <std::size_t n, typename... Ts>
-    struct at : detail::at<n>::template apply<Ts...> {};
+    struct at : placeholder<n>::template apply<Ts...> {};
 
     template <std::size_t n, typename... Ts>
     struct at<n, type_list<Ts...>> : at<n, Ts...> {};
