@@ -21,12 +21,12 @@ namespace utils {
         template <typename F>
         decltype(auto) operator()(F&& f, tuple<Ts...>& x) const
             noexcept(noexcept(std::declval<F>()(std::declval<Ts&>()...))) {
-          return x.apply(f);
+          return x.apply(std::forward<F>(f));
         }
         template <typename F>
         decltype(auto) operator()(F&& f, tuple<Ts...> const& x) const noexcept(
             noexcept(std::declval<F>()(std::declval<Ts const&>()...))) {
-          return x.apply(f);
+          return x.apply(std::forward<F>(f));
         }
       };
     }
