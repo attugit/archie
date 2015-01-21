@@ -6,7 +6,7 @@ namespace utils {
 
     struct ignore final {
       template <typename... Ts>
-      ignore(Ts&&...) {}
+      constexpr ignore(Ts&&...) noexcept {}
     };
 
     template <typename>
