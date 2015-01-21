@@ -10,7 +10,7 @@ struct tag {
 };
 
 auto id = [](auto const& x) { return x; };
-auto make_tag = [](auto&& x) { return tag<decltype(x)>{}; };
+auto make_tag = [](auto&& x) { return tag<std::decay_t<decltype(x)>>{}; };
 
 void canUseTransformWithArgsWithoutTypeChange() {
   auto ret = fused::transform(id, 1, 2, 3);
@@ -33,10 +33,27 @@ void canUseTransformWithTupleWithoutTypeChange() {
 }
 
 void canUseTransformWithArgsWithTypeChange() {
-  auto ret = fused::transform(make_tag, 1, 2, 3);
+  auto ret = fused::transform(make_tag, 1, 2u, '3');
   static_assert(
       std::is_same<decltype(ret),
-                   fused::tuple<tag<int&&>, tag<int&&>, tag<int&&>>>::value,
+                   fused::tuple<tag<int>, tag<unsigned>, tag<char>>>::value,
+      "");
+}
+
+void canUseTransformWithTupleWithTypeChange() {
+  auto t3 = fused::make_tuple(1, 2u, '3');
+  auto ret = fused::transform(make_tag, t3);
+  static_assert(
+      std::is_same<decltype(ret),
+                   fused::tuple<tag<int>, tag<unsigned>, tag<char>>>::value,
+      "");
+}
+
+void canUseTransformWithRValueTupleWithTypeChange() {
+  auto ret = fused::transform(make_tag, fused::make_tuple(1, 2u, '3'));
+  static_assert(
+      std::is_same<decltype(ret),
+                   fused::tuple<tag<int>, tag<unsigned>, tag<char>>>::value,
       "");
 }
 
@@ -44,5 +61,7 @@ int main() {
   canUseTransformWithArgsWithoutTypeChange();
   canUseTransformWithTupleWithoutTypeChange();
   canUseTransformWithArgsWithTypeChange();
+  canUseTransformWithTupleWithTypeChange();
+  canUseTransformWithRValueTupleWithTypeChange();
   return 0;
 }
