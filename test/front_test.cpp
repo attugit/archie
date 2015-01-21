@@ -24,6 +24,7 @@ void canUseBackWithLValue() {
 
 int main() {
   canUseFrontWithRValue();
+  canPassNoncopyableToFront();
   canUseBackWithLValue();
   return 0;
 }
