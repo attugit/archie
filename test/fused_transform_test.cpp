@@ -7,6 +7,10 @@ namespace fused = archie::utils::fused;
 template <typename Tp>
 struct tag {
   using type = Tp;
+  template <typename... Us>
+  type construct(Us&&... us) const {
+    return type{std::forward<Us>(us)...};
+  }
 };
 
 auto id = [](auto const& x) { return x; };
@@ -57,11 +61,22 @@ void canUseTransformWithRValueTupleWithTypeChange() {
       "");
 }
 
+auto create = [](auto&& x) { return x.construct(); };
+
+void canUseTransformWithTupleToCallElemntsMemberFunctions() {
+  auto defs = fused::transform(
+      create, fused::tuple<tag<int>, tag<unsigned>, tag<char>>{});
+  static_assert(
+      std::is_same<decltype(defs), fused::tuple<int, unsigned, char>>::value,
+      "");
+}
+
 int main() {
   canUseTransformWithArgsWithoutTypeChange();
   canUseTransformWithTupleWithoutTypeChange();
   canUseTransformWithArgsWithTypeChange();
   canUseTransformWithTupleWithTypeChange();
   canUseTransformWithRValueTupleWithTypeChange();
+  canUseTransformWithTupleToCallElemntsMemberFunctions();
   return 0;
 }

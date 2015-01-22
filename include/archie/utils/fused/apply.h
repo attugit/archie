@@ -32,8 +32,7 @@ namespace utils {
       };
     }
     template <typename F, typename... Ts>
-    decltype(auto) apply(F&& f, Ts&&... x) noexcept(
-        noexcept(std::declval<F>()(std::declval<Ts>()...))) {
+    decltype(auto) apply(F&& f, Ts&&... x) {
       return detail::apply{}(std::forward<F>(f), std::forward<Ts>(x)...);
     }
   }
