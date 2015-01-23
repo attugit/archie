@@ -2,7 +2,9 @@
 namespace fused = archie::utils::fused;
 #include <archie/utils/test.h>
 
-using namespace fused::placeholders;
+auto _0 = fused::placeholder<0>{};
+auto _1 = fused::placeholder<1>{};
+auto _2 = fused::placeholder<2>{};
 
 void canAccessArgumentWithPlaceholder() {
   auto a = 1u;
