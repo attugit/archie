@@ -2,6 +2,7 @@
 #include <archie/utils/fused/apply.h>
 #include <archie/utils/fused/front.h>
 #include <archie/utils/fused/back.h>
+#include <archie/utils/fused/for_each.h>
 #include <archie/utils/test.h>
 
 namespace fused = archie::utils::fused;
@@ -22,8 +23,17 @@ void canComposeFusedBack() {
   EXPECT_EQ(&a, &b);
 }
 
+void canComposeFusedForEach() {
+  auto i = 0u;
+  auto f = [&i](auto&&) { ++i; };
+  fused::apply(fused::for_each, fused::make_tuple(f, 2u, '3'));
+  fused::apply(fused::for_each, f, 2u, '3');
+  EXPECT_EQ(4, i);
+}
+
 int main() {
   canComposeFusedFront();
   canComposeFusedBack();
+  canComposeFusedForEach(); // TODO: kills gdb
   return 0;
 }
