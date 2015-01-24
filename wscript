@@ -15,6 +15,10 @@ def options(opt):
 def configure(conf):
   conf.load('compiler_cxx')
   conf.load('waf_unit_test')
+  conf.define('VERSION', VERSION)
+  conf.define('COMPILER_GCC', 'g++' in conf.env['CXX'] and 1 or 0)
+  conf.define('COMPILER_CLANG', 'clang++' in conf.env['CXX'] and 1 or 0)
+  conf.write_config_header('config.h')
 
 from waflib import Logs, Errors
 def summary(bld):
@@ -39,11 +43,12 @@ def summary(bld):
       raise Errors.WafError("Unit tests failed!")
 
 def build(bld):
-  inc = ['.', 'include']
+  inc = ['.', 'include', out]
 
   cxxflags = getattr(bld, 'cxxflags', buildflags)
   linkflags = getattr(bld, 'linkflags', [])
   lib = getattr(bld, 'lib', [])
+  if 'clang++' in bld.env.CXX: cxxflags.append('-stdlib=libc++')
 
   tests = bld.path.ant_glob('test/*.cpp')
   for f in tests:
@@ -62,17 +67,29 @@ from waflib.Build import BuildContext
 class debug(BuildContext):
   cmd = 'debug'
   variant = 'debug'
-  cxxflags = buildflags + ['-g', '-O0']
+  fun = 'debug'
+
+def debug(bld):
+  bld.cxxflags = buildflags + ['-g', '-O0']
+  build(bld)
 
 class coverage(BuildContext):
   cmd = 'coverage'
   variant = 'coverage'
-  cxxflags = buildflags + ['-g', '-O0']
-  cxxflags += ['-fprofile-arcs', '-ftest-coverage', '-pg']
-  lib = ['gcov']
-  linkflags = ['-pg']
+  fun = 'coverage'
+
+def coverage(bld):
+  bld.cxxflags = buildflags + ['-g', '-O0']
+  bld.cxxflags += ['-fprofile-arcs', '-ftest-coverage', '-pg']
+  bld.lib = ['gcov']
+  bld.linkflags = ['-pg']
+  build(bld)
 
 class release(BuildContext):
   cmd = 'release'
   variant = 'release'
-  cxxflags = buildflags + ['-O2']
+  fun = 'release'
+
+def release(bld):
+  bld.cxxflags = buildflags + ['-O2']
+  build(bld)
