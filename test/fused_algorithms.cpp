@@ -32,8 +32,6 @@ void canComposeFusedForEach() {
   EXPECT_EQ(4, i);
 }
 
-#include <iostream>
-
 void canComposeFusedTransform() {
   auto f = [](auto&& x) { return ++x; };
   auto x = fused::apply(fused::transform, f, 1, 2u, '3');
