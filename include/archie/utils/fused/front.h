@@ -5,11 +5,15 @@
 namespace archie {
 namespace utils {
   namespace fused {
-
-    template <typename Tp, typename... Us>
-    constexpr decltype(auto) front(Tp&& t, Us&&...) noexcept {
-      return std::forward<Tp>(t);
+    namespace detail {
+      struct front {
+        template <typename Tp, typename... Us>
+        constexpr decltype(auto) operator()(Tp&& t, Us&&...) noexcept {
+          return std::forward<Tp>(t);
+        }
+      };
     }
+    constexpr detail::front front{};
   }
 }
 }
