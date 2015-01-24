@@ -11,6 +11,7 @@ using pair_t = std::pair<int, int>;
 using ptr_t = std::unique_ptr<int>;
 
 struct tester {
+  tester(tester&&) = delete;
   tester& operator=(tester&&) = delete;
   tester& operator=(tester const&) = default;
   bool operator==(tester const&) const;
@@ -31,6 +32,9 @@ static_assert(traits::is_equality_comparable<tester, int>::value, "");
 static_assert(!traits::is_equality_comparable<tester, ptr_t>::value, "");
 static_assert(!traits::is_less_than_comparable<tester, tester>::value, "");
 static_assert(traits::is_less_than_comparable<tester, int>::value, "");
+static_assert(traits::is_move_constructible<vec_t>::value, "");
+static_assert(traits::is_move_constructible<ptr_t>::value, "");
+static_assert(!traits::is_move_constructible<tester>::value, "");
 
 namespace {
 struct callable {

@@ -18,6 +18,9 @@ namespace utils {
     template <typename Tp>
     using is_default_constructible = is_constructible<Tp>;
 
+    template <typename Tp>
+    using is_move_constructible = is_constructible<Tp, Tp&&>;
+
 #if defined(COMPILER_GCC)
     template <typename Tp>
     using is_trivially_copy_constructible =
