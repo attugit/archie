@@ -15,12 +15,15 @@ namespace utils {
       }
     };
 
-    struct make_tag {
-      template <typename Tp>
-      decltype(auto) operator()(Tp&&) const noexcept {
-        return type_tag<std::remove_reference_t<Tp>>{};
-      }
-    };
+    namespace detail {
+      struct make_tag {
+        template <typename Tp>
+        constexpr decltype(auto) operator()(Tp&&) noexcept {
+          return type_tag<std::remove_reference_t<Tp>>{};
+        }
+      };
+    }
+    constexpr detail::make_tag make_tag{};
   }
 }
 }
