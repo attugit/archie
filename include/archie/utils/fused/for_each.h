@@ -15,7 +15,6 @@ namespace utils {
         }
       };
     }
-
     constexpr detail::for_each for_each{};
   }
 }

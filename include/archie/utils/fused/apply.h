@@ -29,7 +29,6 @@ namespace utils {
         }
       };
     }
-
     constexpr detail::apply apply{};
   }
 }
