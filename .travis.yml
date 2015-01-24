@@ -1,20 +1,55 @@
 language: cpp
-compiler: gcc
+compiler:
+  - gcc
+  - clang
 
 env:
   global:
     - GCC_VERSION="4.9"
+    - CLANG_VERSION="3.5"
   matrix:
     - BUILD_TYPE=debug
     - BUILD_TYPE=release
 
-# Install dependencies
+matrix:
+  allow_failures:
+    - compiler: clang
+
 before_install:
-  - export CHECKOUT_PATH=`pwd`;
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  -
+    if [ "$CXX" == "g++" ];
+    then
+      echo sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test;
+      sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test;
+    fi
+  -
+    if [ "$CXX" == "clang++" ];
+    then
+      echo sudo add-apt-repository --yes ppa:h-rayflood/gcc-upper;
+      sudo add-apt-repository --yes ppa:h-rayflood/gcc-upper;
+      echo sudo add-apt-repository --yes ppa:h-rayflood/llvm-upper;
+      sudo add-apt-repository --yes ppa:h-rayflood/llvm-upper;
+    fi
   - sudo apt-get update -qq
-  - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-${GCC_VERSION}; fi
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}"; fi
+
+install:
+  -
+    if [ "$CXX" = "g++" ];
+    then
+      echo sudo apt-get install -qq g++-${GCC_VERSION};
+      sudo apt-get install -qq g++-${GCC_VERSION};
+      echo export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}";
+      export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}";
+    fi
+  -
+    if [ "$CXX" == "clang++" ];
+    then
+      echo sudo apt-get install -qq clang-${CLANG_VERSION};
+      sudo apt-get install -qq clang-${CLANG_VERSION};
+      echo export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}";
+      export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}";
+    fi
+  - sudo apt-get install -qq libstdc++6-${GCC_VERSION}-dbg
   - if [ -z "$BUILD_TYPE" ]; then export BUILD_TYPE=release; fi
 
 script: make distclean && make configure && make $BUILD_TYPE
