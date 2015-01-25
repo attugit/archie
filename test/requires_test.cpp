@@ -9,13 +9,13 @@ using archie::utils::meta::any;
 using archie::utils::meta::none;
 
 struct foo {
-  template <typename T, requires<std::is_unsigned<T>>...>
-  int func(T) {
+  template <typename T>
+  int func(T, requires<std::is_unsigned<T>>* = nullptr) {
     return 0;
   }
 
-  template <typename T, requires<std::is_floating_point<T>>...>
-  int func(T) {
+  template <typename T>
+  int func(T, requires<std::is_floating_point<T>>* = nullptr) {
     return 1;
   }
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <utility>
+#include <functional>
 #include <archie/utils/meta/functional.h>
 #include <archie/utils/meta/logic.h>
 #include <archie/utils/traits.h>
@@ -25,11 +26,12 @@ namespace utils {
     template <typename Tp>
     using move_t = meta::if_t<
         meta::all<std::is_move_constructible<Tp>,
-                  meta::any<std::is_reference<Tp>,
-                            meta::opposite_t<std::is_copy_constructible<Tp>>,
+                  meta::any<meta::opposite_t<std::is_copy_constructible<Tp>>,
                             meta::opposite_t<
                                 traits::is_trivially_copy_constructible<Tp>>>>,
-        mover<Tp>, Tp>;
+        mover<Tp>,
+        meta::if_t<std::is_reference<Tp>,
+                   std::reference_wrapper<std::remove_reference_t<Tp>>, Tp>>;
   }
 }
 }
