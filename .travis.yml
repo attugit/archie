@@ -20,6 +20,7 @@ matrix:
       env: STDLIB=libstdc++
     - compiler: clang
       env: STDLIB=libc++
+  fast_finish: true
 
 before_install:
   -
