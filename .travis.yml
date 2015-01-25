@@ -1,19 +1,35 @@
 language: cpp
-compiler:
-  - gcc
-  - clang
 
 env:
   global:
     - GCC_VERSION="4.9"
     - CLANG_VERSION="3.5"
-  matrix:
-    - BUILD_TYPE=debug
-    - BUILD_TYPE=release
 
 matrix:
+  include:
+    - compiler: gcc
+      env: BUILD_TYPE=debug STDLIB=libstdc++
+    - compiler: gcc
+      env: BUILD_TYPE=release STDLIB=libstdc++
+    - compiler: clang
+      env: BUILD_TYPE=debug STDLIB=libstdc++
+    - compiler: clang
+      env: BUILD_TYPE=release STDLIB=libstdc++
+    - compiler: clang
+      env: BUILD_TYPE=debug STDLIB=libc++
+    - compiler: clang
+      env: BUILD_TYPE=release STDLIB=libc++
+  exclude:
+    - env: ignore=this
   allow_failures:
     - compiler: clang
+      env: BUILD_TYPE=debug STDLIB=libstdc++
+    - compiler: clang
+      env: BUILD_TYPE=release STDLIB=libstdc++
+    - compiler: clang
+      env: BUILD_TYPE=debug STDLIB=libc++
+    - compiler: clang
+      env: BUILD_TYPE=release STDLIB=libc++
 
 before_install:
   -
@@ -49,7 +65,21 @@ install:
       echo export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}";
       export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}";
     fi
-  - sudo apt-get install -qq libstdc++6-${GCC_VERSION}-dbg
+  -
+    if [ "$STDLIB" == "libstdc++" ];
+    then
+      echo sudo apt-get install -qq libstdc++6-${GCC_VERSION}-dbg;
+      sudo apt-get install -qq libstdc++6-${GCC_VERSION}-dbg;
+    fi
+  -
+    if [ "$STDLIB" == "libc++" ];
+    then
+      echo sudo apt-get install -qq libc++1 libc++-dev;
+      sudo apt-get install -qq libc++1 libc++-dev;
+    fi
   - if [ -z "$BUILD_TYPE" ]; then export BUILD_TYPE=release; fi
 
-script: make distclean && make configure && make $BUILD_TYPE
+script:
+  - ./waf distclean
+  - ./waf configure --stdlib=${STDLIB};
+  - ./waf $BUILD_TYPE
