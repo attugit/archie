@@ -17,20 +17,20 @@ namespace utils {
     struct tuple {
     private:
       template <typename... Us>
-      static decltype(auto) make_storage(Us... args) {
-        return [args...](auto&& func) mutable -> decltype(auto) {
-          return std::forward<decltype(func)>(func)(static_cast<Ts&>(args)...);
-        };
+      static decltype(auto) make_storage(Us&&... args) {
+        return [](move_t<Ts>... mvs) {
+          return [mvs...](auto&& func) mutable -> decltype(auto) {
+            return std::forward<decltype(func)>(func)(static_cast<Ts&>(mvs)...);
+          };
+        }(std::forward<Us>(args)...);
       }
-      using storage_type =
-          decltype(make_storage(std::declval<move_t<Ts>>()...));
+      using storage_type = decltype(make_storage(std::declval<Ts>()...));
       mutable storage_type storage;
 
     public:
       template <typename... Us>
       constexpr explicit tuple(Us&&... args)
-          : storage(
-                make_storage<move_t<Ts>...>(Ts(std::forward<Us>(args))...)) {}
+          : storage(make_storage(Ts(std::forward<Us>(args))...)) {}
 
       constexpr tuple() : tuple(Ts {}...) {}
 
