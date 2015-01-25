@@ -45,7 +45,7 @@ def read_stdlib(ctx):
     if ctx.options.stdlib:
       ctx.env.STDLIB = ctx.options.stdlib
       ctx.end_msg(ctx.env.STDLIB)
-      ctx.env.CXXFLAGS += ['-stdlib=%s'%ctx.env.STDLIB]
+      ctx.env.COMPILE_FLAGS += ['-stdlib=%s'%ctx.env.STDLIB]
     else:
       ctx.end_msg('stdlib is not set')
   else:
@@ -58,7 +58,7 @@ def read_stdlib(ctx):
     ctx.undefine('USE_LIBSTDCPP')
 
 def configure(conf):
-  conf.env.CXXFLAGS = buildflags
+  conf.env.COMPILE_FLAGS = buildflags
   conf.load('compiler_cxx')
   conf.load('waf_unit_test')
   conf.define('VERSION', VERSION)
@@ -100,7 +100,7 @@ def build(bld):
       target=str(f)[:-len('.cpp')],
       features='cxx cxxprogram test',
       includes=inc,
-      cxxflags=bld.env.CXXFLAGS,
+      cxxflags=bld.env.COMPILE_FLAGS,
       linkflags=linkflags,
       lib=lib,
       source=f)
@@ -114,7 +114,7 @@ class debug(BuildContext):
   fun = 'debug'
 
 def debug(bld):
-  bld.env.CXXFLAGS += ['-g', '-O0']
+  bld.env.COMPILE_FLAGS += ['-g', '-O0']
   build(bld)
 
 class coverage(BuildContext):
@@ -123,8 +123,8 @@ class coverage(BuildContext):
   fun = 'coverage'
 
 def coverage(bld):
-  bld.env.CXXFLAGS += ['-g', '-O0']
-  bld.env.CXXFLAGS += ['-fprofile-arcs', '-ftest-coverage', '-pg']
+  bld.env.COMPILE_FLAGS += ['-g', '-O0']
+  bld.env.COMPILE_FLAGS += ['-fprofile-arcs', '-ftest-coverage', '-pg']
   bld.lib = ['gcov']
   bld.linkflags = ['-pg']
   build(bld)
@@ -135,5 +135,5 @@ class release(BuildContext):
   fun = 'release'
 
 def release(bld):
-  bld.env.CXXFLAGS += ['-O2']
+  bld.env.COMPILE_FLAGS += ['-O2']
   build(bld)
