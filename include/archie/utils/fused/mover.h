@@ -15,10 +15,10 @@ namespace utils {
       using reference = value_type&;
       template <typename Up>
       mover(Up&& u)
-          : value(std::forward<Up>(u)) {}
+          : value(std::move(u)) {}
       mover(mover&&) = default;
       mover(mover const&) = default;
-      mover(mover& other) : value(std::forward<Tp>(other.value)) {}
+      mover(mover& other) : value(std::move(other.value)) {}
       operator reference() { return value; }
       Tp value;
     };
