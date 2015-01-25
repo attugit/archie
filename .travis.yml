@@ -8,28 +8,18 @@ env:
 matrix:
   include:
     - compiler: gcc
-      env: BUILD_TYPE=debug STDLIB=libstdc++
-    - compiler: gcc
-      env: BUILD_TYPE=release STDLIB=libstdc++
+      env: STDLIB=libstdc++
     - compiler: clang
-      env: BUILD_TYPE=debug STDLIB=libstdc++
+      env: STDLIB=libstdc++
     - compiler: clang
-      env: BUILD_TYPE=release STDLIB=libstdc++
-    - compiler: clang
-      env: BUILD_TYPE=debug STDLIB=libc++
-    - compiler: clang
-      env: BUILD_TYPE=release STDLIB=libc++
+      env: STDLIB=libc++
   exclude:
     - env: ignore=this
   allow_failures:
     - compiler: clang
-      env: BUILD_TYPE=debug STDLIB=libstdc++
+      env: STDLIB=libstdc++
     - compiler: clang
-      env: BUILD_TYPE=release STDLIB=libstdc++
-    - compiler: clang
-      env: BUILD_TYPE=debug STDLIB=libc++
-    - compiler: clang
-      env: BUILD_TYPE=release STDLIB=libc++
+      env: STDLIB=libc++
 
 before_install:
   -
@@ -77,9 +67,8 @@ install:
       echo sudo apt-get install -qq libc++1 libc++-dev;
       sudo apt-get install -qq libc++1 libc++-dev;
     fi
-  - if [ -z "$BUILD_TYPE" ]; then export BUILD_TYPE=release; fi
 
 script:
   - ./waf distclean
   - ./waf configure --stdlib=${STDLIB};
-  - ./waf $BUILD_TYPE
+  - ./waf debug release
