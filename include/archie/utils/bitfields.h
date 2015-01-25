@@ -97,9 +97,9 @@ namespace utils {
 
   template <size_type... S>
   struct Pack : detail::PackImpl<0u, 0u, S...> {
-    constexpr Pack() noexcept = default;
-    constexpr size_type size() noexcept { return Sum<S...>::value; }
-    constexpr size_type length() noexcept { return sizeof...(S); }
+    constexpr Pack() noexcept {};
+    constexpr size_type size() const noexcept { return Sum<S...>::value; }
+    constexpr size_type length() const noexcept { return sizeof...(S); }
     using data_type = Storage<Sum<S...>::value>;
     void set(data_type val) noexcept { data = val; }
     data_type get() const noexcept { return data; }

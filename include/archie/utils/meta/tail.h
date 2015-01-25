@@ -13,11 +13,11 @@ namespace utils {
     namespace detail {
       template <std::size_t... other>
       struct tail {
-      private:
         template <typename... Ts>
-        static constexpr type_list<Ts...> slice(eat<number<other>>..., Ts...);
+        static constexpr decltype(auto) slice(eat<number<other>>..., Ts...) {
+          return type_list<Ts...>{};
+        }
 
-      public:
         template <typename... Ts>
         using apply = returns<decltype(slice(std::declval<Ts>()...))>;
       };

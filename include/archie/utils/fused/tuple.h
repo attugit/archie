@@ -1,7 +1,6 @@
 #pragma once
 
 #include <archie/utils/meta/index_of.h>
-#include <archie/utils/meta/requires.h>
 #include <archie/utils/meta/at.h>
 #include <archie/utils/meta/indexable.h>
 #include <archie/utils/traits.h>
@@ -28,15 +27,10 @@ namespace utils {
       mutable storage_type storage;
 
     public:
-      template <typename... Us,
-                meta::requires_all<traits::is_convertible<Us, Ts>...>...>
+      template <typename... Us>
       constexpr explicit tuple(Us&&... args)
-          : storage(make_storage<move_t<Ts>...>(std::forward<Us>(args)...)) {}
-
-      template <typename... Us, meta::requires_any<meta::opposite_t<
-                                    traits::is_convertible<Us, Ts>>...>...>
-      constexpr explicit tuple(Us&&... args)
-          : tuple(Ts { std::forward<Us>(args) }...) {}
+          : storage(
+                make_storage<move_t<Ts>...>(Ts(std::forward<Us>(args))...)) {}
 
       constexpr tuple() : tuple(Ts {}...) {}
 

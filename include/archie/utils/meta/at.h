@@ -13,13 +13,14 @@ namespace utils {
     namespace detail {
       template <std::size_t... other>
       struct at {
-      private:
         template <typename Tp>
-        static constexpr Tp skip(eat<number<other>>..., Tp&&, ...) noexcept;
+        static constexpr decltype(auto) skip(eat<number<other>>..., Tp&&,
+                                             ...) noexcept {
+          return returns<Tp>{};
+        }
 
-      public:
         template <typename... Ts>
-        using apply = returns<decltype(skip(std::declval<Ts>()...))>;
+        using apply = decltype(skip(std::declval<Ts>()...));
       };
     }
 

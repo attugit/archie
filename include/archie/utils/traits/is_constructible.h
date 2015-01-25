@@ -21,11 +21,11 @@ namespace utils {
     template <typename Tp>
     using is_move_constructible = is_constructible<Tp, Tp&&>;
 
-#if defined(COMPILER_GCC)
+#if defined(USE_LIBSTDCPP)
     template <typename Tp>
     using is_trivially_copy_constructible =
         std::has_trivial_copy_constructor<Tp>;
-#elif defined(COMPILER_CLANG)
+#elif defined(USE_LIBCPP)
     template <typename Tp>
     using is_trivially_copy_constructible =
         std::is_trivially_copy_constructible<Tp>;
