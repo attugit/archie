@@ -13,7 +13,7 @@ namespace utils {
       struct placeholder {
         template <typename Tp, typename... Us>
         constexpr auto operator()(meta::eat<meta::number<other>>..., Tp&& x,
-                                  Us&&...) noexcept -> decltype(x) {
+                                  Us&&...) const noexcept -> decltype(x) {
           return std::forward<Tp>(x);
         }
       };

@@ -18,7 +18,7 @@ namespace utils {
     namespace detail {
       struct make_tag {
         template <typename Tp>
-        constexpr decltype(auto) operator()(Tp&&) noexcept {
+        constexpr decltype(auto) operator()(Tp&&) const noexcept {
           return type_tag<std::remove_reference_t<Tp>>{};
         }
       };

@@ -9,7 +9,7 @@ namespace utils {
     namespace detail {
       struct back {
         template <typename Tp, typename... Ts>
-        constexpr decltype(auto) operator()(Tp&& t, Ts&&... ts) noexcept {
+        constexpr decltype(auto) operator()(Tp&& t, Ts&&... ts) const noexcept {
           return [](meta::eat<Ts>..., auto&& x) -> decltype(x) {
             return std::forward<decltype(x)>(x);
           }(std::forward<Tp>(t), std::forward<Ts>(ts)...);
