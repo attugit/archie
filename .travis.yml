@@ -17,8 +17,6 @@ matrix:
     - env: ignore=this
   allow_failures:
     - compiler: clang
-      env: STDLIB=libstdc++
-    - compiler: clang
       env: STDLIB=libc++
   fast_finish: true
 
