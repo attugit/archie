@@ -11,6 +11,7 @@
 #if defined(COMPILER_CLANG)
 #include <archie/utils/fused/find.h>
 #include <archie/utils/fused/take.h>
+#include <archie/utils/fused/nth.h>
 #endif
 
 namespace fused = archie::utils::fused;
@@ -88,6 +89,15 @@ void canComposeFusedTake() {
   EXPECT_EQ('3', fused::get<1>(y));
   EXPECT_EQ(2u, fused::get<2>(y));
 }
+
+void canComposeFusedNth() {
+  auto x = fused::apply(fused::nth<0>, 1, 2u, '3');
+  auto y = fused::apply(fused::nth<1>, 1, 2u, '3');
+  auto z = fused::apply(fused::nth<2>, 1, 2u, '3');
+  EXPECT_EQ(1, x);
+  EXPECT_EQ(2u, y);
+  EXPECT_EQ('3', z);
+}
 #endif
 
 int main() {
@@ -100,6 +110,7 @@ int main() {
   canComposeFusedFind();
   canComposeFusedFindIf();
   canComposeFusedTake();
+  canComposeFusedNth();
 #endif
   return 0;
 }
