@@ -6,6 +6,11 @@
 #include <archie/utils/fused/for_each_order.h>
 #include <archie/utils/fused/transform.h>
 #include <archie/utils/test.h>
+#include <config.h>
+
+#if defined(COMPILER_CLANG)
+#include <archie/utils/fused/find.h>
+#endif
 
 namespace fused = archie::utils::fused;
 
@@ -55,11 +60,23 @@ void canComposeFusedTransform() {
   EXPECT_EQ('4', fused::get<2>(x));
 }
 
+#if defined(COMPILER_CLANG)
+void canComposeFusedFind() {
+  auto x = fused::apply(fused::find<unsigned>, 1, 2u, '3', 4u);
+  EXPECT_EQ(2u, x);
+  auto y = fused::apply(fused::find<char>, 1, 2u, '3', 4u);
+  EXPECT_EQ('3', y);
+}
+#endif
+
 int main() {
   canComposeFusedFront();
   canComposeFusedBack();
   canComposeFusedForEach(); // TODO: kills gdb
   canComposeFusedForEachOrder();
   canComposeFusedTransform(); // TODO: kills gdb
+#if defined(COMPILER_CLANG)
+  canComposeFusedFind();
+#endif
   return 0;
 }
