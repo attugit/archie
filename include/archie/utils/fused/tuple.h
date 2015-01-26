@@ -8,6 +8,7 @@
 #include <archie/utils/fused/mover.h>
 #include <utility>
 #include <array>
+#include "config.h"
 
 namespace archie {
 namespace utils {
@@ -19,9 +20,16 @@ namespace utils {
       template <typename... Us>
       static decltype(auto) make_storage(Us&&... args) {
         return [](move_t<Ts>... mvs) {
-          return [mvs...](auto&& func) mutable -> decltype(auto) {
-            return std::forward<decltype(func)>(func)(static_cast<Ts&>(mvs)...);
-          };
+#if defined(COMPILER_CLANG)
+          return [](move_t<Ts>... mvs) {
+#endif
+            return [mvs...](auto&& func) mutable -> decltype(auto) {
+              return std::forward<decltype(func)>(func)(
+                  static_cast<Ts&>(mvs)...);
+            };
+#if defined(COMPILER_CLANG)
+          }(move_t<Ts>(mvs)...); // FIXME: give clang a bit of help
+#endif
         }(std::forward<Us>(args)...);
       }
       using storage_type = decltype(make_storage(std::declval<Ts>()...));
