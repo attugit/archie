@@ -67,6 +67,13 @@ void canComposeFusedFind() {
   auto y = fused::apply(fused::find<char>, 1, 2u, '3', 4u);
   EXPECT_EQ('3', y);
 }
+
+void canComposeFusedFindIf() {
+  auto x = fused::apply(fused::find_if<std::is_unsigned>, 1, 2u, '3', 4u);
+  EXPECT_EQ(2u, x);
+  auto y = fused::apply(fused::find_if<std::is_signed>, 1, 2u, '3', 4u);
+  EXPECT_EQ(1, y);
+}
 #endif
 
 int main() {
@@ -77,6 +84,7 @@ int main() {
   canComposeFusedTransform(); // TODO: kills gdb
 #if defined(COMPILER_CLANG)
   canComposeFusedFind();
+  canComposeFusedFindIf();
 #endif
   return 0;
 }
