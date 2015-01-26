@@ -12,6 +12,7 @@
 #include <archie/utils/fused/find.h>
 #include <archie/utils/fused/take.h>
 #include <archie/utils/fused/nth.h>
+#include <archie/utils/fused/type_tag.h>
 #endif
 
 namespace fused = archie::utils::fused;
@@ -98,6 +99,15 @@ void canComposeFusedNth() {
   EXPECT_EQ(2u, y);
   EXPECT_EQ('3', z);
 }
+
+void canComposeFusedConstruct() {
+  auto x = fused::apply(fused::construct<fused::tuple<int, unsigned, char>>, 1,
+                        2u, '3');
+  static_assert(fused::tuple_size<decltype(x)>::value == 3u, "");
+  EXPECT_EQ(1, fused::get<0>(x));
+  EXPECT_EQ(2u, fused::get<1>(x));
+  EXPECT_EQ('3', fused::get<2>(x));
+}
 #endif
 
 int main() {
@@ -111,6 +121,7 @@ int main() {
   canComposeFusedFindIf();
   canComposeFusedTake();
   canComposeFusedNth();
+  canComposeFusedConstruct();
 #endif
   return 0;
 }

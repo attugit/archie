@@ -1,6 +1,7 @@
 #pragma once
 
 #include <archie/utils/meta/type_holder.h>
+#include <config.h>
 #include <utility>
 
 namespace archie {
@@ -10,8 +11,12 @@ namespace utils {
     template <typename Tp>
     struct type_tag : meta::type_holder<Tp> {
       template <typename... Us>
-      Tp construct(Us&&... us) const {
+      constexpr decltype(auto) construct(Us&&... us) const {
         return Tp{std::forward<Us>(us)...};
+      }
+      template <typename... Us>
+      constexpr decltype(auto) operator()(Us&&... us) const {
+        return construct(std::forward<Us>(us)...);
       }
     };
 
@@ -24,6 +29,10 @@ namespace utils {
       };
     }
     constexpr detail::make_tag make_tag{};
+#if defined(COMPILER_CLANG)
+    template <typename Tp>
+    constexpr type_tag<Tp> construct{};
+#endif
   }
 }
 }
