@@ -3,6 +3,7 @@
 #include <archie/utils/fused/front.h>
 #include <archie/utils/fused/back.h>
 #include <archie/utils/fused/for_each.h>
+#include <archie/utils/fused/for_each_order.h>
 #include <archie/utils/fused/transform.h>
 #include <archie/utils/test.h>
 
@@ -32,6 +33,19 @@ void canComposeFusedForEach() {
   EXPECT_EQ(4, i);
 }
 
+void canComposeFusedForEachOrder() {
+  auto i = 0u;
+  auto f = [&i](auto&& x) {
+    i *= 10;
+    i += x;
+  };
+  fused::for_each_forward(f, 1u, 2u, 3u);
+  EXPECT_EQ(123u, i);
+  i = 0u;
+  fused::for_each_backward(f, 1u, 2u, 3u);
+  EXPECT_EQ(321u, i);
+}
+
 void canComposeFusedTransform() {
   auto f = [](auto&& x) { return ++x; };
   auto x = fused::apply(fused::transform, f, 1, 2u, '3');
@@ -44,7 +58,8 @@ void canComposeFusedTransform() {
 int main() {
   canComposeFusedFront();
   canComposeFusedBack();
-  canComposeFusedForEach();   // TODO: kills gdb
+  canComposeFusedForEach(); // TODO: kills gdb
+  canComposeFusedForEachOrder();
   canComposeFusedTransform(); // TODO: kills gdb
   return 0;
 }
