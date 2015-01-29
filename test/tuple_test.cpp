@@ -130,9 +130,11 @@ void canCopyConstruct() {
       "");
   auto orig = test::tuple<unsigned, double, char>(1u, 2.0, '3');
   auto copy = orig;
+  auto copy2(orig);
 
   ASSERT_EQ(3u, test::tuple_size<decltype(orig)>::value);
   ASSERT_EQ(3u, test::tuple_size<decltype(copy)>::value);
+  ASSERT_EQ(3u, test::tuple_size<decltype(copy2)>::value);
 
   EXPECT_EQ(test::get<0>(orig), test::get<0>(copy));
   EXPECT_EQ(test::get<1>(orig), test::get<1>(copy));
@@ -141,6 +143,14 @@ void canCopyConstruct() {
   EXPECT_NE(&test::get<0>(orig), &test::get<0>(copy));
   EXPECT_NE(&test::get<1>(orig), &test::get<1>(copy));
   EXPECT_NE(&test::get<2>(orig), &test::get<2>(copy));
+
+  EXPECT_EQ(test::get<0>(orig), test::get<0>(copy2));
+  EXPECT_EQ(test::get<1>(orig), test::get<1>(copy2));
+  EXPECT_EQ(test::get<2>(orig), test::get<2>(copy2));
+
+  EXPECT_NE(&test::get<0>(orig), &test::get<0>(copy2));
+  EXPECT_NE(&test::get<1>(orig), &test::get<1>(copy2));
+  EXPECT_NE(&test::get<2>(orig), &test::get<2>(copy2));
 }
 
 void canCopyAssign() {
@@ -412,6 +422,18 @@ void canConstructTupleWithExplicitElementCtor() {
   EXPECT_EQ(3u, test::get<0>(t2));
 }
 
+void canMakeTupleOfTuples() {
+  auto t0 = test::make_tuple(1, 2u);
+  auto t1 = test::tuple<test::tuple<int, unsigned>>{};
+  auto t2 = test::tuple<test::tuple<int, unsigned>>{t0};
+  auto t3 = test::tuple<test::tuple<int, unsigned>, char>{t0, '3'};
+
+  ASSERT_EQ(2u, test::tuple_size<decltype(t0)>::value);
+  ASSERT_EQ(1u, test::tuple_size<decltype(t1)>::value);
+  ASSERT_EQ(1u, test::tuple_size<decltype(t2)>::value);
+  ASSERT_EQ(2u, test::tuple_size<decltype(t3)>::value);
+}
+
 int main() {
   canDefaultConstruct();
   canDefaultConstructTupleWithUncopyableElement();
@@ -436,6 +458,7 @@ int main() {
   canUseTupleElement();
   canGetElementByType();
   canConstructTupleWithExplicitElementCtor();
+  canMakeTupleOfTuples();
 
   return 0;
 }

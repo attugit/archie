@@ -1,14 +1,15 @@
 #pragma once
 
 #include <archie/utils/meta/index_of.h>
+#include <archie/utils/meta/requires.h>
 #include <archie/utils/meta/at.h>
 #include <archie/utils/meta/indexable.h>
+#include <archie/utils/meta/logic.h>
 #include <archie/utils/traits.h>
 #include <archie/utils/fused/nth.h>
 #include <archie/utils/fused/mover.h>
 #include <utility>
 #include <array>
-#include "config.h"
 
 namespace archie {
 namespace utils {
@@ -17,30 +18,56 @@ namespace utils {
     template <typename... Ts>
     struct tuple {
     private:
+#if !defined(__clang__)
+      template <typename... Us>
+      static decltype(auto) make_storage(Us... args) {
+        return [args...](auto&& func) mutable -> decltype(auto) {
+          return std::forward<decltype(func)>(func)(static_cast<Ts&>(args)...);
+        };
+      }
+      using storage_type =
+          decltype(make_storage(std::declval<move_t<Ts>>()...));
+#else
       template <typename... Us>
       static decltype(auto) make_storage(Us&&... args) {
         return [](move_t<Ts>... mvs) {
-#if defined(__clang__)
           return [](move_t<Ts>... mvs) {
-#endif
             return [mvs...](auto&& func) mutable -> decltype(auto) {
               return std::forward<decltype(func)>(func)(
                   static_cast<Ts&>(mvs)...);
             };
-#if defined(__clang__)
-          }(move_t<Ts>(mvs)...); // FIXME: give clang a bit of help
-#endif
+          }(mvs...);
         }(std::forward<Us>(args)...);
       }
       using storage_type = decltype(make_storage(std::declval<Ts>()...));
+#endif
       mutable storage_type storage;
 
+      struct explicit_ctor_tag {};
+      struct implicit_ctor_tag {};
+
+      template <typename... Us>
+      constexpr explicit tuple(implicit_ctor_tag, Us&&... args)
+          : storage(make_storage<move_t<Ts>...>(std::forward<Us>(args)...)) {}
+
+      template <typename... Us>
+      constexpr explicit tuple(explicit_ctor_tag, Us&&... args)
+          : tuple(Ts { std::forward<Us>(args) }...) {}
+
     public:
+#if !defined(__clang__)
       template <typename... Us>
       constexpr explicit tuple(Us&&... args)
-          : storage(make_storage(Ts(std::forward<Us>(args))...)) {}
-
+          : tuple(meta::if_t<meta::all<traits::is_convertible<Us, Ts>...>,
+                             implicit_ctor_tag, explicit_ctor_tag>{},
+                  std::forward<Us>(args)...) {}
+#else
+      template <typename... Us>
+      constexpr explicit tuple(Us&&... args)
+          : storage{make_storage(Ts(std::forward<Us>(args))...)} {}
+#endif
       constexpr tuple() : tuple(Ts {}...) {}
+      tuple(tuple& other) : tuple(const_cast<tuple const&>(other)) {}
 
       tuple(tuple&&) = default;
       tuple(tuple const&) = default;
