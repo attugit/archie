@@ -18,26 +18,6 @@ def options(opt):
     dest='stdlib')
 
 from waflib.Configure import conf
-
-@conf
-def read_compiler(ctx):
-  cxx = ctx.env.CXX[0]
-  ctx.start_msg('Checking for compiler family')
-  if 'clang' in cxx:
-   ctx.env.COMPILER='clang'
-   ctx.define('COMPILER_CLANG', 1)
-   ctx.undefine('COMPILER_GCC')
-  else:
-    ctx.undefine('COMPILER_CLANG')
-    if 'g++' in cxx or 'gcc' in cxx:
-      ctx.env.COMPILER='gcc'
-      ctx.define('COMPILER_GCC', 1)
-    else:
-      ctx.env.COMPILER='unknown'
-      ctx.undefine('COMPILER_GCC')
-  ctx.define('COMPILER_FAMILY', ctx.env.COMPILER)
-  ctx.end_msg(ctx.env.COMPILER)
-
 @conf
 def read_stdlib(ctx):
   if ctx.env.COMPILER == 'clang':
@@ -62,7 +42,6 @@ def configure(conf):
   conf.load('compiler_cxx')
   conf.load('waf_unit_test')
   conf.define('VERSION', VERSION)
-  conf.read_compiler()
   conf.read_stdlib()
   conf.write_config_header('config.h')
 

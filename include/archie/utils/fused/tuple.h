@@ -20,14 +20,14 @@ namespace utils {
       template <typename... Us>
       static decltype(auto) make_storage(Us&&... args) {
         return [](move_t<Ts>... mvs) {
-#if defined(COMPILER_CLANG)
+#if defined(__clang__)
           return [](move_t<Ts>... mvs) {
 #endif
             return [mvs...](auto&& func) mutable -> decltype(auto) {
               return std::forward<decltype(func)>(func)(
                   static_cast<Ts&>(mvs)...);
             };
-#if defined(COMPILER_CLANG)
+#if defined(__clang__)
           }(move_t<Ts>(mvs)...); // FIXME: give clang a bit of help
 #endif
         }(std::forward<Us>(args)...);
