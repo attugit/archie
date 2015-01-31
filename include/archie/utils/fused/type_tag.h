@@ -29,7 +29,7 @@ namespace utils {
       };
     }
     constexpr detail::make_tag make_tag{};
-#if defined(COMPILER_CLANG)
+#if defined(__clang__)
     template <typename Tp>
     constexpr type_tag<Tp> construct{};
 #endif

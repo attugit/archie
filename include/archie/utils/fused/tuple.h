@@ -105,13 +105,13 @@ namespace utils {
 
     template <std::size_t N, typename Tp>
     decltype(auto) get(Tp&& tp) {
-#if defined(COMPILER_CLANG)
+#if defined(__clang__)
       return tp.apply(nth<N>);
 #else
-        auto f = [](auto&&... args) -> decltype(auto) {
-          return nth<N>(std::forward<decltype(args)>(args)...);
-        };
-        return tp.apply(f);
+      auto f = [](auto&&... args) -> decltype(auto) {
+        return nth<N>(std::forward<decltype(args)>(args)...);
+      };
+      return tp.apply(f);
 #endif
     }
 

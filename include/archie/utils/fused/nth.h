@@ -6,7 +6,7 @@
 namespace archie {
 namespace utils {
   namespace fused {
-#if defined(COMPILER_CLANG)
+#if defined(__clang__)
     template <std::size_t n>
     constexpr placeholder<n> nth{};
 #else

@@ -8,7 +8,7 @@
 #include <archie/utils/test.h>
 #include <config.h>
 
-#if defined(COMPILER_CLANG)
+#if defined(__clang__)
 #include <archie/utils/fused/find.h>
 #include <archie/utils/fused/take.h>
 #include <archie/utils/fused/nth.h>
@@ -63,7 +63,7 @@ void canComposeFusedTransform() {
   EXPECT_EQ('4', fused::get<2>(x));
 }
 
-#if defined(COMPILER_CLANG)
+#if defined(__clang__)
 void canComposeFusedFind() {
   auto x = fused::apply(fused::find<unsigned>, 1, 2u, '3', 4u);
   EXPECT_EQ(2u, x);
@@ -116,7 +116,7 @@ int main() {
   canComposeFusedForEach(); // TODO: kills gdb
   canComposeFusedForEachOrder();
   canComposeFusedTransform(); // TODO: kills gdb
-#if defined(COMPILER_CLANG)
+#if defined(__clang__)
   canComposeFusedFind();
   canComposeFusedFindIf();
   canComposeFusedTake();

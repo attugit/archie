@@ -7,7 +7,7 @@
 namespace archie {
 namespace utils {
   namespace fused {
-#if defined(COMPILER_CLANG)
+#if defined(__clang__)
     namespace detail {
       template <typename Tp>
       struct find {
