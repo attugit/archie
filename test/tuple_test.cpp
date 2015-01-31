@@ -14,13 +14,26 @@ namespace traits = std;
 #include <memory>
 
 void canDefaultConstruct() {
-  static_assert(
-      std::is_default_constructible<test::tuple<unsigned, double, char>>::value,
-      "");
-  auto t = test::tuple<unsigned, double, char>();
+  {
+    static_assert(std::is_default_constructible<
+                      test::tuple<unsigned, double, char>>::value,
+                  "");
+    auto t = test::tuple<unsigned, double, char>();
 
-  EXPECT_EQ(3u, test::tuple_size<decltype(t)>::value);
-  EXPECT_LE(sizeof(unsigned) + sizeof(double) + sizeof(char), sizeof(t));
+    EXPECT_EQ(3u, test::tuple_size<decltype(t)>::value);
+    EXPECT_LE(sizeof(unsigned) + sizeof(double) + sizeof(char), sizeof(t));
+  }
+  {
+    static_assert(
+        std::is_default_constructible<
+            test::tuple<unsigned, std::unique_ptr<double>, char>>::value,
+        "");
+    auto t = test::tuple<unsigned, std::unique_ptr<double>, char>();
+
+    EXPECT_EQ(3u, test::tuple_size<decltype(t)>::value);
+    EXPECT_LE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char),
+              sizeof(t));
+  }
 }
 
 void canDefaultConstructTupleWithUncopyableElement() {
