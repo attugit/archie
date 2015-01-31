@@ -50,13 +50,26 @@ void canDefaultConstructTupleWithUncopyableElement() {
 }
 
 void canConstruct() {
-  static_assert(std::is_constructible<test::tuple<unsigned, double, char>,
-                                      unsigned, double, char>::value,
-                "");
-  auto t = test::tuple<unsigned, double, char>(1u, 2.0, '3');
+  {
+    static_assert(std::is_constructible<test::tuple<unsigned, double, char>,
+                                        unsigned, double, char>::value,
+                  "");
+    auto t = test::tuple<unsigned, double, char>(1u, 2.0, '3');
 
-  EXPECT_EQ(3u, test::tuple_size<decltype(t)>::value);
-  EXPECT_LE(sizeof(unsigned) + sizeof(double) + sizeof(char), sizeof(t));
+    EXPECT_EQ(3u, test::tuple_size<decltype(t)>::value);
+    EXPECT_LE(sizeof(unsigned) + sizeof(double) + sizeof(char), sizeof(t));
+  }
+  {
+    static_assert(std::is_constructible <
+                      test::tuple<unsigned, std::unique_ptr<double>, char>,
+                  unsigned, std::unique_ptr<double>&&, char > ::value, "");
+    auto t = test::tuple<unsigned, std::unique_ptr<double>, char>(
+        1u, std::unique_ptr<double>{}, '3');
+
+    EXPECT_EQ(3u, test::tuple_size<decltype(t)>::value);
+    EXPECT_LE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char),
+              sizeof(t));
+  }
 }
 
 void canConstructTupleWithUncopyableElement() {
