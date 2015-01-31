@@ -13,6 +13,7 @@
 #include <archie/utils/fused/take.h>
 #include <archie/utils/fused/nth.h>
 #include <archie/utils/fused/type_tag.h>
+#include <archie/utils/fused/index_of.h>
 #endif
 
 namespace fused = archie::utils::fused;
@@ -108,6 +109,30 @@ void canComposeFusedConstruct() {
   EXPECT_EQ(2u, fused::get<1>(x));
   EXPECT_EQ('3', fused::get<2>(x));
 }
+
+void canComposeIndexOf() {
+  {
+    auto x = fused::apply(fused::index_of<int>, 1, 2u, '3');
+    auto y = fused::apply(fused::index_of<unsigned>, 1, 2u, '3');
+    auto z = fused::apply(fused::index_of<char>, 1, 2u, '3');
+    EXPECT_EQ(0, x);
+    EXPECT_EQ(1, y);
+    EXPECT_EQ(2, z);
+  }
+  {
+    auto x = fused::apply(fused::index_of<int>, 1);
+    EXPECT_EQ(0, x);
+  }
+  {
+    auto tl = fused::type_list<int, unsigned, char>;
+    auto x = fused::apply(fused::index_of<int>, tl);
+    auto y = fused::apply(fused::index_of<unsigned>, tl);
+    auto z = fused::apply(fused::index_of<char>, tl);
+    EXPECT_EQ(0, x);
+    EXPECT_EQ(1, y);
+    EXPECT_EQ(2, z);
+  }
+}
 #endif
 
 int main() {
@@ -122,6 +147,7 @@ int main() {
   canComposeFusedTake();
   canComposeFusedNth();
   canComposeFusedConstruct();
+  canComposeIndexOf();
 #endif
   return 0;
 }
