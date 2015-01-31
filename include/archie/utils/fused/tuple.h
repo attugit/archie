@@ -121,6 +121,12 @@ namespace utils {
       return get<idx>(u);
     }
 
+    template <typename Tp, typename... Us>
+    decltype(auto) get(tuple<Us...> const& u) {
+      constexpr auto idx = meta::index_of<Tp>(meta::type_list<Us...>{});
+      return get<idx>(u);
+    }
+
     template <std::size_t I, typename Tp>
     struct tuple_element;
 
