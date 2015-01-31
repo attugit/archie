@@ -427,11 +427,13 @@ void canMakeTupleOfTuples() {
   auto t1 = test::tuple<test::tuple<int, unsigned>>{};
   auto t2 = test::tuple<test::tuple<int, unsigned>>{t0};
   auto t3 = test::tuple<test::tuple<int, unsigned>, char>{t0, '3'};
+  auto t4 = test::tuple<test::tuple<int, unsigned>, test::tuple<char>>{t0, '3'};
 
   ASSERT_EQ(2u, test::tuple_size<decltype(t0)>::value);
   ASSERT_EQ(1u, test::tuple_size<decltype(t1)>::value);
   ASSERT_EQ(1u, test::tuple_size<decltype(t2)>::value);
   ASSERT_EQ(2u, test::tuple_size<decltype(t3)>::value);
+  ASSERT_EQ(2u, test::tuple_size<decltype(t4)>::value);
 }
 
 int main() {
