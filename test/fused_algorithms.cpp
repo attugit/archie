@@ -5,6 +5,7 @@
 #include <archie/utils/fused/for_each.h>
 #include <archie/utils/fused/for_each_order.h>
 #include <archie/utils/fused/transform.h>
+#include <archie/utils/fused/concat.h>
 #include <archie/utils/test.h>
 #include <config.h>
 
@@ -62,6 +63,25 @@ void canComposeFusedTransform() {
   EXPECT_EQ(2, fused::get<0>(x));
   EXPECT_EQ(3u, fused::get<1>(x));
   EXPECT_EQ('4', fused::get<2>(x));
+}
+
+void canComposeFusedConcat() {
+  auto x = fused::apply(fused::concat, fused::make_tuple(1, 2u, '3'), 4.0);
+  static_assert(fused::tuple_size<decltype(x)>::value == 4u, "");
+  EXPECT_EQ(1, fused::get<0>(x));
+  EXPECT_EQ(2u, fused::get<1>(x));
+  EXPECT_EQ('3', fused::get<2>(x));
+  EXPECT_EQ(4.0, fused::get<3>(x));
+
+  auto y = fused::apply(fused::concat, fused::make_tuple(1, 2u, '3'),
+                        fused::make_tuple(4.0, 5, 6u));
+  static_assert(fused::tuple_size<decltype(y)>::value == 6u, "");
+  EXPECT_EQ(1, fused::get<0>(y));
+  EXPECT_EQ(2u, fused::get<1>(y));
+  EXPECT_EQ('3', fused::get<2>(y));
+  EXPECT_EQ(4.0, fused::get<3>(y));
+  EXPECT_EQ(5, fused::get<4>(y));
+  EXPECT_EQ(6u, fused::get<5>(y));
 }
 
 #if defined(__clang__)
@@ -141,6 +161,7 @@ int main() {
   canComposeFusedForEach(); // TODO: kills gdb
   canComposeFusedForEachOrder();
   canComposeFusedTransform(); // TODO: kills gdb
+  canComposeFusedConcat();
 #if defined(__clang__)
   canComposeFusedFind();
   canComposeFusedFindIf();
