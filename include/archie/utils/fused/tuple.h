@@ -93,15 +93,25 @@ namespace utils {
       }
     };
 
-    template <typename... Ts>
-    decltype(auto) make_tuple(Ts&&... args) {
-      return tuple<std::remove_reference_t<Ts>...>(std::forward<Ts>(args)...);
+    namespace detail {
+      struct make_tuple_ {
+        template <typename... Ts>
+        constexpr decltype(auto) operator()(Ts&&... args) const {
+          return fused::tuple<std::remove_reference_t<Ts>...>(
+              std::forward<Ts>(args)...);
+        }
+      };
+
+      struct tie_ {
+        template <typename... Ts>
+        constexpr decltype(auto) operator()(Ts&... args) const {
+          return fused::tuple<Ts&...>(args...);
+        }
+      };
     }
 
-    template <typename... Ts>
-    decltype(auto) tie(Ts&... args) {
-      return tuple<Ts&...>(args...);
-    }
+    constexpr detail::make_tuple_ make_tuple{};
+    constexpr detail::tie_ tie{};
 
     template <std::size_t N, typename Tp>
     decltype(auto) get(Tp&& tp) {
