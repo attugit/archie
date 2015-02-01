@@ -20,7 +20,7 @@ def options(opt):
 from waflib.Configure import conf
 @conf
 def read_stdlib(ctx):
-  if ctx.env.COMPILER == 'clang':
+  if 'clang' in ctx.env.CXX[0]:
     ctx.start_msg('Checking for the stdlib')
     if ctx.options.stdlib:
       ctx.env.STDLIB = ctx.options.stdlib

@@ -44,5 +44,6 @@ void canConcatTwoTuples() {
 
 int main() {
   canConcatTuple();
+  canConcatTwoTuples();
   return 0;
 }
