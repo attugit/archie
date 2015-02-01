@@ -8,6 +8,7 @@
 #include <archie/utils/fused/transform.h>
 #include <archie/utils/fused/concat.h>
 #include <archie/utils/fused/zip.h>
+#include <archie/utils/fused/tail.h>
 #include <archie/utils/test.h>
 #include <config.h>
 
@@ -127,6 +128,13 @@ void canComposeFusedZip() {
   EXPECT_EQ(6u, fused::get<5>(x));
 }
 
+void canComposeFusedTail() {
+  auto x = fused::tail(fused::make_tuple(1, 2u, '3'));
+  static_assert(fused::tuple_size<decltype(x)>::value == 2u, "");
+  EXPECT_EQ(2u, fused::get<0>(x));
+  EXPECT_EQ('3', fused::get<1>(x));
+}
+
 #if defined(HAS_VARIABLE_TEMPLATES)
 void canComposeFusedFind() {
   auto x = fused::apply(fused::find<unsigned>, 1, 2u, '3', 4u);
@@ -208,6 +216,7 @@ int main() {
   canComposeFusedTransform(); // TODO: kills gdb
   canComposeFusedConcat();
   canComposeFusedZip();
+  canComposeFusedTail();
 #if defined(HAS_VARIABLE_TEMPLATES)
   canComposeFusedFind();
   canComposeFusedFindIf();
