@@ -2,11 +2,12 @@
 
 #include <utility>
 #include <archie/utils/fused/placeholder.h>
+#include <config.h>
 
 namespace archie {
 namespace utils {
   namespace fused {
-#if defined(__clang__)
+#if defined(HAS_VARIABLE_TEMPLATES)
     template <std::size_t n>
     constexpr placeholder<n> nth{};
 #else

@@ -9,7 +9,7 @@
 #include <archie/utils/test.h>
 #include <config.h>
 
-#if defined(__clang__)
+#if defined(HAS_VARIABLE_TEMPLATES)
 #include <archie/utils/fused/find.h>
 #include <archie/utils/fused/take.h>
 #include <archie/utils/fused/nth.h>
@@ -84,7 +84,7 @@ void canComposeFusedConcat() {
   EXPECT_EQ(6u, fused::get<5>(y));
 }
 
-#if defined(__clang__)
+#if defined(HAS_VARIABLE_TEMPLATES)
 void canComposeFusedFind() {
   auto x = fused::apply(fused::find<unsigned>, 1, 2u, '3', 4u);
   EXPECT_EQ(2u, x);
@@ -162,7 +162,7 @@ int main() {
   canComposeFusedForEachOrder();
   canComposeFusedTransform(); // TODO: kills gdb
   canComposeFusedConcat();
-#if defined(__clang__)
+#if defined(HAS_VARIABLE_TEMPLATES)
   canComposeFusedFind();
   canComposeFusedFindIf();
   canComposeFusedTake();

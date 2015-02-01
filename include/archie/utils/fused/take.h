@@ -19,7 +19,7 @@ namespace utils {
         constexpr decltype(auto) operator()(tuple<Ts...> const& t) const {
           return make_tuple(get<ids>(t)...);
         }
-#if defined(__clang__)
+#if defined(HAS_VARIABLE_TEMPLATES)
         template <typename... Ts>
         constexpr decltype(auto) operator()(tuple<Ts...>&& t) const {
           return make_tuple(get<ids>(t)...);
@@ -35,7 +35,7 @@ namespace utils {
 #endif
       };
     }
-#if defined(__clang__)
+#if defined(HAS_VARIABLE_TEMPLATES)
     template <std::size_t n>
     constexpr meta::indexable_t<detail::take, n> take{};
 #else

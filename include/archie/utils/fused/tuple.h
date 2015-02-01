@@ -8,6 +8,7 @@
 #include <archie/utils/traits.h>
 #include <archie/utils/fused/nth.h>
 #include <archie/utils/fused/mover.h>
+#include <config.h>
 #include <utility>
 #include <array>
 
@@ -115,7 +116,7 @@ namespace utils {
 
     template <std::size_t N, typename Tp>
     decltype(auto) get(Tp&& tp) {
-#if defined(__clang__)
+#if defined(HAS_VARIABLE_TEMPLATES)
       return tp.apply(nth<N>);
 #else
       auto f = [](auto&&... args) -> decltype(auto) {

@@ -37,12 +37,28 @@ def read_stdlib(ctx):
     ctx.define('USE_LIBCPP', 1)
     ctx.undefine('USE_LIBSTDCPP')
 
+@conf
+def check_variable_templates(ctx):
+  ctx.check_cxx(fragment='''
+    template<typename Tp>
+    struct type {
+    };
+    template<typename Tp>
+    constexpr type<Tp> var{};
+    int main() { return 0; } ''',
+    mandatory   = False,
+    cxxflags    = ['-std=c++14'],
+    define_name = "HAS_VARIABLE_TEMPLATES",
+    execute     = False,
+    msg         = "Checking for variable templates")
+
 def configure(conf):
   conf.env.COMPILE_FLAGS = buildflags
   conf.load('compiler_cxx')
   conf.load('waf_unit_test')
   conf.define('VERSION', VERSION)
   conf.read_stdlib()
+  conf.check_variable_templates()
   conf.write_config_header('config.h')
 
 from waflib.Tools import waf_unit_test

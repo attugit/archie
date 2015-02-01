@@ -1,13 +1,14 @@
 #pragma once
 
-#include <utility>
 #include <archie/utils/meta/index_of.h>
 #include <archie/utils/fused/type_list.h>
+#include <config.h>
+#include <utility>
 
 namespace archie {
 namespace utils {
   namespace fused {
-#if defined(__clang__)
+#if defined(HAS_VARIABLE_TEMPLATES)
     namespace detail {
       template <typename Tp>
       struct index_of {
