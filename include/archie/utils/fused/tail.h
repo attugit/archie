@@ -2,6 +2,7 @@
 
 #include <utility>
 #include <archie/utils/fused/tuple.h>
+#include <archie/utils/fused/apply.h>
 
 namespace archie {
 namespace utils {
@@ -20,16 +21,16 @@ namespace utils {
       public:
         template <typename Tp, typename... Us>
         constexpr decltype(auto) operator()(fused::tuple<Tp, Us...>& t) const {
-          return t.apply(impl<Us...>{});
+          return fused::apply(impl<Us...>{}, t);
         }
         template <typename Tp, typename... Us>
         constexpr decltype(auto) operator()(
             fused::tuple<Tp, Us...> const& t) const {
-          return t.apply(impl<Us...>{});
+          return fused::apply(impl<Us...>{}, t);
         }
         template <typename Tp, typename... Us>
         constexpr decltype(auto) operator()(fused::tuple<Tp, Us...>&& t) const {
-          return t.apply(impl<Us...>{});
+          return fused::apply(impl<Us...>{}, t);
         }
       };
     }
