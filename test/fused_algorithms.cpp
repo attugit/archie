@@ -19,6 +19,25 @@
 
 namespace fused = archie::utils::fused;
 
+void canComposeFusedMakeTuple() {
+  auto x = fused::apply(fused::make_tuple, 1, 2u, '3');
+  static_assert(fused::tuple_size<decltype(x)>::value == 3u, "");
+  EXPECT_EQ(1, fused::get<0>(x));
+  EXPECT_EQ(2u, fused::get<1>(x));
+  EXPECT_EQ('3', fused::get<2>(x));
+}
+
+void canComposeFusedTie() {
+  auto a = 1;
+  auto b = 2u;
+  auto c = '3';
+  auto x = fused::apply(fused::tie, a, b, c);
+  static_assert(fused::tuple_size<decltype(x)>::value == 3u, "");
+  EXPECT_EQ(&a, &fused::get<0>(x));
+  EXPECT_EQ(&b, &fused::get<1>(x));
+  EXPECT_EQ(&c, &fused::get<2>(x));
+}
+
 void canComposeFusedFront() {
   auto a = fused::apply(fused::front, fused::make_tuple(1, 2u, '3'));
   EXPECT_EQ(1, a);
@@ -156,6 +175,8 @@ void canComposeIndexOf() {
 #endif
 
 int main() {
+  canComposeFusedMakeTuple();
+  canComposeFusedTie();
   canComposeFusedFront();
   canComposeFusedBack();
   canComposeFusedForEach(); // TODO: kills gdb
