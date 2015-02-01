@@ -1,4 +1,5 @@
 #include <archie/utils/fused/tuple.h>
+#include <archie/utils/fused/compose.h>
 #include <archie/utils/fused/apply.h>
 #include <archie/utils/fused/front.h>
 #include <archie/utils/fused/back.h>
@@ -40,11 +41,21 @@ void canComposeFusedTie() {
 }
 
 void canComposeFusedFront() {
-  auto a = fused::apply(fused::front, fused::make_tuple(1, 2u, '3'));
-  EXPECT_EQ(1, a);
-  auto const& b = fused::apply(fused::front, a, 2u, '3');
-  EXPECT_EQ(1, b);
-  EXPECT_EQ(&a, &b);
+  {
+    auto a = fused::apply(fused::front, fused::make_tuple(1, 2u, '3'));
+    EXPECT_EQ(1, a);
+    auto const& b = fused::apply(fused::front, a, 2u, '3');
+    EXPECT_EQ(1, b);
+    EXPECT_EQ(&a, &b);
+  }
+  {
+    auto a = fused::compose(fused::front, fused::make_tuple, 1, 2u, '3');
+    auto b = 2u;
+    auto c = '3';
+
+    auto const& y = fused::compose(fused::front, fused::tie, a, b, c);
+    EXPECT_EQ(&a, &y);
+  }
 }
 
 void canComposeFusedBack() {
