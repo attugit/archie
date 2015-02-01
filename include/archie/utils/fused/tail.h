@@ -1,6 +1,7 @@
 #pragma once
 
 #include <utility>
+#include <archie/utils/fused/tuple.h>
 
 namespace archie {
 namespace utils {
