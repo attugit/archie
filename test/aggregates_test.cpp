@@ -41,14 +41,14 @@ using BaseType = detail::PackedStruct::type;
 namespace fused = archie::utils::fused;
 
 void canCreate() {
-  PackedStruct pack{1, "Aqq", -20, 10};
+  PackedStruct pack{Id{1}, Name{"Aqq"}, Value{-20}, Amount{10}};
   EXPECT_EQ(1u, fused::get<Id>(pack));
   EXPECT_EQ("Aqq", fused::get<Name>(pack));
   EXPECT_EQ(-20, fused::get<Value>(pack));
 }
 
 void canSelect() {
-  PackedStruct pack{1, "Aqq", -20, 10};
+  PackedStruct pack{Id{1}, Name{"Aqq"}, Value{-20}, Amount{10}};
   auto select = fused::select<Id, Value>(pack);
   EXPECT_EQ(1u, fused::get<Id>(select));
   EXPECT_EQ(-20, fused::get<Value>(select));

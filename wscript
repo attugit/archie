@@ -16,6 +16,11 @@ def options(opt):
     default='',
     type='string',
     dest='stdlib')
+  opt.add_option('--tuple',
+    action='store',
+    default='archie',
+    type='string',
+    dest='tuple')
 
 from waflib.Configure import conf
 @conf
@@ -52,12 +57,27 @@ def check_variable_templates(ctx):
     execute     = False,
     msg         = "Checking for variable templates")
 
+@conf
+def check_tuple_impl(ctx):
+  ctx.start_msg('Checking for tuple impl')
+  if ctx.options.tuple:
+    if 'archie' in ctx.options.tuple:
+      ctx.define('USE_ARCHIE_TUPLE', 1)
+      ctx.undefine('USE_STD_TUPLE')
+    elif 'std' in ctx.options.tuple:
+      ctx.undefine('USE_ARCHIE_TUPLE')
+      ctx.define('USE_STD_TUPLE', 1)
+    ctx.end_msg(ctx.options.tuple)
+  else:
+    ctx.end_msg('not set')
+
 def configure(conf):
   conf.env.COMPILE_FLAGS = buildflags
   conf.load('compiler_cxx')
   conf.load('waf_unit_test')
   conf.define('VERSION', VERSION)
   conf.read_stdlib()
+  conf.check_tuple_impl()
   conf.check_variable_templates()
   conf.write_config_header('config.h')
 

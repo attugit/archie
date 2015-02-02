@@ -1,10 +1,11 @@
 #include <type_traits>
+#include <config.h>
 
-#if 1
+#if defined(USE_ARCHIE_TUPLE)
 #include <archie/utils/fused/tuple.h>
 namespace test = archie::utils::fused;
 namespace traits = archie::utils::traits;
-#else
+#elif defined(USE_STD_TUPLE)
 #include <tuple>
 namespace test = std;
 namespace traits = std;
@@ -437,6 +438,7 @@ struct conv {
   unsigned value = 0;
 };
 
+#if defined(USE_ARCHIE_TUPLE)
 void canConstructTupleWithExplicitElementCtor() {
   static_assert(traits::is_convertible<unsigned, conv>::value, "");
   static_assert(!traits::is_convertible<std::string&, conv>::value, "");
@@ -447,13 +449,15 @@ void canConstructTupleWithExplicitElementCtor() {
   EXPECT_EQ(1u, test::get<0>(t1));
   EXPECT_EQ(3u, test::get<0>(t2));
 }
+#endif
 
 void canMakeTupleOfTuples() {
   auto t0 = test::make_tuple(1, 2u);
   auto t1 = test::tuple<test::tuple<int, unsigned>>{};
   auto t2 = test::tuple<test::tuple<int, unsigned>>{t0};
   auto t3 = test::tuple<test::tuple<int, unsigned>, char>{t0, '3'};
-  auto t4 = test::tuple<test::tuple<int, unsigned>, test::tuple<char>>{t0, '3'};
+  auto t4 = test::tuple<test::tuple<int, unsigned>, test::tuple<char>>{
+      t0, test::make_tuple('3')};
 
   ASSERT_EQ(2u, test::tuple_size<decltype(t0)>::value);
   ASSERT_EQ(1u, test::tuple_size<decltype(t1)>::value);
@@ -485,7 +489,9 @@ int main() {
   canTieWithIgnore();
   canUseTupleElement();
   canGetElementByType();
+#if defined(USE_ARCHIE_TUPLE)
   canConstructTupleWithExplicitElementCtor();
+#endif
   canMakeTupleOfTuples();
 
   return 0;

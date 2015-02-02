@@ -8,16 +8,24 @@ env:
 matrix:
   include:
     - compiler: gcc
-      env: STDLIB=libstdc++
+      env: STDLIB=libstdc++ TUPLE_IMPL=archie
+    - compiler: gcc
+      env: STDLIB=libstdc++ TUPLE_IMPL=std
     - compiler: clang
-      env: STDLIB=libstdc++
+      env: STDLIB=libstdc++ TUPLE_IMPL=archie
     - compiler: clang
-      env: STDLIB=libc++
+      env: STDLIB=libstdc++ TUPLE_IMPL=std
+    - compiler: clang
+      env: STDLIB=libc++ TUPLE_IMPL=archie
+    - compiler: clang
+      env: STDLIB=libc++ TUPLE_IMPL=std
   exclude:
     - env: ignore=this
   allow_failures:
     - compiler: clang
-      env: STDLIB=libc++
+      env: STDLIB=libc++ TUPLE_IMPL=archie
+    - compiler: clang
+      env: STDLIB=libc++ TUPLE_IMPL=std
   fast_finish: true
 
 before_install:
@@ -69,5 +77,5 @@ install:
 
 script:
   - ./waf distclean
-  - ./waf configure --stdlib=${STDLIB};
+  - ./waf configure --stdlib=${STDLIB} --tuple=${TUPLE_IMPL};
   - ./waf debug release

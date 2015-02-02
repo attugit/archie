@@ -1,6 +1,7 @@
 #pragma once
 
 #include <archie/utils/fused/tuple.h>
+#include <archie/utils/meta/index_of.h>
 #include <functional>
 
 namespace archie {
