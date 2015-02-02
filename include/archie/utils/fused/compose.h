@@ -1,11 +1,11 @@
 #pragma once
 
 #include <utility>
+#include <archie/utils/meta/functional.h>
 #include <archie/utils/fused/tuple.h>
 #include <archie/utils/fused/apply.h>
 #include <archie/utils/fused/tail.h>
 #include <archie/utils/traits/is_fused_tuple.h>
-#include <archie/utils/meta/logic.h>
 
 namespace archie {
 namespace utils {
