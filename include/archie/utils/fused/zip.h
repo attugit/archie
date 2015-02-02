@@ -6,7 +6,7 @@ namespace archie {
 namespace utils {
   namespace fused {
     namespace detail {
-      struct zip {
+      struct zip_ {
         template <typename... Ts, typename... Us>
         constexpr tuple<tuple<Ts, Us>...> operator()(
             tuple<Ts...> const& a, tuple<Us...> const& b) const {
@@ -14,7 +14,7 @@ namespace utils {
         }
       };
     }
-    constexpr detail::zip zip{};
+    constexpr detail::zip_ zip{};
   }
 }
 }

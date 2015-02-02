@@ -7,7 +7,7 @@ namespace archie {
 namespace utils {
   namespace fused {
     namespace detail {
-      struct apply {
+      struct apply_ {
         template <typename F, typename Tp, typename... Us>
         decltype(auto) operator()(F&& f, Tp&& x, Us&&... y) const
             noexcept(noexcept(std::declval<F>()(std::declval<Tp>(),
@@ -29,7 +29,7 @@ namespace utils {
         }
       };
     }
-    constexpr detail::apply apply{};
+    constexpr detail::apply_ apply{};
   }
 }
 }

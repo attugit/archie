@@ -7,7 +7,7 @@ namespace archie {
 namespace utils {
   namespace fused {
     namespace detail {
-      struct back {
+      struct back_ {
         template <typename Tp, typename... Ts>
         constexpr decltype(auto) operator()(Tp&& t, Ts&&... ts) const noexcept {
           return [](meta::eat<Ts>..., auto&& x) -> decltype(x) {
@@ -16,7 +16,7 @@ namespace utils {
         }
       };
     }
-    constexpr detail::back back{};
+    constexpr detail::back_ back{};
   }
 }
 }

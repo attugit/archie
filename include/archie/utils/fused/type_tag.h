@@ -21,14 +21,14 @@ namespace utils {
     };
 
     namespace detail {
-      struct make_tag {
+      struct make_tag_ {
         template <typename Tp>
         constexpr decltype(auto) operator()(Tp&&) const noexcept {
           return type_tag<std::remove_reference_t<Tp>>{};
         }
       };
     }
-    constexpr detail::make_tag make_tag{};
+    constexpr detail::make_tag_ make_tag{};
 #if defined(HAS_VARIABLE_TEMPLATES)
     template <typename Tp>
     constexpr type_tag<Tp> construct{};

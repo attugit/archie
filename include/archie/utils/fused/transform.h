@@ -8,7 +8,7 @@ namespace archie {
 namespace utils {
   namespace fused {
     namespace detail {
-      struct transform {
+      struct transform_ {
         template <typename F, typename... Ts>
         decltype(auto) operator()(F&& f, Ts&&... x) const {
           auto make = [g = std::forward<F>(f)](auto&&... xs) {
@@ -18,7 +18,7 @@ namespace utils {
         }
       };
     }
-    constexpr detail::transform transform{};
+    constexpr detail::transform_ transform{};
   }
 }
 }

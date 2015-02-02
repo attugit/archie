@@ -11,7 +11,7 @@ namespace utils {
 #if defined(HAS_VARIABLE_TEMPLATES)
     namespace detail {
       template <typename Tp>
-      struct index_of {
+      struct index_of_ {
         template <typename... Us>
         constexpr decltype(auto) operator()(Us&&...) const noexcept {
           return meta::index_of<Tp>(type_list<Us...>);
@@ -24,7 +24,7 @@ namespace utils {
       };
     }
     template <typename Tp>
-    constexpr detail::index_of<Tp> index_of{};
+    constexpr detail::index_of_<Tp> index_of{};
 #endif
   }
 }

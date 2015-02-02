@@ -7,7 +7,7 @@ namespace archie {
 namespace utils {
   namespace fused {
     namespace detail {
-      struct for_each {
+      struct for_each_ {
         template <typename Func, typename... Args>
         decltype(auto) operator()(Func&& func, Args&&... args) const {
           meta::ignore{(func(std::forward<Args>(args)), 0)...};
@@ -15,7 +15,7 @@ namespace utils {
         }
       };
     }
-    constexpr detail::for_each for_each{};
+    constexpr detail::for_each_ for_each{};
   }
 }
 }

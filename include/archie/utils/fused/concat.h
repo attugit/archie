@@ -8,7 +8,7 @@ namespace archie {
 namespace utils {
   namespace fused {
     namespace detail {
-      struct concat {
+      struct concat_ {
       private:
         template <typename Vp, typename... Ts, typename... Us>
         constexpr decltype(auto) eval(meta::boolean<false>,
@@ -38,7 +38,7 @@ namespace utils {
         }
       };
     }
-    constexpr detail::concat concat{};
+    constexpr detail::concat_ concat{};
   }
 }
 }
