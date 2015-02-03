@@ -49,7 +49,7 @@ namespace utils {
 
       template <typename... Us>
       constexpr explicit tuple(implicit_ctor_tag, Us&&... args)
-          : storage(make_storage<move_t<Ts>...>(std::forward<Us>(args)...)) {}
+          : storage(make_storage(move_t<Ts>(std::forward<Us>(args))...)) {}
 
       template <typename... Us>
       constexpr explicit tuple(explicit_ctor_tag, Us&&... args)
