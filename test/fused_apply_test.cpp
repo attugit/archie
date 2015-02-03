@@ -22,8 +22,15 @@ void canUseApplyWithTuple() {
   EXPECT_EQ(3u, fused::apply(count, t3));
 }
 
+void canUseApplyWithRValueTuple() {
+  EXPECT_EQ(1u, fused::apply(count, fused::make_tuple(3)));
+  EXPECT_EQ(2u, fused::apply(count, fused::make_tuple(3, 2)));
+  EXPECT_EQ(3u, fused::apply(count, fused::make_tuple(3, 2, 1)));
+}
+
 int main() {
   canUseApplyWithRegularArgs();
   canUseApplyWithTuple();
+  canUseApplyWithRValueTuple();
   return 0;
 }
