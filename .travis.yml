@@ -22,8 +22,6 @@ matrix:
   exclude:
     - env: ignore=this
   allow_failures:
-    - compiler: gcc
-      env: STDLIB=libstdc++ TUPLE_IMPL=archie
     - compiler: clang
       env: STDLIB=libc++ TUPLE_IMPL=archie
     - compiler: clang
