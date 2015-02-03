@@ -30,13 +30,11 @@ void canUseFusedCompose() {
     EXPECT_EQ(2u, fused::get<1>(x));
     EXPECT_EQ('3', fused::get<2>(x));
   }
-#if 0
   {
     auto x = fused::compose(fused::make_tuple(fused::front, fused::make_tuple),
                             1, 2u, '3');
     EXPECT_EQ(1, x);
   }
-#endif
 }
 
 void canComposeFusedMakeTuple() {
