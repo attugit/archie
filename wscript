@@ -81,7 +81,23 @@ def configure(conf):
   conf.check_variable_templates()
   conf.write_config_header('config.h')
 
-from waflib.Tools import waf_unit_test
+from waflib import Logs
+def summary(bld):
+  lst=getattr(bld,'utest_results',[])
+  if lst:
+    Logs.pprint('CYAN','execution summary')
+    total=len(lst)
+    tfail=len([x for x in lst if x[1]])
+    Logs.pprint('CYAN','  tests that pass %d/%d'%(total-tfail,total))
+    for(f,code,out,err)in lst:
+      if not code:
+        Logs.pprint('CYAN','    %s'%f)
+    Logs.pprint('RED','  tests that fail %d/%d'%(tfail,total))
+    for(f,code,out,err)in lst:
+      if code:
+        Logs.pprint('RED','    %s'%f)
+        Logs.pprint('RED', str(err))
+
 def build(bld):
   inc = ['.', 'include', out]
 
@@ -99,7 +115,7 @@ def build(bld):
       lib=lib,
       source=f)
 
-  bld.add_post_fun(waf_unit_test.summary)
+  bld.add_post_fun(summary)
 
 from waflib.Build import BuildContext
 class debug(BuildContext):
