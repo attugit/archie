@@ -244,6 +244,9 @@ namespace utils {
 
     template <typename... Ts>
     struct tuple_size<tuple<Ts...>> : meta::number<sizeof...(Ts)> {};
+
+    template <typename... Ts>
+    struct tuple_size<const tuple<Ts...>> : tuple_size<tuple<Ts...>> {};
   }
 }
 }

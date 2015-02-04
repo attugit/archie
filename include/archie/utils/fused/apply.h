@@ -3,6 +3,8 @@
 #include <utility>
 #include <archie/utils/fused/tuple.h>
 #include <archie/utils/meta/indexable.h>
+#include <archie/utils/meta/boolean.h>
+#include <archie/utils/traits/is_fused_tuple.h>
 #include <config.h>
 
 namespace archie {
@@ -11,26 +13,19 @@ namespace utils {
     namespace detail {
       struct apply_ {
         template <typename F, typename Tp, typename... Us>
-        decltype(auto) operator()(F&& f, Tp&& x, Us&&... y) const
-            noexcept(noexcept(std::declval<F>()(std::declval<Tp>(),
-                                                std::declval<Us>()...))) {
-          return std::forward<F>(f)(std::forward<Tp>(x),
-                                    std::forward<Us>(y)...);
+        decltype(auto) operator()(F&& f, Tp&& tp, Us&&... us) const {
+          return impl(meta::boolean < traits::is_fused_tuple<
+                                          std::remove_reference_t<Tp>>::value &&
+                          (sizeof...(Us) == 0) > {},
+                      std::forward<F>(f), std::forward<Tp>(tp),
+                      std::forward<Us>(us)...);
         }
-#if defined(USE_ARCHIE_TUPLE)
+
+      private:
         template <typename F, typename... Ts>
-        decltype(auto) operator()(F&& f, fused::tuple<Ts...>& x) const {
-          return x.apply(std::forward<F>(f));
+        decltype(auto) impl(meta::false_t, F&& f, Ts&&... ts) const {
+          return std::forward<F>(f)(std::forward<Ts>(ts)...);
         }
-        template <typename F, typename... Ts>
-        decltype(auto) operator()(F&& f, fused::tuple<Ts...> const& x) const {
-          return x.apply(std::forward<F>(f));
-        }
-        template <typename F, typename... Ts>
-        decltype(auto) operator()(F&& f, fused::tuple<Ts...>&& x) const {
-          return x.apply(std::forward<F>(f));
-        }
-#elif defined(USE_STD_TUPLE)
         template <std::size_t... ids>
         struct apply_impl {
           template <typename F, typename Tp>
@@ -38,22 +33,13 @@ namespace utils {
             return std::forward<F>(f)(fused::get<ids>(std::forward<Tp>(t))...);
           }
         };
-        template <typename F, typename... Ts>
-        decltype(auto) operator()(F&& f, fused::tuple<Ts...>& x) const {
-          return meta::indexable_t<apply_impl, sizeof...(Ts)>{}(
-              std::forward<F>(f), x);
+        template <typename F, typename Tp>
+        decltype(auto) impl(meta::true_t, F&& f, Tp&& tp) const {
+          return meta::indexable_t<
+              apply_impl,
+              fused::tuple_size<std::remove_reference_t<Tp>>::value>{}(
+              std::forward<F>(f), std::forward<Tp>(tp));
         }
-        template <typename F, typename... Ts>
-        decltype(auto) operator()(F&& f, fused::tuple<Ts...> const& x) const {
-          return meta::indexable_t<apply_impl, sizeof...(Ts)>{}(
-              std::forward<F>(f), x);
-        }
-        template <typename F, typename... Ts>
-        decltype(auto) operator()(F&& f, fused::tuple<Ts...>&& x) const {
-          return meta::indexable_t<apply_impl, sizeof...(Ts)>{}(
-              std::forward<F>(f), x);
-        }
-#endif
       };
     }
     constexpr detail::apply_ apply{};
