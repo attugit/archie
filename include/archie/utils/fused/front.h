@@ -1,17 +1,12 @@
 #pragma once
 
-#include <utility>
+#include <archie/utils/fused/placeholder.h>
 
 namespace archie {
 namespace utils {
   namespace fused {
     namespace detail {
-      struct front_ {
-        template <typename Tp, typename... Us>
-        constexpr decltype(auto) operator()(Tp&& t, Us&&...) const noexcept {
-          return std::forward<Tp>(t);
-        }
-      };
+      struct front_ : fused::placeholder<0> {};
     }
     constexpr detail::front_ front{};
   }
