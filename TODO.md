@@ -1,3 +1,3 @@
 ##TODO list
 
-- fix fused::compose when passing rvalue
+- fix composing fused::front when passing rvalue
