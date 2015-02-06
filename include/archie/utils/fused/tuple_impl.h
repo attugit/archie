@@ -89,7 +89,7 @@ namespace utils {
       constexpr std::size_t size() noexcept { return sizeof...(Ts); }
 
       template <typename F>
-      decltype(auto) apply(F&& f) const {
+      decltype(auto) apply(F&& f) const & {
         auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
 #if !defined(__clang__)
           return std::forward<decltype(f)>(f)(static_cast<Ts const&>(xs)...);
@@ -101,9 +101,17 @@ namespace utils {
       }
 
       template <typename F>
-      decltype(auto) apply(F&& f) {
+      decltype(auto) apply(F&& f) & {
         auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
           return std::forward<decltype(f)>(f)(static_cast<Ts&>(xs)...);
+        };
+        return storage(exec);
+      }
+
+      template <typename F>
+      decltype(auto) apply(F&& f) && {
+        auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
+          return std::forward<decltype(f)>(f)(static_cast<Ts&&>(xs)...);
         };
         return storage(exec);
       }
