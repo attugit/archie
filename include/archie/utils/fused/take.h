@@ -17,7 +17,7 @@ namespace utils {
       struct take {
         template <typename... Ts>
         constexpr decltype(auto) operator()(tuple<Ts...> const& t) const {
-          return make_tuple(get<ids>(t)...);
+          return fused::tuple<meta::at_t<ids, Ts...>...>(get<ids>(t)...);
         }
 #if defined(HAS_VARIABLE_TEMPLATES)
         template <typename... Ts>
