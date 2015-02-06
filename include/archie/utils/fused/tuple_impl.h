@@ -23,7 +23,7 @@ namespace utils {
       template <typename... Us>
       static decltype(auto) make_storage(Us... args) {
         return [args...](auto&& func) mutable -> decltype(auto) {
-          return std::forward<decltype(func)>(func)(static_cast<Ts&>(args)...);
+          return std::forward<decltype(func)>(func)(args...);
         };
       }
       using storage_type =
@@ -78,7 +78,8 @@ namespace utils {
       template <typename... Us>
       tuple& operator=(tuple<Us...> const&);
 
-      bool operator==(tuple const&) const;
+      template <typename... Us>
+      bool operator==(tuple<Us...> const&) const;
       bool operator<(tuple const&) const;
 
       bool operator!=(tuple const& rhs) const { return !(*this == rhs); }
@@ -90,7 +91,17 @@ namespace utils {
 
       template <typename F>
       decltype(auto) apply(F&& f) const {
-        return storage(std::forward<F>(f));
+        auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
+          return std::forward<decltype(f)>(f)(static_cast<Ts const&>(xs)...);
+        };
+        return storage(exec);
+      }
+      template <typename F>
+      decltype(auto) apply(F&& f) {
+        auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
+          return std::forward<decltype(f)>(f)(static_cast<Ts&>(xs)...);
+        };
+        return storage(exec);
       }
     };
 
@@ -156,8 +167,8 @@ namespace utils {
 
       template <>
       struct tuple_recursion<> {
-        template <typename... Ts>
-        static bool equal(tuple<Ts...> const&, tuple<Ts...> const&) {
+        template <typename... Ts, typename... Us>
+        static bool equal(tuple<Ts...> const&, tuple<Us...> const&) {
           return true;
         }
         template <typename... Ts>
@@ -168,8 +179,8 @@ namespace utils {
 
       template <std::size_t head, std::size_t... tail>
       struct tuple_recursion<head, tail...> {
-        template <typename... Ts>
-        static bool equal(tuple<Ts...> const& lhs, tuple<Ts...> const& rhs) {
+        template <typename... Ts, typename... Us>
+        static bool equal(tuple<Ts...> const& lhs, tuple<Us...> const& rhs) {
           return get<head>(lhs) == get<head>(rhs)
                      ? tuple_recursion<tail...>::equal(lhs, rhs)
                      : false;
@@ -193,8 +204,8 @@ namespace utils {
           meta::ignore{(fused::get<idx>(lhs) = std::move(fused::get<idx>(rhs)),
                         false)...};
         }
-        template <typename... Ts>
-        static bool equal(tuple<Ts...> const& lhs, tuple<Ts...> const& rhs) {
+        template <typename... Ts, typename... Us>
+        static bool equal(tuple<Ts...> const& lhs, tuple<Us...> const& rhs) {
           return tuple_recursion<idx...>::equal(lhs, rhs);
         }
         template <typename... Ts>
@@ -228,7 +239,8 @@ namespace utils {
     }
 
     template <typename... Ts>
-    bool tuple<Ts...>::operator==(tuple<Ts...> const& rhs) const {
+    template <typename... Us>
+    bool tuple<Ts...>::operator==(tuple<Us...> const& rhs) const {
       return meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::equal(
           *this, rhs);
     }

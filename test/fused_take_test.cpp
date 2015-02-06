@@ -11,9 +11,9 @@ namespace fused = archie::utils::fused;
 
 namespace {
 using x = decltype(fused::take<1>(fused::tuple<_0, _1>{}));
-static_assert(std::is_same<x, fused::tuple<_0>>::value, "");
+static_assert(std::is_same<x, fused::tuple<const _0>>::value, "");
 using y = decltype(fused::take<2>(fused::tuple<_0, _1>{}));
-static_assert(std::is_same<y, fused::tuple<_0, _1>>::value, "");
+static_assert(std::is_same<y, fused::tuple<const _0, const _1>>::value, "");
 }
 
 #include <archie/utils/test.h>
