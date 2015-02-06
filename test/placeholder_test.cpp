@@ -38,8 +38,23 @@ void canBindPlaceHolders() {
   EXPECT_EQ('5', c);
 }
 
+void canGetExpiringValue() {
+  auto x = 0.0;
+  {
+    auto a = 1;
+    auto b = 2u;
+    auto c = 'c';
+    auto d = 4.0;
+    auto&& y = _0(std::move(a), b, c, d);
+    x = _2(std::move(b), std::move(c), std::move(d));
+    static_assert(std::is_same<decltype(y), int&&>::value, "");
+  }
+  EXPECT_EQ(4.0, x);
+}
+
 int main() {
   canAccessArgumentWithPlaceholder();
   canBindPlaceHolders();
+  canGetExpiringValue();
   return 0;
 }
