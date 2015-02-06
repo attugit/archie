@@ -75,7 +75,6 @@ install:
       sudo apt-get install -qq libc++1 libc++-dev;
     fi
   - sudo apt-get -qq install valgrind;
-  - echo `which scan-build`;
 
 script:
   - ./waf distclean

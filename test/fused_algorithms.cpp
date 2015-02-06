@@ -87,11 +87,20 @@ void canComposeFusedBack() {
 }
 
 void canComposeFusedForEach() {
-  auto i = 0u;
-  auto f = [&i](auto&&) { ++i; };
-  fused::apply(fused::for_each, fused::make_tuple(f, 2u, '3'));
-  fused::apply(fused::for_each, f, 2u, '3');
-  EXPECT_EQ(4, i);
+  {
+    auto i = 0u;
+    auto f = [&i](auto&&) { ++i; };
+    fused::apply(fused::for_each, fused::make_tuple(f, 2u, '3'));
+    fused::apply(fused::for_each, f, 2u, '3');
+    EXPECT_EQ(4, i);
+  }
+  {
+    auto i = 0u;
+    auto f = [&i](auto&&) { ++i; };
+    auto opt = fused::make_tuple(fused::for_each, fused::make_tuple);
+    fused::compose(opt, f, 1, 2u, '3', 4.0);
+    EXPECT_EQ(4, i);
+  }
 }
 
 void canComposeFusedForEachOrder() {
