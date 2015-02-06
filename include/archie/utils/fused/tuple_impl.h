@@ -91,11 +91,16 @@ namespace utils {
 
       template <typename F>
       decltype(auto) apply(F&& f) const {
+#if !defined(__clang__)
         auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
           return std::forward<decltype(f)>(f)(static_cast<Ts const&>(xs)...);
         };
         return storage(exec);
+#else
+        return storage(std::forward<decltype(f)>(f));
+#endif
       }
+#if !defined(__clang__)
       template <typename F>
       decltype(auto) apply(F&& f) {
         auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
@@ -103,6 +108,7 @@ namespace utils {
         };
         return storage(exec);
       }
+#endif
     };
 
     namespace detail {

@@ -25,8 +25,6 @@ matrix:
     - compiler: clang
       env: STDLIB=libstdc++ TUPLE_IMPL=archie
     - compiler: clang
-      env: STDLIB=libstdc++ TUPLE_IMPL=std
-    - compiler: clang
       env: STDLIB=libc++ TUPLE_IMPL=archie
     - compiler: clang
       env: STDLIB=libc++ TUPLE_IMPL=std
