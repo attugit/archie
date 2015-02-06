@@ -34,8 +34,7 @@ namespace utils {
         return [](move_t<Ts>... mvs) {
           return [](move_t<Ts>... mvs) {
             return [mvs...](auto&& func) mutable -> decltype(auto) {
-              return std::forward<decltype(func)>(func)(
-                  static_cast<Ts&>(mvs)...);
+              return std::forward<decltype(func)>(func)(mvs...);
             };
           }(mvs...);
         }(std::forward<Us>(args)...);
@@ -91,16 +90,16 @@ namespace utils {
 
       template <typename F>
       decltype(auto) apply(F&& f) const {
-#if !defined(__clang__)
         auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
+#if !defined(__clang__)
           return std::forward<decltype(f)>(f)(static_cast<Ts const&>(xs)...);
+#else
+          return std::forward<decltype(f)>(f)(static_cast<Ts&>(xs)...);
+#endif
         };
         return storage(exec);
-#else
-        return storage(std::forward<decltype(f)>(f));
-#endif
       }
-#if !defined(__clang__)
+
       template <typename F>
       decltype(auto) apply(F&& f) {
         auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
@@ -108,7 +107,6 @@ namespace utils {
         };
         return storage(exec);
       }
-#endif
     };
 
     namespace detail {
