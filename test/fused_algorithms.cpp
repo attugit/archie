@@ -20,6 +20,8 @@
 #include <archie/utils/fused/index_of.h>
 #endif
 
+#include <memory>
+
 namespace fused = archie::utils::fused;
 
 void canUseFusedCompose() {
@@ -117,12 +119,24 @@ void canComposeFusedForEachOrder() {
 }
 
 void canComposeFusedTransform() {
-  auto f = [](auto&& x) { return ++x; };
-  auto x = fused::apply(fused::transform, f, 1, 2u, '3');
-  static_assert(fused::tuple_size<decltype(x)>::value == 3u, "");
-  EXPECT_EQ(2, fused::get<0>(x));
-  EXPECT_EQ(3u, fused::get<1>(x));
-  EXPECT_EQ('4', fused::get<2>(x));
+  {
+    auto f = [](auto&& x) { return ++x; };
+    auto x = fused::apply(fused::transform, f, 1, 2u, '3');
+    static_assert(fused::tuple_size<decltype(x)>::value == 3u, "");
+    EXPECT_EQ(2, fused::get<0>(x));
+    EXPECT_EQ(3u, fused::get<1>(x));
+    EXPECT_EQ('4', fused::get<2>(x));
+  }
+  {
+    auto f = [](auto&& x) {
+      return std::make_unique<std::remove_reference_t<decltype(x)>>(x);
+    };
+    auto opt = fused::make_tuple(fused::transform, fused::make_tuple);
+    auto x = fused::compose(opt, f, 1, 2u, '3', 4.0);
+    static_assert(fused::tuple_size<decltype(x)>::value == 4u, "");
+    // EXPECT_TRUE(fused::get<0>(x) == true);
+    EXPECT_EQ(1, *fused::get<0>(x));
+  }
 }
 
 void canComposeFusedConcat() {
