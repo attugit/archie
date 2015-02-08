@@ -8,11 +8,11 @@ namespace utils {
   namespace fused {
     namespace detail {
       struct back_ {
-        template <typename Tp, typename... Ts>
-        constexpr decltype(auto) operator()(Tp&& t, Ts&&... ts) const noexcept {
-          return [](meta::eat<Ts>..., auto&& x) -> decltype(x) {
+        template <typename Tp, typename... Us>
+        constexpr decltype(auto) operator()(Tp&& t, Us&&... us) const noexcept {
+          return [](meta::eat<Us>..., auto&& x) -> decltype(x) {
             return std::forward<decltype(x)>(x);
-          }(std::forward<Tp>(t), std::forward<Ts>(ts)...);
+          }(std::forward<Tp>(t), std::forward<Us>(us)...);
         }
       };
     }
