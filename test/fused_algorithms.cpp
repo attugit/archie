@@ -134,7 +134,7 @@ void canComposeFusedTransform() {
     auto opt = fused::make_tuple(fused::transform, fused::make_tuple);
     auto x = fused::compose(opt, f, 1, 2u, '3', 4.0);
     static_assert(fused::tuple_size<decltype(x)>::value == 4u, "");
-    // EXPECT_TRUE(fused::get<0>(x) == true);
+    EXPECT_TRUE(fused::get<0>(x) != nullptr);
     EXPECT_EQ(1, *fused::get<0>(x));
   }
 }
