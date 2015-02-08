@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+
 namespace archie {
 namespace utils {
   namespace meta {
@@ -11,6 +13,9 @@ namespace utils {
 
     template <typename>
     using eat = ignore;
+
+    template <std::size_t>
+    using eat_n = ignore;
   }
 }
 }

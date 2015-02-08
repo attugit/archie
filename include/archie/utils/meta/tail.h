@@ -14,7 +14,7 @@ namespace utils {
       template <std::size_t... other>
       struct tail {
         template <typename... Ts>
-        static constexpr decltype(auto) slice(eat<number<other>>..., Ts...) {
+        static constexpr decltype(auto) slice(eat_n<other>..., Ts...) {
           return type_list<Ts...>{};
         }
 
