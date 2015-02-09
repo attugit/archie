@@ -41,8 +41,35 @@ void canUseFusedFindIf() {
   EXPECT_EQ(b, y);
 }
 
+template <typename F, typename... Ts>
+decltype(auto) foo(F&& f, Ts&&... ts) {
+  return std::forward<F>(f)(std::forward<Ts>(ts)...);
+}
+
+void canUseVariableTemplate() {
+  {
+#if defined(HAS_VARIABLE_TEMPLATES)
+    auto x = foo(fused::find<int>, 1, 2u, '3', 4.0, 5);
+#else
+    auto x = foo(fused::find_v<int>::value, 1, 2u, '3', 4.0, 5);
+#endif
+    static_assert(std::is_same<decltype(x), int>::value, "");
+    EXPECT_EQ(1, x);
+  }
+  {
+#if defined(HAS_VARIABLE_TEMPLATES)
+    auto x = foo(fused::find_if<is_u>, 1, 2u, '3', 4.0, 5);
+#else
+    auto x = foo(fused::find_if_v<is_u>::value, 1, 2u, '3', 4.0, 5);
+#endif
+    static_assert(std::is_same<decltype(x), unsigned>::value, "");
+    EXPECT_EQ(2u, x);
+  }
+}
+
 int main() {
   canUseFusedFind();
   canUseFusedFindIf();
+  canUseVariableTemplate();
   return 0;
 }
