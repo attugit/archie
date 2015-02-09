@@ -16,6 +16,12 @@ namespace utils {
       static_assert(n < sizeof...(Ts), "");
       return placeholder<n>{}(std::forward<Ts>(args)...);
     }
+    template <std::size_t n>
+    struct nth_v {
+      constexpr static placeholder<n> value{};
+    };
+    template <std::size_t n>
+    constexpr placeholder<n> nth_v<n>::value;
 #endif
   }
 }

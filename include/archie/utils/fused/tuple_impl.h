@@ -142,10 +142,7 @@ namespace utils {
 #if defined(HAS_VARIABLE_TEMPLATES)
       return tp.apply(nth<N>);
 #else
-      auto f = [](auto&&... args) -> decltype(auto) {
-        return nth<N>(std::forward<decltype(args)>(args)...);
-      };
-      return tp.apply(f);
+      return tp.apply(nth_v<N>::value);
 #endif
     }
 
