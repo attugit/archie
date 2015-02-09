@@ -1,5 +1,8 @@
 #pragma once
 
+#include <config.h>
+
+#if !defined(HAS_VARIABLE_TEMPLATES)
 namespace archie {
 namespace utils {
   namespace meta {
@@ -13,3 +16,4 @@ namespace utils {
   }
 }
 }
+#endif

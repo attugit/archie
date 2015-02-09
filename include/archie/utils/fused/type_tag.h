@@ -1,10 +1,8 @@
 #pragma once
 
-#include <archie/utils/meta/type_holder.h>
-#if !defined(HAS_VARIABLE_TEMPLATES)
-#include <archie/utils/meta/variable_template.h>
-#endif
 #include <config.h>
+#include <archie/utils/meta/type_holder.h>
+#include <archie/utils/meta/variable_template.h>
 #include <utility>
 
 namespace archie {

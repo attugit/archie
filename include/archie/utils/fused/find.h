@@ -1,11 +1,9 @@
 #pragma once
 
-#include <archie/utils/meta/find.h>
-#if !defined(HAS_VARIABLE_TEMPLATES)
-#include <archie/utils/meta/variable_template.h>
-#endif
-#include <archie/utils/fused/nth.h>
 #include <config.h>
+#include <archie/utils/meta/find.h>
+#include <archie/utils/meta/variable_template.h>
+#include <archie/utils/fused/nth.h>
 
 namespace archie {
 namespace utils {

@@ -17,8 +17,9 @@
 #include <archie/utils/fused/take.h>
 #include <archie/utils/fused/nth.h>
 #include <archie/utils/fused/type_tag.h>
-#include <archie/utils/fused/index_of.h>
 #endif
+
+#include <archie/utils/fused/index_of.h>
 
 #include <memory>
 
@@ -222,31 +223,48 @@ void canComposeFusedConstruct() {
   EXPECT_EQ(2u, fused::get<1>(x));
   EXPECT_EQ('3', fused::get<2>(x));
 }
+#endif
 
 void canComposeIndexOf() {
   {
+#if defined(HAS_VARIABLE_TEMPLATES)
     auto x = fused::apply(fused::index_of<int>, 1, 2u, '3');
     auto y = fused::apply(fused::index_of<unsigned>, 1, 2u, '3');
     auto z = fused::apply(fused::index_of<char>, 1, 2u, '3');
+#else
+    auto x = fused::apply(fused::index_of<int>::value, 1, 2u, '3');
+    auto y = fused::apply(fused::index_of<unsigned>::value, 1, 2u, '3');
+    auto z = fused::apply(fused::index_of<char>::value, 1, 2u, '3');
+#endif
     EXPECT_EQ(0, x);
     EXPECT_EQ(1, y);
     EXPECT_EQ(2, z);
   }
   {
+#if defined(HAS_VARIABLE_TEMPLATES)
     auto x = fused::apply(fused::index_of<int>, 1);
+#else
+    auto x = fused::apply(fused::index_of<int>::value, 1);
+#endif
     EXPECT_EQ(0, x);
   }
   {
+#if defined(HAS_VARIABLE_TEMPLATES)
     auto tl = fused::type_list<int, unsigned, char>;
     auto x = fused::apply(fused::index_of<int>, tl);
     auto y = fused::apply(fused::index_of<unsigned>, tl);
     auto z = fused::apply(fused::index_of<char>, tl);
+#else
+    auto tl = fused::type_list<int, unsigned, char>::value;
+    auto x = fused::apply(fused::index_of<int>::value, tl);
+    auto y = fused::apply(fused::index_of<unsigned>::value, tl);
+    auto z = fused::apply(fused::index_of<char>::value, tl);
+#endif
     EXPECT_EQ(0, x);
     EXPECT_EQ(1, y);
     EXPECT_EQ(2, z);
   }
 }
-#endif
 
 int main() {
   canUseFusedCompose();
@@ -266,7 +284,8 @@ int main() {
   canComposeFusedTake();
   canComposeFusedNth();
   canComposeFusedConstruct();
-  canComposeIndexOf();
 #endif
+  canComposeIndexOf();
+
   return 0;
 }
