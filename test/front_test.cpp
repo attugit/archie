@@ -1,4 +1,5 @@
 #include <archie/utils/fused/front.h>
+#include <archie/utils/fused/tuple.h>
 #include <archie/utils/test.h>
 #include <memory>
 #include <type_traits>
@@ -68,9 +69,43 @@ void canUseBackWithLValue() {
   }
 }
 
+template <typename Tp>
+decltype(auto) foo(Tp&& t) {
+  return fused::front(fused::get<0>(std::forward<Tp>(t)));
+}
+
+#if 0
+template <typename... Ts>
+decltype(auto) goo(Ts&&... ts) {
+  return foo(fused::make_tuple(std::forward<Ts>(ts)...));
+}
+#endif
+
+void canWrapFusedFrontWithFunction() {
+  {
+    auto x = foo(fused::make_tuple(1u, 2.0, '3'));
+    static_assert(std::is_same<decltype(x), unsigned>::value, "");
+    EXPECT_EQ(1u, x);
+  }
+  {
+    auto a = fused::make_tuple(1u, 2.0, '3');
+    auto const& x = foo(a);
+    static_assert(std::is_same<decltype(x), unsigned const&>::value, "");
+    EXPECT_EQ(&fused::get<0>(a), &x);
+  }
+#if 0
+  {
+    auto x = goo(1u, 2.0, '3');
+    static_assert(std::is_same<decltype(x), unsigned>::value, "");
+    EXPECT_EQ(1u, x);
+  }
+#endif
+}
+
 int main() {
   canUseFrontWithRValue();
   canPassNoncopyableToFront();
   canUseBackWithLValue();
+  canWrapFusedFrontWithFunction();
   return 0;
 }
