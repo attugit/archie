@@ -24,13 +24,48 @@ void canPassNoncopyableToFront() {
     EXPECT_TRUE(a != nullptr);
     EXPECT_EQ(1u, *a);
   }
+  {
+    auto a = std::make_unique<unsigned>(1u);
+    auto& x = fused::front(a, 2.0, '3');
+    static_assert(std::is_same<decltype(x), uptr&>::value, "");
+    EXPECT_TRUE(x != nullptr);
+    EXPECT_EQ(&a, &x);
+  }
 }
 
 void canUseBackWithLValue() {
-  unsigned a = 1u;
-  auto const& x = fused::front(a, 2.0, '3');
-  EXPECT_EQ(1u, x);
-  EXPECT_EQ(&a, &x);
+  {
+    auto a = 1u;
+    auto x = fused::front(a, 2.0, '3');
+    static_assert(std::is_same<decltype(x), unsigned>::value, "");
+    EXPECT_EQ(1u, x);
+    EXPECT_NE(&a, &x);
+  }
+  {
+    auto const a = 1u;
+    auto x = fused::front(a, 2.0, '3');
+    static_assert(std::is_same<decltype(x), unsigned>::value, "");
+    EXPECT_EQ(1u, x);
+    EXPECT_NE(&a, &x);
+  }
+  {
+    auto a = 1u;
+    auto& x = fused::front(a, 2.0, '3');
+    static_assert(std::is_same<decltype(x), unsigned&>::value, "");
+    EXPECT_EQ(&a, &x);
+  }
+  {
+    auto const a = 1u;
+    auto& x = fused::front(a, 2.0, '3');
+    static_assert(std::is_same<decltype(x), unsigned const&>::value, "");
+    EXPECT_EQ(&a, &x);
+  }
+  {
+    auto a = 1u;
+    auto const& x = fused::front(a, 2.0, '3');
+    static_assert(std::is_same<decltype(x), unsigned const&>::value, "");
+    EXPECT_EQ(&a, &x);
+  }
 }
 
 int main() {
