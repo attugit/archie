@@ -1,6 +1,9 @@
 #pragma once
 
 #include <archie/utils/meta/type_holder.h>
+#if !defined(HAS_VARIABLE_TEMPLATES)
+#include <archie/utils/meta/variable_template.h>
+#endif
 #include <config.h>
 #include <utility>
 
@@ -32,6 +35,9 @@ namespace utils {
 #if defined(HAS_VARIABLE_TEMPLATES)
     template <typename Tp>
     constexpr type_tag<Tp> construct{};
+#else
+    template <typename Tp>
+    struct construct : meta::variable_template<type_tag<Tp>> {};
 #endif
   }
 }

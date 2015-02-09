@@ -28,8 +28,19 @@ void canExpandTags() {
   EXPECT_EQ(0, fused::get<2>(defs));
 }
 
+void canUseVariableTemplate() {
+#if defined(HAS_VARIABLE_TEMPLATES)
+  auto x = fused::construct<int>(1);
+#else
+  auto x = fused::construct<int>::value(1);
+#endif
+  static_assert(std::is_same<decltype(x), int>::value, "");
+  EXPECT_EQ(1, x);
+}
+
 int main() {
   canCreateTags();
   canExpandTags();
+  canUseVariableTemplate();
   return 0;
 }

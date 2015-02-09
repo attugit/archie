@@ -21,7 +21,7 @@ namespace utils {
       return placeholder<n>{}(std::forward<Ts>(args)...);
     }
     template <std::size_t n>
-    using nth_v = meta::variable_template_non_type<std::size_t, n, placeholder>;
+    struct nth_v : meta::variable_template<placeholder<n>> {};
 #endif
   }
 }
