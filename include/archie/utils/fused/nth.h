@@ -12,13 +12,13 @@ namespace utils {
     template <std::size_t n>
     constexpr placeholder<n> nth{};
 #else
-    template <std::size_t n, typename... Ts>
-    decltype(auto) nth(Ts&&... args) {
-      static_assert(n < sizeof...(Ts), "");
-      return placeholder<n>{}(std::forward<Ts>(args)...);
-    }
     template <std::size_t n>
     struct nth_v : meta::variable_template<placeholder<n>> {};
+
+    template <std::size_t n, typename... Ts>
+    decltype(auto) nth(Ts&&... args) {
+      return nth_v<n>::value(std::forward<Ts>(args)...);
+    }
 #endif
   }
 }

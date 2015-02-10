@@ -30,22 +30,22 @@ namespace utils {
     template <template <typename> class F>
     constexpr detail::find_if_<F> find_if{};
 #else
-    template <typename Tp, typename... Us>
-    decltype(auto) find(Us&&... us) noexcept {
-      return detail::find_<Tp>{}(std::forward<Us>(us)...);
-    }
 
     template <typename Tp>
     struct find_v : meta::variable_template<detail::find_<Tp>> {};
 
-    template <template <typename> class F, typename... Us>
-    decltype(auto) find_if(Us&&... us) noexcept {
-      return detail::find_if_<F>{}(std::forward<Us>(us)...);
+    template <typename Tp, typename... Us>
+    decltype(auto) find(Us&&... us) noexcept {
+      return fused::find_v<Tp>::value(std::forward<Us>(us)...);
     }
 
     template <template <typename> class F>
     struct find_if_v : meta::variable_template<detail::find_if_<F>> {};
 
+    template <template <typename> class F, typename... Us>
+    decltype(auto) find_if(Us&&... us) noexcept {
+      return fused::find_if_v<F>::value(std::forward<Us>(us)...);
+    }
 #endif
   }
 }
