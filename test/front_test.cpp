@@ -74,12 +74,10 @@ decltype(auto) foo(Tp&& t) {
   return fused::front(fused::get<0>(std::forward<Tp>(t)));
 }
 
-#if 0
 template <typename... Ts>
-decltype(auto) goo(Ts&&... ts) {
+auto goo(Ts&&... ts) {
   return foo(fused::make_tuple(std::forward<Ts>(ts)...));
 }
-#endif
 
 void canWrapFusedFrontWithFunction() {
   {
@@ -93,13 +91,11 @@ void canWrapFusedFrontWithFunction() {
     static_assert(std::is_same<decltype(x), unsigned const&>::value, "");
     EXPECT_EQ(&fused::get<0>(a), &x);
   }
-#if 0
   {
     auto x = goo(1u, 2.0, '3');
     static_assert(std::is_same<decltype(x), unsigned>::value, "");
     EXPECT_EQ(1u, x);
   }
-#endif
 }
 
 int main() {
