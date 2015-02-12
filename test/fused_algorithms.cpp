@@ -1,3 +1,4 @@
+#include <config.h>
 #include <archie/utils/fused/tuple.h>
 #include <archie/utils/fused/compose.h>
 #include <archie/utils/fused/apply.h>
@@ -9,11 +10,10 @@
 #include <archie/utils/fused/concat.h>
 #include <archie/utils/fused/zip.h>
 #include <archie/utils/fused/tail.h>
+#include <archie/utils/fused/find.h>
 #include <archie/utils/test.h>
-#include <config.h>
 
 #if defined(HAS_VARIABLE_TEMPLATES)
-#include <archie/utils/fused/find.h>
 #include <archie/utils/fused/take.h>
 #include <archie/utils/fused/nth.h>
 #include <archie/utils/fused/type_tag.h>
@@ -187,14 +187,21 @@ void canComposeFusedTail() {
   EXPECT_EQ('3', fused::get<1>(x));
 }
 
-#if defined(HAS_VARIABLE_TEMPLATES)
 void canComposeFusedFind() {
-  auto x = fused::apply(fused::find<unsigned>, 1, 2u, '3', 4u);
+#if !defined(HAS_VARIABLE_TEMPLATES)
+  auto const& find_u = fused::find_v<unsigned>::value;
+  auto const& find_c = fused::find_v<char>::value;
+#else
+  auto const& find_u = fused::find<unsigned>;
+  auto const& find_c = fused::find<char>;
+#endif
+  auto x = fused::apply(find_u, 1, 2u, '3', 4u);
   EXPECT_EQ(2u, x);
-  auto y = fused::apply(fused::find<char>, 1, 2u, '3', 4u);
+  auto y = fused::apply(find_c, 1, 2u, '3', 4u);
   EXPECT_EQ('3', y);
 }
 
+#if defined(HAS_VARIABLE_TEMPLATES)
 void canComposeFusedFindIf() {
   auto x = fused::apply(fused::find_if<std::is_unsigned>, 1, 2u, '3', 4u);
   EXPECT_EQ(2u, x);
