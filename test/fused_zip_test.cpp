@@ -19,10 +19,19 @@ void canZipViewTwoTuples() {
   auto b = fused::make_tuple('4', 5.0, 6u);
   auto x = fused::zip_view(a, b);
 
-  EXPECT_EQ(3u, fused::tuple_size<decltype(x)>::value);
+  static_assert(fused::tuple_size<decltype(x)>::value == 3u, "");
   auto const& x0 = fused::get<0>(x);
   auto const& x1 = fused::get<1>(x);
   auto const& x2 = fused::get<2>(x);
+
+  static_assert(
+      std::is_same<decltype(x0), fused::tuple<int&, char&> const&>::value, "");
+  static_assert(std::is_same<decltype(x1),
+                             fused::tuple<unsigned&, double&> const&>::value,
+                "");
+  static_assert(
+      std::is_same<decltype(x2), fused::tuple<char&, unsigned&> const&>::value,
+      "");
 
   EXPECT_EQ(&fused::get<0>(a), &fused::get<0>(x0));
   EXPECT_EQ(&fused::get<1>(a), &fused::get<0>(x1));
@@ -31,6 +40,11 @@ void canZipViewTwoTuples() {
   EXPECT_EQ(&fused::get<0>(b), &fused::get<1>(x0));
   EXPECT_EQ(&fused::get<1>(b), &fused::get<1>(x1));
   EXPECT_EQ(&fused::get<2>(b), &fused::get<1>(x2));
+
+  fused::get<0>(x1) = 7u;
+  EXPECT_EQ(7u, fused::get<1>(a));
+  fused::get<1>(x2) = 8u;
+  EXPECT_EQ(8u, fused::get<2>(b));
 }
 
 int main() {
