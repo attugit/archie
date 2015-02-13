@@ -69,14 +69,7 @@ void canZipViewTwoTuplesWithConsts() {
   auto const c = 2u;
   auto const d = 5.0;
   auto a = fused::tuple<int, const unsigned, char>{1, c, '3'};
-
-  static_assert(std::is_same<std::remove_reference_t<decltype(a)>,
-                             fused::tuple<int, const unsigned, char>>::value,
-                "");
   auto b = fused::make_tuple('4', d, 6u);
-  static_assert(std::is_same<std::remove_reference_t<decltype(b)>,
-                             fused::tuple<char, const double, unsigned>>::value,
-                "");
 
   auto x = fused::zip_view(a, b);
   static_assert(fused::tuple_size<decltype(x)>::value == 3u, "");
