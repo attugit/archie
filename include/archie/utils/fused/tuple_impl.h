@@ -19,7 +19,6 @@ namespace utils {
     template <typename... Ts>
     struct tuple {
     private:
-#if !defined(__clang__)
       template <typename... Us>
       static decltype(auto) make_storage(Us... args) {
         return [args...](auto&& func) mutable -> decltype(auto) {
@@ -28,44 +27,31 @@ namespace utils {
       }
       using storage_type =
           decltype(make_storage(std::declval<move_t<Ts>>()...));
-#else
-      template <typename... Us>
-      static decltype(auto) make_storage(Us&&... args) {
-        return [](move_t<Ts>... mvs) {
-          return [](move_t<Ts>... mvs) {
-            return [mvs...](auto&& func) mutable -> decltype(auto) {
-              return std::forward<decltype(func)>(func)(mvs...);
-            };
-          }(mvs...);
-        }(std::forward<Us>(args)...);
-      }
-      using storage_type = decltype(make_storage(std::declval<Ts>()...));
-#endif
+
       mutable storage_type storage;
 
       struct explicit_ctor_tag {};
       struct implicit_ctor_tag {};
+      struct move_t_ctor_tag {};
 
       template <typename... Us>
       constexpr explicit tuple(implicit_ctor_tag, Us&&... args)
-          : storage(make_storage(move_t<Ts>(std::forward<Us>(args))...)) {}
+          : tuple(move_t_ctor_tag{}, move_t<Ts>(std::forward<Us>(args))...) {}
+
+      constexpr explicit tuple(move_t_ctor_tag, move_t<Ts>... mvs)
+          : storage(make_storage(mvs...)) {}
 
       template <typename... Us>
       constexpr explicit tuple(explicit_ctor_tag, Us&&... args)
           : tuple(Ts { std::forward<Us>(args) }...) {}
 
     public:
-#if !defined(__clang__)
       template <typename... Us>
       constexpr explicit tuple(Us&&... args)
           : tuple(meta::if_t<meta::all<traits::is_convertible<Us, Ts>...>,
                              implicit_ctor_tag, explicit_ctor_tag>{},
                   std::forward<Us>(args)...) {}
-#else
-      template <typename... Us>
-      constexpr explicit tuple(Us&&... args)
-          : storage{make_storage(Ts(std::forward<Us>(args))...)} {}
-#endif
+
       constexpr tuple() : tuple(Ts {}...) {}
       tuple(tuple& other) : tuple(const_cast<tuple const&>(other)) {}
 
@@ -91,11 +77,7 @@ namespace utils {
       template <typename F>
       decltype(auto) apply(F&& f) const & {
         auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
-#if !defined(__clang__)
           return std::forward<decltype(f)>(f)(static_cast<Ts const&>(xs)...);
-#else
-          return std::forward<decltype(f)>(f)(static_cast<Ts&>(xs)...);
-#endif
         };
         return storage(exec);
       }
