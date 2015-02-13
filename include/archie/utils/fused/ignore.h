@@ -6,7 +6,7 @@ namespace archie {
 namespace utils {
   namespace fused {
 
-    auto ignore = meta::ignore{};
+    constexpr meta::ignore ignore{};
   }
 }
 }
