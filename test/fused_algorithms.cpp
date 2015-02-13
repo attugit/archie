@@ -249,40 +249,33 @@ void canComposeFusedConstruct() {
 #endif
 
 void canComposeIndexOf() {
-  {
 #if defined(HAS_VARIABLE_TEMPLATES)
-    auto x = fused::apply(fused::index_of<int>, 1, 2u, '3');
-    auto y = fused::apply(fused::index_of<unsigned>, 1, 2u, '3');
-    auto z = fused::apply(fused::index_of<char>, 1, 2u, '3');
+  auto const& idx_i32 = fused::index_of<int>;
+  auto const& idx_u32 = fused::index_of<unsigned>;
+  auto const& idx_u8 = fused::index_of<char>;
+  auto const& tl = fused::type_list<int, unsigned, char>;
 #else
-    auto x = fused::apply(fused::index_of<int>::value, 1, 2u, '3');
-    auto y = fused::apply(fused::index_of<unsigned>::value, 1, 2u, '3');
-    auto z = fused::apply(fused::index_of<char>::value, 1, 2u, '3');
+  auto const& idx_i32 = fused::index_of<int>::value;
+  auto const& idx_u32 = fused::index_of<unsigned>::value;
+  auto const& idx_u8 = fused::index_of<char>::value;
+  auto const& tl = fused::type_list<int, unsigned, char>::value;
 #endif
+  {
+    auto x = fused::apply(idx_i32, 1, 2u, '3');
+    auto y = fused::apply(idx_u32, 1, 2u, '3');
+    auto z = fused::apply(idx_u8, 1, 2u, '3');
     EXPECT_EQ(0, x);
     EXPECT_EQ(1, y);
     EXPECT_EQ(2, z);
   }
   {
-#if defined(HAS_VARIABLE_TEMPLATES)
-    auto x = fused::apply(fused::index_of<int>, 1);
-#else
-    auto x = fused::apply(fused::index_of<int>::value, 1);
-#endif
+    auto x = fused::apply(idx_i32, 1);
     EXPECT_EQ(0, x);
   }
   {
-#if defined(HAS_VARIABLE_TEMPLATES)
-    auto tl = fused::type_list<int, unsigned, char>;
-    auto x = fused::apply(fused::index_of<int>, tl);
-    auto y = fused::apply(fused::index_of<unsigned>, tl);
-    auto z = fused::apply(fused::index_of<char>, tl);
-#else
-    auto tl = fused::type_list<int, unsigned, char>::value;
-    auto x = fused::apply(fused::index_of<int>::value, tl);
-    auto y = fused::apply(fused::index_of<unsigned>::value, tl);
-    auto z = fused::apply(fused::index_of<char>::value, tl);
-#endif
+    auto x = fused::apply(idx_i32, tl);
+    auto y = fused::apply(idx_u32, tl);
+    auto z = fused::apply(idx_u8, tl);
     EXPECT_EQ(0, x);
     EXPECT_EQ(1, y);
     EXPECT_EQ(2, z);

@@ -17,6 +17,7 @@ namespace utils {
                 std::forward<F>(f)(fused::get<ns>(a), fused::get<ns>(b))...);
           }
         };
+
       public:
         template <typename F, typename Tp, typename Up>
         constexpr decltype(auto) operator()(F&& f, Tp&& a, Up&& b) const {
