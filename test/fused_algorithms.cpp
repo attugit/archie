@@ -201,14 +201,21 @@ void canComposeFusedFind() {
   EXPECT_EQ('3', y);
 }
 
-#if defined(HAS_VARIABLE_TEMPLATES)
 void canComposeFusedFindIf() {
-  auto x = fused::apply(fused::find_if<std::is_unsigned>, 1, 2u, '3', 4u);
+#if !defined(HAS_VARIABLE_TEMPLATES)
+  auto const& find_iu = fused::find_if_v<std::is_unsigned>::value;
+  auto const& find_is = fused::find_if_v<std::is_signed>::value;
+#else
+  auto const& find_iu = fused::find_if<std::is_unsigned>;
+  auto const& find_is = fused::find_if<std::is_signed>;
+#endif
+  auto x = fused::apply(find_iu, 1, 2u, '3', 4u);
   EXPECT_EQ(2u, x);
-  auto y = fused::apply(fused::find_if<std::is_signed>, 1, 2u, '3', 4u);
+  auto y = fused::apply(find_is, 1, 2u, '3', 4u);
   EXPECT_EQ(1, y);
 }
 
+#if defined(HAS_VARIABLE_TEMPLATES)
 void canComposeFusedTake() {
   auto x = fused::apply(fused::take<2>, fused::make_tuple(1, 2u, '3'));
   static_assert(fused::tuple_size<decltype(x)>::value == 2u, "");
@@ -294,9 +301,9 @@ int main() {
   canComposeFusedConcat();
   canComposeFusedZip();
   canComposeFusedTail();
-#if defined(HAS_VARIABLE_TEMPLATES)
   canComposeFusedFind();
   canComposeFusedFindIf();
+#if defined(HAS_VARIABLE_TEMPLATES)
   canComposeFusedTake();
   canComposeFusedNth();
   canComposeFusedConstruct();
