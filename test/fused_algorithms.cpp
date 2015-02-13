@@ -263,16 +263,16 @@ void canComposeFusedConstruct() {
 }
 
 void canComposeIndexOf() {
-#if defined(HAS_VARIABLE_TEMPLATES)
-  constexpr auto& idx_i32 = fused::index_of<int>;
-  constexpr auto& idx_u32 = fused::index_of<unsigned>;
-  constexpr auto& idx_u8 = fused::index_of<char>;
-  constexpr auto& tl = fused::type_list<int, unsigned, char>;
-#else
+#if !defined(HAS_VARIABLE_TEMPLATES)
   constexpr auto& idx_i32 = fused::index_of<int>::value;
   constexpr auto& idx_u32 = fused::index_of<unsigned>::value;
   constexpr auto& idx_u8 = fused::index_of<char>::value;
   constexpr auto& tl = fused::type_list<int, unsigned, char>::value;
+#else
+  constexpr auto& idx_i32 = fused::index_of<int>;
+  constexpr auto& idx_u32 = fused::index_of<unsigned>;
+  constexpr auto& idx_u8 = fused::index_of<char>;
+  constexpr auto& tl = fused::type_list<int, unsigned, char>;
 #endif
   {
     auto x = fused::apply(idx_i32, 1, 2u, '3');
