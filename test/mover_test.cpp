@@ -32,4 +32,16 @@ static_assert(std::is_same<fused::move_t<noncopyable>,
               "");
 }
 
-int main() { return 0; }
+#include <archie/utils/test.h>
+
+void canCastToConstValue() {
+  auto i = 1;
+  auto m = fused::move_t<const int&>(i);
+  auto const& x = static_cast<const int&>(m);
+  EXPECT_EQ(&i, &x);
+}
+
+int main() {
+  canCastToConstValue();
+  return 0;
+}

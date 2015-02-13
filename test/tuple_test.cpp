@@ -394,6 +394,25 @@ void canTieElements() {
   EXPECT_EQ('9', c);
 }
 
+void canTieConstElements() {
+  auto a = 1u;
+  auto const b = 2.0;
+  auto c = '3';
+
+  auto t = test::tie(a, b, c);
+  static_assert(
+      std::is_same<std::remove_reference_t<decltype(t)>,
+                   test::tuple<unsigned&, double const&, char&>>::value,
+      "");
+  ASSERT_EQ(1u, test::get<0>(t));
+  ASSERT_EQ(2.0, test::get<1>(t));
+  ASSERT_EQ('3', test::get<2>(t));
+
+  EXPECT_EQ(&a, &test::get<0>(t));
+  EXPECT_EQ(&b, &test::get<1>(t));
+  EXPECT_EQ(&c, &test::get<2>(t));
+}
+
 #include <archie/utils/fused/ignore.h>
 
 void canTieWithIgnore() {
@@ -486,6 +505,7 @@ int main() {
   canStoreValuesInTuple();
   canStoreReferencesInTuple();
   canTieElements();
+  canTieConstElements();
   canTieWithIgnore();
   canUseTupleElement();
   canGetElementByType();

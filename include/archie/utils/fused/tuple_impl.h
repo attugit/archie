@@ -103,7 +103,8 @@ namespace utils {
       template <typename F>
       decltype(auto) apply(F&& f) & {
         auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
-          return std::forward<decltype(f)>(f)(static_cast<Ts&>(xs)...);
+          return std::forward<decltype(f)>(f)(
+              static_cast<std::add_lvalue_reference_t<Ts>>(xs)...);
         };
         return storage(exec);
       }
