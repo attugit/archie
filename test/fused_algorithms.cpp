@@ -80,14 +80,12 @@ void canComposeFusedFront() {
     EXPECT_EQ(1, b);
     EXPECT_EQ(&a, &b);
   }
+#if 0
   {
-    //    auto a = fused::compose(fused::front, fused::make_tuple, 1, 2u, '3');
-    //    auto b = 2u;
-    //    auto c = '3';
-
-    //    auto const& y = fused::compose(fused::front, fused::tie, a, b, c);
-    //    EXPECT_EQ(&a, &y);
+    auto x = fused::compose(fused::make_tuple(fused::front, fused::make_tuple), 1, 2u, '3');
+    EXPECT_EQ(1, x);
   }
+#endif
 }
 
 void canComposeFusedBack() {
@@ -189,11 +187,11 @@ void canComposeFusedTail() {
 
 void canComposeFusedFind() {
 #if !defined(HAS_VARIABLE_TEMPLATES)
-  auto const& find_u = fused::find_v<unsigned>::value;
-  auto const& find_c = fused::find_v<char>::value;
+  constexpr auto& find_u = fused::find_v<unsigned>::value;
+  constexpr auto& find_c = fused::find_v<char>::value;
 #else
-  auto const& find_u = fused::find<unsigned>;
-  auto const& find_c = fused::find<char>;
+  constexpr auto& find_u = fused::find<unsigned>;
+  constexpr auto& find_c = fused::find<char>;
 #endif
   auto x = fused::apply(find_u, 1, 2u, '3', 4u);
   EXPECT_EQ(2u, x);
@@ -203,11 +201,11 @@ void canComposeFusedFind() {
 
 void canComposeFusedFindIf() {
 #if !defined(HAS_VARIABLE_TEMPLATES)
-  auto const& find_iu = fused::find_if_v<std::is_unsigned>::value;
-  auto const& find_is = fused::find_if_v<std::is_signed>::value;
+  constexpr auto& find_iu = fused::find_if_v<std::is_unsigned>::value;
+  constexpr auto& find_is = fused::find_if_v<std::is_signed>::value;
 #else
-  auto const& find_iu = fused::find_if<std::is_unsigned>;
-  auto const& find_is = fused::find_if<std::is_signed>;
+  constexpr auto& find_iu = fused::find_if<std::is_unsigned>;
+  constexpr auto& find_is = fused::find_if<std::is_signed>;
 #endif
   auto x = fused::apply(find_iu, 1, 2u, '3', 4u);
   EXPECT_EQ(2u, x);
@@ -250,15 +248,15 @@ void canComposeFusedConstruct() {
 
 void canComposeIndexOf() {
 #if defined(HAS_VARIABLE_TEMPLATES)
-  auto const& idx_i32 = fused::index_of<int>;
-  auto const& idx_u32 = fused::index_of<unsigned>;
-  auto const& idx_u8 = fused::index_of<char>;
-  auto const& tl = fused::type_list<int, unsigned, char>;
+  constexpr auto& idx_i32 = fused::index_of<int>;
+  constexpr auto& idx_u32 = fused::index_of<unsigned>;
+  constexpr auto& idx_u8 = fused::index_of<char>;
+  constexpr auto& tl = fused::type_list<int, unsigned, char>;
 #else
-  auto const& idx_i32 = fused::index_of<int>::value;
-  auto const& idx_u32 = fused::index_of<unsigned>::value;
-  auto const& idx_u8 = fused::index_of<char>::value;
-  auto const& tl = fused::type_list<int, unsigned, char>::value;
+  constexpr auto& idx_i32 = fused::index_of<int>::value;
+  constexpr auto& idx_u32 = fused::index_of<unsigned>::value;
+  constexpr auto& idx_u8 = fused::index_of<char>::value;
+  constexpr auto& tl = fused::type_list<int, unsigned, char>::value;
 #endif
   {
     auto x = fused::apply(idx_i32, 1, 2u, '3');
