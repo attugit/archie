@@ -13,9 +13,9 @@
 #include <archie/utils/fused/find.h>
 #include <archie/utils/test.h>
 #include <archie/utils/fused/take.h>
+#include <archie/utils/fused/nth.h>
 
 #if defined(HAS_VARIABLE_TEMPLATES)
-#include <archie/utils/fused/nth.h>
 #include <archie/utils/fused/type_tag.h>
 #endif
 
@@ -233,16 +233,25 @@ void canComposeFusedTake() {
   EXPECT_EQ(2u, fused::get<2>(y));
 }
 
-#if defined(HAS_VARIABLE_TEMPLATES)
 void canComposeFusedNth() {
-  auto x = fused::apply(fused::nth<0>, 1, 2u, '3');
-  auto y = fused::apply(fused::nth<1>, 1, 2u, '3');
-  auto z = fused::apply(fused::nth<2>, 1, 2u, '3');
+#if !defined(HAS_VARIABLE_TEMPLATES)
+  constexpr auto& fst = fused::nth_v<0>::value;
+  constexpr auto& snd = fused::nth_v<1>::value;
+  constexpr auto& trd = fused::nth_v<2>::value;
+#else
+  constexpr auto& fst = fused::nth<0>;
+  constexpr auto& snd = fused::nth<1>;
+  constexpr auto& trd = fused::nth<2>;
+#endif
+  auto x = fused::apply(fst, 1, 2u, '3');
+  auto y = fused::apply(snd, 1, 2u, '3');
+  auto z = fused::apply(trd, 1, 2u, '3');
   EXPECT_EQ(1, x);
   EXPECT_EQ(2u, y);
   EXPECT_EQ('3', z);
 }
 
+#if defined(HAS_VARIABLE_TEMPLATES)
 void canComposeFusedConstruct() {
   auto x = fused::apply(fused::construct<fused::tuple<int, unsigned, char>>, 1,
                         2u, '3');
@@ -302,8 +311,8 @@ int main() {
   canComposeFusedFind();
   canComposeFusedFindIf();
   canComposeFusedTake();
-#if defined(HAS_VARIABLE_TEMPLATES)
   canComposeFusedNth();
+#if defined(HAS_VARIABLE_TEMPLATES)
   canComposeFusedConstruct();
 #endif
   canComposeIndexOf();
