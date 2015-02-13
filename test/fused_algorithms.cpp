@@ -14,10 +14,7 @@
 #include <archie/utils/test.h>
 #include <archie/utils/fused/take.h>
 #include <archie/utils/fused/nth.h>
-
-#if defined(HAS_VARIABLE_TEMPLATES)
 #include <archie/utils/fused/type_tag.h>
-#endif
 
 #include <archie/utils/fused/index_of.h>
 
@@ -251,16 +248,19 @@ void canComposeFusedNth() {
   EXPECT_EQ('3', z);
 }
 
-#if defined(HAS_VARIABLE_TEMPLATES)
 void canComposeFusedConstruct() {
-  auto x = fused::apply(fused::construct<fused::tuple<int, unsigned, char>>, 1,
-                        2u, '3');
+#if !defined(HAS_VARIABLE_TEMPLATES)
+  constexpr auto& ctor =
+      fused::construct<fused::tuple<int, unsigned, char>>::value;
+#else
+  constexpr auto& ctor = fused::construct<fused::tuple<int, unsigned, char>>;
+#endif
+  auto x = fused::apply(ctor, 1, 2u, '3');
   static_assert(fused::tuple_size<decltype(x)>::value == 3u, "");
   EXPECT_EQ(1, fused::get<0>(x));
   EXPECT_EQ(2u, fused::get<1>(x));
   EXPECT_EQ('3', fused::get<2>(x));
 }
-#endif
 
 void canComposeIndexOf() {
 #if defined(HAS_VARIABLE_TEMPLATES)
@@ -312,9 +312,7 @@ int main() {
   canComposeFusedFindIf();
   canComposeFusedTake();
   canComposeFusedNth();
-#if defined(HAS_VARIABLE_TEMPLATES)
   canComposeFusedConstruct();
-#endif
   canComposeIndexOf();
 
   return 0;
