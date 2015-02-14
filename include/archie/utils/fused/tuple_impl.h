@@ -123,10 +123,11 @@ namespace utils {
     template <std::size_t N, typename Tp>
     decltype(auto) get(Tp&& tp) {
 #if defined(HAS_VARIABLE_TEMPLATES)
-      return tp.apply(nth<N>);
+      constexpr auto& nth_n = nth<N>;
 #else
-      return tp.apply(nth_v<N>::value);
+      constexpr auto& nth_n = nth_v<N>::value;
 #endif
+      return tp.apply(nth_n);
     }
 
     template <typename Tp, typename... Us>

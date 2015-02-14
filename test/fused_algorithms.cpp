@@ -15,7 +15,6 @@
 #include <archie/utils/fused/take.h>
 #include <archie/utils/fused/nth.h>
 #include <archie/utils/fused/type_tag.h>
-
 #include <archie/utils/fused/index_of.h>
 
 #include <memory>
