@@ -18,6 +18,19 @@ namespace utils {
 
     template <typename... Ts>
     struct as_tuple<meta::type_list<Ts...>> : as_tuple<Ts...> {};
+
+    template <typename>
+    struct as_type_list;
+
+    template <typename... Ts>
+    struct as_type_list<tuple<Ts...>> : meta::returns<meta::type_list<Ts...>> {
+      constexpr static decltype(auto) make() {
+        return meta::type_list<Ts...>{};
+      }
+    };
+
+    template <typename Tp>
+    using as_type_list_t = typename as_type_list<Tp>::type;
   }
 }
 }
