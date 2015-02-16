@@ -5,6 +5,7 @@
 #include <archie/utils/fused/select_overload.h>
 #include <archie/utils/meta/indexable.h>
 #include <archie/utils/meta/boolean.h>
+#include <archie/utils/meta/requires.h>
 #include <archie/utils/traits/is_fused_tuple.h>
 #include <config.h>
 
