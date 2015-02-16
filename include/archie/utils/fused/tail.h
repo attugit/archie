@@ -2,8 +2,8 @@
 
 #include <utility>
 #include <archie/utils/fused/tuple.h>
-#include <archie/utils/fused/as_tuple.h>
 #include <archie/utils/fused/apply.h>
+#include <archie/utils/meta/as_type_list.h>
 
 namespace archie {
 namespace utils {
@@ -25,7 +25,7 @@ namespace utils {
       public:
         template <typename Tp>
         constexpr decltype(auto) operator()(Tp&& t) const {
-          return fused::apply(impl<as_type_list_t<std::decay_t<Tp>>>{},
+          return fused::apply(impl<meta::as_type_list_t<std::decay_t<Tp>>>{},
                               std::forward<Tp>(t));
         }
       };
