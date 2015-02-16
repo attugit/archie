@@ -5,6 +5,8 @@
 #include <archie/utils/meta/take.h>
 #include <archie/utils/meta/indexable.h>
 #include <archie/utils/meta/variable_template.h>
+#include <archie/utils/meta/listed.h>
+#include <archie/utils/meta/as_type_list.h>
 #include <archie/utils/fused/tuple.h>
 #include <archie/utils/fused/nth.h>
 #include <archie/utils/fused/as_tuple.h>
@@ -17,16 +19,17 @@ namespace utils {
       template <std::size_t... ids>
       struct take {
         template <typename... Ts>
-        constexpr decltype(auto) operator()(tuple<Ts...> const& t) const {
-          return fused::tuple<meta::at_t<ids, Ts...>...>(get<ids>(t)...);
-        }
-        template <typename... Ts>
-        constexpr decltype(auto) operator()(tuple<Ts...>&& t) const {
-          return make_tuple(get<ids>(t)...);
-        }
-        template <typename... Ts>
-        constexpr decltype(auto) operator()(tuple<Ts...>& t) const {
-          return make_tuple(get<ids>(t)...);
+        struct impl {
+          template <typename Up>
+          constexpr decltype(auto) operator()(Up&& u) const {
+            return fused::tuple<meta::at_t<ids, Ts...>...>(
+                get<ids>(std::forward<Up>(u))...);
+          }
+        };
+        template <typename Tp>
+        constexpr decltype(auto) operator()(Tp&& t) const {
+          return meta::listed_t<impl, meta::as_type_list_t<std::decay_t<Tp>>>{}(
+              std::forward<Tp>(t));
         }
         template <typename... Ts>
         constexpr decltype(auto) operator()(Ts&&... ts) const {
