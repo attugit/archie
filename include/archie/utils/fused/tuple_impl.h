@@ -75,30 +75,40 @@ namespace utils {
       constexpr std::size_t size() noexcept { return sizeof...(Ts); }
 
       template <typename F>
-      decltype(auto) apply(F&& f) const & {
-        auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
-          return std::forward<decltype(f)>(f)(static_cast<Ts const&>(xs)...);
-        };
-        return storage(exec);
-      }
-
+      decltype(auto) apply(F&& f) const&;
       template <typename F>
-      decltype(auto) apply(F&& f) & {
-        auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
-          return std::forward<decltype(f)>(f)(
-              static_cast<std::add_lvalue_reference_t<Ts>>(xs)...);
-        };
-        return storage(exec);
-      }
-
+      decltype(auto) apply(F&& f) &;
       template <typename F>
-      decltype(auto) apply(F&& f) && {
-        auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
-          return std::forward<decltype(f)>(f)(static_cast<Ts&&>(xs)...);
-        };
-        return storage(exec);
-      }
+      decltype(auto) apply(F&& f) &&;
     };
+
+    template <typename... Ts>
+    template <typename F>
+    decltype(auto) tuple<Ts...>::apply(F&& f) const & {
+      auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
+        return std::forward<decltype(f)>(f)(static_cast<Ts const&>(xs)...);
+      };
+      return storage(exec);
+    }
+
+    template <typename... Ts>
+    template <typename F>
+    decltype(auto) tuple<Ts...>::apply(F&& f) & {
+      auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
+        return std::forward<decltype(f)>(f)(
+            static_cast<std::add_lvalue_reference_t<Ts>>(xs)...);
+      };
+      return storage(exec);
+    }
+
+    template <typename... Ts>
+    template <typename F>
+    decltype(auto) tuple<Ts...>::apply(F&& f) && {
+      auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
+        return std::forward<decltype(f)>(f)(static_cast<Ts&&>(xs)...);
+      };
+      return storage(exec);
+    }
 
     namespace detail {
       struct make_tuple_ {
