@@ -3,6 +3,7 @@
 #include <utility>
 #include <archie/utils/fused/tuple.h>
 #include <archie/utils/fused/apply.h>
+#include <archie/utils/meta/listed.h>
 #include <archie/utils/meta/as_type_list.h>
 
 namespace archie {
@@ -11,11 +12,8 @@ namespace utils {
     namespace detail {
       struct tail_ {
       private:
-        template <typename>
-        struct impl;
-
         template <typename Rp, typename... Vs>
-        struct impl<meta::type_list<Rp, Vs...>> {
+        struct impl {
           template <typename Tp, typename... Us>
           constexpr decltype(auto) operator()(Tp&&, Us&&... us) const {
             return fused::tuple<Vs...>(std::forward<Us>(us)...);
@@ -25,8 +23,9 @@ namespace utils {
       public:
         template <typename Tp>
         constexpr decltype(auto) operator()(Tp&& t) const {
-          return fused::apply(impl<meta::as_type_list_t<std::decay_t<Tp>>>{},
-                              std::forward<Tp>(t));
+          return fused::apply(
+              meta::listed_t<impl, meta::as_type_list_t<std::decay_t<Tp>>>{},
+              std::forward<Tp>(t));
         }
       };
     }
