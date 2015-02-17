@@ -4,6 +4,7 @@
 #include <archie/utils/fused/tuple.h>
 #include <archie/utils/fused/apply.h>
 #include <archie/utils/meta/listed.h>
+#include <archie/utils/meta/ignore.h>
 #include <archie/utils/meta/as_type_list.h>
 
 namespace archie {
@@ -12,11 +13,11 @@ namespace utils {
     namespace detail {
       struct tail_ {
       private:
-        template <typename Rp, typename... Vs>
+        template <typename, typename... Ts>
         struct impl {
-          template <typename Tp, typename... Us>
-          constexpr decltype(auto) operator()(Tp&&, Us&&... us) const {
-            return fused::tuple<Vs...>(std::forward<Us>(us)...);
+          template <typename... Us>
+          constexpr decltype(auto) operator()(meta::ignore, Us&&... us) const {
+            return fused::tuple<Ts...>(std::forward<Us>(us)...);
           }
         };
 
