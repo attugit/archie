@@ -5,8 +5,11 @@
 namespace fused = archie::utils::fused;
 namespace traits = archie::utils::traits;
 
-struct int_t
-    : fused::strong_typedef<int, fused::policy::equality_comparable<int>> {
+struct int_t : fused::strong_typedef<int, fused::policy::eq<int>> {
+  using self_t::self_t;
+};
+
+struct int2_t : fused::strong_typedef<int, fused::policy::lt<int>> {
   using self_t::self_t;
 };
 
@@ -58,9 +61,18 @@ void canUseEqPolicy() {
   ASSERT_TRUE(4 != i);
 }
 
+void canUseLtPolicy() {
+  int2_t i{3};
+  ASSERT_TRUE(i < 4);
+  ASSERT_FALSE(i < 3);
+  ASSERT_FALSE(3 > i);
+  ASSERT_TRUE(4 > i);
+}
+
 int main() {
   canConstructStrongTypedef();
   canAccessUnderlyingTypeMembers();
   canUseEqPolicy();
+  canUseLtPolicy();
   return 0;
 }

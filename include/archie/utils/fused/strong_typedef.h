@@ -10,10 +10,17 @@ namespace utils {
   namespace fused {
     inline namespace policy {
       template <typename Tp>
-      struct equality_comparable {
+      struct eq {
         template <typename Up, typename Vp>
-        bool eq(Up const& u, Vp const& v) const {
+        bool eval(Up const& u, Vp const& v) const {
           return static_cast<Tp const&>(u) == static_cast<Tp const&>(v);
+        }
+      };
+      template <typename Tp>
+      struct lt {
+        template <typename Up, typename Vp>
+        bool eval(Up const& u, Vp const& v) const {
+          return static_cast<Tp const&>(u) < static_cast<Tp const&>(v);
         }
       };
     }
@@ -41,25 +48,35 @@ namespace utils {
         st.value = std::move(v);
       }
 
-      template <typename Up, typename = meta::requires<std::is_base_of<
-                                 policy::equality_comparable<Up>, self_t>>>
+      template <typename Up, typename = meta::requires<
+                                 std::is_base_of<policy::eq<Up>, self_t>>>
       friend bool operator==(self_t const& s, Up const& u) {
-        return s.policy::equality_comparable<Up>::eq(s, u);
+        return s.policy::eq<Up>::eval(s, u);
       }
-      template <typename Up, typename = meta::requires<std::is_base_of<
-                                 policy::equality_comparable<Up>, self_t>>>
+      template <typename Up, typename = meta::requires<
+                                 std::is_base_of<policy::eq<Up>, self_t>>>
       friend bool operator==(Up const& u, self_t const& s) {
         return (s == u);
       }
-      template <typename Up, typename = meta::requires<std::is_base_of<
-                                 policy::equality_comparable<Up>, self_t>>>
+      template <typename Up, typename = meta::requires<
+                                 std::is_base_of<policy::eq<Up>, self_t>>>
       friend bool operator!=(self_t const& s, Up const& u) {
         return !(s == u);
       }
-      template <typename Up, typename = meta::requires<std::is_base_of<
-                                 policy::equality_comparable<Up>, self_t>>>
+      template <typename Up, typename = meta::requires<
+                                 std::is_base_of<policy::eq<Up>, self_t>>>
       friend bool operator!=(Up const& u, self_t const& s) {
         return s != u;
+      }
+      template <typename Up, typename = meta::requires<
+                                 std::is_base_of<policy::lt<Up>, self_t>>>
+      friend bool operator<(self_t const& s, Up const& u) {
+        return s.policy::lt<Up>::eval(s, u);
+      }
+      template <typename Up, typename = meta::requires<
+                                 std::is_base_of<policy::lt<Up>, self_t>>>
+      friend bool operator>(Up const& u, self_t const& s) {
+        return (s < u);
       }
 
     private:
