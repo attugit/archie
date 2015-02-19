@@ -4,12 +4,17 @@
 
 namespace fused = archie::utils::fused;
 namespace traits = archie::utils::traits;
+namespace policy = fused::policy;
 
-struct int_t : fused::strong_typedef<int, fused::policy::eq<int>> {
+struct int1_t : fused::strong_typedef<int, policy::eq<int>> {
   using self_t::self_t;
 };
 
-struct int2_t : fused::strong_typedef<int, fused::policy::lt<int>> {
+struct int2_t : fused::strong_typedef<int, policy::lt<int>> {
+  using self_t::self_t;
+};
+
+struct int3_t : fused::strong_typedef<int, policy::eq<int>, policy::lt<int>> {
   using self_t::self_t;
 };
 
@@ -33,7 +38,7 @@ struct uptr_t : fused::strong_typedef<std::unique_ptr<int>> {
 #include <archie/utils/test.h>
 
 void canConstructStrongTypedef() {
-  int_t i{4};
+  int1_t i{4};
   ASSERT_EQ(4, static_cast<int>(i));
   udt_t u1;
   ASSERT_EQ(0, static_cast<udt>(u1).f());
@@ -50,7 +55,7 @@ void canAccessUnderlyingTypeMembers() {
 }
 
 void canUseEqPolicy() {
-  int_t i{3};
+  int1_t i{3};
   ASSERT_TRUE(i == 3);
   ASSERT_TRUE(3 == i);
   ASSERT_FALSE(i != 3);
@@ -67,6 +72,9 @@ void canUseLtPolicy() {
   ASSERT_FALSE(i < 3);
   ASSERT_FALSE(3 > i);
   ASSERT_TRUE(4 > i);
+
+  int3_t j{7};
+  ASSERT_TRUE(j <= 8);
 }
 
 int main() {

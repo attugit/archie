@@ -78,6 +78,12 @@ namespace utils {
       friend bool operator>(Up const& u, self_t const& s) {
         return (s < u);
       }
+      template <typename Up, typename = meta::requires_all<
+                                 std::is_base_of<policy::lt<Up>, self_t>,
+                                 std::is_base_of<policy::eq<Up>, self_t>>>
+      friend bool operator<=(self_t const& s, Up const& u) {
+        return (s < u) || (s == u);
+      }
 
     private:
       Tp value;
