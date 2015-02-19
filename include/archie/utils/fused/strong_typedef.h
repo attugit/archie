@@ -46,6 +46,11 @@ namespace utils {
       bool operator==(Up const& u) const {
         return policy::equality_comparable<Up>::eq(*this, u);
       }
+      template <typename Up, typename = meta::requires<std::is_base_of<
+                                 policy::equality_comparable<Up>, self_t>>>
+      bool operator!=(Up const& u) const {
+        return !(*this == u);
+      }
 
     private:
       Tp value;

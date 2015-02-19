@@ -50,6 +50,9 @@ void canAccessUnderlyingTypeMembers() {
 void canUseEqPolicy() {
   int_t i{3};
   ASSERT_TRUE(i == 3);
+  ASSERT_FALSE(i != 3);
+  ASSERT_FALSE(i == 4);
+  ASSERT_TRUE(i != 4);
 }
 
 int main() {
