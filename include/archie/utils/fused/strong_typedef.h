@@ -23,6 +23,9 @@ namespace utils {
           return static_cast<Tp const&>(u) < static_cast<Tp const&>(v);
         }
       };
+
+      template <typename Tp, typename... Ps>
+      using has = meta::requires_all<std::is_base_of<Ps, Tp>...>;
     }
 
     template <typename Tp, typename... policies>
@@ -48,39 +51,35 @@ namespace utils {
         st.value = std::move(v);
       }
 
-      template <typename Up, typename = meta::requires<
-                                 std::is_base_of<policy::eq<Up>, self_t>>>
+      template <typename Up, typename = policy::has<self_t, eq<Up>>>
       friend bool operator==(self_t const& s, Up const& u) {
         return s.policy::eq<Up>::eval(s, u);
       }
-      template <typename Up, typename = meta::requires<
-                                 std::is_base_of<policy::eq<Up>, self_t>>>
+      template <typename Up, typename = policy::has<self_t, eq<Up>>>
       friend bool operator==(Up const& u, self_t const& s) {
         return (s == u);
       }
-      template <typename Up, typename = meta::requires<
-                                 std::is_base_of<policy::eq<Up>, self_t>>>
+      template <typename Up, typename = policy::has<self_t, eq<Up>>>
       friend bool operator!=(self_t const& s, Up const& u) {
         return !(s == u);
       }
-      template <typename Up, typename = meta::requires<
-                                 std::is_base_of<policy::eq<Up>, self_t>>>
+      template <typename Up, typename = policy::has<self_t, eq<Up>>>
       friend bool operator!=(Up const& u, self_t const& s) {
         return s != u;
       }
-      template <typename Up, typename = meta::requires<
-                                 std::is_base_of<policy::lt<Up>, self_t>>>
+      template <typename Up, typename = policy::has<self_t, lt<Up>>>
       friend bool operator<(self_t const& s, Up const& u) {
         return s.policy::lt<Up>::eval(s, u);
       }
-      template <typename Up, typename = meta::requires<
-                                 std::is_base_of<policy::lt<Up>, self_t>>>
+      template <typename Up, typename = policy::has<self_t, lt<Up>>>
+      friend bool operator<(Up const& u, self_t const& s) {
+        return s.policy::lt<Up>::eval(u, s);
+      }
+      template <typename Up, typename = policy::has<self_t, lt<Up>>>
       friend bool operator>(Up const& u, self_t const& s) {
         return (s < u);
       }
-      template <typename Up, typename = meta::requires_all<
-                                 std::is_base_of<policy::lt<Up>, self_t>,
-                                 std::is_base_of<policy::eq<Up>, self_t>>>
+      template <typename Up, typename = policy::has<self_t, eq<Up>, lt<Up>>>
       friend bool operator<=(self_t const& s, Up const& u) {
         return (s < u) || (s == u);
       }

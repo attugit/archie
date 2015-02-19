@@ -70,6 +70,12 @@ void canUseLtPolicy() {
   int2_t i{3};
   ASSERT_TRUE(i < 4);
   ASSERT_FALSE(i < 3);
+  ASSERT_FALSE(i < 2);
+
+  ASSERT_FALSE(4 < i);
+  ASSERT_FALSE(3 < i);
+  ASSERT_TRUE(2 < i);
+
   ASSERT_FALSE(3 > i);
   ASSERT_TRUE(4 > i);
 
