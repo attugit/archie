@@ -29,7 +29,7 @@ namespace utils {
     }
 
     template <typename Tp, typename... policies>
-    struct strong_typedef : meta::returns<Tp>, policies... {
+    struct strong_typedef : meta::returns<Tp>, private policies... {
       using self_t = strong_typedef<Tp, policies...>;
       using const_reference = Tp const&;
       template <typename... Us>
@@ -53,7 +53,7 @@ namespace utils {
 
       template <typename Up, typename = policy::has<self_t, eq<Up>>>
       friend bool operator==(self_t const& s, Up const& u) {
-        return s.policy::eq<Up>::eval(s, u);
+        return s.eq<Up>::eval(s, u);
       }
       template <typename Up, typename = policy::has<self_t, eq<Up>>>
       friend bool operator==(Up const& u, self_t const& s) {
@@ -69,11 +69,15 @@ namespace utils {
       }
       template <typename Up, typename = policy::has<self_t, lt<Up>>>
       friend bool operator<(self_t const& s, Up const& u) {
-        return s.policy::lt<Up>::eval(s, u);
+        return s.lt<Up>::eval(s, u);
       }
       template <typename Up, typename = policy::has<self_t, lt<Up>>>
       friend bool operator<(Up const& u, self_t const& s) {
-        return s.policy::lt<Up>::eval(u, s);
+        return s.lt<Up>::eval(u, s);
+      }
+      template <typename Up, typename = policy::has<self_t, lt<Up>>>
+      friend bool operator>(self_t const& s, Up const& u) {
+        return (u < s);
       }
       template <typename Up, typename = policy::has<self_t, lt<Up>>>
       friend bool operator>(Up const& u, self_t const& s) {
@@ -82,6 +86,10 @@ namespace utils {
       template <typename Up, typename = policy::has<self_t, eq<Up>, lt<Up>>>
       friend bool operator<=(self_t const& s, Up const& u) {
         return (s < u) || (s == u);
+      }
+      template <typename Up, typename = policy::has<self_t, eq<Up>, lt<Up>>>
+      friend bool operator<=(Up const& u, self_t const& s) {
+        return (u < s) || (u == s);
       }
 
     private:

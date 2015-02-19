@@ -76,11 +76,25 @@ void canUseLtPolicy() {
   ASSERT_FALSE(3 < i);
   ASSERT_TRUE(2 < i);
 
-  ASSERT_FALSE(3 > i);
   ASSERT_TRUE(4 > i);
+  ASSERT_FALSE(3 > i);
+  ASSERT_FALSE(2 > i);
+
+  ASSERT_FALSE(i > 4);
+  ASSERT_FALSE(i > 3);
+  ASSERT_TRUE(i > 2);
 
   int3_t j{7};
   ASSERT_TRUE(j <= 8);
+  ASSERT_TRUE(j <= 7);
+  ASSERT_FALSE(j <= 6);
+  ASSERT_FALSE(8 <= j);
+  ASSERT_TRUE(7 <= j);
+  ASSERT_TRUE(6 <= j);
+
+  ASSERT_FALSE(j > 8);
+  ASSERT_FALSE(j > 7);
+  ASSERT_TRUE(j > 6);
 }
 
 int main() {
