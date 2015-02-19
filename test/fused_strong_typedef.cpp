@@ -7,8 +7,7 @@ namespace traits = archie::utils::traits;
 
 struct int_t
     : fused::strong_typedef<int, fused::policy::equality_comparable<int>> {
-  using fused::strong_typedef<
-      int, fused::policy::equality_comparable<int>>::strong_typedef;
+  using self_t::self_t;
 };
 
 struct udt {
@@ -20,12 +19,12 @@ struct udt {
 };
 
 struct udt_t : fused::strong_typedef<udt> {
-  using fused::strong_typedef<udt>::strong_typedef;
+  using self_t::self_t;
 };
 
 #include <memory>
 struct uptr_t : fused::strong_typedef<std::unique_ptr<int>> {
-  using fused::strong_typedef<std::unique_ptr<int>>::strong_typedef;
+  using self_t::self_t;
 };
 
 #include <archie/utils/test.h>
@@ -50,9 +49,13 @@ void canAccessUnderlyingTypeMembers() {
 void canUseEqPolicy() {
   int_t i{3};
   ASSERT_TRUE(i == 3);
+  ASSERT_TRUE(3 == i);
   ASSERT_FALSE(i != 3);
+  ASSERT_FALSE(3 != i);
   ASSERT_FALSE(i == 4);
+  ASSERT_FALSE(4 == i);
   ASSERT_TRUE(i != 4);
+  ASSERT_TRUE(4 != i);
 }
 
 int main() {
