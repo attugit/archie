@@ -5,8 +5,10 @@
 namespace fused = archie::utils::fused;
 namespace traits = archie::utils::traits;
 
-struct int_t : fused::strong_typedef<int> {
-  using fused::strong_typedef<int>::strong_typedef;
+struct int_t
+    : fused::strong_typedef<int, fused::policy::equality_comparable<int>> {
+  using fused::strong_typedef<
+      int, fused::policy::equality_comparable<int>>::strong_typedef;
 };
 
 struct udt {
@@ -45,8 +47,14 @@ void canAccessUnderlyingTypeMembers() {
   ASSERT_EQ(4, u->value);
 }
 
+void canUseEqPolicy() {
+  int_t i{3};
+  ASSERT_TRUE(i == 3);
+}
+
 int main() {
   canConstructStrongTypedef();
   canAccessUnderlyingTypeMembers();
+  canUseEqPolicy();
   return 0;
 }
