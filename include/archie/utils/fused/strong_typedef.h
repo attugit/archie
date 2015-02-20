@@ -83,13 +83,21 @@ namespace utils {
       friend bool operator>(Up const& u, self_t const& s) {
         return (s < u);
       }
-      template <typename Up, typename = policy::has<self_t, eq<Up>, lt<Up>>>
+      template <typename Up, typename = policy::has<self_t, lt<Up>>>
       friend bool operator<=(self_t const& s, Up const& u) {
-        return (s < u) || (s == u);
+        return !(s > u);
       }
-      template <typename Up, typename = policy::has<self_t, eq<Up>, lt<Up>>>
+      template <typename Up, typename = policy::has<self_t, lt<Up>>>
       friend bool operator<=(Up const& u, self_t const& s) {
-        return (u < s) || (u == s);
+        return !(u > s);
+      }
+      template <typename Up, typename = policy::has<self_t, lt<Up>>>
+      friend bool operator>=(self_t const& s, Up const& u) {
+        return !(s < u);
+      }
+      template <typename Up, typename = policy::has<self_t, lt<Up>>>
+      friend bool operator>=(Up const& u, self_t const& s) {
+        return !(u < s);
       }
 
     private:
