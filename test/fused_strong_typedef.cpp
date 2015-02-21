@@ -14,7 +14,7 @@ struct int2_t : fused::strong_typedef<int, policy::lt<int>> {
   using self_t::self_t;
 };
 
-struct int3_t : fused::strong_typedef<int, policy::eq<int>, policy::lt<int>> {
+struct int3_t : fused::strong_typedef<int, policy::add<int>> {
   using self_t::self_t;
 };
 
@@ -101,10 +101,20 @@ void canUseLtPolicy() {
   ASSERT_FALSE(2 >= i);
 }
 
+void canUseAddPolicy() {
+  int3_t i{1};
+  ASSERT_EQ(1, static_cast<int>(i));
+  i += 1;
+  ASSERT_EQ(2, static_cast<int>(i));
+  i += 2;
+  ASSERT_EQ(4, static_cast<int>(i));
+}
+
 int main() {
   canConstructStrongTypedef();
   canAccessUnderlyingTypeMembers();
   canUseEqPolicy();
   canUseLtPolicy();
+  canUseAddPolicy();
   return 0;
 }

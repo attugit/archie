@@ -8,6 +8,12 @@
 namespace archie {
 namespace utils {
   namespace fused {
+    template <typename...>
+    struct strong_typedef;
+
+    template <typename Tp, typename Up>
+    strong_typedef<Tp>& copy_assing(strong_typedef<Tp>&, Up&&);
+
     inline namespace policy {
       template <typename Tp>
       struct eq {
@@ -23,13 +29,22 @@ namespace utils {
           return static_cast<Tp const&>(u) < static_cast<Tp const&>(v);
         }
       };
+      template <typename Tp>
+      struct add {
+        template <typename Up, typename Vp>
+        Up& eval(Up& u, Vp const& v) const {
+          return copy_assing(u, static_cast<Tp const&>(u) +
+                                    static_cast<Tp const&>(v));
+        }
+      };
 
       template <typename Tp, typename... Ps>
       using has = meta::requires_all<std::is_base_of<Ps, Tp>...>;
     }
 
     template <typename Tp, typename... policies>
-    struct strong_typedef : meta::returns<Tp>, private policies... {
+    struct strong_typedef<Tp, policies...> : meta::returns<Tp>,
+                                             private policies... {
       using self_t = strong_typedef<Tp, policies...>;
       using const_reference = Tp const&;
       template <typename... Us>
@@ -42,8 +57,9 @@ namespace utils {
       Tp* operator->() { return &value; }
 
       template <typename Up>
-      friend void copy_assing(self_t& st, Up&& v) {
+      friend self_t& copy_assing(self_t& st, Up&& v) {
         st.value = std::forward<Up>(v);
+        return st;
       }
 
       template <typename Up>
@@ -98,6 +114,10 @@ namespace utils {
       template <typename Up, typename = policy::has<self_t, lt<Up>>>
       friend bool operator>=(Up const& u, self_t const& s) {
         return !(u < s);
+      }
+      template <typename Up, typename = policy::has<self_t, add<Up>>>
+      friend self_t& operator+=(self_t& s, Up const& u) {
+        return s.add<Up>::eval(s, u);
       }
 
     private:
