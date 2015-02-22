@@ -6,15 +6,15 @@ namespace fused = archie::utils::fused;
 namespace traits = archie::utils::traits;
 namespace policy = fused::policy;
 
-struct int1_t : fused::strong_typedef<int, policy::eq<int>> {
+struct int1_t : fused::strong_typedef<int1_t, int, policy::eq<int>> {
   using self_t::self_t;
 };
 
-struct int2_t : fused::strong_typedef<int, policy::lt<int>> {
+struct int2_t : fused::strong_typedef<int2_t, int, policy::lt<int>> {
   using self_t::self_t;
 };
 
-struct int3_t : fused::strong_typedef<int, policy::add<int>> {
+struct int3_t : fused::strong_typedef<int3_t, int, policy::add<int>> {
   using self_t::self_t;
 };
 
@@ -26,12 +26,12 @@ struct udt {
   int value = 0;
 };
 
-struct udt_t : fused::strong_typedef<udt> {
+struct udt_t : fused::strong_typedef<udt_t, udt> {
   using self_t::self_t;
 };
 
 #include <memory>
-struct uptr_t : fused::strong_typedef<std::unique_ptr<int>> {
+struct uptr_t : fused::strong_typedef<uptr_t, std::unique_ptr<int>> {
   using self_t::self_t;
 };
 
@@ -108,6 +108,11 @@ void canUseAddPolicy() {
   ASSERT_EQ(2, static_cast<int>(i));
   i += 2;
   ASSERT_EQ(4, static_cast<int>(i));
+
+  auto x = i + 3;
+  static_assert(std::is_same<decltype(i), decltype(x)>::value, "");
+  ASSERT_EQ(4, static_cast<int>(i));
+  ASSERT_EQ(7, static_cast<int>(x));
 }
 
 int main() {

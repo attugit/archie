@@ -11,8 +11,8 @@ namespace utils {
     template <typename...>
     struct strong_typedef;
 
-    template <typename Tp, typename Up>
-    strong_typedef<Tp>& copy_assing(strong_typedef<Tp>&, Up&&);
+    template <typename Up, typename... Ts>
+    strong_typedef<Ts...>& copy_assing(strong_typedef<Ts...>&, Up&&);
 
     inline namespace policy {
       template <typename Tp>
@@ -42,10 +42,10 @@ namespace utils {
       using has = meta::requires_all<std::is_base_of<Ps, Tp>...>;
     }
 
-    template <typename Tp, typename... policies>
-    struct strong_typedef<Tp, policies...> : meta::returns<Tp>,
-                                             private policies... {
-      using self_t = strong_typedef<Tp, policies...>;
+    template <typename X, typename Tp, typename... policies>
+    struct strong_typedef<X, Tp, policies...> : meta::returns<X>,
+                                                private policies... {
+      using self_t = strong_typedef<X, Tp, policies...>;
       using const_reference = Tp const&;
       template <typename... Us>
       constexpr explicit strong_typedef(Us&&... us)
@@ -118,6 +118,12 @@ namespace utils {
       template <typename Up, typename = policy::has<self_t, add<Up>>>
       friend self_t& operator+=(self_t& s, Up const& u) {
         return s.add<Up>::eval(s, u);
+      }
+      template <typename Up, typename = policy::has<X, add<Up>>>
+      friend X operator+(X const& x, Up const& u) {
+        X ret = x;
+        ret += u;
+        return ret;
       }
 
     private:
