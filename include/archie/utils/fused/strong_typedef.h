@@ -8,12 +8,6 @@
 namespace archie {
 namespace utils {
   namespace fused {
-    template <typename...>
-    struct strong_typedef;
-
-    template <typename Up, typename... Ts>
-    strong_typedef<Ts...>& copy_assing(strong_typedef<Ts...>&, Up&&);
-
     inline namespace policy {
       template <typename>
       struct eq {};
@@ -25,34 +19,6 @@ namespace utils {
       template <typename Tp, typename... Ps>
       using has = meta::requires_all<std::is_base_of<Ps, Tp>...>;
     }
-
-    template <typename X, typename Tp, typename... policies>
-    struct strong_typedef<X, Tp, policies...> : meta::returns<Tp>,
-                                                private policies... {
-      using self_t = strong_typedef<X, Tp, policies...>;
-      using const_reference = Tp const&;
-      template <typename... Us>
-      constexpr explicit strong_typedef(Us&&... us)
-          : value{std::forward<Us>(us)...} {}
-
-      constexpr explicit operator const_reference() const { return value; }
-      Tp const* operator->() const { return &value; }
-      Tp* operator->() { return &value; }
-
-      template <typename Up>
-      friend X& copy_assing(X& x, Up&& v) {
-        x.value = std::forward<Up>(v);
-        return x;
-      }
-      template <typename Up>
-      friend X& move_assing(X& x, Up&& v) {
-        x.value = std::move(v);
-        return x;
-      }
-
-    private:
-      Tp value;
-    };
 
     template <typename Tp, typename Up, typename = policy::has<Tp, eq<Up>>>
     bool operator==(Tp const& t, Up const& u) {
@@ -116,6 +82,33 @@ namespace utils {
       ret += u;
       return ret;
     }
+
+    template <typename X, typename Tp, typename... policies>
+    struct strong_typedef : meta::returns<Tp>, private policies... {
+      using self_t = strong_typedef<X, Tp, policies...>;
+      using const_reference = Tp const&;
+      template <typename... Us>
+      constexpr explicit strong_typedef(Us&&... us)
+          : value{std::forward<Us>(us)...} {}
+
+      constexpr explicit operator const_reference() const { return value; }
+      Tp const* operator->() const { return &value; }
+      Tp* operator->() { return &value; }
+
+      template <typename Up>
+      friend X& copy_assing(X& x, Up&& v) {
+        x.value = std::forward<Up>(v);
+        return x;
+      }
+      template <typename Up>
+      friend X& move_assing(X& x, Up&& v) {
+        x.value = std::move(v);
+        return x;
+      }
+
+    private:
+      Tp value;
+    };
   }
 }
 }
