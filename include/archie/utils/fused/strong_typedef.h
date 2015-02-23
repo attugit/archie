@@ -43,9 +43,9 @@ namespace utils {
     }
 
     template <typename X, typename Tp, typename... policies>
-    struct strong_typedef<X, Tp, policies...> : meta::returns<X>,
-                                                private policies... {
+    struct strong_typedef<X, Tp, policies...> : private policies... {
       using self_t = strong_typedef<X, Tp, policies...>;
+      using type = X;
       using const_reference = Tp const&;
       template <typename... Us>
       constexpr explicit strong_typedef(Us&&... us)
@@ -57,71 +57,71 @@ namespace utils {
       Tp* operator->() { return &value; }
 
       template <typename Up>
-      friend self_t& copy_assing(self_t& st, Up&& v) {
+      friend type& copy_assing(type& st, Up&& v) {
         st.value = std::forward<Up>(v);
         return st;
       }
 
       template <typename Up>
-      friend void move_assing(self_t& st, Up&& v) {
+      friend void move_assing(type& st, Up&& v) {
         st.value = std::move(v);
       }
 
-      template <typename Up, typename = policy::has<self_t, eq<Up>>>
-      friend bool operator==(self_t const& s, Up const& u) {
+      template <typename Up, typename = policy::has<type, eq<Up>>>
+      friend bool operator==(type const& s, Up const& u) {
         return s.eq<Up>::eval(s, u);
       }
-      template <typename Up, typename = policy::has<self_t, eq<Up>>>
-      friend bool operator==(Up const& u, self_t const& s) {
+      template <typename Up, typename = policy::has<type, eq<Up>>>
+      friend bool operator==(Up const& u, type const& s) {
         return (s == u);
       }
-      template <typename Up, typename = policy::has<self_t, eq<Up>>>
-      friend bool operator!=(self_t const& s, Up const& u) {
+      template <typename Up, typename = policy::has<type, eq<Up>>>
+      friend bool operator!=(type const& s, Up const& u) {
         return !(s == u);
       }
-      template <typename Up, typename = policy::has<self_t, eq<Up>>>
-      friend bool operator!=(Up const& u, self_t const& s) {
+      template <typename Up, typename = policy::has<type, eq<Up>>>
+      friend bool operator!=(Up const& u, type const& s) {
         return s != u;
       }
-      template <typename Up, typename = policy::has<self_t, lt<Up>>>
-      friend bool operator<(self_t const& s, Up const& u) {
+      template <typename Up, typename = policy::has<type, lt<Up>>>
+      friend bool operator<(type const& s, Up const& u) {
         return s.lt<Up>::eval(s, u);
       }
-      template <typename Up, typename = policy::has<self_t, lt<Up>>>
-      friend bool operator<(Up const& u, self_t const& s) {
+      template <typename Up, typename = policy::has<type, lt<Up>>>
+      friend bool operator<(Up const& u, type const& s) {
         return s.lt<Up>::eval(u, s);
       }
-      template <typename Up, typename = policy::has<self_t, lt<Up>>>
-      friend bool operator>(self_t const& s, Up const& u) {
+      template <typename Up, typename = policy::has<type, lt<Up>>>
+      friend bool operator>(type const& s, Up const& u) {
         return (u < s);
       }
-      template <typename Up, typename = policy::has<self_t, lt<Up>>>
-      friend bool operator>(Up const& u, self_t const& s) {
+      template <typename Up, typename = policy::has<type, lt<Up>>>
+      friend bool operator>(Up const& u, type const& s) {
         return (s < u);
       }
-      template <typename Up, typename = policy::has<self_t, lt<Up>>>
-      friend bool operator<=(self_t const& s, Up const& u) {
+      template <typename Up, typename = policy::has<type, lt<Up>>>
+      friend bool operator<=(type const& s, Up const& u) {
         return !(s > u);
       }
-      template <typename Up, typename = policy::has<self_t, lt<Up>>>
-      friend bool operator<=(Up const& u, self_t const& s) {
+      template <typename Up, typename = policy::has<type, lt<Up>>>
+      friend bool operator<=(Up const& u, type const& s) {
         return !(u > s);
       }
-      template <typename Up, typename = policy::has<self_t, lt<Up>>>
-      friend bool operator>=(self_t const& s, Up const& u) {
+      template <typename Up, typename = policy::has<type, lt<Up>>>
+      friend bool operator>=(type const& s, Up const& u) {
         return !(s < u);
       }
-      template <typename Up, typename = policy::has<self_t, lt<Up>>>
-      friend bool operator>=(Up const& u, self_t const& s) {
+      template <typename Up, typename = policy::has<type, lt<Up>>>
+      friend bool operator>=(Up const& u, type const& s) {
         return !(u < s);
       }
-      template <typename Up, typename = policy::has<self_t, add<Up>>>
-      friend self_t& operator+=(self_t& s, Up const& u) {
+      template <typename Up, typename = policy::has<type, add<Up>>>
+      friend type& operator+=(type& s, Up const& u) {
         return s.add<Up>::eval(s, u);
       }
-      template <typename Up, typename = policy::has<X, add<Up>>>
-      friend X operator+(X const& x, Up const& u) {
-        X ret = x;
+      template <typename Up, typename = policy::has<type, add<Up>>>
+      friend type operator+(type const& t, Up const& u) {
+        type ret = t;
         ret += u;
         return ret;
       }
