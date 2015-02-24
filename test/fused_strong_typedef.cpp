@@ -47,6 +47,13 @@ void canConstructStrongTypedef() {
   ASSERT_EQ(3, static_cast<udt>(u2).f());
 }
 
+void canExtractValue() {
+  int1_t i{4};
+  ASSERT_EQ(4, fused::extract(i));
+  fused::extract(i) = 7;
+  ASSERT_EQ(7, fused::extract(i));
+}
+
 void canAccessUnderlyingTypeMembers() {
   udt_t u{3};
   ASSERT_EQ(3, u->f());
@@ -118,6 +125,7 @@ void canUseAddPolicy() {
 
 int main() {
   canConstructStrongTypedef();
+  canExtractValue();
   canAccessUnderlyingTypeMembers();
   canUseEqPolicy();
   canUseLtPolicy();
