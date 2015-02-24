@@ -20,8 +20,7 @@ namespace utils {
 
     template <typename Tp, typename Up, typename = policy::has<Tp, eq<Up>>>
     bool operator==(Tp const& t, Up const& u) {
-      return static_cast<meta::eval<Tp> const&>(t) ==
-             static_cast<meta::eval<Tp> const&>(u);
+      return fused::extract(t) == static_cast<meta::eval<Tp> const&>(u);
     }
     template <typename Tp, typename Up, typename = policy::has<Tp, eq<Up>>>
     bool operator==(Up const& u, Tp const& t) {
@@ -37,13 +36,11 @@ namespace utils {
     }
     template <typename Tp, typename Up, typename = policy::has<Tp, lt<Up>>>
     bool operator<(Tp const& t, Up const& u) {
-      return static_cast<meta::eval<Tp> const&>(t) <
-             static_cast<meta::eval<Tp> const&>(u);
+      return fused::extract(t) < static_cast<meta::eval<Tp> const&>(u);
     }
     template <typename Tp, typename Up, typename = policy::has<Tp, lt<Up>>>
     bool operator<(Up const& u, Tp const& t) {
-      return static_cast<meta::eval<Tp> const&>(u) <
-             static_cast<meta::eval<Tp> const&>(t);
+      return static_cast<meta::eval<Tp> const&>(u) < fused::extract(t);
     }
     template <typename Tp, typename Up, typename = policy::has<Tp, lt<Up>>>
     bool operator>(Tp const& t, Up const& u) {
@@ -71,7 +68,7 @@ namespace utils {
     }
     template <typename Tp, typename Up, typename = policy::has<Tp, add<Up>>>
     Tp& operator+=(Tp& t, Up const& u) {
-      return copy_assing(t, static_cast<meta::eval<Tp> const&>(t) +
+      return copy_assing(t, fused::extract(t) +
                                 static_cast<meta::eval<Tp> const&>(u));
     }
     template <typename Tp, typename Up, typename = policy::has<Tp, add<Up>>>

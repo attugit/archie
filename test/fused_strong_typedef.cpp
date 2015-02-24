@@ -40,11 +40,11 @@ struct uptr_t : fused::strong_typedef<uptr_t, std::unique_ptr<int>> {
 
 void canConstructStrongTypedef() {
   int1_t i{4};
-  ASSERT_EQ(4, static_cast<int>(i));
+  ASSERT_EQ(4, fused::extract(i));
   udt_t u1;
-  ASSERT_EQ(0, static_cast<udt>(u1).f());
+  ASSERT_EQ(0, fused::extract(u1).f());
   udt_t u2{3};
-  ASSERT_EQ(3, static_cast<udt>(u2).f());
+  ASSERT_EQ(3, fused::extract(u2).f());
 }
 
 void canExtractValue() {
@@ -111,16 +111,16 @@ void canUseLtPolicy() {
 
 void canUseAddPolicy() {
   int3_t i{1};
-  ASSERT_EQ(1, static_cast<int>(i));
+  ASSERT_EQ(1, fused::extract(i));
   i += 1;
-  ASSERT_EQ(2, static_cast<int>(i));
+  ASSERT_EQ(2, fused::extract(i));
   i += 2;
-  ASSERT_EQ(4, static_cast<int>(i));
+  ASSERT_EQ(4, fused::extract(i));
 
   auto x = i + 3;
   static_assert(std::is_same<decltype(i), decltype(x)>::value, "");
-  ASSERT_EQ(4, static_cast<int>(i));
-  ASSERT_EQ(7, static_cast<int>(x));
+  ASSERT_EQ(4, fused::extract(i));
+  ASSERT_EQ(7, fused::extract(x));
 }
 
 int main() {
