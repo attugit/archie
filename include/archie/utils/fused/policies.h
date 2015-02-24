@@ -1,11 +1,23 @@
 #pragma once
 
 #include <type_traits>
+#include <iterator>
 #include <archie/utils/meta/requires.h>
 
 namespace archie {
 namespace utils {
   namespace fused {
+
+    template <typename, typename, typename...>
+    struct strong_typedef;
+
+    template <typename Up, typename Vp, typename... Ps>
+    Vp& extract(strong_typedef<Up, Vp, Ps...>&);
+    template <typename Up, typename Vp, typename... Ps>
+    Vp const& extract(strong_typedef<Up, Vp, Ps...> const&);
+    template <typename Up, typename Vp, typename... Ps>
+    Vp&& extract(strong_typedef<Up, Vp, Ps...>&&);
+
     inline namespace policy {
       template <typename>
       struct eq {};
@@ -13,6 +25,7 @@ namespace utils {
       struct lt {};
       template <typename Tp>
       struct add {};
+      struct iterate {};
 
       template <typename Tp, typename... Ps>
       using has = meta::requires_all<std::is_base_of<Ps, Tp>...>;
@@ -76,6 +89,18 @@ namespace utils {
       Tp ret = t;
       ret += u;
       return ret;
+    }
+    template <typename Tp,
+              typename = policy::has<std::remove_reference_t<Tp>, iterate>>
+    decltype(auto) begin(Tp&& t) {
+      using std::begin;
+      return begin(extract(std::forward<Tp>(t)));
+    }
+    template <typename Tp,
+              typename = policy::has<std::remove_reference_t<Tp>, iterate>>
+    decltype(auto) end(Tp&& t) {
+      using std::end;
+      return end(extract(std::forward<Tp>(t)));
     }
   }
 }

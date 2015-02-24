@@ -36,6 +36,12 @@ struct uptr_t : fused::strong_typedef<uptr_t, std::unique_ptr<int>> {
   using self_t::self_t;
 };
 
+#include <vector>
+struct uvec_t
+    : fused::strong_typedef<uvec_t, std::vector<unsigned>, policy::iterate> {
+  using self_t::self_t;
+};
+
 #include <archie/utils/test.h>
 
 void canConstructStrongTypedef() {
@@ -123,6 +129,18 @@ void canUseAddPolicy() {
   ASSERT_EQ(7, fused::extract(x));
 }
 
+void canUseIteratePolicy() {
+  uvec_t vec{0u, 1u, 2u, 3u, 4u};
+  ASSERT_EQ(5u, vec->size());
+  auto i = 5u;
+  for (auto&& x : vec) {
+    x += i;
+    --i;
+  }
+  ASSERT_EQ(0u, i);
+  for (auto const& x : vec) { ASSERT_EQ(5u, x); }
+}
+
 int main() {
   canConstructStrongTypedef();
   canExtractValue();
@@ -130,5 +148,6 @@ int main() {
   canUseEqPolicy();
   canUseLtPolicy();
   canUseAddPolicy();
+  canUseIteratePolicy();
   return 0;
 }
