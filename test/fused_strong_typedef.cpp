@@ -7,15 +7,15 @@ namespace fused = archie::utils::fused;
 namespace traits = archie::utils::traits;
 namespace policy = fused::policy;
 
-struct int1_t : fused::strong_typedef<int1_t, int, policy::eq<int>> {
+struct int1_t : fused::strong_typedef<int1_t, int, policy::eq> {
   using self_t::self_t;
 };
 
-struct int2_t : fused::strong_typedef<int2_t, int, policy::lt<int>> {
+struct int2_t : fused::strong_typedef<int2_t, int, policy::lt> {
   using self_t::self_t;
 };
 
-struct int3_t : fused::strong_typedef<int3_t, int, policy::add<int>> {
+struct int3_t : fused::strong_typedef<int3_t, int, policy::add> {
   using self_t::self_t;
 };
 

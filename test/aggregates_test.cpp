@@ -9,14 +9,13 @@ namespace fused = archie::utils::fused;
 
 namespace detail {
 struct PackedStruct {
-  struct Id : fused::strong_typedef<Id, unsigned, fused::policy::eq<unsigned>> {
+  struct Id : fused::strong_typedef<Id, unsigned, fused::policy::eq> {
     using self_t::self_t;
   };
-  struct Name : fused::strong_typedef<Name, std::string,
-                                      fused::policy::eq<std::string>> {
+  struct Name : fused::strong_typedef<Name, std::string, fused::policy::eq> {
     using self_t::self_t;
   };
-  struct Value : fused::strong_typedef<Value, int, fused::policy::eq<int>> {
+  struct Value : fused::strong_typedef<Value, int, fused::policy::eq> {
     using self_t::self_t;
   };
   struct Amount : fused::strong_typedef<Amount, unsigned> {

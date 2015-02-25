@@ -20,11 +20,8 @@ namespace utils {
     Vp&& extract(strong_typedef<Up, Vp, Ps...>&&);
 
     inline namespace policy {
-      template <typename>
       struct eq {};
-      template <typename>
       struct lt {};
-      template <typename Tp>
       struct add {};
       struct iterate {};
 
@@ -32,61 +29,61 @@ namespace utils {
       using has = meta::requires_all<std::is_base_of<Ps, Tp>...>;
     }
 
-    template <typename Tp, typename = policy::has<Tp, eq<meta::eval<Tp>>>>
+    template <typename Tp, typename = policy::has<Tp, eq>>
     bool operator==(Tp const& t, meta::identity_t<meta::eval<Tp>> const& u) {
       return fused::extract(t) == u;
     }
-    template <typename Tp, typename = policy::has<Tp, eq<meta::eval<Tp>>>>
+    template <typename Tp, typename = policy::has<Tp, eq>>
     bool operator==(meta::identity_t<meta::eval<Tp>> const& u, Tp const& t) {
       return (t == u);
     }
-    template <typename Tp, typename Up, typename = policy::has<Tp, eq<Up>>>
-    bool operator!=(Tp const& t, Up const& u) {
+    template <typename Tp, typename = policy::has<Tp, eq>>
+    bool operator!=(Tp const& t, meta::identity_t<meta::eval<Tp>> const& u) {
       return !(t == u);
     }
-    template <typename Tp, typename Up, typename = policy::has<Tp, eq<Up>>>
-    bool operator!=(Up const& u, Tp const& t) {
+    template <typename Tp, typename = policy::has<Tp, eq>>
+    bool operator!=(meta::identity_t<meta::eval<Tp>> const& u, Tp const& t) {
       return t != u;
     }
-    template <typename Tp, typename Up, typename = policy::has<Tp, lt<Up>>>
-    bool operator<(Tp const& t, Up const& u) {
+    template <typename Tp, typename = policy::has<Tp, lt>>
+    bool operator<(Tp const& t, meta::identity_t<meta::eval<Tp>> const& u) {
       return fused::extract(t) < static_cast<meta::eval<Tp> const&>(u);
     }
-    template <typename Tp, typename Up, typename = policy::has<Tp, lt<Up>>>
-    bool operator<(Up const& u, Tp const& t) {
+    template <typename Tp, typename = policy::has<Tp, lt>>
+    bool operator<(meta::identity_t<meta::eval<Tp>> const& u, Tp const& t) {
       return static_cast<meta::eval<Tp> const&>(u) < fused::extract(t);
     }
-    template <typename Tp, typename Up, typename = policy::has<Tp, lt<Up>>>
-    bool operator>(Tp const& t, Up const& u) {
+    template <typename Tp, typename = policy::has<Tp, lt>>
+    bool operator>(Tp const& t, meta::identity_t<meta::eval<Tp>> const& u) {
       return (u < t);
     }
-    template <typename Tp, typename Up, typename = policy::has<Tp, lt<Up>>>
-    bool operator>(Up const& u, Tp const& t) {
+    template <typename Tp, typename = policy::has<Tp, lt>>
+    bool operator>(meta::identity_t<meta::eval<Tp>> const& u, Tp const& t) {
       return (t < u);
     }
-    template <typename Tp, typename Up, typename = policy::has<Tp, lt<Up>>>
-    bool operator<=(Tp const& t, Up const& u) {
+    template <typename Tp, typename = policy::has<Tp, lt>>
+    bool operator<=(Tp const& t, meta::identity_t<meta::eval<Tp>> const& u) {
       return !(t > u);
     }
-    template <typename Tp, typename Up, typename = policy::has<Tp, lt<Up>>>
-    bool operator<=(Up const& u, Tp const& t) {
+    template <typename Tp, typename = policy::has<Tp, lt>>
+    bool operator<=(meta::identity_t<meta::eval<Tp>> const& u, Tp const& t) {
       return !(u > t);
     }
-    template <typename Tp, typename Up, typename = policy::has<Tp, lt<Up>>>
-    bool operator>=(Tp const& t, Up const& u) {
+    template <typename Tp, typename = policy::has<Tp, lt>>
+    bool operator>=(Tp const& t, meta::identity_t<meta::eval<Tp>> const& u) {
       return !(t < u);
     }
-    template <typename Tp, typename Up, typename = policy::has<Tp, lt<Up>>>
-    bool operator>=(Up const& u, Tp const& t) {
+    template <typename Tp, typename = policy::has<Tp, lt>>
+    bool operator>=(meta::identity_t<meta::eval<Tp>> const& u, Tp const& t) {
       return !(u < t);
     }
-    template <typename Tp, typename Up, typename = policy::has<Tp, add<Up>>>
-    Tp& operator+=(Tp& t, Up const& u) {
+    template <typename Tp, typename = policy::has<Tp, add>>
+    Tp& operator+=(Tp& t, meta::identity_t<meta::eval<Tp>> const& u) {
       return copy_assing(t, fused::extract(t) +
                                 static_cast<meta::eval<Tp> const&>(u));
     }
-    template <typename Tp, typename Up, typename = policy::has<Tp, add<Up>>>
-    Tp operator+(Tp const& t, Up const& u) {
+    template <typename Tp, typename = policy::has<Tp, add>>
+    Tp operator+(Tp const& t, meta::identity_t<meta::eval<Tp>> const& u) {
       Tp ret = t;
       ret += u;
       return ret;
