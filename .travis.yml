@@ -29,6 +29,7 @@ matrix:
   fast_finish: true
 
 before_install:
+  - git log --name-status HEAD^..HEAD
   -
     if [ "$CXX" == "g++" ];
     then
