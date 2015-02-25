@@ -68,6 +68,7 @@ namespace utils {
         return *(impl_.begin_ + n);
       }
       const_reference front() const { return operator[](0); }
+      const_reference back() const { return operator[](size() - 1u); }
       const_iterator begin() const { return &front(); }
       const_iterator end() const { return begin() + size(); }
 
@@ -98,9 +99,19 @@ namespace utils {
     };
 
     template <typename Tp, std::size_t N>
-    struct ring_iterator {
-    private:
+    struct ring_buffer {
       using buff_t = fixed_buffer<Tp, N>;
+      using value_type = typename buff_t::value_type;
+      using pointer = typename buff_t::pointer;
+      using reference = typename buff_t::reference;
+      using const_reference = typename buff_t::const_reference;
+      using const_pointer = typename buff_t::const_pointer;
+      using size_type = typename buff_t::size_type;
+
+      size_type size() const { return 0; }
+
+    private:
+      buff_t buff_;
     };
   }
 }
@@ -147,9 +158,16 @@ void canConstructFixedBufferWithNum() {
   EXPECT_EQ(1u, buff2[1]);
 }
 
+void canCreateRingBuffer() {
+  auto buff = cont::ring_buffer<int, 5>{};
+  EXPECT_EQ(0u, buff.size());
+}
+
 int main() {
   canCreateStackAlloc();
+  canAllocateWithStackAlloc();
   canDefaultConstructFixedBuffer();
   canConstructFixedBufferWithNum();
+  canCreateRingBuffer();
   return 0;
 }
