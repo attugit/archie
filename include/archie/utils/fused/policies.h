@@ -3,6 +3,7 @@
 #include <type_traits>
 #include <iterator>
 #include <archie/utils/meta/requires.h>
+#include <archie/utils/meta/identity.h>
 
 namespace archie {
 namespace utils {
@@ -31,12 +32,12 @@ namespace utils {
       using has = meta::requires_all<std::is_base_of<Ps, Tp>...>;
     }
 
-    template <typename Tp, typename Up, typename = policy::has<Tp, eq<Up>>>
-    bool operator==(Tp const& t, Up const& u) {
-      return fused::extract(t) == static_cast<meta::eval<Tp> const&>(u);
+    template <typename Tp, typename = policy::has<Tp, eq<meta::eval<Tp>>>>
+    bool operator==(Tp const& t, meta::identity_t<meta::eval<Tp>> const& u) {
+      return fused::extract(t) == u;
     }
-    template <typename Tp, typename Up, typename = policy::has<Tp, eq<Up>>>
-    bool operator==(Up const& u, Tp const& t) {
+    template <typename Tp, typename = policy::has<Tp, eq<meta::eval<Tp>>>>
+    bool operator==(meta::identity_t<meta::eval<Tp>> const& u, Tp const& t) {
       return (t == u);
     }
     template <typename Tp, typename Up, typename = policy::has<Tp, eq<Up>>>

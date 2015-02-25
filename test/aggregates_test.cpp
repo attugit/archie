@@ -36,7 +36,7 @@ using Amount = detail::PackedStruct::Amount;
 void canCreate() {
   PackedStruct pack{Id{1u}, Name{"Aqq"}, Value{-20}, Amount{10u}};
   EXPECT_EQ(1u, fused::get<Id>(pack));
-  EXPECT_EQ(std::string{"Aqq"}, fused::get<Name>(pack));
+  EXPECT_EQ("Aqq", fused::get<Name>(pack));
   EXPECT_EQ(-20, fused::get<Value>(pack));
 }
 
