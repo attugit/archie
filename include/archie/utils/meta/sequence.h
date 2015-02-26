@@ -1,5 +1,6 @@
 #pragma once
 
+#include <archie/utils/meta/eval.h>
 #include <archie/utils/meta/number.h>
 #include <archie/utils/meta/boolean.h>
 #include <archie/utils/meta/at.h>

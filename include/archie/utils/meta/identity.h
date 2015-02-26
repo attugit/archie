@@ -1,17 +1,17 @@
 #pragma once
 
-#include <archie/utils/meta/returns.h>
-#include <archie/utils/meta/apply.h>
+#include <archie/utils/meta/eval.h>
 
 namespace archie {
 namespace utils {
   namespace meta {
+    template <typename Tp>
+    struct identity {
+      using type = Tp;
+    };
 
     template <typename Tp>
-    using identity = returns<Tp>;
-
-    template <typename Tp>
-    using identity_t = apply_t<identity, Tp>;
+    using identity_t = eval<identity<Tp>>;
   }
 }
 }

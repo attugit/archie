@@ -1,6 +1,7 @@
 #pragma once
 
 #include <utility>
+#include <archie/utils/meta/eval.h>
 #include <archie/utils/meta/ignore.h>
 #include <archie/utils/meta/returns.h>
 #include <archie/utils/meta/number.h>

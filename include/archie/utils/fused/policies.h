@@ -2,6 +2,8 @@
 
 #include <type_traits>
 #include <iterator>
+
+#include <archie/utils/meta/eval.h>
 #include <archie/utils/meta/requires.h>
 #include <archie/utils/meta/identity.h>
 

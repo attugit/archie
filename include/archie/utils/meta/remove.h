@@ -1,5 +1,6 @@
 #pragma once
 
+#include <archie/utils/meta/eval.h>
 #include <archie/utils/meta/logic.h>
 #include <archie/utils/meta/append.h>
 #include <archie/utils/meta/returns.h>

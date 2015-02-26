@@ -1,7 +1,7 @@
 #pragma once
 
 #include <config.h>
-#include <archie/utils/meta/type_holder.h>
+#include <archie/utils/meta/identity.h>
 #include <archie/utils/meta/variable_template.h>
 #include <utility>
 
@@ -10,7 +10,7 @@ namespace utils {
   namespace fused {
 
     template <typename Tp>
-    struct type_tag : meta::type_holder<Tp> {
+    struct type_tag : meta::identity<Tp> {
       template <typename... Us>
       constexpr decltype(auto) construct(Us&&... us) const {
         return Tp{std::forward<Us>(us)...};

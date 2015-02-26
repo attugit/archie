@@ -1,6 +1,7 @@
 #pragma once
 
 #include <type_traits>
+#include <archie/utils/meta/eval.h>
 #include <archie/utils/meta/sequence.h>
 
 namespace archie {

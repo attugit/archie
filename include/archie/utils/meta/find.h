@@ -1,5 +1,6 @@
 #pragma once
 
+#include <archie/utils/meta/eval.h>
 #include <archie/utils/meta/type_list.h>
 #include <archie/utils/meta/index_of.h>
 #include <archie/utils/meta/apply.h>
