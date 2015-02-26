@@ -5,6 +5,7 @@
 #include <archie/utils/fused/tuple.h>
 #include <archie/utils/fused/apply.h>
 #include <archie/utils/fused/tail.h>
+#include <archie/utils/fused/boolean.h>
 #include <archie/utils/traits/is_fused_tuple.h>
 
 namespace archie {
@@ -14,21 +15,20 @@ namespace utils {
       struct compose_ {
       private:
         template <typename F, typename... Ts>
-        constexpr decltype(auto) do_work_t(meta::true_t, F&& f,
+        constexpr decltype(auto) do_work_t(decltype(True), F&& f,
                                            Ts&&... args) const {
-          return do_work(meta::false_t{}, fused::get<0>(std::forward<F>(f)),
+          return do_work(False, fused::get<0>(std::forward<F>(f)),
                          std::forward<Ts>(args)...);
         }
         template <typename Fs, typename... Ts>
-        constexpr decltype(auto) do_work_t(meta::false_t, Fs&& fs,
+        constexpr decltype(auto) do_work_t(decltype(False), Fs&& fs,
                                            Ts&&... args) const {
           return fused::apply(fused::get<0>(std::forward<Fs>(fs)),
-                              do_work(meta::true_t{},
-                                      fused::tail(std::forward<Fs>(fs)),
+                              do_work(True, fused::tail(std::forward<Fs>(fs)),
                                       std::forward<Ts>(args)...));
         }
         template <typename F, typename... Ts>
-        constexpr decltype(auto) do_work(meta::true_t, F&& f,
+        constexpr decltype(auto) do_work(decltype(True), F&& f,
                                          Ts&&... args) const {
           return do_work_t(
               meta::boolean<(
@@ -36,7 +36,7 @@ namespace utils {
               std::forward<F>(f), std::forward<Ts>(args)...);
         }
         template <typename F, typename... Ts>
-        constexpr decltype(auto) do_work(meta::false_t, F&& f,
+        constexpr decltype(auto) do_work(decltype(False), F&& f,
                                          Ts&&... args) const {
           return fused::apply(std::forward<F>(f), std::forward<Ts>(args)...);
         }
