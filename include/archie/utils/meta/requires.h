@@ -9,7 +9,6 @@
 namespace archie {
 namespace utils {
   namespace meta {
-
     using enabler = ignore;
 
     template <typename Condition>
