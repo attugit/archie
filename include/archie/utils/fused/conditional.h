@@ -10,25 +10,38 @@ namespace archie {
 namespace utils {
   namespace fused {
     namespace detail {
+      template <typename, typename...>
+      struct conditional;
+
+      template <typename F>
+      struct conditional<F> {
+        template <typename... Ts, typename = meta::requires<meta::model_of<
+                                      models::Callable(F, Ts&&...)>>>
+        auto operator()(Ts&&... xs)
+            -> decltype(std::declval<F>()(std::forward<Ts>(xs)...)) {
+          return F{}(std::forward<Ts>(xs)...);
+        }
+      };
+
       template <typename F1, typename F2>
-      struct basic_conditional {
-        template <class... Ts, typename = meta::requires<meta::model_of<
-                                   models::Callable(F1, Ts&&...)>>>
-        auto operator()(Ts&&... xs) -> decltype(F1()(std::forward<Ts>(xs)...)) {
+      struct conditional<F1, F2> {
+        template <typename... Ts, typename = meta::requires<meta::model_of<
+                                      models::Callable(F1, Ts&&...)>>>
+        auto operator()(Ts&&... xs)
+            -> decltype(std::declval<F1>()(std::forward<Ts>(xs)...)) {
           return F1()(std::forward<Ts>(xs)...);
         }
-        template <class... Ts, typename = meta::requires_none<meta::model_of<
-                                   models::Callable(F1, Ts&&...)>>>
-        auto operator()(Ts&&... xs) -> decltype(F2()(std::forward<Ts>(xs)...)) {
+        template <typename... Ts, typename = meta::requires_none<meta::model_of<
+                                      models::Callable(F1, Ts&&...)>>>
+        auto operator()(Ts&&... xs)
+            -> decltype(std::declval<F2>()(std::forward<Ts>(xs)...)) {
           return F2()(std::forward<Ts>(xs)...);
         }
       };
 
-      template <typename F, typename... Fs>
-      struct conditional : basic_conditional<F, conditional<Fs...>> {};
-
-      template <typename F>
-      struct conditional<F> : F {};
+      template <typename F1, typename F2, typename... Fs>
+      struct conditional<F1, F2, Fs...>
+          : conditional<F1, conditional<F2, Fs...>> {};
     }
     template <typename... Fs>
     using conditional = detail::conditional<Fs...>;
