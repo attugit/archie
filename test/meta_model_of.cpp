@@ -1,6 +1,7 @@
 #include <archie/utils/meta/model_of.h>
 #include <archie/utils/meta/requires.h>
 #include <archie/utils/fused/ignore.h>
+#include <archie/utils/fused/conditional.h>
 #include <archie/utils/models.h>
 #include <archie/utils/test.h>
 
@@ -23,24 +24,6 @@ struct foo {
   }
 };
 
-template <class F1, class F2>
-struct basic_conditional {
-  template <typename... Ts>
-  auto operator()(Ts&&... xs) -> decltype(F1()(std::forward<Ts>(xs)...)) {
-    return F1()(std::forward<Ts>(xs)...);
-  }
-  template <typename... Ts>
-  auto operator()(Ts&&... xs) -> decltype(F2()(std::forward<Ts>(xs)...)) {
-    return F2()(std::forward<Ts>(xs)...);
-  }
-};
-
-template <class F, class... Fs>
-struct conditional : basic_conditional<F, conditional<Fs...>> {};
-
-template <class F>
-struct conditional<F> : F {};
-
 struct goo {
   int operator()() { return 3; }
 };
@@ -59,7 +42,7 @@ void canUseModelOf() {
 }
 
 void canUseConditional() {
-  conditional<goo, hoo> cond;
+  fused::conditional<goo, hoo> cond;
   auto x = cond();
   auto y = cond(1);
   ASSERT_EQ(3, x);
@@ -68,5 +51,6 @@ void canUseConditional() {
 
 int main() {
   canUseModelOf();
+  canUseConditional();
   return 0;
 }
