@@ -41,8 +41,20 @@ void canUseModelOf() {
   ASSERT_EQ(1, f.func(h));
 }
 
+void canUseConditionalT() {
+  fused::conditional_t<goo, hoo> cond;
+  auto x = cond();
+  auto y = cond(1);
+  ASSERT_EQ(3, x);
+  ASSERT_EQ(4, y);
+}
+
 void canUseConditional() {
-  fused::conditional<goo, hoo> cond;
+#if defined(HAS_VARIABLE_TEMPLATES)
+  constexpr auto cond = fused::conditional<goo, hoo>;
+#else
+  constexpr auto cond = fused::conditional<goo, hoo>::value;
+#endif
   auto x = cond();
   auto y = cond(1);
   ASSERT_EQ(3, x);
