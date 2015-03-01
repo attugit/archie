@@ -2,10 +2,10 @@
 #include <archie/utils/test.h>
 
 struct goo {
-  int operator()() { return 3; }
+  int operator()() const { return 3; }
 };
 struct hoo {
-  int operator()(int) { return 4; }
+  int operator()(int) const { return 4; }
 };
 
 namespace fused = archie::utils::fused;
@@ -30,8 +30,15 @@ void canUseConditional() {
   ASSERT_EQ(4, y);
 }
 
+void canUseMakeConditional() {
+  constexpr auto f = fused::make_conditional(goo{}, hoo{});
+  ASSERT_EQ(3, f());
+  ASSERT_EQ(4, f(7));
+}
+
 int main() {
   canUseConditionalT();
   canUseConditional();
+  canUseMakeConditional();
   return 0;
 }
