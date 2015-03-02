@@ -71,13 +71,13 @@ namespace utils {
 
 #if defined(HAS_VARIABLE_TEMPLATES)
     template <typename... Fs>
-    constexpr auto conditional = conditional_t<Fs...>{};
+    constexpr auto const conditional = conditional_t<Fs...>{};
 #else
     template <typename... Fs>
     struct conditional : meta::variable_template<conditional_t<Fs...>> {};
 #endif
 
-    constexpr auto make_conditional = detail::make_conditional_{};
+    constexpr auto const make_conditional = detail::make_conditional_{};
   }
 }
 }
