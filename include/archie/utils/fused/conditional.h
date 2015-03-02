@@ -16,28 +16,28 @@ namespace utils {
       struct conditional_;
 
       template <typename F>
-      struct conditional_<F> {
+      struct conditional_<F> : private F {
         template <typename... Ts, typename = meta::requires<meta::model_of<
                                       models::Callable(F, Ts&&...)>>>
         constexpr auto operator()(Ts&&... xs) const
-            -> decltype(std::declval<F>()(std::forward<Ts>(xs)...)) {
-          return std::add_const_t<const F>{}(std::forward<Ts>(xs)...);
+            -> decltype(std::declval<F const&>()(std::forward<Ts>(xs)...)) {
+          return F::operator()(std::forward<Ts>(xs)...);
         }
       };
 
       template <typename F1, typename F2>
-      struct conditional_<F1, F2> {
+      struct conditional_<F1, F2> : private F1, private F2 {
         template <typename... Ts, typename = meta::requires<meta::model_of<
                                       models::Callable(F1, Ts&&...)>>>
         constexpr auto operator()(Ts&&... xs) const
-            -> decltype(std::declval<const F1>()(std::forward<Ts>(xs)...)) {
-          return std::add_const_t<F1>{}(std::forward<Ts>(xs)...);
+            -> decltype(std::declval<F1 const&>()(std::forward<Ts>(xs)...)) {
+          return F1::operator()(std::forward<Ts>(xs)...);
         }
         template <typename... Ts, typename = meta::requires_none<meta::model_of<
                                       models::Callable(F1, Ts&&...)>>>
         constexpr auto operator()(Ts&&... xs) const
-            -> decltype(std::declval<const F2>()(std::forward<Ts>(xs)...)) {
-          return std::add_const_t<F2>{}(std::forward<Ts>(xs)...);
+            -> decltype(std::declval<F2 const&>()(std::forward<Ts>(xs)...)) {
+          return F2::operator()(std::forward<Ts>(xs)...);
         }
       };
 
