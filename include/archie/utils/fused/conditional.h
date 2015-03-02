@@ -17,6 +17,10 @@ namespace utils {
 
       template <typename F>
       struct conditional_<F> : private F {
+        constexpr conditional_() = default;
+        template <typename Up>
+        constexpr explicit conditional_(Up&& u)
+            : F(std::forward<Up>(u)) {}
         template <typename... Ts, typename = meta::requires<meta::model_of<
                                       models::Callable(F, Ts&&...)>>>
         constexpr auto operator()(Ts&&... xs) const
@@ -27,6 +31,10 @@ namespace utils {
 
       template <typename F1, typename F2>
       struct conditional_<F1, F2> : private F1, private F2 {
+        constexpr conditional_() = default;
+        template <typename Up, typename... Vs>
+        constexpr explicit conditional_(Up&& u, Vs&&... vs)
+            : F1(std::forward<Up>(u)), F2(std::forward<Vs>(vs)...) {}
         template <typename... Ts, typename = meta::requires<meta::model_of<
                                       models::Callable(F1, Ts&&...)>>>
         constexpr auto operator()(Ts&&... xs) const
