@@ -39,8 +39,10 @@ void canUseMakeConditional() {
 void canUseConditionalWithLambda() {
   auto const f = [](int i) { return i + 2; };
   auto const g = [](int i, int j) { return 2 * i + j; };
+  auto const h = [](int i, int j, int k) { return i * j + k; };
   using f_t = std::remove_reference_t<decltype(f)>;
   using g_t = std::remove_reference_t<decltype(g)>;
+  using h_t = std::remove_reference_t<decltype(h)>;
   fused::conditional_t<f_t> c{f};
   ASSERT_EQ(3, c(1));
   ASSERT_EQ(5, c(3));
@@ -49,6 +51,13 @@ void canUseConditionalWithLambda() {
   ASSERT_EQ(5, d(3));
   ASSERT_EQ(3, d(1, 1));
   ASSERT_EQ(8, d(3, 2));
+  fused::conditional_t<f_t, g_t, h_t> e{f, g, h};
+  ASSERT_EQ(3, e(1));
+  ASSERT_EQ(5, e(3));
+  ASSERT_EQ(3, e(1, 1));
+  ASSERT_EQ(8, e(3, 2));
+  ASSERT_EQ(3, e(1, 1, 2));
+  ASSERT_EQ(9, e(3, 2, 3));
 }
 
 int main() {

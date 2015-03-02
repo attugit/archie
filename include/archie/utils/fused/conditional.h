@@ -51,7 +51,13 @@ namespace utils {
 
       template <typename F1, typename F2, typename... Fs>
       struct conditional_<F1, F2, Fs...>
-          : conditional_<F1, conditional_<F2, Fs...>> {};
+          : conditional_<F1, conditional_<F2, Fs...>> {
+        using base_t = conditional_<F1, conditional_<F2, Fs...>>;
+        constexpr conditional_() = default;
+        template <typename... Us>
+        constexpr conditional_(Us&&... us)
+            : base_t(std::forward<Us>(us)...) {}
+      };
 
       struct make_conditional_ {
         template <typename... Ts>
