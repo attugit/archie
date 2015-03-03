@@ -26,9 +26,9 @@ namespace utils {
     }
 #if defined(HAS_VARIABLE_TEMPLATES)
     template <typename Tp>
-    constexpr detail::find_<Tp> find{};
+    constexpr auto const find = detail::find_<Tp>{};
     template <template <typename> class F>
-    constexpr detail::find_if_<F> find_if{};
+    constexpr auto const find_if = detail::find_if_<F>{};
 #else
 
     template <typename Tp>

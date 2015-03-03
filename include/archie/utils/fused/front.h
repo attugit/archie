@@ -8,7 +8,7 @@ namespace utils {
     namespace detail {
       struct front_ : fused::placeholder<0> {};
     }
-    constexpr detail::front_ front{};
+    constexpr auto const front = detail::front_{};
   }
 }
 }

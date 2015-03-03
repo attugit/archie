@@ -16,7 +16,7 @@ namespace utils {
         }
       };
     }
-    constexpr detail::for_each_ for_each{};
+    constexpr auto const for_each = detail::for_each_{};
   }
 }
 }
