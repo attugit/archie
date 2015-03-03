@@ -61,8 +61,8 @@ namespace utils {
 
       struct make_conditional_ {
         template <typename... Ts>
-        constexpr auto operator()(Ts const&...) const {
-          return conditional_<Ts...>{};
+        constexpr auto operator()(Ts const&... ts) const {
+          return conditional_<Ts...>{ts...};
         }
       };
     }

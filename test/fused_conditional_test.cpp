@@ -40,24 +40,21 @@ void canUseConditionalWithLambda() {
   auto const f = [](int i) { return i + 2; };
   auto const g = [](int i, int j) { return 2 * i + j; };
   auto const h = [](int i, int j, int k) { return i * j + k; };
-  using f_t = std::remove_reference_t<decltype(f)>;
-  using g_t = std::remove_reference_t<decltype(g)>;
-  using h_t = std::remove_reference_t<decltype(h)>;
-  fused::conditional_t<f_t> c{f};
-  ASSERT_EQ(3, c(1));
-  ASSERT_EQ(5, c(3));
-  fused::conditional_t<f_t, g_t> d{f, g};
-  ASSERT_EQ(3, d(1));
-  ASSERT_EQ(5, d(3));
-  ASSERT_EQ(3, d(1, 1));
-  ASSERT_EQ(8, d(3, 2));
-  fused::conditional_t<f_t, g_t, h_t> e{f, g, h};
-  ASSERT_EQ(3, e(1));
-  ASSERT_EQ(5, e(3));
-  ASSERT_EQ(3, e(1, 1));
-  ASSERT_EQ(8, e(3, 2));
-  ASSERT_EQ(3, e(1, 1, 2));
-  ASSERT_EQ(9, e(3, 2, 3));
+  auto const c = fused::make_conditional(f);
+  auto const d = fused::make_conditional(f, g);
+  auto const e = fused::make_conditional(f, g, h);
+  ASSERT_EQ(f(1), c(1));
+  ASSERT_EQ(f(3), c(3));
+  ASSERT_EQ(f(1), d(1));
+  ASSERT_EQ(f(3), d(3));
+  ASSERT_EQ(g(1, 1), d(1, 1));
+  ASSERT_EQ(g(3, 2), d(3, 2));
+  ASSERT_EQ(f(1), e(1));
+  ASSERT_EQ(f(3), e(3));
+  ASSERT_EQ(g(1, 1), e(1, 1));
+  ASSERT_EQ(g(3, 2), e(3, 2));
+  ASSERT_EQ(h(1, 1, 2), e(1, 1, 2));
+  ASSERT_EQ(h(3, 2, 3), e(3, 2, 3));
 }
 
 int main() {
