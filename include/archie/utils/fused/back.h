@@ -16,7 +16,7 @@ namespace utils {
         }
       };
     }
-    constexpr detail::back_ back{};
+    constexpr auto const back = detail::back_{};
   }
 }
 }

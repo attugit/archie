@@ -5,8 +5,8 @@
 namespace archie {
 namespace utils {
   namespace fused {
-    constexpr meta::boolean<true> True{};
-    constexpr meta::boolean<false> False{};
+    constexpr auto const True = meta::boolean<true>{};
+    constexpr auto const False = meta::boolean<false>{};
   }
 }
 }

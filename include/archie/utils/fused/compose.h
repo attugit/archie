@@ -49,7 +49,8 @@ namespace utils {
         }
       };
     }
-    constexpr detail::compose_ compose{};
+
+    constexpr auto const compose = detail::compose_{};
   }
 }
 }
