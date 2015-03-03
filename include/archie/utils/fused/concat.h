@@ -2,7 +2,7 @@
 
 #include <archie/utils/fused/tuple.h>
 #include <archie/utils/traits/is_fused_tuple.h>
-#include <archie/utils/meta/boolean.h>
+#include <archie/utils/fused/boolean.h>
 
 namespace archie {
 namespace utils {
@@ -11,15 +11,13 @@ namespace utils {
       struct concat_ {
       private:
         template <typename Vp, typename... Ts, typename... Us>
-        constexpr decltype(auto) eval(meta::boolean<false>,
-                                      tuple<Ts...> const& t, Vp&& v,
-                                      Us&&... us) const {
+        constexpr decltype(auto) eval(decltype(False), tuple<Ts...> const& t,
+                                      Vp&& v, Us&&... us) const {
           return make_tuple(get<Ts>(t)..., std::forward<Vp>(v),
                             std::forward<Us>(us)...);
         }
         template <typename... Ts, typename... Us>
-        constexpr decltype(auto) eval(meta::boolean<true>,
-                                      tuple<Ts...> const& t,
+        constexpr decltype(auto) eval(decltype(True), tuple<Ts...> const& t,
                                       tuple<Us...> const& u) const {
           return make_tuple(get<Ts>(t)..., get<Us>(u)...);
         }
@@ -33,8 +31,8 @@ namespace utils {
         template <typename V1, typename V2, typename... Ts, typename... Us>
         constexpr decltype(auto) operator()(tuple<Ts...> const& t, V1&& v1,
                                             V2&& v2, Us&&... us) const {
-          return eval(meta::boolean<false>{}, t, std::forward<V1>(v1),
-                      std::forward<V2>(v2), std::forward<Us>(us)...);
+          return eval(False, t, std::forward<V1>(v1), std::forward<V2>(v2),
+                      std::forward<Us>(us)...);
         }
       };
     }

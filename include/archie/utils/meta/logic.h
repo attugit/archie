@@ -2,7 +2,7 @@
 
 #include <type_traits>
 #include <archie/utils/meta/eval.h>
-#include <archie/utils/meta/boolean.h>
+#include <archie/utils/fused/boolean.h>
 #include <archie/utils/meta/returns.h>
 
 namespace archie {
@@ -12,11 +12,11 @@ namespace utils {
     template <bool... Xs>
     struct conjunction {
     private:
-      static boolean<true> test();
+      static decltype(fused::True) test();
       template <typename... Ts>
-      static boolean<true> test(Ts*...);
+      static decltype(fused::True) test(Ts*...);
       template <typename... Ts>
-      static boolean<false> test(Ts...);
+      static decltype(fused::False) test(Ts...);
 
     public:
       using type = decltype(test(eval<std::conditional<Xs, int*, int>> {}...));
@@ -28,11 +28,11 @@ namespace utils {
     template <bool... Xs>
     struct disjunction {
     private:
-      static boolean<false> test();
+      static decltype(fused::False) test();
       template <typename... Ts>
-      static boolean<false> test(Ts*...);
+      static decltype(fused::False) test(Ts*...);
       template <typename... Ts>
-      static boolean<true> test(Ts...);
+      static decltype(fused::True) test(Ts...);
 
     public:
       using type = decltype(test(eval<std::conditional<Xs, int, int*>> {}...));
