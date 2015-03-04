@@ -32,7 +32,7 @@ namespace utils {
     constexpr detail::make_tag_ make_tag{};
 #if defined(HAS_VARIABLE_TEMPLATES)
     template <typename Tp>
-    constexpr type_tag<Tp> construct{};
+    constexpr auto const construct = type_tag<Tp>{};
 #else
     template <typename Tp>
     struct construct : meta::variable_template<type_tag<Tp>> {};

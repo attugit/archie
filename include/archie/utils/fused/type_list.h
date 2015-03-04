@@ -9,7 +9,7 @@ namespace utils {
   namespace fused {
 #if defined(HAS_VARIABLE_TEMPLATES)
     template <typename... Ts>
-    constexpr meta::type_list<Ts...> type_list{};
+    constexpr auto const type_list = meta::type_list<Ts...>{};
 #else
     template <typename... Ts>
     struct type_list : meta::variable_template<meta::type_list<Ts...>> {};

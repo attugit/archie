@@ -43,8 +43,8 @@ namespace utils {
         }
       };
     }
-    constexpr detail::zip_ zip{};
-    constexpr detail::zip_view_ zip_view{};
+    constexpr auto const zip = detail::zip_{};
+    constexpr auto const zip_view = detail::zip_view_{};
   }
 }
 }

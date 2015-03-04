@@ -18,7 +18,7 @@ namespace utils {
         }
       };
     }
-    constexpr detail::transform_ transform{};
+    constexpr auto const transform = detail::transform_{};
   }
 }
 }

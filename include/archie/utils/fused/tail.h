@@ -30,7 +30,7 @@ namespace utils {
         }
       };
     }
-    constexpr detail::tail_ tail{};
+    constexpr auto const tail = detail::tail_{};
   }
 }
 }

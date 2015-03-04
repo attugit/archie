@@ -39,7 +39,7 @@ namespace utils {
     }
 #if defined(HAS_VARIABLE_TEMPLATES)
     template <std::size_t n>
-    constexpr meta::indexable_t<detail::take, n> take{};
+    constexpr auto const take = meta::indexable_t<detail::take, n>{};
 #else
     template <std::size_t n>
     struct take_v
