@@ -8,10 +8,8 @@ namespace utils {
   namespace meta {
     template <typename Tp>
     struct variable_template {
-      static constexpr auto const value = Tp{};
+      static constexpr auto value = Tp{};
     };
-    template <typename Tp>
-    constexpr Tp const variable_template<Tp>::value;
   }
 }
 }
