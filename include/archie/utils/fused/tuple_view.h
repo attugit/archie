@@ -7,7 +7,6 @@
 namespace archie {
 namespace utils {
   namespace fused {
-
     template <typename Tp>
     struct value_view : std::reference_wrapper<Tp> {
       using base_t = std::reference_wrapper<Tp>;
@@ -22,10 +21,16 @@ namespace utils {
     template <typename... Ts>
     using tuple_view = tuple<value_view<Ts>...>;
 
-    template <typename... Ts>
-    decltype(auto) make_view(Ts&... args) {
-      return tuple<value_view<Ts>...>(args...);
+    namespace detail {
+      struct make_view_ {
+        template <typename... Ts>
+        constexpr decltype(auto) operator()(Ts&... args) const {
+          return tuple_view<Ts...>(args...);
+        }
+      };
     }
+
+    constexpr auto const make_view = detail::make_view_{};
 
     template <std::size_t... idx, typename... Ts>
     decltype(auto) select(tuple<Ts...>& t) {
