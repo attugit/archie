@@ -9,37 +9,44 @@ namespace utils {
     namespace detail {
       struct zip_impl {
       private:
+        template <std::size_t n>
+        struct impl_n {
+          template <typename F, typename... Ts>
+          constexpr decltype(auto) operator()(F&& f, Ts&&... t) const {
+            return std::forward<F>(f)(fused::get<n>(std::forward<Ts>(t))...);
+          }
+        };
         template <std::size_t... ns>
         struct impl {
-          template <typename F, typename Tp, typename Up>
-          constexpr decltype(auto) operator()(F&& f, Tp&& a, Up&& b) const {
+          template <typename F, typename... Ts>
+          constexpr decltype(auto) operator()(F&& f, Ts&&... t) const {
             return fused::make_tuple(
-                std::forward<F>(f)(fused::get<ns>(a), fused::get<ns>(b))...);
+                impl_n<ns>{}(std::forward<F>(f), std::forward<Ts>(t)...)...);
           }
         };
 
       public:
-        template <typename F, typename Tp, typename Up>
-        constexpr decltype(auto) operator()(F&& f, Tp&& a, Up&& b) const {
+        template <typename F, typename Tp, typename... Us>
+        constexpr decltype(auto) operator()(F&& f, Tp&& t, Us&&... us) const {
           return meta::indexable_t<
-              impl, fused::tuple_size<std::remove_reference_t<Tp>>::value>{}(
-              std::forward<F>(f), std::forward<Tp>(a), std::forward<Up>(b));
+              impl,
+              fused::tuple_size<std::remove_reference_t<Tp>>::value>{}(
+              std::forward<F>(f), std::forward<Tp>(t), std::forward<Us>(us)...);
         }
       };
 
       struct zip_ : private zip_impl {
-        template <typename Tp, typename Up>
-        constexpr decltype(auto) operator()(Tp&& a, Up&& b) const {
-          return zip_impl::operator()(fused::make_tuple, std::forward<Tp>(a),
-                                      std::forward<Up>(b));
+        template <typename... Ts>
+        constexpr decltype(auto) operator()(Ts&&... ts) const {
+          return zip_impl::operator()(fused::make_tuple,
+                                      std::forward<Ts>(ts)...);
         }
       };
 
       struct zip_view_ : private zip_impl {
-        template <typename Tp, typename Up>
-        constexpr decltype(auto) operator()(Tp&& a, Up&& b) const {
-          return zip_impl::operator()(fused::tie, std::forward<Tp>(a),
-                                      std::forward<Up>(b));
+        template <typename... Ts>
+        constexpr decltype(auto) operator()(Ts&&... ts) const {
+          return zip_impl::operator()(fused::tie, std::forward<Ts>(ts)...);
         }
       };
     }

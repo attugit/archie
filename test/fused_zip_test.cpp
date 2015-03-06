@@ -14,6 +14,18 @@ void canZipTwoTuples() {
   EXPECT_EQ(fused::make_tuple('3', 6u), fused::get<2>(x));
 }
 
+void canZipManyTuples() {
+  auto a = fused::make_tuple(1, 2u, '3');
+  auto b = fused::make_tuple(4u, '5', 6);
+  auto c = fused::make_tuple('7', 8, 9u);
+  auto x = fused::zip(a, b, c);
+
+  EXPECT_EQ(3u, fused::tuple_size<decltype(x)>::value);
+  EXPECT_EQ(fused::make_tuple(1, 4u, '7'), fused::get<0>(x));
+  EXPECT_EQ(fused::make_tuple(2u, '5', 8), fused::get<1>(x));
+  EXPECT_EQ(fused::make_tuple('3', 6, 9u), fused::get<2>(x));
+}
+
 void canZipViewTwoTuples() {
   auto a = fused::make_tuple(1, 2u, '3');
   auto b = fused::make_tuple('4', 5.0, 6u);
@@ -93,6 +105,7 @@ void canZipViewTwoTuplesWithConsts() {
 
 int main() {
   canZipTwoTuples();
+  canZipManyTuples();
   canZipViewTwoTuples();
   canZipViewTwoConstTuples();
   canZipViewTwoTuplesWithConsts();
