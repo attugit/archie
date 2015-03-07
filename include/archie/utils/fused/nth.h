@@ -10,7 +10,7 @@ namespace utils {
   namespace fused {
 #if defined(HAS_VARIABLE_TEMPLATES)
     template <std::size_t n>
-    constexpr placeholder<n> nth{};
+    constexpr auto const nth = placeholder<n>{};
 #else
     template <std::size_t n>
     struct nth_v : meta::variable_template<placeholder<n>> {};
