@@ -18,20 +18,18 @@ namespace utils {
         template <typename Tp>
         constexpr decltype(auto) operator()(type_tag<Tp>) const {
 #if defined(HAS_VARIABLE_TEMPLATES)
-          constexpr auto const& x = fused::id<std::decay_t<Tp>>;
+          return impl(fused::id<std::decay_t<Tp>>);
 #else
-          constexpr auto const& x = fused::id<std::decay_t<Tp>>::value;
+          return impl(fused::id<std::decay_t<Tp>>::value);
 #endif
-          return impl(x);
         }
         template <typename Tp>
         constexpr decltype(auto) operator()(Tp const&) const {
 #if defined(HAS_VARIABLE_TEMPLATES)
-          constexpr auto const& x = fused::id<Tp>;
+          return impl(fused::id<Tp>);
 #else
-          constexpr auto const& x = fused::id<Tp>::value;
+          return impl(fused::id<Tp>::value);
 #endif
-          return impl(x);
         }
 
       private:
@@ -41,6 +39,10 @@ namespace utils {
         }
       };
     }
+
+    template <std::size_t I, typename Tp>
+    using tuple_element_t = meta::eval<fused::tuple_element<I, Tp>>;
+
     constexpr auto const make_tuple = detail::make_tuple_{};
     constexpr auto const tie = detail::tie_{};
     constexpr auto const tuple_size_n = detail::tuple_size_n_{};

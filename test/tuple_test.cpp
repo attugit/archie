@@ -1,6 +1,7 @@
 #include <type_traits>
 
 #include <archie/utils/fused/tuple.h>
+#include <archie/utils/traits.h>
 namespace test = archie::utils::fused;
 namespace traits = archie::utils::traits;
 namespace meta = archie::utils::meta;

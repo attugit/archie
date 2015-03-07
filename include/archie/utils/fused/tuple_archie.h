@@ -159,9 +159,6 @@ namespace utils {
       using type = meta::at_t<I, Ts...>;
     };
 
-    template <std::size_t I, typename Tp>
-    using tuple_element_t = meta::eval<tuple_element<I, Tp>>;
-
     namespace detail {
 
       template <std::size_t...>
