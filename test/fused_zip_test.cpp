@@ -8,7 +8,7 @@ void canZipTwoTuples() {
   auto b = fused::make_tuple('4', 5.0, 6u);
   auto x = fused::zip(a, b);
 
-  EXPECT_EQ(3u, fused::tuple_size_n(x));
+  EXPECT_EQ(3u, fused::tuple_size(x));
   EXPECT_EQ(fused::make_tuple(1, '4'), fused::get<0>(x));
   EXPECT_EQ(fused::make_tuple(2u, 5.0), fused::get<1>(x));
   EXPECT_EQ(fused::make_tuple('3', 6u), fused::get<2>(x));
@@ -20,7 +20,7 @@ void canZipManyTuples() {
   auto c = fused::make_tuple('7', 8, 9u);
   auto x = fused::zip(a, b, c);
 
-  EXPECT_EQ(3u, fused::tuple_size_n(x));
+  EXPECT_EQ(3u, fused::tuple_size(x));
   EXPECT_EQ(fused::make_tuple(1, 4u, '7'), fused::get<0>(x));
   EXPECT_EQ(fused::make_tuple(2u, '5', 8), fused::get<1>(x));
   EXPECT_EQ(fused::make_tuple('3', 6, 9u), fused::get<2>(x));
@@ -31,7 +31,7 @@ void canZipViewTwoTuples() {
   auto b = fused::make_tuple('4', 5.0, 6u);
   auto x = fused::zip_view(a, b);
 
-  static_assert(fused::tuple_size_n(fused::type_tag<decltype(x)>{}) == 3u, "");
+  static_assert(fused::tuple_size(fused::type_tag<decltype(x)>{}) == 3u, "");
   auto const& x0 = fused::get<0>(x);
   auto const& x1 = fused::get<1>(x);
   auto const& x2 = fused::get<2>(x);
@@ -65,7 +65,7 @@ void canZipViewManyTuples() {
   auto c = fused::make_tuple('7', 8.0, 9u);
   auto x = fused::zip_view(a, b, c);
 
-  static_assert(fused::tuple_size_n(fused::type_tag<decltype(x)>{}) == 3u, "");
+  static_assert(fused::tuple_size(fused::type_tag<decltype(x)>{}) == 3u, "");
   auto const& x0 = fused::get<0>(x);
   auto const& x1 = fused::get<1>(x);
   auto const& x2 = fused::get<2>(x);
@@ -106,7 +106,7 @@ void canZipViewTwoConstTuples() {
   auto const b = fused::make_tuple('4', 5.0, 6u);
   auto x = fused::zip_view(a, b);
 
-  static_assert(fused::tuple_size_n(fused::type_tag<decltype(x)>{}) == 3u, "");
+  static_assert(fused::tuple_size(fused::type_tag<decltype(x)>{}) == 3u, "");
   auto x0 = fused::get<0>(x);
   auto x1 = fused::get<1>(x);
   auto x2 = fused::get<2>(x);
@@ -126,7 +126,7 @@ void canZipViewTwoTuplesWithConsts() {
   auto b = fused::make_tuple('4', d, 6u);
 
   auto x = fused::zip_view(a, b);
-  static_assert(fused::tuple_size_n(fused::type_tag<decltype(x)>{}) == 3u, "");
+  static_assert(fused::tuple_size(fused::type_tag<decltype(x)>{}) == 3u, "");
   auto x0 = fused::get<0>(x);
   auto x1 = fused::get<1>(x);
   auto x2 = fused::get<2>(x);

@@ -28,7 +28,7 @@ namespace utils {
       public:
         template <typename F, typename Tp, typename... Us>
         constexpr decltype(auto) operator()(F&& f, Tp&& t, Us&&... us) const {
-          return meta::indexable_t<impl, tuple_size_n(type_tag<Tp>{})>{}(
+          return meta::indexable_t<impl, tuple_size(type_tag<Tp>{})>{}(
               std::forward<F>(f), std::forward<Tp>(t), std::forward<Us>(us)...);
         }
       };

@@ -14,14 +14,14 @@ void canDefaultConstruct() {
     static_assert(std::is_default_constructible<
                       test::tuple<unsigned, double, char>>::value,
                   "");
-    static_assert(test::tuple_size_n(
+    static_assert(test::tuple_size(
                       test::type_tag<test::tuple<unsigned, double, char>>{}) ==
                       3u,
                   "");
     auto t = test::tuple<unsigned, double, char>();
-    static_assert(test::tuple_size_n(test::type_tag<decltype(t)>{}) == 3u, "");
+    static_assert(test::tuple_size(test::type_tag<decltype(t)>{}) == 3u, "");
 
-    EXPECT_EQ(3u, test::tuple_size_n(t));
+    EXPECT_EQ(3u, test::tuple_size(t));
     EXPECT_LE(sizeof(unsigned) + sizeof(double) + sizeof(char), sizeof(t));
   }
   {
@@ -31,7 +31,7 @@ void canDefaultConstruct() {
         "");
     auto t = test::tuple<unsigned, std::unique_ptr<double>, char>();
 
-    EXPECT_EQ(3u, test::tuple_size_n(t));
+    EXPECT_EQ(3u, test::tuple_size(t));
     EXPECT_LE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char),
               sizeof(t));
   }
@@ -45,7 +45,7 @@ void canDefaultConstructTupleWithUncopyableElement() {
 
   auto t = test::tuple<unsigned, std::unique_ptr<double>, char>{};
 
-  EXPECT_EQ(3u, test::tuple_size_n(t));
+  EXPECT_EQ(3u, test::tuple_size(t));
   EXPECT_LE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char),
             sizeof(t));
 }
@@ -57,7 +57,7 @@ void canConstruct() {
                   "");
     auto t = test::tuple<unsigned, double, char>(1u, 2.0, '3');
 
-    EXPECT_EQ(3u, test::tuple_size_n(t));
+    EXPECT_EQ(3u, test::tuple_size(t));
     EXPECT_LE(sizeof(unsigned) + sizeof(double) + sizeof(char), sizeof(t));
   }
   {
@@ -67,7 +67,7 @@ void canConstruct() {
     auto t = test::tuple<unsigned, std::unique_ptr<double>, char>(
         1u, std::unique_ptr<double>{}, '3');
 
-    EXPECT_EQ(3u, test::tuple_size_n(t));
+    EXPECT_EQ(3u, test::tuple_size(t));
     EXPECT_LE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char),
               sizeof(t));
   }
@@ -80,7 +80,7 @@ void canConstructTupleWithUncopyableElement() {
   auto t = test::tuple<unsigned, std::unique_ptr<double>, char>(
       1u, std::make_unique<double>(2.0), '3');
 
-  EXPECT_EQ(3u, test::tuple_size_n(t));
+  EXPECT_EQ(3u, test::tuple_size(t));
   EXPECT_LE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char),
             sizeof(t));
 }
@@ -92,7 +92,7 @@ void makeTupleTakesElementsByValue() {
 
   auto t = test::make_tuple(a, b, c);
 
-  ASSERT_EQ(3u, test::tuple_size_n(t));
+  ASSERT_EQ(3u, test::tuple_size(t));
 
   EXPECT_EQ(a, test::get<0>(t));
   EXPECT_EQ(b, test::get<1>(t));
@@ -107,7 +107,7 @@ void makeTupleTakesElementsByRValue() {
   auto ptr = std::make_unique<char>('3');
   auto t = test::make_tuple(1u, std::make_unique<double>(2.0), std::move(ptr));
 
-  ASSERT_EQ(3u, test::tuple_size_n(t));
+  ASSERT_EQ(3u, test::tuple_size(t));
 
   EXPECT_EQ(2.0, *test::get<1>(t));
   EXPECT_EQ('3', *test::get<2>(t));
@@ -116,7 +116,7 @@ void makeTupleTakesElementsByRValue() {
 void canUseGetByIdToRead() {
   auto t = test::make_tuple(1u, 2.0, '3');
 
-  ASSERT_EQ(3u, test::tuple_size_n(t));
+  ASSERT_EQ(3u, test::tuple_size(t));
 
   EXPECT_EQ(1u, test::get<0>(t));
   EXPECT_EQ(2.0, test::get<1>(t));
@@ -131,7 +131,7 @@ void canUseGetByIdToRead() {
 void canUseGetByIdToWrite() {
   auto t = test::make_tuple(1u, std::make_unique<double>(2.0), '3');
 
-  ASSERT_EQ(3u, test::tuple_size_n(t));
+  ASSERT_EQ(3u, test::tuple_size(t));
 
   auto const& x = test::get<0>(t);
   ASSERT_EQ(1u, x);
@@ -159,9 +159,9 @@ void canCopyConstruct() {
   auto copy = orig;
   auto copy2(orig);
 
-  ASSERT_EQ(3u, test::tuple_size_n(orig));
-  ASSERT_EQ(3u, test::tuple_size_n(copy));
-  ASSERT_EQ(3u, test::tuple_size_n(copy2));
+  ASSERT_EQ(3u, test::tuple_size(orig));
+  ASSERT_EQ(3u, test::tuple_size(copy));
+  ASSERT_EQ(3u, test::tuple_size(copy2));
 
   EXPECT_EQ(test::get<0>(orig), test::get<0>(copy));
   EXPECT_EQ(test::get<1>(orig), test::get<1>(copy));
@@ -190,8 +190,8 @@ void canCopyAssign() {
   auto orig = test::tuple<unsigned, double, char>(1u, 2.0, '3');
   auto copy = test::tuple<unsigned, double, char>(2u, 4.0, '6');
 
-  ASSERT_EQ(3u, test::tuple_size_n(orig));
-  ASSERT_EQ(3u, test::tuple_size_n(copy));
+  ASSERT_EQ(3u, test::tuple_size(orig));
+  ASSERT_EQ(3u, test::tuple_size(copy));
 
   ASSERT_EQ(2u, test::get<0>(copy));
   ASSERT_EQ(4.0, test::get<1>(copy));
@@ -199,7 +199,7 @@ void canCopyAssign() {
 
   copy = orig;
 
-  ASSERT_EQ(3u, test::tuple_size_n(copy));
+  ASSERT_EQ(3u, test::tuple_size(copy));
 
   EXPECT_EQ(1u, test::get<0>(copy));
   EXPECT_EQ(2.0, test::get<1>(copy));
@@ -216,7 +216,7 @@ void canMoveConstruct() {
       "");
   auto orig = test::tuple<unsigned, double, char>(1u, 2.0, '3');
 
-  ASSERT_EQ(3u, test::tuple_size_n(orig));
+  ASSERT_EQ(3u, test::tuple_size(orig));
 
   ASSERT_EQ(1u, test::get<0>(orig));
   ASSERT_EQ(2.0, test::get<1>(orig));
@@ -224,7 +224,7 @@ void canMoveConstruct() {
 
   auto copy = test::tuple<unsigned, double, char>{std::move(orig)};
 
-  ASSERT_EQ(3u, test::tuple_size_n(copy));
+  ASSERT_EQ(3u, test::tuple_size(copy));
 
   EXPECT_EQ(1u, test::get<0>(copy));
   EXPECT_EQ(2.0, test::get<1>(copy));
@@ -241,8 +241,8 @@ void canMoveAssign() {
   auto orig = test::tuple<unsigned, double, char>(1u, 2.0, '3');
   auto copy = test::tuple<unsigned, double, char>(2u, 4.0, '6');
 
-  ASSERT_EQ(3u, test::tuple_size_n(orig));
-  ASSERT_EQ(3u, test::tuple_size_n(copy));
+  ASSERT_EQ(3u, test::tuple_size(orig));
+  ASSERT_EQ(3u, test::tuple_size(copy));
 
   ASSERT_EQ(2u, test::get<0>(copy));
   ASSERT_EQ(4.0, test::get<1>(copy));
@@ -250,7 +250,7 @@ void canMoveAssign() {
 
   copy = std::move(orig);
 
-  ASSERT_EQ(3u, test::tuple_size_n(copy));
+  ASSERT_EQ(3u, test::tuple_size(copy));
 
   EXPECT_EQ(1u, test::get<0>(copy));
   EXPECT_EQ(2.0, test::get<1>(copy));
@@ -478,11 +478,11 @@ void canMakeTupleOfTuples() {
   auto t4 = test::tuple<test::tuple<int, unsigned>, test::tuple<char>>{
       t0, test::make_tuple('3')};
 
-  ASSERT_EQ(2u, test::tuple_size_n(t0));
-  ASSERT_EQ(1u, test::tuple_size_n(t1));
-  ASSERT_EQ(1u, test::tuple_size_n(t2));
-  ASSERT_EQ(2u, test::tuple_size_n(t3));
-  ASSERT_EQ(2u, test::tuple_size_n(t4));
+  ASSERT_EQ(2u, test::tuple_size(t0));
+  ASSERT_EQ(1u, test::tuple_size(t1));
+  ASSERT_EQ(1u, test::tuple_size(t2));
+  ASSERT_EQ(2u, test::tuple_size(t3));
+  ASSERT_EQ(2u, test::tuple_size(t4));
 }
 
 int main() {

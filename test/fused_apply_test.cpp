@@ -31,7 +31,7 @@ void canUseApplyWithRValueTuple() {
 
 void canUseApplyWithMakeTuple() {
   auto x = fused::apply(fused::make_tuple, 1, 2u, '3');
-  static_assert(fused::tuple_size_n(fused::type_tag<decltype(x)>{}) == 3u, "");
+  static_assert(fused::tuple_size(fused::type_tag<decltype(x)>{}) == 3u, "");
 }
 
 void canUseApplyResultOfAnotherApply() {

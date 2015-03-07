@@ -14,7 +14,7 @@ namespace archie {
 namespace utils {
   namespace fused {
     namespace detail {
-      struct tuple_size_n_ {
+      struct tuple_size_ {
         template <typename Tp>
         constexpr decltype(auto) operator()(type_tag<Tp>) const {
 #if defined(HAS_VARIABLE_TEMPLATES)
@@ -45,7 +45,7 @@ namespace utils {
 
     constexpr auto const make_tuple = detail::make_tuple_{};
     constexpr auto const tie = detail::tie_{};
-    constexpr auto const tuple_size_n = detail::tuple_size_n_{};
+    constexpr auto const tuple_size = detail::tuple_size_{};
   }
 }
 }
