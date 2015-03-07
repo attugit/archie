@@ -1,5 +1,9 @@
 #pragma once
 
+#include <config.h>
+#if defined(USE_ARCHIE_TUPLE)
+#include <utility>
+#include <array>
 #include <archie/utils/meta/eval.h>
 #include <archie/utils/meta/index_of.h>
 #include <archie/utils/meta/requires.h>
@@ -9,9 +13,6 @@
 #include <archie/utils/traits.h>
 #include <archie/utils/fused/nth.h>
 #include <archie/utils/fused/mover.h>
-#include <config.h>
-#include <utility>
-#include <array>
 
 namespace archie {
 namespace utils {
@@ -128,8 +129,8 @@ namespace utils {
       };
     }
 
-    constexpr detail::make_tuple_ make_tuple{};
-    constexpr detail::tie_ tie{};
+    constexpr auto const make_tuple = detail::make_tuple_{};
+    constexpr auto const tie = detail::tie_{};
 
     template <std::size_t N, typename Tp>
     decltype(auto) get(Tp&& tp) {
@@ -266,3 +267,4 @@ namespace utils {
   }
 }
 }
+#endif
