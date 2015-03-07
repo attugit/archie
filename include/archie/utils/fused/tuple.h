@@ -9,6 +9,7 @@
 
 #include <utility>
 #include <archie/utils/fused/type_tag.h>
+#include <archie/utils/meta/variable_template.h>
 
 namespace archie {
 namespace utils {
@@ -38,6 +39,22 @@ namespace utils {
           return sizeof...(Ts);
         }
       };
+
+      template <std::size_t n>
+      struct at_ {
+        template <typename Up>
+        constexpr decltype(auto) operator()(Up&& up) const {
+          return fused::get<n>(std::forward<Up>(up));
+        }
+      };
+
+      template <typename Tp>
+      struct extract_ {
+        template <typename Up>
+        constexpr decltype(auto) operator()(Up&& up) const {
+          return fused::get<Tp>(std::forward<Up>(up));
+        }
+      };
     }
 
     template <std::size_t I, typename Tp>
@@ -46,6 +63,20 @@ namespace utils {
     constexpr auto const make_tuple = detail::make_tuple_{};
     constexpr auto const tie = detail::tie_{};
     constexpr auto const tuple_size = detail::tuple_size_{};
+
+#if defined(HAS_VARIABLE_TEMPLATES)
+    template <std::size_t n>
+    constexpr auto const at = detail::at_<n>{};
+
+    template <typename Tp>
+    constexpr auto const extract = detail::extract_<Tp>{};
+#else
+    template <std::size_t n>
+    struct at : meta::variable_template<detail::at_<n>> {};
+
+    template <typename Tp>
+    struct extract : meta::variable_template<detail::extract_<Tp>> {};
+#endif
   }
 }
 }
