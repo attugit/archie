@@ -129,9 +129,6 @@ namespace utils {
       };
     }
 
-    constexpr auto const make_tuple = detail::make_tuple_{};
-    constexpr auto const tie = detail::tie_{};
-
     template <std::size_t N, typename Tp>
     decltype(auto) get(Tp&& tp) {
 #if defined(HAS_VARIABLE_TEMPLATES)

@@ -24,8 +24,6 @@ namespace utils {
         }
       };
     }
-    constexpr auto const make_tuple = detail::make_tuple_{};
-    constexpr auto const tie = detail::tie_{};
   }
 }
 }
