@@ -8,7 +8,6 @@ namespace utils {
   namespace fused {
     using std::tuple;
     using std::get;
-    using std::tuple_size;
     using std::tuple_element;
     namespace detail {
       struct make_tuple_ {

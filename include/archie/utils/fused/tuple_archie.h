@@ -249,15 +249,6 @@ namespace utils {
       return meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::less(
           *this, rhs);
     }
-
-    template <typename Tp>
-    struct tuple_size;
-
-    template <typename... Ts>
-    struct tuple_size<tuple<Ts...>> : meta::number<sizeof...(Ts)> {};
-
-    template <typename... Ts>
-    struct tuple_size<const tuple<Ts...>> : tuple_size<tuple<Ts...>> {};
   }
 }
 }

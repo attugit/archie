@@ -26,10 +26,8 @@ namespace utils {
                   typename = meta::requires<
                       traits::is_fused_tuple<std::remove_reference_t<F>>>>
         constexpr decltype(auto) operator()(F&& f, Ts&&... ts) const {
-          return impl(
-              meta::boolean<(
-                  fused::tuple_size<std::remove_reference_t<F>>::value == 1)>{},
-              std::forward<F>(f), std::forward<Ts>(ts)...);
+          return impl(meta::boolean<(tuple_size_n(type_tag<F>{}) == 1)>{},
+                      std::forward<F>(f), std::forward<Ts>(ts)...);
         }
 
       private:
