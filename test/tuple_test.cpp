@@ -147,6 +147,34 @@ void canUseGetByIdToWrite() {
   EXPECT_EQ(3.0, *fused::get<1>(t));
 }
 
+void canUseAt() {
+#if defined(HAS_VARIABLE_TEMPLATES)
+  constexpr auto const& at_0 = fused::at<0>;
+  constexpr auto const& at_1 = fused::at<1>;
+  constexpr auto const& at_2 = fused::at<2>;
+#else
+  constexpr auto const& at_0 = fused::at<0>::value;
+  constexpr auto const& at_1 = fused::at<1>::value;
+  constexpr auto const& at_2 = fused::at<2>::value;
+#endif
+
+  auto t = fused::make_tuple(1u, 2.0, '3');
+
+  ASSERT_EQ(3u, fused::tuple_size(t));
+
+  EXPECT_EQ(1u, at_0(t));
+  EXPECT_EQ(2.0, at_1(t));
+  EXPECT_EQ('3', at_2(t));
+
+  auto const& x = at_0(t);
+  EXPECT_EQ(1u, x);
+  auto const& y = at_0(t);
+  EXPECT_EQ(&x, &y);
+
+  at_0(t) = 4u;
+  EXPECT_EQ(4u, x);
+}
+
 void canCopyConstruct() {
   static_assert(
       !std::is_copy_constructible<
@@ -521,6 +549,7 @@ int main() {
   makeTupleTakesElementsByRValue();
   canUseGetByIdToRead();
   canUseGetByIdToWrite();
+  canUseAt();
   canCopyConstruct();
   canCopyAssign();
   canMoveConstruct();
