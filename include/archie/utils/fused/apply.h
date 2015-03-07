@@ -23,8 +23,7 @@ namespace utils {
                   typename = meta::requires<
                       traits::is_fused_tuple<std::remove_reference_t<Tp>>>>
         constexpr decltype(auto) operator()(F&& f, Tp&& tp) const {
-          return meta::indexable_t<
-              impl_, fused::tuple_size<std::remove_reference_t<Tp>>::value>{}(
+          return meta::indexable_t<impl_, fused::tuple_size_n(tp)>{}(
               std::forward<F>(f), std::forward<Tp>(tp));
         }
 
