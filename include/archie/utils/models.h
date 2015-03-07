@@ -1,3 +1,3 @@
 #pragma once
 
-#include <archie/utils/models/callable.h>
+#include <archie/utils/traits/callable.h>

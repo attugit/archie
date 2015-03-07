@@ -2,7 +2,7 @@
 
 #include <type_traits>
 #include <config.h>
-#include <archie/utils/meta/has_member.h>
+#include <archie/utils/traits/has_member.h>
 
 namespace archie {
 namespace utils {
@@ -12,8 +12,8 @@ namespace utils {
       using inspect_constructible = decltype(Tp{std::declval<Us>()...});
     }
     template <typename Tp, typename... Us>
-    using is_constructible = meta::has_member<detail::inspect_constructible,
-                                              meta::type_list<Tp, Us...>>;
+    using is_constructible =
+        has_member<detail::inspect_constructible, meta::type_list<Tp, Us...>>;
 
     template <typename Tp>
     using is_default_constructible = is_constructible<Tp>;

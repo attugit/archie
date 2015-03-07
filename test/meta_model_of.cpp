@@ -1,11 +1,11 @@
-#include <archie/utils/meta/model_of.h>
+#include <archie/utils/traits/model_of.h>
 #include <archie/utils/meta/requires.h>
 #include <archie/utils/fused/ignore.h>
 #include <archie/utils/models.h>
 #include <archie/utils/test.h>
 
 using archie::utils::meta::requires;
-using archie::utils::meta::model_of;
+using archie::utils::traits::model_of;
 using archie::utils::models::Callable;
 
 namespace fused = archie::utils::fused;

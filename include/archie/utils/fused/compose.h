@@ -15,7 +15,7 @@ namespace utils {
       struct compose_args_ {
         template <typename F, typename... Ts,
                   typename = meta::requires<
-                      meta::model_of<models::Callable(F, Ts&&...)>>>
+                      traits::model_of<models::Callable(F, Ts&&...)>>>
         constexpr decltype(auto) operator()(F&& f, Ts&&... ts) const {
           return fused::apply(std::forward<F>(f), std::forward<Ts>(ts)...);
         }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <archie/utils/traits/has_member.h>
+
 namespace archie {
 namespace utils {
   namespace traits {
@@ -15,7 +17,7 @@ namespace utils {
     }
     template <typename Tp, typename Up>
     using is_convertible =
-        meta::has_member<detail::inspect_convertible, meta::type_list<Tp, Up>>;
+        has_member<detail::inspect_convertible, meta::type_list<Tp, Up>>;
   }
 }
 }

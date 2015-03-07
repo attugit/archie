@@ -1,6 +1,6 @@
 #pragma once
 
-#include <archie/utils/meta/has_member.h>
+#include <archie/utils/traits/has_member.h>
 #include <archie/utils/fused/tuple.h>
 
 namespace archie {
@@ -22,7 +22,7 @@ namespace utils {
     }
     template <typename Tp>
     using is_fused_tuple =
-        meta::has_member<detail::inspect_fused_tuple, meta::type_list<Tp>>;
+        has_member<detail::inspect_fused_tuple, meta::type_list<Tp>>;
   }
 }
 }
