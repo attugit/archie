@@ -14,11 +14,11 @@ void canDefaultConstruct() {
                       test::tuple<unsigned, double, char>>::value,
                   "");
     static_assert(test::tuple_size_n(
-                      meta::identity<test::tuple<unsigned, double, char>>{}) ==
+                      test::type_tag<test::tuple<unsigned, double, char>>{}) ==
                       3u,
                   "");
     auto t = test::tuple<unsigned, double, char>();
-    static_assert(test::tuple_size_n(meta::identity<decltype(t)>{}) == 3u, "");
+    static_assert(test::tuple_size_n(test::type_tag<decltype(t)>{}) == 3u, "");
 
     EXPECT_EQ(3u, test::tuple_size_n(t));
     EXPECT_LE(sizeof(unsigned) + sizeof(double) + sizeof(char), sizeof(t));

@@ -8,7 +8,7 @@
 #endif
 
 #include <utility>
-#include <archie/utils/meta/identity.h>
+#include <archie/utils/fused/type_tag.h>
 
 namespace archie {
 namespace utils {
@@ -16,18 +16,27 @@ namespace utils {
     namespace detail {
       struct tuple_size_n_ {
         template <typename Tp>
-        constexpr decltype(auto) operator()(meta::identity<Tp>) const {
-          return impl(meta::identity<std::decay_t<Tp>>{});
+        constexpr decltype(auto) operator()(type_tag<Tp>) const {
+#if defined(HAS_VARIABLE_TEMPLATES)
+          constexpr auto const& x = fused::id<std::decay_t<Tp>>;
+#else
+          constexpr auto const& x = fused::id<std::decay_t<Tp>>::value;
+#endif
+          return impl(x);
         }
         template <typename Tp>
         constexpr decltype(auto) operator()(Tp const&) const {
-          return impl(meta::identity<Tp>{});
+#if defined(HAS_VARIABLE_TEMPLATES)
+          constexpr auto const& x = fused::id<Tp>;
+#else
+          constexpr auto const& x = fused::id<Tp>::value;
+#endif
+          return impl(x);
         }
 
       private:
         template <typename... Ts>
-        constexpr decltype(auto) impl(
-            meta::identity<fused::tuple<Ts...>>) const {
+        constexpr decltype(auto) impl(type_tag<fused::tuple<Ts...>>) const {
           return sizeof...(Ts);
         }
       };

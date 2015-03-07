@@ -30,9 +30,9 @@ void canExpandTags() {
 
 void canUseVariableTemplate() {
 #if defined(HAS_VARIABLE_TEMPLATES)
-  auto x = fused::construct<int>(1);
+  auto x = fused::id<int>(1);
 #else
-  auto x = fused::construct<int>::value(1);
+  auto x = fused::id<int>::value(1);
 #endif
   static_assert(std::is_same<decltype(x), int>::value, "");
   EXPECT_EQ(1, x);

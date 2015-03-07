@@ -249,10 +249,9 @@ void canComposeFusedNth() {
 
 void canComposeFusedConstruct() {
 #if !defined(HAS_VARIABLE_TEMPLATES)
-  constexpr auto& ctor =
-      fused::construct<fused::tuple<int, unsigned, char>>::value;
+  constexpr auto& ctor = fused::id<fused::tuple<int, unsigned, char>>::value;
 #else
-  constexpr auto& ctor = fused::construct<fused::tuple<int, unsigned, char>>;
+  constexpr auto& ctor = fused::id<fused::tuple<int, unsigned, char>>;
 #endif
   auto x = fused::apply(ctor, 1, 2u, '3');
   static_assert(fused::tuple_size<decltype(x)>::value == 3u, "");
