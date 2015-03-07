@@ -9,7 +9,7 @@
 
 namespace archie {
 namespace utils {
-  namespace fused {
+  namespace types {
 
     template <typename, typename, typename...>
     struct strong_typedef;
@@ -33,7 +33,7 @@ namespace utils {
 
     template <typename Tp, typename = policy::has<Tp, eq>>
     bool operator==(Tp const& t, meta::identity_t<meta::eval<Tp>> const& u) {
-      return fused::extract(t) == u;
+      return types::extract(t) == u;
     }
     template <typename Tp, typename = policy::has<Tp, eq>>
     bool operator==(meta::identity_t<meta::eval<Tp>> const& u, Tp const& t) {
@@ -49,11 +49,11 @@ namespace utils {
     }
     template <typename Tp, typename = policy::has<Tp, lt>>
     bool operator<(Tp const& t, meta::identity_t<meta::eval<Tp>> const& u) {
-      return fused::extract(t) < static_cast<meta::eval<Tp> const&>(u);
+      return types::extract(t) < static_cast<meta::eval<Tp> const&>(u);
     }
     template <typename Tp, typename = policy::has<Tp, lt>>
     bool operator<(meta::identity_t<meta::eval<Tp>> const& u, Tp const& t) {
-      return static_cast<meta::eval<Tp> const&>(u) < fused::extract(t);
+      return static_cast<meta::eval<Tp> const&>(u) < types::extract(t);
     }
     template <typename Tp, typename = policy::has<Tp, lt>>
     bool operator>(Tp const& t, meta::identity_t<meta::eval<Tp>> const& u) {
@@ -81,7 +81,7 @@ namespace utils {
     }
     template <typename Tp, typename = policy::has<Tp, add>>
     Tp& operator+=(Tp& t, meta::identity_t<meta::eval<Tp>> const& u) {
-      return copy_assing(t, fused::extract(t) +
+      return copy_assing(t, types::extract(t) +
                                 static_cast<meta::eval<Tp> const&>(u));
     }
     template <typename Tp, typename = policy::has<Tp, add>>

@@ -5,7 +5,7 @@
 
 namespace archie {
 namespace utils {
-  namespace fused {
+  namespace types {
     template <typename X, typename Tp, typename... policies>
     struct strong_typedef : meta::returns<Tp>, private policies... {
       using self_t = strong_typedef<X, Tp, policies...>;

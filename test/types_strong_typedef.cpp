@@ -1,21 +1,21 @@
-#include <archie/utils/fused/strong_typedef.h>
-#include <archie/utils/fused/policies.h>
+#include <archie/utils/types/strong_typedef.h>
+#include <archie/utils/types/policies.h>
 #include <archie/utils/traits.h>
 #include <type_traits>
 
-namespace fused = archie::utils::fused;
+namespace types = archie::utils::types;
 namespace traits = archie::utils::traits;
-namespace policy = fused::policy;
+namespace policy = types::policy;
 
-struct int1_t : fused::strong_typedef<int1_t, int, policy::eq> {
+struct int1_t : types::strong_typedef<int1_t, int, policy::eq> {
   using self_t::self_t;
 };
 
-struct int2_t : fused::strong_typedef<int2_t, int, policy::lt> {
+struct int2_t : types::strong_typedef<int2_t, int, policy::lt> {
   using self_t::self_t;
 };
 
-struct int3_t : fused::strong_typedef<int3_t, int, policy::add> {
+struct int3_t : types::strong_typedef<int3_t, int, policy::add> {
   using self_t::self_t;
 };
 
@@ -27,18 +27,18 @@ struct udt {
   int value = 0;
 };
 
-struct udt_t : fused::strong_typedef<udt_t, udt> {
+struct udt_t : types::strong_typedef<udt_t, udt> {
   using self_t::self_t;
 };
 
 #include <memory>
-struct uptr_t : fused::strong_typedef<uptr_t, std::unique_ptr<int>> {
+struct uptr_t : types::strong_typedef<uptr_t, std::unique_ptr<int>> {
   using self_t::self_t;
 };
 
 #include <vector>
 struct uvec_t
-    : fused::strong_typedef<uvec_t, std::vector<unsigned>, policy::iterate> {
+    : types::strong_typedef<uvec_t, std::vector<unsigned>, policy::iterate> {
   using self_t::self_t;
 };
 
@@ -46,18 +46,18 @@ struct uvec_t
 
 void canConstructStrongTypedef() {
   int1_t i{4};
-  ASSERT_EQ(4, fused::extract(i));
+  ASSERT_EQ(4, types::extract(i));
   udt_t u1;
-  ASSERT_EQ(0, fused::extract(u1).f());
+  ASSERT_EQ(0, types::extract(u1).f());
   udt_t u2{3};
-  ASSERT_EQ(3, fused::extract(u2).f());
+  ASSERT_EQ(3, types::extract(u2).f());
 }
 
 void canExtractValue() {
   int1_t i{4};
-  ASSERT_EQ(4, fused::extract(i));
-  fused::extract(i) = 7;
-  ASSERT_EQ(7, fused::extract(i));
+  ASSERT_EQ(4, types::extract(i));
+  types::extract(i) = 7;
+  ASSERT_EQ(7, types::extract(i));
 }
 
 void canAccessUnderlyingTypeMembers() {
@@ -117,16 +117,16 @@ void canUseLtPolicy() {
 
 void canUseAddPolicy() {
   int3_t i{1};
-  ASSERT_EQ(1, fused::extract(i));
+  ASSERT_EQ(1, types::extract(i));
   i += 1;
-  ASSERT_EQ(2, fused::extract(i));
+  ASSERT_EQ(2, types::extract(i));
   i += 2;
-  ASSERT_EQ(4, fused::extract(i));
+  ASSERT_EQ(4, types::extract(i));
 
   auto x = i + 3;
   static_assert(std::is_same<decltype(i), decltype(x)>::value, "");
-  ASSERT_EQ(4, fused::extract(i));
-  ASSERT_EQ(7, fused::extract(x));
+  ASSERT_EQ(4, types::extract(i));
+  ASSERT_EQ(7, types::extract(x));
 }
 
 void canUseIteratePolicy() {

@@ -1,24 +1,25 @@
-#include <archie/utils/fused/strong_typedef.h>
-#include <archie/utils/fused/policies.h>
+#include <archie/utils/types/strong_typedef.h>
+#include <archie/utils/types/policies.h>
 #include <archie/utils/fused/tuple.h>
 #include <archie/utils/fused/tuple_view.h>
 #include <string>
 #include <archie/utils/test.h>
 
+namespace types = archie::utils::types;
 namespace fused = archie::utils::fused;
 
 namespace detail {
 struct PackedStruct {
-  struct Id : fused::strong_typedef<Id, unsigned, fused::policy::eq> {
+  struct Id : types::strong_typedef<Id, unsigned, types::policy::eq> {
     using self_t::self_t;
   };
-  struct Name : fused::strong_typedef<Name, std::string, fused::policy::eq> {
+  struct Name : types::strong_typedef<Name, std::string, types::policy::eq> {
     using self_t::self_t;
   };
-  struct Value : fused::strong_typedef<Value, int, fused::policy::eq> {
+  struct Value : types::strong_typedef<Value, int, types::policy::eq> {
     using self_t::self_t;
   };
-  struct Amount : fused::strong_typedef<Amount, unsigned> {
+  struct Amount : types::strong_typedef<Amount, unsigned> {
     using self_t::self_t;
   };
 
