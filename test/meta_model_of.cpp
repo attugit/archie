@@ -7,6 +7,7 @@
 using archie::utils::meta::requires;
 using archie::utils::traits::model_of;
 using archie::utils::models::Callable;
+using archie::utils::models::Iterable;
 
 namespace fused = archie::utils::fused;
 
@@ -37,6 +38,20 @@ void canUseModelOf() {
   ASSERT_EQ(0, f.func(g));
   ASSERT_EQ(1, f.func(h));
 }
+
+template <typename Tp>
+struct is_iterable : model_of<Iterable(Tp)> {};
+
+struct no_iter {};
+struct iter {
+  no_iter* begin();
+  no_iter* end();
+};
+
+#include <vector>
+static_assert(!is_iterable<no_iter>::value, "");
+static_assert(is_iterable<std::vector<no_iter>>::value, "");
+static_assert(is_iterable<iter>::value, "");
 
 int main() {
   canUseModelOf();
