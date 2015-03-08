@@ -30,8 +30,8 @@ namespace utils {
 
     template <typename Tp, typename... Ts>
     constexpr decltype(auto) index_of(type_list<Ts...>) noexcept {
-      using type = decltype(detail::element<0, sizeof...(Ts), Ts...>{}.match(
-          detail::no_convert<Tp>{}));
+      using type =
+          decltype(detail::element<0, sizeof...(Ts), Ts...>{}.match(detail::no_convert<Tp>{}));
       return type{};
     }
 

@@ -22,8 +22,7 @@ namespace utils {
         struct impl {
           template <typename Up>
           constexpr decltype(auto) operator()(Up&& u) const {
-            return fused::tuple<meta::at_t<ids, Ts...>...>(
-                get<ids>(std::forward<Up>(u))...);
+            return fused::tuple<meta::at_t<ids, Ts...>...>(get<ids>(std::forward<Up>(u))...);
           }
         };
         template <typename Tp>
@@ -42,8 +41,7 @@ namespace utils {
     constexpr auto const take = meta::indexable_t<detail::take, n>{};
 #else
     template <std::size_t n>
-    struct take_v
-        : meta::variable_template<meta::indexable_t<detail::take, n>> {};
+    struct take_v : meta::variable_template<meta::indexable_t<detail::take, n>> {};
 
     template <std::size_t n, typename... Ts>
     decltype(auto) take(tuple<Ts...> const& t) {

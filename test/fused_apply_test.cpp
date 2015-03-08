@@ -36,21 +36,18 @@ void canUseApplyWithMakeTuple() {
 
 void canUseApplyResultOfAnotherApply() {
   {
-    auto x =
-        fused::apply(fused::front, fused::apply(fused::make_tuple, 1, 2u, '3'));
+    auto x = fused::apply(fused::front, fused::apply(fused::make_tuple, 1, 2u, '3'));
     EXPECT_EQ(1, x);
   }
   auto a = 1;
   auto b = 2u;
   auto c = '3';
   {
-    auto x =
-        fused::apply(fused::front, fused::apply(fused::make_tuple, a, b, c));
+    auto x = fused::apply(fused::front, fused::apply(fused::make_tuple, a, b, c));
     EXPECT_EQ(a, x);
   }
   {
-    auto const& x =
-        fused::apply(fused::front, fused::apply(fused::tie, a, b, c));
+    auto const& x = fused::apply(fused::front, fused::apply(fused::tie, a, b, c));
     EXPECT_EQ(&a, &x);
   }
 }

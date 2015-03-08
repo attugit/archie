@@ -27,8 +27,7 @@ namespace utils {
           return std::forward<decltype(func)>(func)(args...);
         };
       }
-      using storage_type =
-          decltype(make_storage(std::declval<move_t<Ts>>()...));
+      using storage_type = decltype(make_storage(std::declval<move_t<Ts>>()...));
 
       mutable storage_type storage;
 
@@ -51,7 +50,8 @@ namespace utils {
       template <typename... Us>
       constexpr explicit tuple(Us&&... args)
           : tuple(meta::if_t<meta::all<traits::is_convertible<Us, Ts>...>,
-                             implicit_ctor_tag, explicit_ctor_tag>{},
+                             implicit_ctor_tag,
+                             explicit_ctor_tag>{},
                   std::forward<Us>(args)...) {}
 
       constexpr tuple() : tuple(Ts {}...) {}
@@ -97,8 +97,7 @@ namespace utils {
     template <typename F>
     decltype(auto) tuple<Ts...>::apply(F&& f) & {
       auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
-        return std::forward<decltype(f)>(f)(
-            static_cast<std::add_lvalue_reference_t<Ts>>(xs)...);
+        return std::forward<decltype(f)>(f)(static_cast<std::add_lvalue_reference_t<Ts>>(xs)...);
       };
       return storage(exec);
     }
@@ -116,8 +115,7 @@ namespace utils {
       struct make_tuple_ {
         template <typename... Ts>
         constexpr decltype(auto) operator()(Ts&&... args) const {
-          return fused::tuple<std::remove_reference_t<Ts>...>(
-              std::forward<Ts>(args)...);
+          return fused::tuple<std::remove_reference_t<Ts>...>(std::forward<Ts>(args)...);
         }
       };
 
@@ -180,15 +178,13 @@ namespace utils {
       struct tuple_recursion<head, tail...> {
         template <typename... Ts, typename... Us>
         static bool equal(tuple<Ts...> const& lhs, tuple<Us...> const& rhs) {
-          return get<head>(lhs) == get<head>(rhs)
-                     ? tuple_recursion<tail...>::equal(lhs, rhs)
-                     : false;
+          return get<head>(lhs) == get<head>(rhs) ? tuple_recursion<tail...>::equal(lhs, rhs)
+                                                  : false;
         }
         template <typename... Ts>
         static bool less(tuple<Ts...> const& lhs, tuple<Ts...> const& rhs) {
-          return get<head>(lhs) == get<head>(rhs)
-                     ? tuple_recursion<tail...>::less(lhs, rhs)
-                     : get<head>(lhs) < get<head>(rhs);
+          return get<head>(lhs) == get<head>(rhs) ? tuple_recursion<tail...>::less(lhs, rhs)
+                                                  : get<head>(lhs) < get<head>(rhs);
         }
       };
 
@@ -200,8 +196,7 @@ namespace utils {
         }
         template <typename... Ts, typename... Us>
         static void move_assign(tuple<Ts...>& lhs, tuple<Us...>&& rhs) {
-          meta::ignore{(fused::get<idx>(lhs) = std::move(fused::get<idx>(rhs)),
-                        false)...};
+          meta::ignore{(fused::get<idx>(lhs) = std::move(fused::get<idx>(rhs)), false)...};
         }
         template <typename... Ts, typename... Us>
         static bool equal(tuple<Ts...> const& lhs, tuple<Us...> const& rhs) {
@@ -216,15 +211,14 @@ namespace utils {
 
     template <typename... Ts>
     tuple<Ts...>& tuple<Ts...>::operator=(tuple<Ts...> const& orig) {
-      meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::copy_assign(
-          *this, orig);
+      meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::copy_assign(*this, orig);
       return *this;
     }
 
     template <typename... Ts>
     tuple<Ts...>& tuple<Ts...>::operator=(tuple<Ts...>&& orig) {
-      meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::move_assign(
-          *this, std::move(orig));
+      meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::move_assign(*this,
+                                                                             std::move(orig));
       return *this;
     }
 
@@ -232,22 +226,19 @@ namespace utils {
     template <typename... Us>
     tuple<Ts...>& tuple<Ts...>::operator=(tuple<Us...> const& orig) {
       static_assert(sizeof...(Ts) <= sizeof...(Us), "");
-      meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::copy_assign(
-          *this, orig);
+      meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::copy_assign(*this, orig);
       return *this;
     }
 
     template <typename... Ts>
     template <typename... Us>
     bool tuple<Ts...>::operator==(tuple<Us...> const& rhs) const {
-      return meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::equal(
-          *this, rhs);
+      return meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::equal(*this, rhs);
     }
 
     template <typename... Ts>
     bool tuple<Ts...>::operator<(tuple<Ts...> const& rhs) const {
-      return meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::less(
-          *this, rhs);
+      return meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::less(*this, rhs);
     }
   }
 }

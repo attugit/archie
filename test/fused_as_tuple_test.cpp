@@ -10,22 +10,16 @@ using _0 = utype<0>;
 using _1 = utype<1>;
 
 namespace {
-static_assert(std::is_same<fused::as_tuple<_0>::type, fused::tuple<_0>>::value,
-              "");
-static_assert(
-    std::is_same<fused::as_tuple<_0, _1>::type, fused::tuple<_0, _1>>::value,
-    "");
-static_assert(std::is_same<fused::as_tuple<_0, _1, _0>::type,
-                           fused::tuple<_0, _1, _0>>::value,
-              "");
+static_assert(std::is_same<fused::as_tuple<_0>::type, fused::tuple<_0>>::value, "");
+static_assert(std::is_same<fused::as_tuple<_0, _1>::type, fused::tuple<_0, _1>>::value, "");
+static_assert(std::is_same<fused::as_tuple<_0, _1, _0>::type, fused::tuple<_0, _1, _0>>::value, "");
 }
 namespace {
-static_assert(std::is_same<fused::as_tuple<meta::type_list<_0>>::type,
-                           fused::tuple<_0>>::value,
+static_assert(std::is_same<fused::as_tuple<meta::type_list<_0>>::type, fused::tuple<_0>>::value,
               "");
-static_assert(std::is_same<fused::as_tuple<meta::type_list<_0, _1>>::type,
-                           fused::tuple<_0, _1>>::value,
-              "");
+static_assert(
+    std::is_same<fused::as_tuple<meta::type_list<_0, _1>>::type, fused::tuple<_0, _1>>::value,
+    "");
 static_assert(std::is_same<fused::as_tuple<meta::type_list<_0, _1, _0>>::type,
                            fused::tuple<_0, _1, _0>>::value,
               "");
@@ -42,8 +36,7 @@ void canUseAsTuple() {
 }
 
 void canUseAsTupleWithTypeList() {
-  auto x =
-      fused::as_tuple<meta::type_list<int, double, char>>::make(1, 2.0, '3');
+  auto x = fused::as_tuple<meta::type_list<int, double, char>>::make(1, 2.0, '3');
 
   EXPECT_EQ(1, fused::get<0>(x));
   EXPECT_EQ(2.0, fused::get<1>(x));

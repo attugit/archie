@@ -24,9 +24,8 @@ namespace utils {
       public:
         template <typename Tp>
         constexpr decltype(auto) operator()(Tp&& t) const {
-          return fused::apply(
-              meta::listed_t<impl, meta::as_type_list_t<std::decay_t<Tp>>>{},
-              std::forward<Tp>(t));
+          return fused::apply(meta::listed_t<impl, meta::as_type_list_t<std::decay_t<Tp>>>{},
+                              std::forward<Tp>(t));
         }
       };
     }

@@ -11,13 +11,9 @@ namespace meta = archie::utils::meta;
 
 void canDefaultConstruct() {
   {
-    static_assert(std::is_default_constructible<
-                      fused::tuple<unsigned, double, char>>::value,
+    static_assert(std::is_default_constructible<fused::tuple<unsigned, double, char>>::value, "");
+    static_assert(fused::tuple_size(fused::type_tag<fused::tuple<unsigned, double, char>>{}) == 3u,
                   "");
-    static_assert(
-        fused::tuple_size(
-            fused::type_tag<fused::tuple<unsigned, double, char>>{}) == 3u,
-        "");
     auto t = fused::tuple<unsigned, double, char>();
     static_assert(fused::tuple_size(fused::type_tag<decltype(t)>{}) == 3u, "");
 
@@ -26,63 +22,61 @@ void canDefaultConstruct() {
   }
   {
     static_assert(
-        std::is_default_constructible<
-            fused::tuple<unsigned, std::unique_ptr<double>, char>>::value,
+        std::is_default_constructible<fused::tuple<unsigned, std::unique_ptr<double>, char>>::value,
         "");
     auto t = fused::tuple<unsigned, std::unique_ptr<double>, char>();
 
     EXPECT_EQ(3u, fused::tuple_size(t));
-    EXPECT_LE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char),
-              sizeof(t));
+    EXPECT_LE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char), sizeof(t));
   }
 }
 
 void canDefaultConstructTupleWithUncopyableElement() {
   static_assert(
-      std::is_default_constructible<
-          fused::tuple<unsigned, std::unique_ptr<double>, char>>::value,
+      std::is_default_constructible<fused::tuple<unsigned, std::unique_ptr<double>, char>>::value,
       "");
 
   auto t = fused::tuple<unsigned, std::unique_ptr<double>, char>{};
 
   EXPECT_EQ(3u, fused::tuple_size(t));
-  EXPECT_LE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char),
-            sizeof(t));
+  EXPECT_LE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char), sizeof(t));
 }
 
 void canConstruct() {
   {
-    static_assert(std::is_constructible<fused::tuple<unsigned, double, char>,
-                                        unsigned, double, char>::value,
-                  "");
+    static_assert(
+        std::is_constructible<fused::tuple<unsigned, double, char>, unsigned, double, char>::value,
+        "");
     auto t = fused::tuple<unsigned, double, char>(1u, 2.0, '3');
 
     EXPECT_EQ(3u, fused::tuple_size(t));
     EXPECT_LE(sizeof(unsigned) + sizeof(double) + sizeof(char), sizeof(t));
   }
   {
-    static_assert(std::is_constructible <
-                      fused::tuple<unsigned, std::unique_ptr<double>, char>,
-                  unsigned, std::unique_ptr<double>&&, char > ::value, "");
-    auto t = fused::tuple<unsigned, std::unique_ptr<double>, char>(
-        1u, std::unique_ptr<double>{}, '3');
+    static_assert(std::is_constructible < fused::tuple<unsigned, std::unique_ptr<double>, char>,
+                  unsigned,
+                  std::unique_ptr<double>&&,
+                  char > ::value,
+                  "");
+    auto t =
+        fused::tuple<unsigned, std::unique_ptr<double>, char>(1u, std::unique_ptr<double>{}, '3');
 
     EXPECT_EQ(3u, fused::tuple_size(t));
-    EXPECT_LE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char),
-              sizeof(t));
+    EXPECT_LE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char), sizeof(t));
   }
 }
 
 void canConstructTupleWithUncopyableElement() {
-  static_assert(std::is_constructible <
-                    fused::tuple<unsigned, std::unique_ptr<double>, char>,
-                unsigned, std::unique_ptr<double>&&, char > ::value, "");
-  auto t = fused::tuple<unsigned, std::unique_ptr<double>, char>(
-      1u, std::make_unique<double>(2.0), '3');
+  static_assert(std::is_constructible < fused::tuple<unsigned, std::unique_ptr<double>, char>,
+                unsigned,
+                std::unique_ptr<double>&&,
+                char > ::value,
+                "");
+  auto t =
+      fused::tuple<unsigned, std::unique_ptr<double>, char>(1u, std::make_unique<double>(2.0), '3');
 
   EXPECT_EQ(3u, fused::tuple_size(t));
-  EXPECT_LE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char),
-            sizeof(t));
+  EXPECT_LE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char), sizeof(t));
 }
 
 void makeTupleTakesElementsByValue() {
@@ -177,12 +171,9 @@ void canUseAt() {
 
 void canCopyConstruct() {
   static_assert(
-      !std::is_copy_constructible<
-          fused::tuple<unsigned, std::unique_ptr<double>, char>>::value,
+      !std::is_copy_constructible<fused::tuple<unsigned, std::unique_ptr<double>, char>>::value,
       "");
-  static_assert(
-      std::is_copy_constructible<fused::tuple<unsigned, double, char>>::value,
-      "");
+  static_assert(std::is_copy_constructible<fused::tuple<unsigned, double, char>>::value, "");
   auto orig = fused::tuple<unsigned, double, char>(1u, 2.0, '3');
   auto copy = orig;
   auto copy2(orig);
@@ -210,11 +201,8 @@ void canCopyConstruct() {
 
 void canCopyAssign() {
   static_assert(
-      std::is_copy_assignable<
-          fused::tuple<unsigned, std::unique_ptr<double>, char>>::value,
-      "");
-  static_assert(
-      std::is_copy_assignable<fused::tuple<unsigned, double, char>>::value, "");
+      std::is_copy_assignable<fused::tuple<unsigned, std::unique_ptr<double>, char>>::value, "");
+  static_assert(std::is_copy_assignable<fused::tuple<unsigned, double, char>>::value, "");
   auto orig = fused::tuple<unsigned, double, char>(1u, 2.0, '3');
   auto copy = fused::tuple<unsigned, double, char>(2u, 4.0, '6');
 
@@ -236,12 +224,8 @@ void canCopyAssign() {
 
 void canMoveConstruct() {
   static_assert(
-      std::is_move_constructible<
-          fused::tuple<unsigned, std::unique_ptr<double>, char>>::value,
-      "");
-  static_assert(
-      std::is_move_constructible<fused::tuple<unsigned, double, char>>::value,
-      "");
+      std::is_move_constructible<fused::tuple<unsigned, std::unique_ptr<double>, char>>::value, "");
+  static_assert(std::is_move_constructible<fused::tuple<unsigned, double, char>>::value, "");
   auto orig = fused::tuple<unsigned, double, char>(1u, 2.0, '3');
 
   ASSERT_EQ(3u, fused::tuple_size(orig));
@@ -261,11 +245,8 @@ void canMoveConstruct() {
 
 void canMoveAssign() {
   static_assert(
-      std::is_move_assignable<
-          fused::tuple<unsigned, std::unique_ptr<double>, char>>::value,
-      "");
-  static_assert(
-      std::is_move_assignable<fused::tuple<unsigned, double, char>>::value, "");
+      std::is_move_assignable<fused::tuple<unsigned, std::unique_ptr<double>, char>>::value, "");
+  static_assert(std::is_move_assignable<fused::tuple<unsigned, double, char>>::value, "");
   auto orig = fused::tuple<unsigned, double, char>(1u, 2.0, '3');
   auto copy = fused::tuple<unsigned, double, char>(2u, 4.0, '6');
 
@@ -364,9 +345,9 @@ void canStoreValuesInTuple() {
 }
 
 void canStoreReferencesInTuple() {
-  static_assert(std::is_constructible<fused::tuple<unsigned, double, char&>,
-                                      unsigned, double, char&>::value,
-                "");
+  static_assert(
+      std::is_constructible<fused::tuple<unsigned, double, char&>, unsigned, double, char&>::value,
+      "");
   unsigned a = 1u;
   double b = 2.0;
   char c = '3';
@@ -428,10 +409,9 @@ void canTieConstElements() {
   auto c = '3';
 
   auto t = fused::tie(a, b, c);
-  static_assert(
-      std::is_same<std::remove_reference_t<decltype(t)>,
-                   fused::tuple<unsigned&, double const&, char&>>::value,
-      "");
+  static_assert(std::is_same<std::remove_reference_t<decltype(t)>,
+                             fused::tuple<unsigned&, double const&, char&>>::value,
+                "");
   ASSERT_EQ(1u, fused::get<0>(t));
   ASSERT_EQ(2.0, fused::get<1>(t));
   ASSERT_EQ('3', fused::get<2>(t));
@@ -455,11 +435,8 @@ void canTieWithIgnore() {
 
 void canUseTupleElement() {
   using t = fused::tuple<unsigned, std::unique_ptr<double>, char&>;
-  static_assert(std::is_same<fused::tuple_element_t<0, t>, unsigned>::value,
-                "");
-  static_assert(std::is_same<fused::tuple_element_t<1, t>,
-                             std::unique_ptr<double>>::value,
-                "");
+  static_assert(std::is_same<fused::tuple_element_t<0, t>, unsigned>::value, "");
+  static_assert(std::is_same<fused::tuple_element_t<1, t>, std::unique_ptr<double>>::value, "");
   static_assert(std::is_same<fused::tuple_element_t<2, t>, char&>::value, "");
 }
 
@@ -530,8 +507,8 @@ void canMakeTupleOfTuples() {
   auto t1 = fused::tuple<fused::tuple<int, unsigned>>{};
   auto t2 = fused::tuple<fused::tuple<int, unsigned>>{t0};
   auto t3 = fused::tuple<fused::tuple<int, unsigned>, char>{t0, '3'};
-  auto t4 = fused::tuple<fused::tuple<int, unsigned>, fused::tuple<char>>{
-      t0, fused::make_tuple('3')};
+  auto t4 =
+      fused::tuple<fused::tuple<int, unsigned>, fused::tuple<char>>{t0, fused::make_tuple('3')};
 
   ASSERT_EQ(2u, fused::tuple_size(t0));
   ASSERT_EQ(1u, fused::tuple_size(t1));

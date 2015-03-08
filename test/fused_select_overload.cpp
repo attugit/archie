@@ -39,13 +39,11 @@ struct overloaded {
   }
 
 private:
-  template <typename Tp,
-            typename = typename std::enable_if<std::is_signed<Tp>::value>::type>
+  template <typename Tp, typename = typename std::enable_if<std::is_signed<Tp>::value>::type>
   constexpr decltype(auto) impl(fused::choice<1>, Tp&&) const {
     return meta::number<sizeof(Tp)>{};
   }
-  template <typename Tp, typename = typename std::enable_if<
-                             std::is_fundamental<Tp>::value>::type>
+  template <typename Tp, typename = typename std::enable_if<std::is_fundamental<Tp>::value>::type>
   constexpr decltype(auto) impl(fused::choice<2>, Tp&& t) const {
     return std::forward<Tp>(t);
   }

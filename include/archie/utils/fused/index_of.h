@@ -24,8 +24,7 @@ namespace utils {
 #endif
         }
         template <typename... Us>
-        constexpr decltype(auto) operator()(meta::type_list<Us...> x) const
-            noexcept {
+        constexpr decltype(auto) operator()(meta::type_list<Us...> x) const noexcept {
           return meta::index_of<Tp>(x);
         }
       };

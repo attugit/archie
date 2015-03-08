@@ -14,8 +14,7 @@ namespace utils {
     struct append;
 
     template <typename... Ts, typename... Us>
-    struct append<type_list<Ts...>, type_list<Us...>>
-        : returns<type_list<Ts..., Us...>> {};
+    struct append<type_list<Ts...>, type_list<Us...>> : returns<type_list<Ts..., Us...>> {};
 
     template <typename Tp, typename... Us>
     struct append<type_list<Us...>, Tp> : returns<type_list<Us..., Tp>> {};
@@ -28,8 +27,7 @@ namespace utils {
 
     template <template <typename> class F, typename Tp, typename... Us>
     struct append_if<F, type_list<Us...>, Tp>
-        : returns<if_t<eval<F<Tp>>, append_t<type_list<Us...>, Tp>,
-                       type_list<Us...>>> {};
+        : returns<if_t<eval<F<Tp>>, append_t<type_list<Us...>, Tp>, type_list<Us...>>> {};
 
     template <template <typename> class F, typename... Ts>
     using append_if_t = eval<append_if<F, Ts...>>;
@@ -39,8 +37,8 @@ namespace utils {
 
     template <template <typename> class F, typename Tp, typename... Us>
     struct append_if_not<F, type_list<Us...>, Tp>
-        : returns<if_t<opposite_t<eval<F<Tp>>>, append_t<type_list<Us...>, Tp>,
-                       type_list<Us...>>> {};
+        : returns<if_t<opposite_t<eval<F<Tp>>>, append_t<type_list<Us...>, Tp>, type_list<Us...>>> {
+    };
 
     template <template <typename> class F, typename... Ts>
     using append_if_not_t = eval<append_if_not<F, Ts...>>;

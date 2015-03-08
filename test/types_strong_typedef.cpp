@@ -37,8 +37,7 @@ struct uptr_t : types::strong_typedef<uptr_t, std::unique_ptr<int>> {
 };
 
 #include <vector>
-struct uvec_t
-    : types::strong_typedef<uvec_t, std::vector<unsigned>, policy::iterate> {
+struct uvec_t : types::strong_typedef<uvec_t, std::vector<unsigned>, policy::iterate> {
   using self_t::self_t;
 };
 

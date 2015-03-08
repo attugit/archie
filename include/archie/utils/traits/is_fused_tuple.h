@@ -17,12 +17,10 @@ namespace utils {
       };
 
       template <typename Tp>
-      using inspect_fused_tuple =
-          decltype(inspect_fused_tuple_helper::use(std::declval<Tp>()));
+      using inspect_fused_tuple = decltype(inspect_fused_tuple_helper::use(std::declval<Tp>()));
     }
     template <typename Tp>
-    using is_fused_tuple =
-        has_member<detail::inspect_fused_tuple, meta::type_list<Tp>>;
+    using is_fused_tuple = has_member<detail::inspect_fused_tuple, meta::type_list<Tp>>;
   }
 }
 }

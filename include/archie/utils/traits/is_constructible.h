@@ -12,8 +12,7 @@ namespace utils {
       using inspect_constructible = decltype(Tp{std::declval<Us>()...});
     }
     template <typename Tp, typename... Us>
-    using is_constructible =
-        has_member<detail::inspect_constructible, meta::type_list<Tp, Us...>>;
+    using is_constructible = has_member<detail::inspect_constructible, meta::type_list<Tp, Us...>>;
 
     template <typename Tp>
     using is_default_constructible = is_constructible<Tp>;
@@ -23,12 +22,10 @@ namespace utils {
 
 #if defined(USE_LIBSTDCPP)
     template <typename Tp>
-    using is_trivially_copy_constructible =
-        std::has_trivial_copy_constructor<Tp>;
+    using is_trivially_copy_constructible = std::has_trivial_copy_constructor<Tp>;
 #elif defined(USE_LIBCPP)
     template <typename Tp>
-    using is_trivially_copy_constructible =
-        std::is_trivially_copy_constructible<Tp>;
+    using is_trivially_copy_constructible = std::is_trivially_copy_constructible<Tp>;
 #endif
   }
 }

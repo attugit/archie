@@ -8,8 +8,7 @@ namespace archie {
 namespace utils {
   namespace traits {
 
-    template <template <typename...> class, typename,
-              typename = meta::well_formed_t<>>
+    template <template <typename...> class, typename, typename = meta::well_formed_t<>>
     struct has_member : decltype(fused::False) {};
 
     template <template <typename...> class F, typename... Ts>

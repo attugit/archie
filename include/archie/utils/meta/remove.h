@@ -16,8 +16,8 @@ namespace utils {
 
     template <template <typename> class F, typename Tp, typename... Us>
     struct remove_if<F, type_list<Tp, Us...>>
-        : returns<append_t<eval<remove_if<F, type_list<Tp>>>,
-                           eval<remove_if<F, type_list<Us...>>>>> {};
+        : returns<
+              append_t<eval<remove_if<F, type_list<Tp>>>, eval<remove_if<F, type_list<Us...>>>>> {};
 
     template <template <typename> class F, typename Tp>
     using remove_if_t = eval<remove_if<F, Tp>>;

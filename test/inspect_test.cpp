@@ -15,8 +15,7 @@ using pair_t = std::pair<int, int>;
 using ptr_t = std::unique_ptr<int>;
 
 template <typename Tp>
-using InspectReserve = decltype(
-    std::declval<Tp>().reserve(std::declval<typename Tp::size_type>()));
+using InspectReserve = decltype(std::declval<Tp>().reserve(std::declval<typename Tp::size_type>()));
 
 template <typename Tp>
 using InspectDataProperty = decltype(std::declval<Tp>().data);
@@ -31,8 +30,7 @@ template <typename Tp>
 using has_value_type = traits::has_member<ValueType, meta::type_list<Tp>>;
 
 template <typename Tp>
-using has_data_property =
-    traits::has_member<InspectDataProperty, meta::type_list<Tp>>;
+using has_data_property = traits::has_member<InspectDataProperty, meta::type_list<Tp>>;
 
 struct TypeWithPublicData {
   int data;

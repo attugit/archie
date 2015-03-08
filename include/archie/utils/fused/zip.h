@@ -20,8 +20,7 @@ namespace utils {
         struct impl {
           template <typename F, typename... Ts>
           constexpr decltype(auto) operator()(F&& f, Ts&&... t) const {
-            return fused::make_tuple(
-                impl_n<ns>{}(std::forward<F>(f), std::forward<Ts>(t)...)...);
+            return fused::make_tuple(impl_n<ns>{}(std::forward<F>(f), std::forward<Ts>(t)...)...);
           }
         };
 
@@ -36,8 +35,7 @@ namespace utils {
       struct zip_ : private zip_impl {
         template <typename... Ts>
         constexpr decltype(auto) operator()(Ts&&... ts) const {
-          return zip_impl::operator()(fused::make_tuple,
-                                      std::forward<Ts>(ts)...);
+          return zip_impl::operator()(fused::make_tuple, std::forward<Ts>(ts)...);
         }
       };
 

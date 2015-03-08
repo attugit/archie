@@ -15,15 +15,14 @@ namespace utils {
 
   template <size_type Size>
   struct GetStorage {
-    static_assert(Size <= ByteSize::value * sizeof(std::uint64_t),
-                  "Max possible size exceeded");
+    static_assert(Size <= ByteSize::value * sizeof(std::uint64_t), "Max possible size exceeded");
     using type = typename std::conditional<
         (Size > ByteSize::value * sizeof(std::uint8_t)),
         typename std::conditional<
             (Size > ByteSize::value * sizeof(std::uint16_t)),
-            typename std::conditional<
-                (Size > ByteSize::value * sizeof(std::uint32_t)), std::uint64_t,
-                std::uint32_t>::type,
+            typename std::conditional<(Size > ByteSize::value * sizeof(std::uint32_t)),
+                                      std::uint64_t,
+                                      std::uint32_t>::type,
             std::uint16_t>::type,
         std::uint8_t>::type;
   };
@@ -56,8 +55,7 @@ namespace utils {
     struct PackImpl<I, O, S> : PackElement<I, O, S> {};
 
     template <size_type I, size_type O, size_type S, size_type... T>
-    struct PackImpl<I, O, S, T...> : PackElement<I, O, S>,
-                                     PackImpl<I + 1u, O + S, T...> {};
+    struct PackImpl<I, O, S, T...> : PackElement<I, O, S>, PackImpl<I + 1u, O + S, T...> {};
 
     template <size_type...>
     struct Sum;
@@ -118,9 +116,7 @@ namespace utils {
       using field_type = Storage<size_of<I>(Pack{})>;
       field_type value() const noexcept { return (data & mask()) >> offset(); }
 
-      bool test(IndexType at) const noexcept {
-        return (value() & (1u << at)) != 0u;
-      }
+      bool test(IndexType at) const noexcept { return (value() & (1u << at)) != 0u; }
 
       Field& set(IndexType at) noexcept {
         data = data | ((1u << (at + offset())) & mask());
@@ -130,9 +126,7 @@ namespace utils {
         data = data & (~((1u << (at + offset())) & mask()));
         return *this;
       }
-      Field& set(IndexType at, Boolean value) noexcept {
-        return value ? set(at) : reset(at);
-      }
+      Field& set(IndexType at, Boolean value) noexcept { return value ? set(at) : reset(at); }
       bool all() const noexcept { return (data & mask()) == mask(); }
       bool any() const noexcept { return (data & mask()) != 0u; }
       bool none() const noexcept { return !any(); }

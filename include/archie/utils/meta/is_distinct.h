@@ -15,7 +15,8 @@ namespace utils {
       template <typename Tp, typename... Ts>
       struct is_distinct<Tp, Ts...>
           : eval<std::conditional<sequence<Ts...>::template contains<Tp>::value,
-                                  std::false_type, is_distinct<Ts...>>> {};
+                                  std::false_type,
+                                  is_distinct<Ts...>>> {};
 
       template <typename Tp>
       struct is_distinct<Tp> : std::true_type {};

@@ -5,12 +5,8 @@ namespace meta = archie::utils::meta;
 
 static_assert(decltype(meta::type_index<int>(int{}))::value == 0, "");
 static_assert(decltype(meta::type_index<int>(char{}, int{}))::value == 1, "");
-static_assert(decltype(meta::type_index<int>(char{}, int{}, float{}))::value ==
-                  1,
-              "");
-static_assert(decltype(meta::type_index<int>(char{}, int{}, float{},
-                                             int{}))::value == 1,
-              "");
+static_assert(decltype(meta::type_index<int>(char{}, int{}, float{}))::value == 1, "");
+static_assert(decltype(meta::type_index<int>(char{}, int{}, float{}, int{}))::value == 1, "");
 
 void canGetIndexOfSimpleType() {
   char a = '1';
@@ -28,8 +24,7 @@ void canUseIndexOfWithTypeLists() {
 
 #include <array>
 void canUseIndexOfInConsexpr() {
-  constexpr auto idx =
-      meta::index_of<char>(meta::type_list<char, int, float>{});
+  constexpr auto idx = meta::index_of<char>(meta::type_list<char, int, float>{});
   EXPECT_EQ(0, idx);
   constexpr auto cnt = meta::index_of<int>(meta::type_list<char, int, float>{});
   std::array<int, cnt> arr;

@@ -42,17 +42,13 @@ void canApply() {
 
 void canTransform() {
   using type = list_::transform<uptr_>::type;
-  static_assert(std::is_same<sequence<std::unique_ptr<_0>, std::unique_ptr<_1>>,
-                             type>::value,
-                "");
+  static_assert(std::is_same<sequence<std::unique_ptr<_0>, std::unique_ptr<_1>>, type>::value, "");
 }
 
 void canTransformAndApply() {
   using type = list_::transform_t<uptr_>::apply<tuple_>;
-  static_assert(
-      std::is_same<std::tuple<std::unique_ptr<_0>, std::unique_ptr<_1>>,
-                   type>::value,
-      "");
+  static_assert(std::is_same<std::tuple<std::unique_ptr<_0>, std::unique_ptr<_1>>, type>::value,
+                "");
 }
 
 void canAppend() {
@@ -101,9 +97,7 @@ void canUseTypeListAtT() {
 void canTransformStandalone() {
   using uptrs = au::meta::transform_t<uptr_, _0, _1>;
   static_assert(
-      std::is_same<
-          au::meta::type_list<std::unique_ptr<_0>, std::unique_ptr<_1>>,
-          uptrs>::value,
+      std::is_same<au::meta::type_list<std::unique_ptr<_0>, std::unique_ptr<_1>>, uptrs>::value,
       "");
 }
 

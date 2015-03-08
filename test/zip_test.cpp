@@ -34,18 +34,15 @@ using meta::type_list;
 
 #include <type_traits>
 
-static_assert(
-    std::is_same<meta::append<int, char>::type, type_list<int, char>>::value,
-    "");
+static_assert(std::is_same<meta::append<int, char>::type, type_list<int, char>>::value, "");
 
 static_assert(std::is_same<meta::append<type_list<int, char>, unsigned>::type,
                            type_list<int, char, unsigned>>::value,
               "");
 
-static_assert(std::is_same<meta::zip<type_list<int, char>,
-                                     type_list<unsigned, unsigned char>>::type,
-                           type_list<type_list<int, unsigned>,
-                                     type_list<char, unsigned char>>>::value,
-              "");
+static_assert(
+    std::is_same<meta::zip<type_list<int, char>, type_list<unsigned, unsigned char>>::type,
+                 type_list<type_list<int, unsigned>, type_list<char, unsigned char>>>::value,
+    "");
 
 int main() { return 0; }

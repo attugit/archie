@@ -34,8 +34,7 @@ void canUseFusedCompose() {
     auto b = 2u;
     auto c = '3';
 
-    auto const& x =
-        fused::compose(fused::make_tuple(fused::front, fused::tie), a, b, c);
+    auto const& x = fused::compose(fused::make_tuple(fused::front, fused::tie), a, b, c);
     EXPECT_EQ(&a, &x);
   }
   {
@@ -132,9 +131,7 @@ void canComposeFusedTransform() {
     EXPECT_EQ('4', fused::get<2>(x));
   }
   {
-    auto f = [](auto&& x) {
-      return std::make_unique<std::remove_reference_t<decltype(x)>>(x);
-    };
+    auto f = [](auto&& x) { return std::make_unique<std::remove_reference_t<decltype(x)>>(x); };
     auto opt = fused::make_tuple(fused::transform, fused::make_tuple);
     auto x = fused::compose(opt, f, 1, 2u, '3', 4.0);
     static_assert(fused::tuple_size(fused::type_tag<decltype(x)>{}) == 4u, "");
@@ -151,8 +148,8 @@ void canComposeFusedConcat() {
   EXPECT_EQ('3', fused::get<2>(x));
   EXPECT_EQ(4.0, fused::get<3>(x));
 
-  auto y = fused::apply(fused::concat, fused::make_tuple(1, 2u, '3'),
-                        fused::make_tuple(4.0, 5, 6u));
+  auto y =
+      fused::apply(fused::concat, fused::make_tuple(1, 2u, '3'), fused::make_tuple(4.0, 5, 6u));
   static_assert(fused::tuple_size(fused::type_tag<decltype(y)>{}) == 6u, "");
   EXPECT_EQ(1, fused::get<0>(y));
   EXPECT_EQ(2u, fused::get<1>(y));
@@ -163,8 +160,8 @@ void canComposeFusedConcat() {
 }
 
 void canComposeFusedZip() {
-  auto x = fused::apply(fused::concat, fused::make_tuple(1, 2u, '3'),
-                        fused::make_tuple(4.0, 5, 6u));
+  auto x =
+      fused::apply(fused::concat, fused::make_tuple(1, 2u, '3'), fused::make_tuple(4.0, 5, 6u));
   static_assert(fused::tuple_size(fused::type_tag<decltype(x)>{}) == 6u, "");
   EXPECT_EQ(1, fused::get<0>(x));
   EXPECT_EQ(2u, fused::get<1>(x));

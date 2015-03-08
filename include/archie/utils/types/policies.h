@@ -81,8 +81,7 @@ namespace utils {
     }
     template <typename Tp, typename = policy::has<Tp, add>>
     Tp& operator+=(Tp& t, meta::identity_t<meta::eval<Tp>> const& u) {
-      return copy_assing(t, types::extract(t) +
-                                static_cast<meta::eval<Tp> const&>(u));
+      return copy_assing(t, types::extract(t) + static_cast<meta::eval<Tp> const&>(u));
     }
     template <typename Tp, typename = policy::has<Tp, add>>
     Tp operator+(Tp const& t, meta::identity_t<meta::eval<Tp>> const& u) {
@@ -90,14 +89,12 @@ namespace utils {
       ret += u;
       return ret;
     }
-    template <typename Tp,
-              typename = policy::has<std::remove_reference_t<Tp>, iterate>>
+    template <typename Tp, typename = policy::has<std::remove_reference_t<Tp>, iterate>>
     decltype(auto) begin(Tp&& t) {
       using std::begin;
       return begin(extract(std::forward<Tp>(t)));
     }
-    template <typename Tp,
-              typename = policy::has<std::remove_reference_t<Tp>, iterate>>
+    template <typename Tp, typename = policy::has<std::remove_reference_t<Tp>, iterate>>
     decltype(auto) end(Tp&& t) {
       using std::end;
       return end(extract(std::forward<Tp>(t)));

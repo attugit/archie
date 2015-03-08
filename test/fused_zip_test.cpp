@@ -36,14 +36,9 @@ void canZipViewTwoTuples() {
   auto const& x1 = fused::get<1>(x);
   auto const& x2 = fused::get<2>(x);
 
-  static_assert(
-      std::is_same<decltype(x0), fused::tuple<int&, char&> const&>::value, "");
-  static_assert(std::is_same<decltype(x1),
-                             fused::tuple<unsigned&, double&> const&>::value,
-                "");
-  static_assert(
-      std::is_same<decltype(x2), fused::tuple<char&, unsigned&> const&>::value,
-      "");
+  static_assert(std::is_same<decltype(x0), fused::tuple<int&, char&> const&>::value, "");
+  static_assert(std::is_same<decltype(x1), fused::tuple<unsigned&, double&> const&>::value, "");
+  static_assert(std::is_same<decltype(x2), fused::tuple<char&, unsigned&> const&>::value, "");
 
   EXPECT_EQ(&fused::get<0>(a), &fused::get<0>(x0));
   EXPECT_EQ(&fused::get<1>(a), &fused::get<0>(x1));
@@ -70,18 +65,11 @@ void canZipViewManyTuples() {
   auto const& x1 = fused::get<1>(x);
   auto const& x2 = fused::get<2>(x);
 
-  static_assert(
-      std::is_same<decltype(x0),
-                   fused::tuple<int&, unsigned&, char&> const&>::value,
-      "");
-  static_assert(
-      std::is_same<decltype(x1),
-                   fused::tuple<unsigned&, char&, double&> const&>::value,
-      "");
-  static_assert(
-      std::is_same<decltype(x2),
-                   fused::tuple<char&, double&, unsigned&> const&>::value,
-      "");
+  static_assert(std::is_same<decltype(x0), fused::tuple<int&, unsigned&, char&> const&>::value, "");
+  static_assert(std::is_same<decltype(x1), fused::tuple<unsigned&, char&, double&> const&>::value,
+                "");
+  static_assert(std::is_same<decltype(x2), fused::tuple<char&, double&, unsigned&> const&>::value,
+                "");
 
   EXPECT_EQ(&fused::get<0>(a), &fused::get<0>(x0));
   EXPECT_EQ(&fused::get<1>(a), &fused::get<0>(x1));

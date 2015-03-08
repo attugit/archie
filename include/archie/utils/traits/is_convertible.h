@@ -12,12 +12,10 @@ namespace utils {
       };
 
       template <typename Tp, typename Up>
-      using inspect_convertible =
-          decltype(convert_helper<Up>::implicit(std::declval<Tp>()));
+      using inspect_convertible = decltype(convert_helper<Up>::implicit(std::declval<Tp>()));
     }
     template <typename Tp, typename Up>
-    using is_convertible =
-        has_member<detail::inspect_convertible, meta::type_list<Tp, Up>>;
+    using is_convertible = has_member<detail::inspect_convertible, meta::type_list<Tp, Up>>;
   }
 }
 }

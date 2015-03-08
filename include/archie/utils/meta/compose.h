@@ -13,8 +13,7 @@ namespace utils {
       using apply = F<Xs...>;
     };
 
-    template <template <typename...> class F,
-              template <typename...> class... Gs>
+    template <template <typename...> class F, template <typename...> class... Gs>
     struct compose<F, Gs...> {
       template <typename... Xs>
       using apply = F<typename compose<Gs...>::template apply<Xs...>::type>;

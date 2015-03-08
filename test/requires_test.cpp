@@ -24,21 +24,18 @@ static_assert(boolean<true>::value, "");
 static_assert(!boolean<false>::value, "");
 
 static_assert(all<std::is_integral<int>>::value, "");
-static_assert(all<std::is_integral<int>, std::is_unsigned<unsigned>>::value,
-              "");
+static_assert(all<std::is_integral<int>, std::is_unsigned<unsigned>>::value, "");
 static_assert(!all<std::is_integral<int>, std::is_unsigned<int>>::value, "");
 
 static_assert(any<std::is_integral<int>>::value, "");
 static_assert(!any<std::is_integral<float>>::value, "");
-static_assert(any<std::is_integral<int>, std::is_unsigned<unsigned>>::value,
-              "");
+static_assert(any<std::is_integral<int>, std::is_unsigned<unsigned>>::value, "");
 static_assert(any<std::is_integral<int>, std::is_unsigned<int>>::value, "");
 static_assert(!any<std::is_integral<float>, std::is_unsigned<int>>::value, "");
 
 static_assert(!none<std::is_integral<int>>::value, "");
 static_assert(none<std::is_integral<float>>::value, "");
-static_assert(!none<std::is_integral<int>, std::is_unsigned<unsigned>>::value,
-              "");
+static_assert(!none<std::is_integral<int>, std::is_unsigned<unsigned>>::value, "");
 static_assert(!none<std::is_integral<int>, std::is_unsigned<int>>::value, "");
 static_assert(none<std::is_integral<float>, std::is_unsigned<int>>::value, "");
 

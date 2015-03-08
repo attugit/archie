@@ -43,24 +43,18 @@ struct callable {
   void operator()(unsigned) {}
 };
 
-static_assert(!traits::is_callable<callable, unsigned, double, char>::value,
+static_assert(!traits::is_callable<callable, unsigned, double, char>::value, "");
+static_assert(!traits::is_callable<callable, const unsigned&, const double&, const char&>::value,
               "");
-static_assert(!traits::is_callable<callable, const unsigned&, const double&,
-                                   const char&>::value,
-              "");
-static_assert(
-    !traits::is_callable<callable, unsigned&, const double&, char&>::value, "");
-static_assert(traits::is_callable<callable, unsigned&, double&, char&>::value,
-              "");
-static_assert(
-    traits::is_callable<callable, const unsigned&, const char&>::value, "");
+static_assert(!traits::is_callable<callable, unsigned&, const double&, char&>::value, "");
+static_assert(traits::is_callable<callable, unsigned&, double&, char&>::value, "");
+static_assert(traits::is_callable<callable, const unsigned&, const char&>::value, "");
 static_assert(!traits::is_callable<callable, double, std::string&>::value, "");
 static_assert(traits::is_callable<callable, unsigned>::value, "");
 static_assert(!traits::is_callable<callable, std::string>::value, "");
 
 static_assert(!traits::is_type_list<int>::value, "");
-static_assert(traits::is_type_list<archie::utils::meta::type_list<int>>::value,
-              "");
+static_assert(traits::is_type_list<archie::utils::meta::type_list<int>>::value, "");
 
 struct conv {
   explicit conv(int);
@@ -78,8 +72,7 @@ static_assert(!traits::is_constructible<conv>::value, "");
 static_assert(traits::is_constructible<conv, int>::value, "");
 static_assert(traits::is_constructible<conv, std::vector<int>>::value, "");
 static_assert(traits::is_constructible<conv, std::vector<int>, int>::value, "");
-static_assert(
-    !traits::is_constructible<conv, std::vector<int>, int, int>::value, "");
+static_assert(!traits::is_constructible<conv, std::vector<int>, int, int>::value, "");
 static_assert(!traits::is_constructible<conv, int, int>::value, "");
 
 static_assert(!traits::is_default_constructible<conv>::value, "");
