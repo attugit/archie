@@ -34,6 +34,19 @@ void canUseTransformWithTupleWithoutTypeChange() {
   EXPECT_EQ(3, fused::get<2>(ret));
 }
 
+void canUseTransformView() {
+  auto t = fused::make_tuple(1u, 2.0, '3');
+  auto twice = [](auto&& x) -> decltype(x) {
+    x += x;
+    return x;
+  };
+  auto ret = fused::transform_view(twice, t);
+
+  EXPECT_EQ(&fused::get<0>(t), &fused::get<0>(ret).get());
+  EXPECT_EQ(&fused::get<1>(t), &fused::get<1>(ret).get());
+  EXPECT_EQ(&fused::get<2>(t), &fused::get<2>(ret).get());
+}
+
 void canUseTransformWithArgsWithTypeChange() {
   auto ret = fused::transform(make_tag, 1, 2u, '3');
   static_assert(
@@ -63,6 +76,7 @@ void canUseTransformWithTupleToCallElemntsMemberFunctions() {
 int main() {
   canUseTransformWithArgsWithoutTypeChange();
   canUseTransformWithTupleWithoutTypeChange();
+  canUseTransformView();
   canUseTransformWithArgsWithTypeChange();
   canUseTransformWithTupleWithTypeChange();
   canUseTransformWithRValueTupleWithTypeChange();
