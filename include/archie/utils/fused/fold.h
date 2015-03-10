@@ -31,15 +31,13 @@ namespace utils {
         template <typename F>
         constexpr decltype(auto) operator()(F&& f) const {
           return [g = std::forward<F>(f)](auto&&... xs) {
-            return fused::fold(std::forward<decltype(g)>(g), std::forward<decltype(xs)>(xs)...);
+            return fused::fold(g, std::forward<decltype(xs)>(xs)...);
           };
         }
         template <typename F, typename S>
         constexpr decltype(auto) operator()(F&& f, S&& s) const {
           return [ g = std::forward<F>(f), state = std::forward<S>(s) ](auto&&... xs) {
-            return fused::fold(std::forward<decltype(g)>(g),
-                               std::forward<decltype(state)>(state),
-                               std::forward<decltype(xs)>(xs)...);
+            return fused::fold(g, state, std::forward<decltype(xs)>(xs)...);
           };
         }
       };
