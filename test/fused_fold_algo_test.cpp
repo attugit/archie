@@ -6,9 +6,9 @@
 namespace fused = archie::utils::fused;
 
 void canUseAccumulate() {
-  EXPECT_EQ(1, fused::accumulate(0, 1));
-  EXPECT_EQ(3, fused::accumulate(0, 1, 2));
-  EXPECT_EQ(6, fused::accumulate(0, 1, 2, 3));
+  EXPECT_EQ(1u, fused::accumulate(0, 1u));
+  EXPECT_EQ(3.0, fused::accumulate(0, 1u, 2.0));
+  EXPECT_EQ(54.0, fused::accumulate(0, 1u, 2.0, '3'));
 }
 
 void canApplyAccumulate() {
@@ -26,9 +26,9 @@ void canUseAccumulateWithCustomFunctionObject() {
 }
 
 void canUseMax() {
-  EXPECT_EQ(1, fused::max(0, 1));
-  EXPECT_EQ(2, fused::max(0, 1, 2));
-  EXPECT_EQ(3, fused::max(0, 3, 2));
+  EXPECT_EQ(1.0, fused::max(0, 1.0));
+  EXPECT_EQ('1', fused::max(0, '1', 2.0));
+  EXPECT_EQ(3, fused::max(0, 3, 2.0));
 }
 
 void canApplyMax() {
