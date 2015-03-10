@@ -26,6 +26,25 @@ namespace utils {
       };
     }
     constexpr auto const fold = detail::fold_{};
+    namespace detail {
+      struct make_fold_ {
+        template <typename F>
+        constexpr decltype(auto) operator()(F&& f) const {
+          return [g = std::forward<F>(f)](auto&&... xs) {
+            return fused::fold(std::forward<decltype(g)>(g), std::forward<decltype(xs)>(xs)...);
+          };
+        }
+        template <typename F, typename S>
+        constexpr decltype(auto) operator()(F&& f, S&& s) const {
+          return [ g = std::forward<F>(f), state = std::forward<S>(s) ](auto&&... xs) {
+            return fused::fold(std::forward<decltype(g)>(g),
+                               std::forward<decltype(state)>(state),
+                               std::forward<decltype(xs)>(xs)...);
+          };
+        }
+      };
+    }
+    constexpr auto const make_fold = detail::make_fold_{};
   }
 }
 }

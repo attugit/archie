@@ -14,10 +14,7 @@ void canUseFold() {
 void canApplyFold() {
   auto const mkt = [](auto&& s, auto&& e) { return fused::make_tuple(s, e); };
   auto const t = fused::make_tuple(0, 1, 2);
-  EXPECT_EQ(
-      fused::make_tuple(fused::make_tuple(0, 1), 2),
-      fused::apply(
-          [&mkt](auto&&... xs) { return fused::fold(mkt, std::forward<decltype(xs)>(xs)...); }, t));
+  EXPECT_EQ(fused::make_tuple(fused::make_tuple(0, 1), 2), fused::apply(fused::make_fold(mkt), t));
 }
 
 int main() {
