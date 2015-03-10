@@ -1,6 +1,5 @@
 #include <archie/utils/fused/fold.h>
 #include <archie/utils/fused/tuple.h>
-#include <archie/utils/fused/apply.h>
 #include <archie/utils/test.h>
 
 namespace fused = archie::utils::fused;
