@@ -27,29 +27,19 @@ namespace utils {
           });
         }
       };
-      struct max_ {
+      struct extremum_ {
         template <typename F, typename... Ts>
         constexpr decltype(auto) operator()(F const& f, Ts&&... ts) const {
           return operator()(f)(std::forward<Ts>(ts)...);
         }
         template <typename F, typename Tp>
         constexpr decltype(auto) operator()(F const& f, Tp&& t) const {
-          return fused::make_fold([f](auto const& a, auto const& b) { return f(a, b) ? b : a; },
+          return fused::make_fold([f](auto const& a, auto const& b) { return f(a, b) ? a : b; },
                                   std::forward<Tp>(t));
         }
         template <typename F>
         constexpr decltype(auto) operator()(F const& f) const {
-          return fused::make_fold([f](auto const& a, auto const& b) { return f(a, b) ? b : a; });
-        }
-      };
-      struct min_ {
-        template <typename Tp, typename Up, typename... Vs>
-        constexpr decltype(auto) operator()(Tp&& t, Up&& u, Vs&&... vs) const {
-          return fused::make_fold(
-              [](auto&& a, auto&& b) {
-                return b < a ? std::forward<decltype(b)>(b) : std::forward<decltype(a)>(a);
-              },
-              std::forward<Tp>(t))(std::forward<Up>(u), std::forward<Vs>(vs)...);
+          return fused::make_fold([f](auto const& a, auto const& b) { return f(a, b) ? a : b; });
         }
       };
       struct all_of_ {
@@ -84,8 +74,7 @@ namespace utils {
       };
     }
     constexpr auto const accumulate = detail::accumulate_{};
-    constexpr auto const max = detail::max_{};
-    constexpr auto const min = detail::min_{};
+    constexpr auto const extremum = detail::extremum_{};
     constexpr auto const all_of = detail::all_of_{};
     constexpr auto const any_of = detail::any_of_{};
     constexpr auto const none_of = detail::none_of_{};
