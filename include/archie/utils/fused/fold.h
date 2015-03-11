@@ -24,8 +24,25 @@ namespace utils {
                       std::forward<Ys>(ys)...);
         }
       };
+      struct greedy_fold_ {
+        template <typename F, typename S, typename... Xs>
+        decltype(auto) operator()(F const& f, S const& s, Xs const&... xs) const {
+          return impl(f, s, xs...);
+        }
+
+      private:
+        template <typename F, typename S, typename X>
+        decltype(auto) impl(F const& f, S const& s, X const& x) const {
+          return f(s, x);
+        }
+        template <typename F, typename S, typename X, typename... Ys>
+        decltype(auto) impl(F const& f, S const& s, X const& x, Ys const&... ys) const {
+          return impl(f, f(s, x, ys...), ys...);
+        }
+      };
     }
     constexpr auto const fold = detail::fold_{};
+    constexpr auto const greedy_fold = detail::greedy_fold_{};
     namespace detail {
       struct make_fold_ {
       private:

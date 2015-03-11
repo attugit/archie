@@ -134,6 +134,24 @@ void canApplyCountIf() {
   EXPECT_EQ(2, fused::apply(fused::count_if(is_odd), fused::make_tuple(0, 1, 2, 3)));
 }
 
+void canUseIsSorted() {
+  EXPECT_TRUE(fused::is_sorted(le)(0));
+  EXPECT_TRUE(fused::is_sorted(le)(0, 1u));
+  EXPECT_TRUE(fused::is_sorted(le)(0, 1u, 2.0));
+  EXPECT_TRUE(fused::is_sorted(le)(0, 1u, 2.0, '3'));
+  EXPECT_FALSE(fused::is_sorted(le)(0, 1u, 2.0, 0));
+  EXPECT_FALSE(fused::is_sorted(le)(0, 1u, 0.0, '3'));
+}
+
+void canApplyIsSorted() {
+  EXPECT_TRUE(fused::apply(fused::is_sorted(le), fused::make_tuple(0)));
+  EXPECT_TRUE(fused::apply(fused::is_sorted(le), fused::make_tuple(0, 1u)));
+  EXPECT_TRUE(fused::apply(fused::is_sorted(le), fused::make_tuple(0, 1u, 2.0)));
+  EXPECT_TRUE(fused::apply(fused::is_sorted(le), fused::make_tuple(0, 1u, 2.0, '3')));
+  EXPECT_FALSE(fused::apply(fused::is_sorted(le), fused::make_tuple(0, 1u, 2.0, 0)));
+  EXPECT_FALSE(fused::apply(fused::is_sorted(le), fused::make_tuple(0, 1u, 0.0, '3')));
+}
+
 int main() {
   canUseAccumulate();
   canApplyAccumulate();
@@ -152,5 +170,7 @@ int main() {
   canApplyNoneOf();
   canUseCountIf();
   canApplyCountIf();
+  canUseIsSorted();
+  canApplyIsSorted();
   return 0;
 }

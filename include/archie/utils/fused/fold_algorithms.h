@@ -71,6 +71,30 @@ namespace utils {
                                   0u);
         }
       };
+      struct is_sorted_ {
+      private:
+        template <typename F>
+        struct impl {
+          F const f;
+          impl(F const f) : f(f){};
+          template <typename Tp, typename Up, typename Vp, typename... Rs>
+          constexpr bool operator()(Tp const t, Up const& u, Vp const& v, Rs const&...) const {
+            return t ? f(u, v) : false;
+          }
+          template <typename Tp, typename Up>
+          constexpr bool operator()(Tp const& t, Up) const {
+            return t;
+          }
+        };
+
+      public:
+        template <typename F>
+        constexpr decltype(auto) operator()(F const& f) const {
+          return [g = impl<F>{f}](auto&&... xs) {
+            return fused::greedy_fold(g, true, std::forward<decltype(xs)>(xs)...);
+          };
+        }
+      };
     }
     constexpr auto const accumulate = detail::accumulate_{};
     constexpr auto const extremum = detail::extremum_{};
@@ -80,6 +104,7 @@ namespace utils {
     constexpr auto const any_of = detail::any_of_{};
     constexpr auto const none_of = detail::none_of_{};
     constexpr auto const count_if = detail::count_if_{};
+    constexpr auto const is_sorted = detail::is_sorted_{};
   }
 }
 }
