@@ -63,6 +63,23 @@ void canApplyMinWithCustomFunctionObject() {
   EXPECT_EQ(4, fused::apply(fused::make_fold(f), fused::make_tuple(4, 3, 2)));
 }
 
+void canUseAllOf() {
+  auto const is_odd = [](auto x) { return x % 2 != 0; };
+  EXPECT_TRUE(fused::all_of(is_odd, 1, 3, 5));
+  EXPECT_FALSE(fused::all_of(is_odd, 1, 2, 5));
+  EXPECT_FALSE(fused::all_of(is_odd, 2, 2, 2));
+}
+
+void canApplyAllOf() {
+  auto const is_odd = [](auto x) { return x % 2 != 0; };
+  auto const odds = fused::make_tuple(1, 3, 5);
+  auto const mixed = fused::make_tuple(1, 2, 3);
+  auto const evens = fused::make_tuple(2, 4, 6);
+  EXPECT_TRUE(fused::apply(fused::all_of(is_odd), odds));
+  EXPECT_FALSE(fused::apply(fused::all_of(is_odd), mixed));
+  EXPECT_FALSE(fused::apply(fused::all_of(is_odd), evens));
+}
+
 int main() {
   canUseAccumulate();
   canApplyAccumulate();
@@ -73,5 +90,7 @@ int main() {
   canUseMin();
   canApplyMin();
   canApplyMinWithCustomFunctionObject();
+  canUseAllOf();
+  canApplyAllOf();
   return 0;
 }
