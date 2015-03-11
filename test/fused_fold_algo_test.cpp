@@ -29,22 +29,25 @@ void canUseAccumulateWithCustomFunctionObject() {
 }
 
 void canUseMax() {
-  EXPECT_EQ(1.0, fused::max(0, 1.0));
-  EXPECT_EQ('1', fused::max(0, '1', 2.0));
-  EXPECT_EQ(3, fused::max(0, 3, 2.0));
+  auto const less = std::less<>{};
+  EXPECT_EQ(1.0, fused::max(less, 0, 1.0));
+  EXPECT_EQ('1', fused::max(less, 0, '1', 2.0));
+  EXPECT_EQ(3, fused::max(less, 0, 3, 2.0));
 }
 
 void canApplyMax() {
+  auto const less = std::less<>{};
   auto const t = fused::make_tuple(0, 3, 2);
-  EXPECT_EQ(3, fused::apply(fused::max, t));
-  EXPECT_EQ(4, fused::apply(fused::max, fused::make_tuple(4, 3, 2)));
+  EXPECT_EQ(3, fused::apply(fused::max(less), t));
+  EXPECT_EQ(4, fused::apply(fused::max(less), fused::make_tuple(4, 3, 2)));
+  EXPECT_EQ(5, fused::apply(fused::max(less, 5), fused::make_tuple(4, 3, 2)));
 }
 
 void canApplyMaxWithCustomFunctionObject() {
   auto const t = fused::make_tuple(0, 3, 4);
-  auto const f = [](auto a, auto b) { return b > (2 * a) ? b : a; };
-  EXPECT_EQ(3, fused::apply(fused::make_fold(f), t));
-  EXPECT_EQ(4, fused::apply(fused::make_fold(f), fused::make_tuple(4, 3, 6)));
+  auto const f = [](auto const& a, auto const& b) { return b > (2 * a); };
+  EXPECT_EQ(3, fused::apply(fused::max(f), t));
+  EXPECT_EQ(4, fused::apply(fused::max(f), fused::make_tuple(4, 3, 6)));
 }
 
 void canUseMin() {
