@@ -1,6 +1,5 @@
-#include <archie/utils/fused/fold_algorithms.h>
 #include <archie/utils/fused/tuple.h>
-#include <archie/utils/fused/apply.h>
+#include <archie/utils/fused/algorithm.h>
 #include <archie/utils/test.h>
 #include <functional>
 
