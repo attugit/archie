@@ -6,15 +6,18 @@
 
 namespace fused = archie::utils::fused;
 
+auto const plus = std::plus<>{};
+auto const ge = std::greater_equal<>{};
+auto const le = std::less_equal<>{};
+auto const is_odd = [](auto x) { return x % 2 != 0; };
+
 void canUseAccumulate() {
-  auto const plus = std::plus<>{};
   EXPECT_EQ(1u, fused::accumulate(plus, 0, 1u));
   EXPECT_EQ(3.0, fused::accumulate(plus, 0, 1u, 2.0));
   EXPECT_EQ(54.0, fused::accumulate(plus, 0, 1u, 2.0, '3'));
 }
 
 void canApplyAccumulate() {
-  auto const plus = std::plus<>{};
   auto const t = fused::make_tuple(0, 1, 2);
   EXPECT_EQ(3, fused::apply(fused::accumulate(plus), t));
   EXPECT_EQ(6, fused::apply(fused::accumulate(plus), fused::make_tuple(0, 1, 2, 3)));
@@ -29,7 +32,6 @@ void canUseAccumulateWithCustomFunctionObject() {
 }
 
 void canUseMax() {
-  auto const ge = std::greater_equal<>{};
   auto const max = fused::extremum(ge);
   EXPECT_EQ(1.0, max(0, 1.0));
   EXPECT_EQ('1', max(0, '1', 2.0));
@@ -37,7 +39,6 @@ void canUseMax() {
 }
 
 void canApplyMax() {
-  auto const ge = std::greater_equal<>{};
   auto const max = fused::extremum(ge);
   auto const t = fused::make_tuple(0, 3, 2);
   EXPECT_EQ(3, fused::apply(max, t));
@@ -55,7 +56,6 @@ void canApplyMaxWithCustomFunctionObject() {
 }
 
 void canUseMin() {
-  auto const le = std::less_equal<>{};
   auto const min = fused::extremum(le);
   EXPECT_EQ(0, min(0, 1));
   EXPECT_EQ(0, min(2, 0, 1));
@@ -63,7 +63,6 @@ void canUseMin() {
 }
 
 void canApplyMin() {
-  auto const le = std::less_equal<>{};
   auto const min = fused::extremum(le);
   auto const t = fused::make_tuple(3, 0, 2);
   EXPECT_EQ(0, fused::apply(min, t));
@@ -81,14 +80,12 @@ void canApplyMinWithCustomFunctionObject() {
 }
 
 void canUseAllOf() {
-  auto const is_odd = [](auto x) { return x % 2 != 0; };
   EXPECT_TRUE(fused::all_of(is_odd, 1, 3, 5));
   EXPECT_FALSE(fused::all_of(is_odd, 1, 2, 5));
   EXPECT_FALSE(fused::all_of(is_odd, 2, 2, 2));
 }
 
 void canApplyAllOf() {
-  auto const is_odd = [](auto x) { return x % 2 != 0; };
   auto const odds = fused::make_tuple(1, 3, 5);
   auto const mixed = fused::make_tuple(1, 2, 3);
   auto const evens = fused::make_tuple(2, 4, 6);
@@ -98,14 +95,12 @@ void canApplyAllOf() {
 }
 
 void canUseAnyOf() {
-  auto const is_odd = [](auto x) { return x % 2 != 0; };
   EXPECT_TRUE(fused::any_of(is_odd, 1, 3, 5));
   EXPECT_TRUE(fused::any_of(is_odd, 1, 2, 5));
   EXPECT_FALSE(fused::any_of(is_odd, 2, 2, 2));
 }
 
 void canApplyAnyOf() {
-  auto const is_odd = [](auto x) { return x % 2 != 0; };
   auto const odds = fused::make_tuple(1, 3, 5);
   auto const mixed = fused::make_tuple(1, 2, 3);
   auto const evens = fused::make_tuple(2, 4, 6);
@@ -115,20 +110,32 @@ void canApplyAnyOf() {
 }
 
 void canUseNoneOf() {
-  auto const is_odd = [](auto x) { return x % 2 != 0; };
   EXPECT_FALSE(fused::none_of(is_odd, 1, 3, 5));
   EXPECT_FALSE(fused::none_of(is_odd, 1, 2, 5));
   EXPECT_TRUE(fused::none_of(is_odd, 2, 2, 2));
 }
 
 void canApplyNoneOf() {
-  auto const is_odd = [](auto x) { return x % 2 != 0; };
   auto const odds = fused::make_tuple(1, 3, 5);
   auto const mixed = fused::make_tuple(1, 2, 3);
   auto const evens = fused::make_tuple(2, 4, 6);
   EXPECT_FALSE(fused::apply(fused::none_of(is_odd), odds));
   EXPECT_FALSE(fused::apply(fused::none_of(is_odd), mixed));
   EXPECT_TRUE(fused::apply(fused::none_of(is_odd), evens));
+}
+
+void canUseCountIf() {
+  EXPECT_EQ(0, fused::count_if(is_odd, 0));
+  EXPECT_EQ(1, fused::count_if(is_odd, 1));
+  EXPECT_EQ(1, fused::count_if(is_odd, 0, 1, 2));
+  EXPECT_EQ(2, fused::count_if(is_odd, 0, 1, 2, 3));
+}
+
+void canApplyCountIf() {
+  EXPECT_EQ(0, fused::apply(fused::count_if(is_odd), fused::make_tuple(0)));
+  EXPECT_EQ(1, fused::apply(fused::count_if(is_odd), fused::make_tuple(1)));
+  EXPECT_EQ(1, fused::apply(fused::count_if(is_odd), fused::make_tuple(0, 1, 2)));
+  EXPECT_EQ(2, fused::apply(fused::count_if(is_odd), fused::make_tuple(0, 1, 2, 3)));
 }
 
 int main() {
@@ -147,5 +154,7 @@ int main() {
   canApplyAnyOf();
   canUseNoneOf();
   canApplyNoneOf();
+  canUseCountIf();
+  canApplyCountIf();
   return 0;
 }

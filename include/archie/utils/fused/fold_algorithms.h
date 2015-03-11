@@ -9,11 +9,11 @@ namespace utils {
     namespace detail {
       struct accumulate_ {
         template <typename F, typename Tp, typename... Us>
-        constexpr decltype(auto) operator()(F&& f, Tp&& t, Us&&... us) const {
-          return operator()(std::forward<F>(f), std::forward<Tp>(t))(std::forward<Us>(us)...);
+        constexpr decltype(auto) operator()(F const& f, Tp&& t, Us&&... us) const {
+          return operator()(f, std::forward<Tp>(t))(std::forward<Us>(us)...);
         }
         template <typename F, typename Tp>
-        constexpr decltype(auto) operator()(F&& f, Tp&& t) const {
+        constexpr decltype(auto) operator()(F const& f, Tp&& t) const {
           return fused::make_fold([f](auto&& a, auto&& b) {
                                     return f(std::forward<decltype(a)>(a),
                                              std::forward<decltype(b)>(b));
@@ -21,7 +21,7 @@ namespace utils {
                                   std::forward<Tp>(t));
         }
         template <typename F>
-        constexpr decltype(auto) operator()(F&& f) const {
+        constexpr decltype(auto) operator()(F const& f) const {
           return fused::make_fold([f](auto&& a, auto&& b) {
             return f(std::forward<decltype(a)>(a), std::forward<decltype(b)>(b));
           });
@@ -44,32 +44,43 @@ namespace utils {
       };
       struct all_of_ {
         template <typename F, typename... Ts>
-        constexpr decltype(auto) operator()(F&& f, Ts&&... ts) const {
-          return operator()(std::forward<F>(f))(std::forward<Ts>(ts)...);
+        constexpr decltype(auto) operator()(F const& f, Ts&&... ts) const {
+          return operator()(f)(std::forward<Ts>(ts)...);
         }
         template <typename F>
-        constexpr decltype(auto) operator()(F&& f) const {
-          return fused::make_fold([f](auto s, auto x) { return s & f(x); }, true);
+        constexpr decltype(auto) operator()(F const& f) const {
+          return fused::make_fold([f](auto const& s, auto const& x) { return s & f(x); }, true);
         }
       };
       struct any_of_ {
         template <typename F, typename... Ts>
-        constexpr decltype(auto) operator()(F&& f, Ts&&... ts) const {
-          return operator()(std::forward<F>(f))(std::forward<Ts>(ts)...);
+        constexpr decltype(auto) operator()(F const& f, Ts&&... ts) const {
+          return operator()(f)(std::forward<Ts>(ts)...);
         }
         template <typename F>
-        constexpr decltype(auto) operator()(F&& f) const {
-          return fused::make_fold([f](auto s, auto x) { return s | f(x); }, false);
+        constexpr decltype(auto) operator()(F const& f) const {
+          return fused::make_fold([f](auto const& s, auto const& x) { return s | f(x); }, false);
         }
       };
       struct none_of_ {
         template <typename F, typename... Ts>
-        constexpr decltype(auto) operator()(F&& f, Ts&&... ts) const {
-          return operator()(std::forward<F>(f))(std::forward<Ts>(ts)...);
+        constexpr decltype(auto) operator()(F const& f, Ts&&... ts) const {
+          return operator()(f)(std::forward<Ts>(ts)...);
         }
         template <typename F>
-        constexpr decltype(auto) operator()(F&& f) const {
-          return fused::make_fold([f](auto s, auto x) { return s & !f(x); }, true);
+        constexpr decltype(auto) operator()(F const& f) const {
+          return fused::make_fold([f](auto const& s, auto const& x) { return s & !f(x); }, true);
+        }
+      };
+      struct count_if_ {
+        template <typename F, typename... Ts>
+        constexpr decltype(auto) operator()(F const& f, Ts&&... ts) const {
+          return operator()(f)(std::forward<Ts>(ts)...);
+        }
+        template <typename F>
+        constexpr decltype(auto) operator()(F const& f) const {
+          return fused::make_fold([f](auto const& s, auto const& x) { return f(x) ? s + 1 : s; },
+                                  0u);
         }
       };
     }
@@ -78,6 +89,7 @@ namespace utils {
     constexpr auto const all_of = detail::all_of_{};
     constexpr auto const any_of = detail::any_of_{};
     constexpr auto const none_of = detail::none_of_{};
+    constexpr auto const count_if = detail::count_if_{};
   }
 }
 }
