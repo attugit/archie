@@ -12,9 +12,9 @@ auto const le = std::less_equal<>{};
 auto const is_odd = [](auto x) { return x % 2 != 0; };
 
 void canUseAccumulate() {
-  EXPECT_EQ(1u, fused::accumulate(plus, 0, 1u));
-  EXPECT_EQ(3.0, fused::accumulate(plus, 0, 1u, 2.0));
-  EXPECT_EQ(54.0, fused::accumulate(plus, 0, 1u, 2.0, '3'));
+  EXPECT_EQ(1u, fused::accumulate(plus)(0, 1u));
+  EXPECT_EQ(3.0, fused::accumulate(plus)(0, 1u, 2.0));
+  EXPECT_EQ(54.0, fused::accumulate(plus)(0, 1u, 2.0, '3'));
 }
 
 void canApplyAccumulate() {
@@ -80,9 +80,9 @@ void canApplyMinWithCustomFunctionObject() {
 }
 
 void canUseAllOf() {
-  EXPECT_TRUE(fused::all_of(is_odd, 1, 3, 5));
-  EXPECT_FALSE(fused::all_of(is_odd, 1, 2, 5));
-  EXPECT_FALSE(fused::all_of(is_odd, 2, 2, 2));
+  EXPECT_TRUE(fused::all_of(is_odd)(1, 3, 5));
+  EXPECT_FALSE(fused::all_of(is_odd)(1, 2, 5));
+  EXPECT_FALSE(fused::all_of(is_odd)(2, 2, 2));
 }
 
 void canApplyAllOf() {
@@ -95,9 +95,9 @@ void canApplyAllOf() {
 }
 
 void canUseAnyOf() {
-  EXPECT_TRUE(fused::any_of(is_odd, 1, 3, 5));
-  EXPECT_TRUE(fused::any_of(is_odd, 1, 2, 5));
-  EXPECT_FALSE(fused::any_of(is_odd, 2, 2, 2));
+  EXPECT_TRUE(fused::any_of(is_odd)(1, 3, 5));
+  EXPECT_TRUE(fused::any_of(is_odd)(1, 2, 5));
+  EXPECT_FALSE(fused::any_of(is_odd)(2, 2, 2));
 }
 
 void canApplyAnyOf() {
@@ -110,9 +110,9 @@ void canApplyAnyOf() {
 }
 
 void canUseNoneOf() {
-  EXPECT_FALSE(fused::none_of(is_odd, 1, 3, 5));
-  EXPECT_FALSE(fused::none_of(is_odd, 1, 2, 5));
-  EXPECT_TRUE(fused::none_of(is_odd, 2, 2, 2));
+  EXPECT_FALSE(fused::none_of(is_odd)(1, 3, 5));
+  EXPECT_FALSE(fused::none_of(is_odd)(1, 2, 5));
+  EXPECT_TRUE(fused::none_of(is_odd)(2, 2, 2));
 }
 
 void canApplyNoneOf() {
@@ -125,10 +125,10 @@ void canApplyNoneOf() {
 }
 
 void canUseCountIf() {
-  EXPECT_EQ(0, fused::count_if(is_odd, 0));
-  EXPECT_EQ(1, fused::count_if(is_odd, 1));
-  EXPECT_EQ(1, fused::count_if(is_odd, 0, 1, 2));
-  EXPECT_EQ(2, fused::count_if(is_odd, 0, 1, 2, 3));
+  EXPECT_EQ(0, fused::count_if(is_odd)(0));
+  EXPECT_EQ(1, fused::count_if(is_odd)(1));
+  EXPECT_EQ(1, fused::count_if(is_odd)(0, 1, 2));
+  EXPECT_EQ(2, fused::count_if(is_odd)(0, 1, 2, 3));
 }
 
 void canApplyCountIf() {
