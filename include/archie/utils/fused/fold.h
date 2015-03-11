@@ -28,17 +28,35 @@ namespace utils {
     constexpr auto const fold = detail::fold_{};
     namespace detail {
       struct make_fold_ {
+      private:
         template <typename F>
-        constexpr decltype(auto) operator()(F&& f) const {
-          return [g = std::forward<F>(f)](auto&&... xs) {
-            return fused::fold(g, std::forward<decltype(xs)>(xs)...);
-          };
+        struct impl_no_state {
+          F const f;
+          constexpr impl_no_state(F const& f) : f(f) {}
+          template <typename... Ts>
+          constexpr decltype(auto) operator()(Ts&&... ts) const {
+            return fused::fold(f, std::forward<Ts>(ts)...);
+          }
+        };
+        template <typename F, typename S>
+        struct impl_with_state {
+          F const f;
+          S const state;
+          constexpr impl_with_state(F const& f, S const& s) : f(f), state(s) {}
+          template <typename... Ts>
+          constexpr decltype(auto) operator()(Ts&&... ts) const {
+            return fused::fold(f, state, std::forward<Ts>(ts)...);
+          }
+        };
+
+      public:
+        template <typename F>
+        constexpr decltype(auto) operator()(F const& f) const {
+          return impl_no_state<F>{f};
         }
         template <typename F, typename S>
-        constexpr decltype(auto) operator()(F&& f, S&& s) const {
-          return [ g = std::forward<F>(f), state = std::forward<S>(s) ](auto&&... xs) {
-            return fused::fold(g, state, std::forward<decltype(xs)>(xs)...);
-          };
+        constexpr decltype(auto) operator()(F const& f, S const& s) const {
+          return impl_with_state<F, S>{f, s};
         }
       };
     }

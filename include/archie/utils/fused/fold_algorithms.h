@@ -1,6 +1,7 @@
 #pragma once
 
 #include <utility>
+#include <functional>
 #include <archie/utils/fused/fold.h>
 
 namespace archie {
@@ -24,14 +25,25 @@ namespace utils {
         }
       };
       struct extremum_ {
+      private:
+        template <typename F>
+        struct impl {
+          F const f;
+          constexpr impl(F const& f) : f(f) {}
+          template <typename Tp, typename Up>
+          constexpr decltype(auto) operator()(Tp const& a, Up const& b) const {
+            return f(a, b) ? a : b;
+          }
+        };
+
+      public:
         template <typename F, typename Tp>
         constexpr decltype(auto) operator()(F const& f, Tp&& t) const {
-          return fused::make_fold([f](auto const& a, auto const& b) { return f(a, b) ? a : b; },
-                                  std::forward<Tp>(t));
+          return fused::make_fold(impl<F>{f}, std::forward<Tp>(t));
         }
         template <typename F>
         constexpr decltype(auto) operator()(F const& f) const {
-          return fused::make_fold([f](auto const& a, auto const& b) { return f(a, b) ? a : b; });
+          return fused::make_fold(impl<F>{f});
         }
       };
       struct all_of_ {
@@ -62,6 +74,8 @@ namespace utils {
     }
     constexpr auto const accumulate = detail::accumulate_{};
     constexpr auto const extremum = detail::extremum_{};
+    constexpr auto const max = extremum(std::greater_equal<>{});
+    constexpr auto const min = extremum(std::less_equal<>{});
     constexpr auto const all_of = detail::all_of_{};
     constexpr auto const any_of = detail::any_of_{};
     constexpr auto const none_of = detail::none_of_{};
