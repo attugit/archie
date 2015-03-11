@@ -2,27 +2,30 @@
 #include <archie/utils/fused/tuple.h>
 #include <archie/utils/fused/apply.h>
 #include <archie/utils/test.h>
+#include <functional>
 
 namespace fused = archie::utils::fused;
 
 void canUseAccumulate() {
-  EXPECT_EQ(1u, fused::accumulate(0, 1u));
-  EXPECT_EQ(3.0, fused::accumulate(0, 1u, 2.0));
-  EXPECT_EQ(54.0, fused::accumulate(0, 1u, 2.0, '3'));
+  auto const plus = std::plus<>{};
+  EXPECT_EQ(1u, fused::accumulate(plus, 0, 1u));
+  EXPECT_EQ(3.0, fused::accumulate(plus, 0, 1u, 2.0));
+  EXPECT_EQ(54.0, fused::accumulate(plus, 0, 1u, 2.0, '3'));
 }
 
 void canApplyAccumulate() {
+  auto const plus = std::plus<>{};
   auto const t = fused::make_tuple(0, 1, 2);
-  EXPECT_EQ(3, fused::apply(fused::accumulate, t));
-  EXPECT_EQ(6, fused::apply(fused::accumulate, fused::make_tuple(0, 1, 2, 3)));
+  EXPECT_EQ(3, fused::apply(fused::accumulate(plus), t));
+  EXPECT_EQ(6, fused::apply(fused::accumulate(plus), fused::make_tuple(0, 1, 2, 3)));
 }
 
 void canUseAccumulateWithCustomFunctionObject() {
   auto const t = fused::make_tuple(0, 1, 2);
   auto const f = [](auto a, auto b) { return a + 3 * b; };
-  EXPECT_EQ(9, fused::apply(fused::make_fold(f), t));
-  EXPECT_EQ(9, fused::apply(fused::make_fold(f, 0), t));
-  EXPECT_EQ(10, fused::apply(fused::make_fold(f, 1), t));
+  EXPECT_EQ(9, fused::apply(fused::accumulate(f), t));
+  EXPECT_EQ(9, fused::apply(fused::accumulate(f, 0), t));
+  EXPECT_EQ(10, fused::apply(fused::accumulate(f, 1), t));
 }
 
 void canUseMax() {

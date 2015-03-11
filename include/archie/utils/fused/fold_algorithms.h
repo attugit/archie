@@ -8,27 +8,43 @@ namespace utils {
   namespace fused {
     namespace detail {
       struct accumulate_ {
-        template <typename Tp, typename Up, typename... Vs>
-        constexpr decltype(auto) operator()(Tp&& t, Up&& u, Vs&&... vs) const {
-          return fused::make_fold([](auto&& a, auto&& b) {
-            return std::forward<decltype(a)>(a) + std::forward<decltype(b)>(b);
-          })(std::forward<Tp>(t), std::forward<Up>(u), std::forward<Vs>(vs)...);
+        template <typename F, typename Tp, typename... Us>
+        constexpr decltype(auto) operator()(F&& f, Tp&& t, Us&&... us) const {
+          return operator()(std::forward<F>(f), std::forward<Tp>(t))(std::forward<Us>(us)...);
+        }
+        template <typename F, typename Tp>
+        constexpr decltype(auto) operator()(F&& f, Tp&& t) const {
+          return fused::make_fold([f](auto&& a, auto&& b) {
+                                    return f(std::forward<decltype(a)>(a),
+                                             std::forward<decltype(b)>(b));
+                                  },
+                                  std::forward<Tp>(t));
+        }
+        template <typename F>
+        constexpr decltype(auto) operator()(F&& f) const {
+          return fused::make_fold([f](auto&& a, auto&& b) {
+            return f(std::forward<decltype(a)>(a), std::forward<decltype(b)>(b));
+          });
         }
       };
       struct max_ {
         template <typename Tp, typename Up, typename... Vs>
         constexpr decltype(auto) operator()(Tp&& t, Up&& u, Vs&&... vs) const {
-          return fused::make_fold([](auto&& a, auto&& b) {
-            return b > a ? std::forward<decltype(b)>(b) : std::forward<decltype(a)>(a);
-          })(std::forward<Tp>(t), std::forward<Up>(u), std::forward<Vs>(vs)...);
+          return fused::make_fold(
+              [](auto&& a, auto&& b) {
+                return b > a ? std::forward<decltype(b)>(b) : std::forward<decltype(a)>(a);
+              },
+              std::forward<Tp>(t))(std::forward<Up>(u), std::forward<Vs>(vs)...);
         }
       };
       struct min_ {
         template <typename Tp, typename Up, typename... Vs>
         constexpr decltype(auto) operator()(Tp&& t, Up&& u, Vs&&... vs) const {
-          return fused::make_fold([](auto&& a, auto&& b) {
-            return b < a ? std::forward<decltype(b)>(b) : std::forward<decltype(a)>(a);
-          })(std::forward<Tp>(t), std::forward<Up>(u), std::forward<Vs>(vs)...);
+          return fused::make_fold(
+              [](auto&& a, auto&& b) {
+                return b < a ? std::forward<decltype(b)>(b) : std::forward<decltype(a)>(a);
+              },
+              std::forward<Tp>(t))(std::forward<Up>(u), std::forward<Vs>(vs)...);
         }
       };
       struct all_of_ {
