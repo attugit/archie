@@ -35,9 +35,24 @@ void canUseVariableTemplate() {
   EXPECT_EQ(1, x);
 }
 
+void canCompareTags() {
+#if defined(HAS_VARIABLE_TEMPLATES)
+  constexpr auto const& x = fused::id<int>;
+  constexpr auto const& y = fused::id<unsigned>;
+#else
+  constexpr auto const& x = fused::id<int>::value;
+  constexpr auto const& y = fused::id<unsigned>::value;
+#endif
+  EXPECT_EQ(x, fused::make_tag(1));
+  EXPECT_EQ(y, fused::make_tag(1u));
+  EXPECT_NE(x, y);
+  EXPECT_NE(fused::make_tag(1), fused::make_tag(1u));
+}
+
 int main() {
   canCreateTags();
   canExpandTags();
   canUseVariableTemplate();
+  canCompareTags();
   return 0;
 }
