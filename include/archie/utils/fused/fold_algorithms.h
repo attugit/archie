@@ -3,6 +3,7 @@
 #include <utility>
 #include <functional>
 #include <archie/utils/fused/fold.h>
+#include <archie/utils/fused/boolean.h>
 
 namespace archie {
 namespace utils {
@@ -79,7 +80,7 @@ namespace utils {
           impl(F const f) : f(f){};
           template <typename Tp, typename Up, typename Vp, typename... Rs>
           constexpr bool operator()(Tp const t, Up const& u, Vp const& v, Rs const&...) const {
-            return t ? f(u, v) : false;
+            return t ? f(u, v) : False;
           }
           template <typename Tp, typename Up>
           constexpr bool operator()(Tp const& t, Up) const {

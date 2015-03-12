@@ -6,6 +6,7 @@
 #include <archie/utils/meta/number.h>
 #include <archie/utils/meta/returns.h>
 #include <archie/utils/meta/type_list.h>
+#include <archie/utils/fused/boolean.h>
 
 namespace archie {
 namespace utils {
@@ -15,7 +16,8 @@ namespace utils {
     using if_t = eval<std::conditional<Condition::value, Tp, Up>>;
 
     template <typename Lhs, typename Rhs>
-    using less_t = if_t<boolean<(Lhs::value < Rhs::value)>, true_t, false_t>;
+    using less_t =
+        if_t<boolean<(Lhs::value < Rhs::value)>, decltype(fused::True), decltype(fused::False)>;
 
     template <typename Lhs, typename Rhs>
     using greater_t = less_t<Rhs, Lhs>;
