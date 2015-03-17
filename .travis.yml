@@ -86,7 +86,7 @@ install:
 
 script:
   - rm -rf ./build
-  - ./premake4 --targetdir=build ${USE_STDLIB} ${USE_TUPLE};
+  - ./premake4 --targetdir=build ${USE_STDLIB} ${USE_TUPLE} --testcmd="valgrind -q --error-exitcode=1";
   - pushd ./build;
   - make config=debug;
   - make config=release;

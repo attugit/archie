@@ -8,6 +8,13 @@ newoption {
   description = "Choose std::tuple implementation",
 }
 
+newoption {
+  trigger = "testcmd",
+  description = "Prefix argument to test command",
+}
+
+TESTCMD = _OPTIONS["testcmd"] or ""
+
 for _,file in pairs(os.matchfiles("*.cpp"))
 do
   if string.find(file, ".cpp$") then
@@ -16,7 +23,7 @@ do
       includedirs { "../include" }
       kind "ConsoleApp"
       files { file }
-      local test = "./"..name
+      local test = TESTCMD .. " ./"..name
       postbuildcommands{ test }
       configuration "use-std-tuple"
         defines { "USE_STD_TUPLE" }
