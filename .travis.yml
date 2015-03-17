@@ -86,7 +86,7 @@ install:
 
 script:
   - rm -rf ./build
-  - ./premake4 --targetdir=build ${USE_STDLIB} {USE_TUPLE};
-  - pushd ./build
-  - make config=debug
-  - make config=release
+  - ./premake4 --targetdir=build ${USE_STDLIB} ${USE_TUPLE};
+  - pushd ./build;
+  - make config=debug;
+  - make config=release;
