@@ -21,4 +21,18 @@ namespace utils {
   }
 }
 }
+
+#define DECL_VTEMPL(name, type, param)                                                             \
+  template <param T>                                                                               \
+  struct name : archie::utils::meta::variable_template<type<T>> {}
+
+#define VTEMPL(name, T) name<T>::value
+
+#else
+
+#define DECL_VTEMPL(name, type, param)                                                             \
+  template <param T>                                                                               \
+  constexpr auto const name = type<T> {}
+
+#define VTEMPL(name, T) name<T>
 #endif

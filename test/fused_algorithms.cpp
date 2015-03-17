@@ -165,30 +165,16 @@ void canComposeFusedTail() {
 }
 
 void canComposeFusedFind() {
-#if !defined(HAS_VARIABLE_TEMPLATES)
-  constexpr auto& find_u = fused::find_v<unsigned>::value;
-  constexpr auto& find_c = fused::find_v<char>::value;
-#else
-  constexpr auto& find_u = fused::find<unsigned>;
-  constexpr auto& find_c = fused::find<char>;
-#endif
-  auto x = fused::apply(find_u, 1, 2u, '3', 4u);
+  auto x = fused::apply(VTEMPL(fused::find, unsigned), 1, 2u, '3', 4u);
   EXPECT_EQ(2u, x);
-  auto y = fused::apply(find_c, 1, 2u, '3', 4u);
+  auto y = fused::apply(VTEMPL(fused::find, char), 1, 2u, '3', 4u);
   EXPECT_EQ('3', y);
 }
 
 void canComposeFusedFindIf() {
-#if !defined(HAS_VARIABLE_TEMPLATES)
-  constexpr auto& find_iu = fused::find_if_v<std::is_unsigned>::value;
-  constexpr auto& find_is = fused::find_if_v<std::is_signed>::value;
-#else
-  constexpr auto& find_iu = fused::find_if<std::is_unsigned>;
-  constexpr auto& find_is = fused::find_if<std::is_signed>;
-#endif
-  auto x = fused::apply(find_iu, 1, 2u, '3', 4u);
+  auto x = fused::apply(VTEMPL(fused::find_if, std::is_unsigned), 1, 2u, '3', 4u);
   EXPECT_EQ(2u, x);
-  auto y = fused::apply(find_is, 1, 2u, '3', 4u);
+  auto y = fused::apply(VTEMPL(fused::find_if, std::is_signed), 1, 2u, '3', 4u);
   EXPECT_EQ(1, y);
 }
 

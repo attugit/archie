@@ -5,7 +5,6 @@
 #include <archie/utils/meta/variable_template.h>
 #include <utility>
 
-
 namespace archie {
 namespace utils {
   namespace fused {

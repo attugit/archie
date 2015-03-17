@@ -23,29 +23,8 @@ namespace utils {
         }
       };
     }
-#if defined(HAS_VARIABLE_TEMPLATES)
-    template <typename Tp>
-    constexpr auto const find = detail::find_<Tp>{};
-    template <template <typename> class F>
-    constexpr auto const find_if = detail::find_if_<F>{};
-#else
-
-    template <typename Tp>
-    struct find_v : meta::variable_template<detail::find_<Tp>> {};
-
-    template <typename Tp, typename... Us>
-    decltype(auto) find(Us&&... us) noexcept {
-      return fused::find_v<Tp>::value(std::forward<Us>(us)...);
-    }
-
-    template <template <typename> class F>
-    struct find_if_v : meta::variable_template<detail::find_if_<F>> {};
-
-    template <template <typename> class F, typename... Us>
-    decltype(auto) find_if(Us&&... us) noexcept {
-      return fused::find_if_v<F>::value(std::forward<Us>(us)...);
-    }
-#endif
+    DECL_VTEMPL(find, detail::find_, typename);
+    DECL_VTEMPL(find_if, detail::find_if_, template <typename> class);
   }
 }
 }

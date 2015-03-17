@@ -12,15 +12,15 @@ void canUseFusedFind() {
   double d = 3.0;
   unsigned e = 4u;
 
-  auto x = fused::find<unsigned&>(a, b, c, d, e);
-  auto y = fused::find<double&>(a, b, c, d, e);
+  auto x = VTEMPL(fused::find, unsigned&)(a, b, c, d, e);
+  auto y = VTEMPL(fused::find, double&)(a, b, c, d, e);
   EXPECT_EQ(a, x);
   EXPECT_EQ(d, y);
 
-  EXPECT_EQ(1, fused::find<int>(1, 2u, 3.0, '4'));
-  EXPECT_EQ(2u, fused::find<unsigned>(1, 2u, 3.0, '4'));
-  EXPECT_EQ(3.0, fused::find<double>(1, 2u, 3.0, '4'));
-  EXPECT_EQ('4', fused::find<char>(1, 2u, 3.0, '4'));
+  EXPECT_EQ(1, VTEMPL(fused::find, int)(1, 2u, 3.0, '4'));
+  EXPECT_EQ(2u, VTEMPL(fused::find, unsigned)(1, 2u, 3.0, '4'));
+  EXPECT_EQ(3.0, VTEMPL(fused::find, double)(1, 2u, 3.0, '4'));
+  EXPECT_EQ('4', VTEMPL(fused::find, char)(1, 2u, 3.0, '4'));
 }
 
 template <typename Tp>
@@ -36,8 +36,8 @@ void canUseFusedFindIf() {
   double d = 3.0;
   unsigned e = 4u;
 
-  auto x = fused::find_if<is_u>(a, b, c, d, e);
-  auto y = fused::find_if<is_s>(a, b, c, d, e);
+  auto x = VTEMPL(fused::find_if, is_u)(a, b, c, d, e);
+  auto y = VTEMPL(fused::find_if, is_s)(a, b, c, d, e);
   EXPECT_EQ(a, x);
   EXPECT_EQ(b, y);
 }
@@ -49,20 +49,12 @@ decltype(auto) foo(F&& f, Ts&&... ts) {
 
 void canUseVariableTemplate() {
   {
-#if defined(HAS_VARIABLE_TEMPLATES)
-    auto x = foo(fused::find<int>, 1, 2u, '3', 4.0, 5);
-#else
-    auto x = foo(fused::find_v<int>::value, 1, 2u, '3', 4.0, 5);
-#endif
+    auto x = foo(VTEMPL(fused::find, int), 1, 2u, '3', 4.0, 5);
     static_assert(std::is_same<decltype(x), int>::value, "");
     EXPECT_EQ(1, x);
   }
   {
-#if defined(HAS_VARIABLE_TEMPLATES)
-    auto x = foo(fused::find_if<is_u>, 1, 2u, '3', 4.0, 5);
-#else
-    auto x = foo(fused::find_if_v<is_u>::value, 1, 2u, '3', 4.0, 5);
-#endif
+    auto x = foo(VTEMPL(fused::find_if, is_u), 1, 2u, '3', 4.0, 5);
     static_assert(std::is_same<decltype(x), unsigned>::value, "");
     EXPECT_EQ(2u, x);
   }
