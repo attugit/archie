@@ -3,22 +3,19 @@
 all: debug
 
 configure:
-	./waf configure
+	./premake4
 
 debug:
-	./waf debug
+	make --directory=build config=debug
 
 release:
-	./waf release
+	make --directory=build config=release
 
 clean:
-	./waf clean
+	make --directory=build clean
 
 distclean:
-	./waf distclean
-
-run: debug
-	./waf --alltests
+	rm -rf build
 
 format:
 	clang-format -i `find test/ -name *.cpp` `find include/ -name *.h`

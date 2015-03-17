@@ -1,3 +1,4 @@
+#include <archie/utils/meta/variable_template.h>
 #include <archie/utils/fused/type_tag.h>
 #include <archie/utils/fused/transform.h>
 #include <archie/utils/test.h>

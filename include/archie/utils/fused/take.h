@@ -10,7 +10,6 @@
 #include <archie/utils/fused/tuple.h>
 #include <archie/utils/fused/nth.h>
 #include <archie/utils/fused/as_tuple.h>
-#include <config.h>
 
 namespace archie {
 namespace utils {

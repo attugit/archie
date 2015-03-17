@@ -1,5 +1,5 @@
+#include <archie/utils/meta/variable_template.h>
 #include <archie/utils/fused/number.h>
-#include <config.h>
 #include <archie/utils/test.h>
 
 namespace fused = archie::utils::fused;

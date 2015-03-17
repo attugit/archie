@@ -69,15 +69,24 @@ install:
       echo sudo apt-get install -qq libstdc++6-${GCC_VERSION}-dbg;
       sudo apt-get install -qq libstdc++6-${GCC_VERSION}-dbg;
     fi
+  - export USE_STDLIB="";
   -
     if [ "$STDLIB" == "libc++" ];
     then
       echo sudo apt-get install -qq libc++1 libc++-dev;
       sudo apt-get install -qq libc++1 libc++-dev;
+      export USE_STDLIB="--libc++";
+    fi
+  - export USE_TUPLE="";
+  - if [ "TUPLE_IMPL" == "std" ];
+    then
+      export USE_TUPLE="--use-std-tuple";
     fi
   - sudo apt-get -qq install valgrind;
 
 script:
-  - ./waf distclean
-  - ./waf configure --stdlib=${STDLIB} --tuple=${TUPLE_IMPL};
-  - ./waf debug release --alltest --testcmd="valgrind --error-exitcode=1 %s"
+  - rm -rf ./build
+  - ./premake4 --targetdir=build ${USE_STDLIB} {USE_TUPLE};
+  - pushd ./build
+  - make config=debug
+  - make config=release

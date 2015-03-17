@@ -1,5 +1,6 @@
 #include <type_traits>
 
+#include <archie/utils/meta/variable_template.h>
 #include <archie/utils/fused/tuple.h>
 #include <archie/utils/traits.h>
 namespace fused = archie::utils::fused;

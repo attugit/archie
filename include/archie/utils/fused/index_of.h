@@ -1,13 +1,10 @@
 #pragma once
 
-#include <config.h>
 #include <archie/utils/meta/index_of.h>
 #include <archie/utils/fused/type_list.h>
+#include <archie/utils/meta/variable_template.h>
 #include <utility>
 
-#if !defined(HAS_VARIABLE_TEMPLATES)
-#include <archie/utils/meta/variable_template.h>
-#endif
 
 namespace archie {
 namespace utils {

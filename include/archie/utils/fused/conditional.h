@@ -2,7 +2,6 @@
 
 #include <utility>
 #include <type_traits>
-#include <config.h>
 #include <archie/utils/models.h>
 #include <archie/utils/traits/model_of.h>
 #include <archie/utils/meta/requires.h>

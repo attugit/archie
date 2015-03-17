@@ -1,6 +1,5 @@
 #pragma once
 
-#include <config.h>
 #include <archie/utils/meta/identity.h>
 #include <archie/utils/meta/variable_template.h>
 #include <archie/utils/fused/boolean.h>

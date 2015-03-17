@@ -1,5 +1,4 @@
 #pragma once
-#include <config.h>
 
 #if defined(USE_STD_TUPLE)
 #include <tuple>

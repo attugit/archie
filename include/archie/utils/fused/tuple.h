@@ -1,13 +1,12 @@
 #pragma once
-#include <config.h>
 
+#include <utility>
 #if defined(USE_ARCHIE_TUPLE)
 #include <archie/utils/fused/tuple_archie.h>
 #elif defined(USE_STD_TUPLE)
 #include <archie/utils/fused/tuple_std.h>
 #endif
 
-#include <utility>
 #include <archie/utils/fused/type_tag.h>
 #include <archie/utils/meta/variable_template.h>
 

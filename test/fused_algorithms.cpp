@@ -1,4 +1,4 @@
-#include <config.h>
+#include <archie/utils/meta/variable_template.h>
 #include <archie/utils/fused/tuple.h>
 #include <archie/utils/fused/algorithm.h>
 #include <archie/utils/test.h>

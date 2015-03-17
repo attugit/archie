@@ -1,6 +1,5 @@
 #pragma once
 
-#include <config.h>
 #include <utility>
 #include <archie/utils/fused/placeholder.h>
 #include <archie/utils/meta/variable_template.h>

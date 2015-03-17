@@ -1,7 +1,6 @@
 #pragma once
 
 #include <type_traits>
-#include <config.h>
 #include <archie/utils/traits/has_member.h>
 
 namespace archie {
@@ -20,12 +19,12 @@ namespace utils {
     template <typename Tp>
     using is_move_constructible = is_constructible<Tp, Tp&&>;
 
-#if defined(USE_LIBSTDCPP)
-    template <typename Tp>
-    using is_trivially_copy_constructible = std::has_trivial_copy_constructor<Tp>;
-#elif defined(USE_LIBCPP)
+#if defined(USE_LIBCPP)
     template <typename Tp>
     using is_trivially_copy_constructible = std::is_trivially_copy_constructible<Tp>;
+#else
+    template <typename Tp>
+    using is_trivially_copy_constructible = std::has_trivial_copy_constructor<Tp>;
 #endif
   }
 }

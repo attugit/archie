@@ -1,3 +1,4 @@
+#include <archie/utils/meta/variable_template.h>
 #include <archie/utils/fused/find.h>
 #include <archie/utils/test.h>
 #include <type_traits>

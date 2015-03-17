@@ -1,6 +1,5 @@
 #pragma once
 
-#include <config.h>
 #if defined(USE_ARCHIE_TUPLE)
 #include <utility>
 #include <array>
@@ -10,6 +9,7 @@
 #include <archie/utils/meta/at.h>
 #include <archie/utils/meta/indexable.h>
 #include <archie/utils/meta/logic.h>
+#include <archie/utils/meta/variable_template.h>
 #include <archie/utils/traits.h>
 #include <archie/utils/fused/nth.h>
 #include <archie/utils/fused/mover.h>
@@ -79,9 +79,11 @@ namespace utils {
       template <typename F>
       decltype(auto) apply(F&& f) const&;
       template <typename F>
-      decltype(auto) apply(F&& f) &;
+          decltype(auto) apply(F&& f) &
+          ;
       template <typename F>
-      decltype(auto) apply(F&& f) &&;
+          decltype(auto) apply(F&& f) &&
+          ;
     };
 
     template <typename... Ts>
