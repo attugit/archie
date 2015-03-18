@@ -1,4 +1,5 @@
 language: cpp
+os: linux
 
 env:
   global:
