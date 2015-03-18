@@ -12,9 +12,9 @@ local archie = solution "archie"
   location ( TARGETDIR )
   targetdir ( TARGETDIR )
   configurations { "debug", "release" }
-  buildoptions { "-std=c++1y" }
   language "C++"
   flags {
+    "Cpp14",
     "ExtraWarnings",
     "FatalWarnings",
     "NoExceptions",
