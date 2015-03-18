@@ -30,14 +30,12 @@ matrix:
 
 before_install:
   - git log --name-status HEAD^..HEAD
-  -
-    if [ "$CXX" == "g++" ];
+  - if [ "$CXX" == "g++" ];
     then
       echo sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test;
       sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test;
     fi
-  -
-    if [ "$CXX" == "clang++" ];
+  - if [ "$CXX" == "clang++" ];
     then
       echo sudo add-apt-repository --yes ppa:h-rayflood/gcc-upper;
       sudo add-apt-repository --yes ppa:h-rayflood/gcc-upper;
@@ -47,31 +45,27 @@ before_install:
   - sudo apt-get update -qq
 
 install:
-  -
-    if [ "$CXX" = "g++" ];
+  - if [ "$CXX" = "g++" ];
     then
       echo sudo apt-get install -qq g++-${GCC_VERSION};
       sudo apt-get install -qq g++-${GCC_VERSION};
       echo export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}";
       export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}";
     fi
-  -
-    if [ "$CXX" == "clang++" ];
+  - if [ "$CXX" == "clang++" ];
     then
       echo sudo apt-get install -qq clang-${CLANG_VERSION};
       sudo apt-get install -qq clang-${CLANG_VERSION};
       echo export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}";
       export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}";
     fi
-  -
-    if [ "$STDLIB" == "libstdc++" ];
+  - if [ "$STDLIB" == "libstdc++" ];
     then
       echo sudo apt-get install -qq libstdc++6-${GCC_VERSION}-dbg;
       sudo apt-get install -qq libstdc++6-${GCC_VERSION}-dbg;
     fi
   - export USE_STDLIB="";
-  -
-    if [ "$STDLIB" == "libc++" ];
+  - if [ "$STDLIB" == "libc++" ];
     then
       echo sudo apt-get install -qq libc++1 libc++-dev;
       sudo apt-get install -qq libc++1 libc++-dev;
@@ -87,5 +81,5 @@ install:
 script:
   - rm -rf build;
   - ./configure --targetdir=build ${USE_STDLIB} ${USE_TUPLE} --testcmd="valgrind -q --error-exitcode=1";
-  - make config=debug -C build -f Makefile;
-  - make config=release -C build -f Makefile;
+  - make config=debug verbose=1 -C build -f Makefile;
+  - make config=release verbose=1 -C build -f Makefile;
