@@ -85,8 +85,7 @@ install:
   - sudo apt-get -qq install valgrind;
 
 script:
-  - rm -rf ./build
-  - ./premake4 --targetdir=build ${USE_STDLIB} ${USE_TUPLE} --testcmd="valgrind -q --error-exitcode=1";
-  - pushd ./build;
-  - make config=debug;
-  - make config=release;
+  - rm -rf build;
+  - ./configure --targetdir=build ${USE_STDLIB} ${USE_TUPLE} --testcmd="valgrind -q --error-exitcode=1";
+  - make config=debug -C build -f Makefile;
+  - make config=release -C build -f Makefile;

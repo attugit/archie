@@ -1,18 +1,19 @@
 .PHONY: configure all release debug clean distclean run format
 
-all: debug
+all:
+	make --directory=build -f Makefile
 
 configure:
 	./premake4
 
 debug:
-	make --directory=build config=debug
+	make config=debug --directory=build -f Makefile
 
 release:
-	make --directory=build config=release
+	make config=release --directory=build -f Makefile
 
 clean:
-	make --directory=build clean
+	make clean --directory=build -f Makefile
 
 distclean:
 	rm -rf build
