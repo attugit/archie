@@ -165,16 +165,16 @@ void canComposeFusedTail() {
 }
 
 void canComposeFusedFind() {
-  auto x = fused::apply(VTEMPL(fused::find, unsigned), 1, 2u, '3', 4u);
+  auto x = fused::apply(VARTEMPL(fused::find, unsigned), 1, 2u, '3', 4u);
   EXPECT_EQ(2u, x);
-  auto y = fused::apply(VTEMPL(fused::find, char), 1, 2u, '3', 4u);
+  auto y = fused::apply(VARTEMPL(fused::find, char), 1, 2u, '3', 4u);
   EXPECT_EQ('3', y);
 }
 
 void canComposeFusedFindIf() {
-  auto x = fused::apply(VTEMPL(fused::find_if, std::is_unsigned), 1, 2u, '3', 4u);
+  auto x = fused::apply(VARTEMPL(fused::find_if, std::is_unsigned), 1, 2u, '3', 4u);
   EXPECT_EQ(2u, x);
-  auto y = fused::apply(VTEMPL(fused::find_if, std::is_signed), 1, 2u, '3', 4u);
+  auto y = fused::apply(VARTEMPL(fused::find_if, std::is_signed), 1, 2u, '3', 4u);
   EXPECT_EQ(1, y);
 }
 

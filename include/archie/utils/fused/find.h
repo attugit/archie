@@ -23,8 +23,8 @@ namespace utils {
         }
       };
     }
-    DECL_VTEMPL(find, detail::find_, typename);
-    DECL_VTEMPL(find_if, detail::find_if_, template <typename> class);
+    DECL_VARTEMPL(find, detail::find_, typename);
+    DECL_VARTEMPL(find_if, detail::find_if_, template <typename> class);
   }
 }
 }

@@ -6,7 +6,7 @@
 namespace archie {
 namespace utils {
   namespace fused {
-    DECL_VTEMPL(number, meta::number, std::size_t);
+    DECL_VARTEMPL(number, meta::number, std::size_t);
   }
 }
 }
