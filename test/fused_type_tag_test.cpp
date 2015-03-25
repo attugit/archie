@@ -27,23 +27,14 @@ void canExpandTags() {
 }
 
 void canUseVariableTemplate() {
-#if defined(HAS_VARIABLE_TEMPLATES)
-  auto x = fused::id<int>(1);
-#else
-  auto x = fused::id<int>::value(1);
-#endif
+  auto x = VARTEMPL(fused::id, int)(1);
   static_assert(std::is_same<decltype(x), int>::value, "");
   EXPECT_EQ(1, x);
 }
 
 void canCompareTags() {
-#if defined(HAS_VARIABLE_TEMPLATES)
-  constexpr auto const& x = fused::id<int>;
-  constexpr auto const& y = fused::id<unsigned>;
-#else
-  constexpr auto const& x = fused::id<int>::value;
-  constexpr auto const& y = fused::id<unsigned>::value;
-#endif
+  constexpr auto const& x = VARTEMPL(fused::id, int);
+  constexpr auto const& y = VARTEMPL(fused::id, unsigned);
   EXPECT_EQ(x, fused::make_tag(1));
   EXPECT_EQ(y, fused::make_tag(1u));
   EXPECT_NE(x, y);
