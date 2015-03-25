@@ -37,13 +37,7 @@ namespace utils {
       };
     }
     constexpr auto make_tag = detail::make_tag_{};
-#if defined(HAS_VARIABLE_TEMPLATES)
-    template <typename Tp>
-    constexpr auto const id = type_tag<Tp>{};
-#else
-    template <typename Tp>
-    struct id : meta::variable_template<type_tag<Tp>> {};
-#endif
+    DECL_VARTEMPL(id, type_tag, typename);
   }
 }
 }

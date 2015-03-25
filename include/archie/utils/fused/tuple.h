@@ -17,19 +17,11 @@ namespace utils {
       struct tuple_size_ {
         template <typename Tp>
         constexpr decltype(auto) operator()(type_tag<Tp>) const {
-#if defined(HAS_VARIABLE_TEMPLATES)
-          return impl(fused::id<std::decay_t<Tp>>);
-#else
-          return impl(fused::id<std::decay_t<Tp>>::value);
-#endif
+          return impl(VARTEMPL(fused::id, std::decay_t<Tp>));
         }
         template <typename Tp>
         constexpr decltype(auto) operator()(Tp const&) const {
-#if defined(HAS_VARIABLE_TEMPLATES)
-          return impl(fused::id<Tp>);
-#else
-          return impl(fused::id<Tp>::value);
-#endif
+          return impl(VARTEMPL(fused::id, Tp));
         }
 
       private:
