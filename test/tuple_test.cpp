@@ -143,15 +143,9 @@ void canUseGetByIdToWrite() {
 }
 
 void canUseAt() {
-#if defined(HAS_VARIABLE_TEMPLATES)
-  constexpr auto const& at_0 = fused::at<0>;
-  constexpr auto const& at_1 = fused::at<1>;
-  constexpr auto const& at_2 = fused::at<2>;
-#else
-  constexpr auto const& at_0 = fused::at<0>::value;
-  constexpr auto const& at_1 = fused::at<1>::value;
-  constexpr auto const& at_2 = fused::at<2>::value;
-#endif
+  constexpr auto const& at_0 = VARTEMPL(fused::at, 0);
+  constexpr auto const& at_1 = VARTEMPL(fused::at, 1);
+  constexpr auto const& at_2 = VARTEMPL(fused::at, 2);
 
   auto t = fused::make_tuple(1u, 2.0, '3');
 
@@ -458,15 +452,9 @@ void canGetElementByType() {
 }
 
 void canExtractElement() {
-#if defined(HAS_VARIABLE_TEMPLATES)
-  constexpr auto const& ex_u = fused::extract<unsigned>;
-  constexpr auto const& ex_d = fused::extract<double>;
-  constexpr auto const& ex_c = fused::extract<char>;
-#else
-  constexpr auto const& ex_u = fused::extract<unsigned>::value;
-  constexpr auto const& ex_d = fused::extract<double>::value;
-  constexpr auto const& ex_c = fused::extract<char>::value;
-#endif
+  constexpr auto const& ex_u = VARTEMPL(fused::extract, unsigned);
+  constexpr auto const& ex_d = VARTEMPL(fused::extract, double);
+  constexpr auto const& ex_c = VARTEMPL(fused::extract, char);
 
   auto t = fused::make_tuple(1u, 2.0, '3');
 

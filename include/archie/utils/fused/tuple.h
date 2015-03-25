@@ -55,19 +55,8 @@ namespace utils {
     constexpr auto const tie = detail::tie_{};
     constexpr auto const tuple_size = detail::tuple_size_{};
 
-#if defined(HAS_VARIABLE_TEMPLATES)
-    template <std::size_t n>
-    constexpr auto const at = detail::at_<n>{};
-
-    template <typename Tp>
-    constexpr auto const extract = detail::extract_<Tp>{};
-#else
-    template <std::size_t n>
-    struct at : meta::variable_template<detail::at_<n>> {};
-
-    template <typename Tp>
-    struct extract : meta::variable_template<detail::extract_<Tp>> {};
-#endif
+    DECL_VARTEMPL(at, detail::at_, std::size_t);
+    DECL_VARTEMPL(extract, detail::extract_, typename);
   }
 }
 }
