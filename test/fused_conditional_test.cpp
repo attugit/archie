@@ -20,13 +20,8 @@ void canUseConditionalT() {
 }
 
 void canUseConditional() {
-#if defined(HAS_VARIABLE_TEMPLATES)
-  constexpr auto cond = fused::conditional<goo, hoo>;
-#else
-  constexpr auto cond = fused::conditional<goo, hoo>::value;
-#endif
-  auto x = cond();
-  auto y = cond(1);
+  auto x = VARTEMPL(fused::conditional, goo, hoo)();
+  auto y = VARTEMPL(fused::conditional, goo, hoo)(1);
   ASSERT_EQ(3, x);
   ASSERT_EQ(4, y);
 }

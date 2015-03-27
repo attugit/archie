@@ -211,31 +211,25 @@ void canComposeFusedConstruct() {
 }
 
 void canComposeIndexOf() {
-#if !defined(HAS_VARIABLE_TEMPLATES)
-  constexpr auto& idx_i32 = fused::index_of<int>::value;
-  constexpr auto& idx_u32 = fused::index_of<unsigned>::value;
-  constexpr auto& idx_u8 = fused::index_of<char>::value;
-#else
-  constexpr auto& idx_i32 = fused::index_of<int>;
-  constexpr auto& idx_u32 = fused::index_of<unsigned>;
-  constexpr auto& idx_u8 = fused::index_of<char>;
-#endif
   {
-    auto x = fused::apply(idx_i32, 1, 2u, '3');
-    auto y = fused::apply(idx_u32, 1, 2u, '3');
-    auto z = fused::apply(idx_u8, 1, 2u, '3');
+    auto x = fused::apply(VARTEMPL(fused::index_of, int), 1, 2u, '3');
+    auto y = fused::apply(VARTEMPL(fused::index_of, unsigned), 1, 2u, '3');
+    auto z = fused::apply(VARTEMPL(fused::index_of, char), 1, 2u, '3');
     EXPECT_EQ(0, x);
     EXPECT_EQ(1, y);
     EXPECT_EQ(2, z);
   }
   {
-    auto x = fused::apply(idx_i32, 1);
+    auto x = fused::apply(VARTEMPL(fused::index_of, int), 1);
     EXPECT_EQ(0, x);
   }
   {
-    auto x = fused::apply(idx_i32, VARTEMPL(fused::type_list, int, unsigned, char));
-    auto y = fused::apply(idx_u32, VARTEMPL(fused::type_list, int, unsigned, char));
-    auto z = fused::apply(idx_u8, VARTEMPL(fused::type_list, int, unsigned, char));
+    auto x = fused::apply(VARTEMPL(fused::index_of, int),
+                          VARTEMPL(fused::type_list, int, unsigned, char));
+    auto y = fused::apply(VARTEMPL(fused::index_of, unsigned),
+                          VARTEMPL(fused::type_list, int, unsigned, char));
+    auto z = fused::apply(VARTEMPL(fused::index_of, char),
+                          VARTEMPL(fused::type_list, int, unsigned, char));
     EXPECT_EQ(0, x);
     EXPECT_EQ(1, y);
     EXPECT_EQ(2, z);

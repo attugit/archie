@@ -21,13 +21,7 @@ namespace utils {
         }
       };
     }
-#if defined(HAS_VARIABLE_TEMPLATES)
-    template <typename Tp>
-    constexpr detail::index_of_<Tp> index_of{};
-#else
-    template <typename Tp>
-    struct index_of : meta::variable_template<detail::index_of_<Tp>> {};
-#endif
+    DECL_VARTEMPL(index_of, detail::index_of_, typename);
   }
 }
 }
