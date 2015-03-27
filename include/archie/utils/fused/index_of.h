@@ -13,11 +13,7 @@ namespace utils {
       struct index_of_ {
         template <typename... Us>
         constexpr decltype(auto) operator()(Us&&...) const noexcept {
-#if defined(HAS_VARIABLE_TEMPLATES)
-          return meta::index_of<Tp>(type_list<Us...>);
-#else
-          return meta::index_of<Tp>(type_list<Us...>::value);
-#endif
+          return meta::index_of<Tp>(VARTEMPL(fused::type_list, Us...));
         }
         template <typename... Us>
         constexpr decltype(auto) operator()(meta::type_list<Us...> x) const noexcept {
