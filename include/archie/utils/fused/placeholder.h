@@ -4,6 +4,7 @@
 #include <archie/utils/meta/ignore.h>
 #include <archie/utils/meta/number.h>
 #include <archie/utils/meta/indexable.h>
+#include <archie/utils/meta/variable_template.h>
 
 namespace archie {
 namespace utils {
@@ -27,17 +28,19 @@ namespace utils {
       return [f, xs...](auto&&... ys) { return f(xs(ys...)...); };
     }
 
+    DECL_VARTEMPL(nth, placeholder, std::size_t);
+
     inline namespace placeholders {
-      constexpr placeholder<0> _0{};
-      constexpr placeholder<1> _1{};
-      constexpr placeholder<2> _2{};
-      constexpr placeholder<3> _3{};
-      constexpr placeholder<4> _4{};
-      constexpr placeholder<5> _5{};
-      constexpr placeholder<6> _6{};
-      constexpr placeholder<7> _7{};
-      constexpr placeholder<8> _8{};
-      constexpr placeholder<9> _9{};
+      constexpr auto const& _0 = VARTEMPL(fused::nth, 0);
+      constexpr auto const& _1 = VARTEMPL(fused::nth, 1);
+      constexpr auto const& _2 = VARTEMPL(fused::nth, 2);
+      constexpr auto const& _3 = VARTEMPL(fused::nth, 3);
+      constexpr auto const& _4 = VARTEMPL(fused::nth, 4);
+      constexpr auto const& _5 = VARTEMPL(fused::nth, 5);
+      constexpr auto const& _6 = VARTEMPL(fused::nth, 6);
+      constexpr auto const& _7 = VARTEMPL(fused::nth, 7);
+      constexpr auto const& _8 = VARTEMPL(fused::nth, 8);
+      constexpr auto const& _9 = VARTEMPL(fused::nth, 9);
     }
   }
 }
