@@ -6,13 +6,7 @@
 namespace archie {
 namespace utils {
   namespace fused {
-#if defined(HAS_VARIABLE_TEMPLATES)
-    template <typename... Ts>
-    constexpr auto const type_list = meta::type_list<Ts...>{};
-#else
-    template <typename... Ts>
-    struct type_list : meta::variable_template<meta::type_list<Ts...>> {};
-#endif
+    DECL_VARIADIC_VARTEMPL(type_list, meta::type_list, typename...);
   }
 }
 }

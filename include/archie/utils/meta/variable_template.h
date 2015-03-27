@@ -26,7 +26,11 @@ namespace utils {
   template <param T>                                                                               \
   struct name : archie::utils::meta::variable_template<type<T>> {}
 
-#define VARTEMPL(name, T) name<T>::value
+#define DECL_VARIADIC_VARTEMPL(name, type, param)                                                  \
+  template <param T>                                                                               \
+  struct name : archie::utils::meta::variable_template<type<T...>> {}
+
+#define VARTEMPL(name, ...) name<__VA_ARGS__>::value
 
 #else
 
@@ -34,5 +38,9 @@ namespace utils {
   template <param T>                                                                               \
   constexpr auto const name = type<T> {}
 
-#define VARTEMPL(name, T) name<T>
+#define DECL_VARIADIC_VARTEMPL(name, type, param)                                                  \
+  template <param T>                                                                               \
+  constexpr auto const name = type<T...> {}
+
+#define VARTEMPL(name, ...) name<__VA_ARGS__>
 #endif
