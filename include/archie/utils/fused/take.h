@@ -31,7 +31,7 @@ namespace utils {
         }
         template <typename... Ts>
         constexpr decltype(auto) operator()(Ts&&... ts) const {
-          return make_tuple(fused::nth<ids>(ts...)...);
+          return make_tuple(VARTEMPL(fused::nth, ids)(ts...)...);
         }
       };
     }

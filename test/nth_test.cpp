@@ -1,21 +1,21 @@
 #include <archie/utils/fused/nth.h>
 #include <archie/utils/test.h>
 
-using archie::utils::fused::nth;
+namespace fused = archie::utils::fused;
 
 void canUseNth() {
   char a = 0;
   int b = 1;
   float c = 2.0;
 
-  auto& x = nth<0>(a, b, c);
-  auto& y = nth<1>(a, b, c);
-  auto& z = nth<2>(a, b, c);
+  auto& x = VARTEMPL(fused::nth, 0)(a, b, c);
+  auto& y = VARTEMPL(fused::nth, 1)(a, b, c);
+  auto& z = VARTEMPL(fused::nth, 2)(a, b, c);
   EXPECT_EQ(&a, &x);
   EXPECT_EQ(&b, &y);
   EXPECT_EQ(&c, &z);
 
-  nth<0>(a, b, c) = 7;
+  VARTEMPL(fused::nth, 0)(a, b, c) = 7;
   EXPECT_EQ(7, a);
 }
 
@@ -24,7 +24,7 @@ void canUseConstNth() {
   const int b = 1;
   const float c = 2.0;
 
-  auto const& x = nth<0>(a, b, c);
+  auto const& x = VARTEMPL(fused::nth, 0)(a, b, c);
   EXPECT_EQ(&a, &x);
 }
 
@@ -33,8 +33,9 @@ void canWrapNthWithLambda() {
   const int b = 1;
   const float c = 2.0;
 
-  auto f = [](auto&&... args)
-               -> decltype(auto) { return nth<0>(std::forward<decltype(args)>(args)...); };
+  auto f = [](auto&&... args) -> decltype(auto) {
+    return VARTEMPL(fused::nth, 0)(std::forward<decltype(args)>(args)...);
+  };
   auto const& x = f(a, b, c);
   EXPECT_EQ(&a, &x);
 }
@@ -46,9 +47,9 @@ void canUseNthWithNonCopyable() {
   auto b = std::make_unique<int>(2);
   auto c = std::make_unique<char>('3');
 
-  auto const& x = nth<0>(a, b, c);
-  auto const& y = nth<1>(a, b, c);
-  auto const& z = nth<2>(a, b, c);
+  auto const& x = VARTEMPL(fused::nth, 0)(a, b, c);
+  auto const& y = VARTEMPL(fused::nth, 1)(a, b, c);
+  auto const& z = VARTEMPL(fused::nth, 2)(a, b, c);
 
   EXPECT_EQ(*a, *x);
   EXPECT_EQ(*b, *y);
@@ -56,9 +57,9 @@ void canUseNthWithNonCopyable() {
 }
 
 void canUseNthWithRValues() {
-  auto x = nth<0>(1u, 2.0, '3');
-  auto y = nth<1>(1u, 2.0, '3');
-  auto z = nth<2>(1u, 2.0, '3');
+  auto x = VARTEMPL(fused::nth, 0)(1u, 2.0, '3');
+  auto y = VARTEMPL(fused::nth, 1)(1u, 2.0, '3');
+  auto z = VARTEMPL(fused::nth, 2)(1u, 2.0, '3');
 
   EXPECT_EQ(1u, x);
   EXPECT_EQ(2.0, y);

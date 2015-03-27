@@ -199,18 +199,9 @@ void canComposeFusedTake() {
 }
 
 void canComposeFusedNth() {
-#if !defined(HAS_VARIABLE_TEMPLATES)
-  constexpr auto& fst = fused::nth_v<0>::value;
-  constexpr auto& snd = fused::nth_v<1>::value;
-  constexpr auto& trd = fused::nth_v<2>::value;
-#else
-  constexpr auto& fst = fused::nth<0>;
-  constexpr auto& snd = fused::nth<1>;
-  constexpr auto& trd = fused::nth<2>;
-#endif
-  auto x = fused::apply(fst, 1, 2u, '3');
-  auto y = fused::apply(snd, 1, 2u, '3');
-  auto z = fused::apply(trd, 1, 2u, '3');
+  auto x = fused::apply(VARTEMPL(fused::nth, 0), 1, 2u, '3');
+  auto y = fused::apply(VARTEMPL(fused::nth, 1), 1, 2u, '3');
+  auto z = fused::apply(VARTEMPL(fused::nth, 2), 1, 2u, '3');
   EXPECT_EQ(1, x);
   EXPECT_EQ(2u, y);
   EXPECT_EQ('3', z);
