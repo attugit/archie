@@ -43,4 +43,5 @@ namespace utils {
   constexpr auto const name = type<T...> {}
 
 #define VARTEMPL(name, ...) name<__VA_ARGS__>
+#undef HAS_VARIABLE_TEMPLATES
 #endif
