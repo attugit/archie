@@ -13,11 +13,13 @@
 #include <archie/utils/traits.h>
 #include <archie/utils/fused/nth.h>
 #include <archie/utils/fused/mover.h>
+#include <archie/utils/traits/model_of.h>
+#include <archie/utils/fused/ignore.h>
+#include <archie/utils/models.h>
 
 namespace archie {
 namespace utils {
   namespace fused {
-
     template <typename... Ts>
     struct tuple {
     private:
@@ -29,7 +31,7 @@ namespace utils {
       }
       using storage_type = decltype(make_storage(std::declval<move_t<Ts>>()...));
 
-      mutable storage_type storage;
+      storage_type storage;
 
       struct explicit_ctor_tag {};
       struct implicit_ctor_tag {};
@@ -77,7 +79,16 @@ namespace utils {
       constexpr std::size_t size() noexcept { return sizeof...(Ts); }
 
       template <typename F>
-      decltype(auto) apply(F&& f) const&;
+      decltype(auto) apply(F&& f,
+                           meta::requires<traits::model_of<models::Callable(F, Ts const&...)>> =
+                               fused::ignore) const & {
+        auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
+          return std::forward<decltype(f)>(f)(static_cast<Ts const&>(xs)...);
+        };
+        // TODO explain why const_cast is used here
+        return const_cast<storage_type&>(storage)(exec);
+      }
+
       template <typename F>
           decltype(auto) apply(F&& f) &
           ;
@@ -85,15 +96,6 @@ namespace utils {
           decltype(auto) apply(F&& f) &&
           ;
     };
-
-    template <typename... Ts>
-    template <typename F>
-    decltype(auto) tuple<Ts...>::apply(F&& f) const & {
-      auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
-        return std::forward<decltype(f)>(f)(static_cast<Ts const&>(xs)...);
-      };
-      return storage(exec);
-    }
 
     template <typename... Ts>
     template <typename F>
