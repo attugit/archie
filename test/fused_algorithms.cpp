@@ -179,19 +179,12 @@ void canComposeFusedFindIf() {
 }
 
 void canComposeFusedTake() {
-#if !defined(HAS_VARIABLE_TEMPLATES)
-  constexpr auto& take_2 = fused::take_v<2>::value;
-  constexpr auto& take_3 = fused::take_v<3>::value;
-#else
-  constexpr auto& take_2 = fused::take<2>;
-  constexpr auto& take_3 = fused::take<3>;
-#endif
-  auto x = fused::apply(take_2, fused::make_tuple(1, 2u, '3'));
+  auto x = fused::apply(VARTEMPL(fused::take, 2), fused::make_tuple(1, 2u, '3'));
   static_assert(fused::tuple_size(fused::type_tag<decltype(x)>{}) == 2u, "");
   EXPECT_EQ(1, fused::get<0>(x));
   EXPECT_EQ(2u, fused::get<1>(x));
 
-  auto y = fused::apply(take_3, 4.0, '3', 2u, 1);
+  auto y = fused::apply(VARTEMPL(fused::take, 3), 4.0, '3', 2u, 1);
   static_assert(fused::tuple_size(fused::type_tag<decltype(y)>{}) == 3u, "");
   EXPECT_EQ(4.0, fused::get<0>(y));
   EXPECT_EQ('3', fused::get<1>(y));

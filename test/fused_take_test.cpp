@@ -10,9 +10,9 @@ namespace fused = archie::utils::fused;
 #include <type_traits>
 
 namespace {
-using x = decltype(fused::take<1>(fused::tuple<_0, _1>{}));
+using x = decltype(VARTEMPL(fused::take, 1)(fused::tuple<_0, _1>{}));
 static_assert(std::is_same<x, fused::tuple<_0>>::value, "");
-using y = decltype(fused::take<2>(fused::tuple<_0, _1>{}));
+using y = decltype(VARTEMPL(fused::take, 2)(fused::tuple<_0, _1>{}));
 static_assert(std::is_same<y, fused::tuple<_0, _1>>::value, "");
 }
 
@@ -20,9 +20,9 @@ static_assert(std::is_same<y, fused::tuple<_0, _1>>::value, "");
 
 void canTakeElementsFromTuple() {
   auto a = fused::make_tuple(1, 2.0, '3');
-  auto b = fused::take<1>(a);
-  auto c = fused::take<2>(a);
-  auto d = fused::take<3>(a);
+  auto b = VARTEMPL(fused::take, 1)(a);
+  auto c = VARTEMPL(fused::take, 2)(a);
+  auto d = VARTEMPL(fused::take, 3)(a);
 
   EXPECT_EQ(1, fused::get<0>(b));
   EXPECT_EQ(1, fused::get<0>(c));

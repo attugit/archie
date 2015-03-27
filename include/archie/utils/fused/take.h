@@ -16,7 +16,7 @@ namespace utils {
   namespace fused {
     namespace detail {
       template <std::size_t... ids>
-      struct take {
+      struct take_ {
         template <typename... Ts>
         struct impl {
           template <typename Up>
@@ -34,19 +34,10 @@ namespace utils {
           return make_tuple(VARTEMPL(fused::nth, ids)(ts...)...);
         }
       };
+      template <std::size_t N>
+      using indexed_take_ = meta::indexable_t<detail::take_, N>;
     }
-#if defined(HAS_VARIABLE_TEMPLATES)
-    template <std::size_t n>
-    constexpr auto const take = meta::indexable_t<detail::take, n>{};
-#else
-    template <std::size_t n>
-    struct take_v : meta::variable_template<meta::indexable_t<detail::take, n>> {};
-
-    template <std::size_t n, typename... Ts>
-    decltype(auto) take(tuple<Ts...> const& t) {
-      return fused::take_v<n>::value(t);
-    }
-#endif
+    DECL_VARTEMPL(take, detail::indexed_take_, std::size_t);
   }
 }
 }
