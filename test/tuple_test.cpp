@@ -12,11 +12,11 @@ namespace meta = archie::utils::meta;
 
 void canDefaultConstruct() {
   {
-    static_assert(std::is_default_constructible<fused::tuple<unsigned, double, char>>::value, "");
-    static_assert(fused::tuple_size(fused::type_tag<fused::tuple<unsigned, double, char>>{}) == 3u,
-                  "");
+    using tuple_t = fused::tuple<unsigned, double, char>;
+    static_assert(std::is_default_constructible<tuple_t>::value, "");
+    static_assert(fused::tuple_size(VARTEMPL(fused::id, tuple_t)) == 3u, "");
     auto t = fused::tuple<unsigned, double, char>();
-    static_assert(fused::tuple_size(fused::type_tag<decltype(t)>{}) == 3u, "");
+    static_assert(fused::tuple_size(VARTEMPL(fused::id, decltype(t))) == 3u, "");
 
     EXPECT_EQ(3u, fused::tuple_size(t));
     EXPECT_LE(sizeof(unsigned) + sizeof(double) + sizeof(char), sizeof(t));
