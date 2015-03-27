@@ -48,6 +48,9 @@ namespace utils {
       constexpr explicit tuple(explicit_ctor_tag, Us&&... args)
           : tuple(Ts { std::forward<Us>(args) }...) {}
 
+      template <typename F, typename... Us>
+      using is_callable = meta::requires<traits::model_of<models::Callable(F, Us...)>>;
+
     public:
       template <typename... Us>
       constexpr explicit tuple(Us&&... args)
@@ -79,9 +82,7 @@ namespace utils {
       constexpr std::size_t size() noexcept { return sizeof...(Ts); }
 
       template <typename F>
-      decltype(auto) apply(F&& f,
-                           meta::requires<traits::model_of<models::Callable(F, Ts const&...)>> =
-                               fused::ignore) const & {
+      decltype(auto) apply(F&& f, is_callable<F, Ts const&...> = fused::ignore) const & {
         auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
           return std::forward<decltype(f)>(f)(static_cast<Ts const&>(xs)...);
         };
@@ -90,30 +91,21 @@ namespace utils {
       }
 
       template <typename F>
-          decltype(auto) apply(F&& f) &
-          ;
+      decltype(auto) apply(F&& f, is_callable<F, Ts&...> = fused::ignore) & {
+        auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
+          return std::forward<decltype(f)>(f)(static_cast<std::add_lvalue_reference_t<Ts>>(xs)...);
+        };
+        return storage(exec);
+      }
+
       template <typename F>
-          decltype(auto) apply(F&& f) &&
-          ;
+      decltype(auto) apply(F&& f, is_callable<F, Ts&&...> = fused::ignore) && {
+        auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
+          return std::forward<decltype(f)>(f)(static_cast<Ts&&>(xs)...);
+        };
+        return storage(exec);
+      }
     };
-
-    template <typename... Ts>
-    template <typename F>
-    decltype(auto) tuple<Ts...>::apply(F&& f) & {
-      auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
-        return std::forward<decltype(f)>(f)(static_cast<std::add_lvalue_reference_t<Ts>>(xs)...);
-      };
-      return storage(exec);
-    }
-
-    template <typename... Ts>
-    template <typename F>
-    decltype(auto) tuple<Ts...>::apply(F&& f) && {
-      auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
-        return std::forward<decltype(f)>(f)(static_cast<Ts&&>(xs)...);
-      };
-      return storage(exec);
-    }
 
     namespace detail {
       struct make_tuple_ {
