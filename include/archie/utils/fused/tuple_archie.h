@@ -13,9 +13,8 @@
 #include <archie/utils/traits.h>
 #include <archie/utils/fused/nth.h>
 #include <archie/utils/fused/mover.h>
-#include <archie/utils/traits/model_of.h>
 #include <archie/utils/fused/ignore.h>
-#include <archie/utils/models.h>
+#include <archie/utils/traits/is_callable.h>
 
 namespace archie {
 namespace utils {
@@ -49,7 +48,7 @@ namespace utils {
           : tuple(Ts { std::forward<Us>(args) }...) {}
 
       template <typename F, typename... Us>
-      using is_callable = meta::requires<traits::model_of<models::Callable(F, Us...)>>;
+      using requires_callable = meta::requires<traits::is_callable<F, Us...>>;
 
     public:
       template <typename... Us>
@@ -82,7 +81,7 @@ namespace utils {
       constexpr std::size_t size() noexcept { return sizeof...(Ts); }
 
       template <typename F>
-      decltype(auto) apply(F&& f, is_callable<F, Ts const&...> = fused::ignore) const & {
+      decltype(auto) apply(F&& f, requires_callable<F, Ts const&...> = fused::ignore) const & {
         auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
           return std::forward<decltype(f)>(f)(static_cast<Ts const&>(xs)...);
         };
@@ -91,7 +90,7 @@ namespace utils {
       }
 
       template <typename F>
-      decltype(auto) apply(F&& f, is_callable<F, Ts&...> = fused::ignore) & {
+      decltype(auto) apply(F&& f, requires_callable<F, Ts&...> = fused::ignore) & {
         auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
           return std::forward<decltype(f)>(f)(static_cast<std::add_lvalue_reference_t<Ts>>(xs)...);
         };
@@ -99,7 +98,7 @@ namespace utils {
       }
 
       template <typename F>
-      decltype(auto) apply(F&& f, is_callable<F, Ts&&...> = fused::ignore) && {
+      decltype(auto) apply(F&& f, requires_callable<F, Ts&&...> = fused::ignore) && {
         auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
           return std::forward<decltype(f)>(f)(static_cast<Ts&&>(xs)...);
         };

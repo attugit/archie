@@ -7,6 +7,7 @@
 #include <archie/utils/fused/boolean.h>
 #include <archie/utils/fused/conditional.h>
 #include <archie/utils/traits/is_fused_tuple.h>
+#include <archie/utils/traits/is_callable.h>
 
 namespace archie {
 namespace utils {
@@ -15,7 +16,7 @@ namespace utils {
       struct compose_args_ {
         template <typename F,
                   typename... Ts,
-                  typename = meta::requires<traits::model_of<models::Callable(F, Ts&&...)>>>
+                  typename = meta::requires<traits::is_callable<F, Ts&&...>>>
         constexpr decltype(auto) operator()(F&& f, Ts&&... ts) const {
           return fused::apply(std::forward<F>(f), std::forward<Ts>(ts)...);
         }

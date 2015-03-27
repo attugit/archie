@@ -1,16 +1,13 @@
 #pragma once
 
-#include <archie/utils/traits/has_member.h>
+#include <archie/utils/traits/model_of.h>
+#include <archie/utils/traits/callable.h>
 
 namespace archie {
 namespace utils {
   namespace traits {
-    namespace detail {
-      template <typename F, typename... Ts>
-      using inspect_callable = decltype(std::declval<F>()(std::declval<Ts>()...));
-    }
     template <typename F, typename... Ts>
-    using is_callable = has_member<detail::inspect_callable, meta::type_list<F, Ts...>>;
+    using is_callable = model_of<Callable(F, Ts...)>;
   }
 }
 }
