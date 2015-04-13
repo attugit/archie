@@ -6,6 +6,7 @@
 namespace archie {
 namespace utils {
   namespace containers {
+
     template <typename Tp, std::size_t N>
     struct stack_allocator {
       using value_type = Tp;
