@@ -1,6 +1,7 @@
 #include <cstddef>
 #include <utility>
 #include <new>
+#include <experimental/dynarray>
 
 namespace archie {
 namespace utils {
