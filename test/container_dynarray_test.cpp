@@ -49,7 +49,12 @@ namespace utils {
           }
         }
 
-        void destroy_storage() noexcept { deallocate(start_, end_of_storage_ - start_); }
+        void destroy_storage() noexcept {
+          deallocate(start_, end_of_storage_ - start_);
+          start_ = nullptr;
+          finish_ = nullptr;
+          end_of_storage_ = nullptr;
+        }
 
         tp_alloc& get_allocator() noexcept { return static_cast<tp_alloc&>(*this); }
 
@@ -76,7 +81,12 @@ namespace utils {
 
       dynamic_array(dynamic_array&& x) { impl_.swap(x.impl_); }
 
-      dynamic_array& operator=(dynamic_array&&) = default;
+      dynamic_array& operator=(dynamic_array&& x) {
+        clear();
+        if (capacity() != 0u) impl_.destroy_storage();
+        impl_.swap(x.impl_);
+        return *this;
+      }
 
       dynamic_array(dynamic_array const&) { IMPLEMENT_ME }
 
@@ -363,6 +373,7 @@ int main() {
   canDefaultConstructDynamicArray();
   canCreateDynamicArrayWithGivenCapacity();
   canMoveConstructDynamicArray();
+  canMoveAssign();
   canEmplaceBackElement();
   canPopBackElement();
   canUseBeginAndEnd();
