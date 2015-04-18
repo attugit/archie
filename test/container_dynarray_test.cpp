@@ -111,6 +111,8 @@ namespace utils {
 
       bool empty() const noexcept { return cbegin() == cend(); }
 
+      bool full() const noexcept { return impl_.finish_ == impl_.end_of_storage_; }
+
       template <typename... Args>
       void emplace_back(Args&&... args) /*noexcept if ctor */ {
         impl_.construct(impl_.finish_, std::forward<Args>(args)...);
@@ -123,7 +125,7 @@ namespace utils {
 
       void pop_back() noexcept { impl_.destroy(--impl_.finish_); }
 
-      void erase(iterator pos) {
+      void erase(iterator pos) /* noexcept if move assign */ {
         auto current = pos;
         ++pos;
         for (; pos != end(); ++pos, ++current) { *current = std::move(*pos); }
@@ -269,20 +271,35 @@ void canPopBackElement() {
 }
 
 void canEraseElement() {
-  darray da(2);
+  darray da(3);
   {
     da.emplace_back(7);
     da.emplace_back(11);
-    EXPECT_EQ(2u, da.capacity());
-    EXPECT_EQ(2u, da.size());
+    da.emplace_back(13);
+    EXPECT_EQ(3u, da.size());
+    EXPECT_TRUE(da.full());
     EXPECT_EQ(7, da[0]);
     EXPECT_EQ(11, da[1]);
+    EXPECT_EQ(13, da[2]);
   }
 
   da.erase(da.begin());
-  EXPECT_EQ(2u, da.capacity());
-  EXPECT_EQ(1, da.size());
-  EXPECT_EQ(11, da[0]);
+  {
+    EXPECT_EQ(2u, da.size());
+    EXPECT_FALSE(da.full());
+    EXPECT_EQ(11, da[0]);
+    EXPECT_EQ(13, da[1]);
+  }
+
+  da.erase(da.begin() + 1);
+  {
+    EXPECT_EQ(1u, da.size());
+    EXPECT_EQ(11, da[0]);
+  }
+
+  da.erase(da.begin());
+  EXPECT_EQ(3u, da.capacity());
+  EXPECT_TRUE(da.empty());
 }
 
 int main() {
