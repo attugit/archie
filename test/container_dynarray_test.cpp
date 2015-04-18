@@ -1,5 +1,6 @@
 #include <memory>
 #include <tuple>
+#include <type_traits>
 
 #define IMPLEMENT_ME std::terminate();
 
@@ -79,9 +80,9 @@ namespace utils {
 
       dynamic_array(size_type n, allocator_type const& a) : impl_(a) { impl_.create_storage(n); }
 
-      dynamic_array(dynamic_array&& x) { impl_.swap(x.impl_); }
+      dynamic_array(dynamic_array&& x) noexcept { impl_.swap(x.impl_); }
 
-      dynamic_array& operator=(dynamic_array&& x) {
+      dynamic_array& operator=(dynamic_array&& x) noexcept {
         clear();
         if (capacity() != 0u) impl_.destroy_storage();
         impl_.swap(x.impl_);
@@ -103,7 +104,7 @@ namespace utils {
       }
 
       template <typename InputIterator>
-      dynamic_array(InputIterator, InputIterator) /*noexcept if copy ctor */ {
+      dynamic_array(InputIterator, InputIterator) {
         IMPLEMENT_ME
       }
 
@@ -123,18 +124,25 @@ namespace utils {
       bool full() const noexcept { return impl_.finish_ == impl_.end_of_storage_; }
 
       template <typename... Args>
-      void emplace_back(Args&&... args) /*noexcept if ctor */ {
+      void emplace_back(Args&&... args) noexcept(
+          std::is_nothrow_constructible<value_type, Args...>::value) {
         impl_.construct(impl_.finish_, std::forward<Args>(args)...);
         ++impl_.finish_;
       }
 
-      void push_back(const_reference x) /*noexcept if copy ctor */ { emplace_back(x); }
+      void push_back(const_reference x) noexcept(
+          std::is_nothrow_copy_constructible<value_type>::value) {
+        emplace_back(x);
+      }
 
-      void push_back(value_type&& x) /*noexcept if move ctor */ { emplace_back(std::move(x)); }
+      void push_back(value_type&& x) noexcept(
+          std::is_nothrow_move_constructible<value_type>::value) {
+        emplace_back(std::move(x));
+      }
 
       void pop_back() noexcept { impl_.destroy(--impl_.finish_); }
 
-      void erase(iterator pos) /* noexcept if move assign */ {
+      void erase(iterator pos) noexcept(std::is_nothrow_move_assignable<value_type>::value) {
         std::move(pos + 1, end(), pos);
         pop_back();
       }
