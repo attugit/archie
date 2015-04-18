@@ -89,10 +89,17 @@ namespace utils {
         return *this;
       }
 
-      dynamic_array(dynamic_array const&) { IMPLEMENT_ME }
+      dynamic_array(dynamic_array const& x) : dynamic_array(x.capacity()) {
+        std::copy(std::begin(x), std::end(x), std::back_inserter(*this));
+      }
 
-      dynamic_array& operator=(dynamic_array const&) {
-        IMPLEMENT_ME
+      dynamic_array& operator=(dynamic_array const& x) {
+        clear();
+        if (capacity() != x.capacity() && capacity() != 0u) {
+          impl_.destroy_storage();
+          impl_.create_storage(x.capacity());
+        }
+        std::copy(std::begin(x), std::end(x), std::back_inserter(*this));
         return *this;
       }
 
@@ -216,6 +223,9 @@ struct resource {
     if (handle) delete handle;
   }
   int* handle = nullptr;
+  friend bool operator==(resource const& lhs, resource const& rhs) noexcept {
+    return *lhs.handle == *rhs.handle;
+  }
   friend bool operator==(resource const& r, int i) noexcept { return *r.handle == i; }
   friend bool operator==(int i, resource const& r) noexcept { return r == i; }
   friend bool operator!=(int i, resource const& r) noexcept { return !(r == i); }
@@ -275,6 +285,46 @@ void canMoveAssign() {
   EXPECT_EQ(5, copy[0]);
   EXPECT_EQ(7, copy[1]);
   EXPECT_EQ(11, copy[2]);
+}
+
+void canCopyConstruct() {
+  darray orig(4);
+  {
+    orig.emplace_back(5);
+    orig.emplace_back(7);
+    orig.emplace_back(11);
+  }
+
+  darray copy(orig);
+  {
+    EXPECT_EQ(orig.capacity(), copy.capacity());
+    EXPECT_EQ(orig.size(), copy.size());
+    EXPECT_NE(orig.data(), copy.data());
+    EXPECT_EQ(orig[0], copy[0]);
+    EXPECT_EQ(orig[1], copy[1]);
+    EXPECT_EQ(orig[2], copy[2]);
+  }
+}
+
+void canCopyAssign() {
+  darray orig(4);
+  darray copy(1);
+  {
+    orig.emplace_back(5);
+    orig.emplace_back(7);
+    orig.emplace_back(11);
+    copy.emplace_back(13);
+  }
+
+  copy = orig;
+  {
+    EXPECT_EQ(orig.capacity(), copy.capacity());
+    EXPECT_EQ(orig.size(), copy.size());
+    EXPECT_NE(orig.data(), copy.data());
+    EXPECT_EQ(orig[0], copy[0]);
+    EXPECT_EQ(orig[1], copy[1]);
+    EXPECT_EQ(orig[2], copy[2]);
+  }
 }
 
 void canEmplaceBackElement() {
@@ -382,6 +432,8 @@ int main() {
   canCreateDynamicArrayWithGivenCapacity();
   canMoveConstructDynamicArray();
   canMoveAssign();
+  canCopyConstruct();
+  canCopyAssign();
   canEmplaceBackElement();
   canPopBackElement();
   canUseBeginAndEnd();
