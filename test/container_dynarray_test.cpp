@@ -72,8 +72,6 @@ namespace utils {
 
       explicit dynamic_array(size_type n) { impl_.create_storage(n); }
 
-      explicit dynamic_array(allocator_type const& a) : impl_(a) {}
-
       dynamic_array(size_type n, allocator_type const& a) : impl_(a) { impl_.create_storage(n); }
 
       dynamic_array(dynamic_array&& x) { impl_.swap(x.impl_); }
@@ -236,6 +234,29 @@ void canMoveConstructDynamicArray() {
   EXPECT_TRUE(da1.empty());
   EXPECT_EQ(1u, da.capacity());
   EXPECT_TRUE(da.empty());
+}
+
+void canMoveAssign() {
+  darray orig(4);
+  darray copy(1);
+  {
+    orig.emplace_back(5);
+    orig.emplace_back(7);
+    orig.emplace_back(11);
+    copy.emplace_back(13);
+    EXPECT_EQ(4u, orig.capacity());
+    EXPECT_EQ(3u, orig.size());
+    EXPECT_EQ(1u, copy.capacity());
+    EXPECT_TRUE(copy.full());
+  }
+
+  copy = std::move(orig);
+  EXPECT_EQ(0u, orig.capacity());
+  EXPECT_EQ(4u, copy.capacity());
+  EXPECT_EQ(3u, copy.size());
+  EXPECT_EQ(5, copy[0]);
+  EXPECT_EQ(7, copy[1]);
+  EXPECT_EQ(11, copy[2]);
 }
 
 void canEmplaceBackElement() {
