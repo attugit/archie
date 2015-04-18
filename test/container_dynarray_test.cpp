@@ -99,7 +99,7 @@ namespace utils {
       }
 
       ~dynamic_array() noexcept {
-        while (!empty()) pop_back();
+        clear();
         impl_.destroy_storage();
       }
 
@@ -109,18 +109,66 @@ namespace utils {
 
       size_type size() const noexcept { return size_type(impl_.finish_ - impl_.start_); }
 
-      bool empty() const noexcept { return size() == 0u; }
+      bool empty() const noexcept { return cbegin() == cend(); }
 
       template <typename... Args>
       void emplace_back(Args&&... args) /*noexcept if ctor */ {
-        impl_.construct(impl_.finish_++, std::forward<Args>(args)...);
+        impl_.construct(impl_.finish_, std::forward<Args>(args)...);
+        ++impl_.finish_;
+      }
+
+      void push_back(const_reference x) /*noexcept if copy ctor */ { emplace_back(x); }
+
+      void push_back(value_type&& x) /*noexcept if move ctor */ { emplace_back(std::move(x)); }
+
+      void pop_back() noexcept { impl_.destroy(--impl_.finish_); }
+
+      void erase(iterator pos) {
+        auto current = pos;
+        ++pos;
+        for (; pos != end(); ++pos, ++current) { *current = std::move(*pos); }
+        pop_back();
+      }
+
+      void clear() noexcept {
+        while (!empty()) pop_back();
       }
 
       const_reference operator[](size_type n) const noexcept { return *(impl_.start_ + n); }
 
       reference operator[](size_type n) noexcept { return *(impl_.start_ + n); }
 
-      void pop_back() noexcept { impl_.destroy(--impl_.finish_); }
+      iterator begin() noexcept { return iterator(impl_.start_); }
+
+      iterator end() noexcept { return iterator(impl_.finish_); }
+
+      const_iterator cbegin() const noexcept { return const_iterator(impl_.start_); }
+
+      const_iterator begin() const noexcept { return cbegin(); }
+
+      const_iterator cend() const noexcept { return const_iterator(impl_.finish_); }
+
+      const_iterator end() const noexcept { return cend(); }
+
+      pointer data() noexcept { return impl_.start_; }
+
+      const_pointer data() const noexcept { return impl_.start_; }
+
+      pointer release() noexcept {
+        auto ptr = data();
+        impl_.start_ = nullptr;
+        impl_.finish_ = nullptr;
+        impl_.end_of_storage_ = nullptr;
+        return ptr;
+      }
+
+      allocator_type& get_allocator() noexcept {
+        static_cast<allocator_type&>(impl_.get_allocator());
+      }
+
+      allocator_type const& get_allocator() const noexcept {
+        static_cast<allocator_type const&>(impl_.get_allocator());
+      }
     };
   }
 }
@@ -130,28 +178,57 @@ namespace utils {
 #include <memory>
 namespace cont = archie::utils::containers;
 
+struct resource {
+  resource(int i) : handle(new int(i)) {}
+  resource(resource const& x) : handle(new int(*(x.handle))) {}
+  resource(resource&& x) noexcept : handle(x.handle) { x.handle = nullptr; }
+  resource& operator=(resource const& x) {
+    if (handle == nullptr)
+      handle = new int(*x.handle);
+    else
+      *handle = *(x.handle);
+    return *this;
+  }
+  resource& operator=(resource&& x) noexcept {
+    if (handle) delete handle;
+    handle = x.handle;
+    x.handle = nullptr;
+    return *this;
+  }
+  ~resource() noexcept {
+    if (handle) delete handle;
+  }
+  int* handle = nullptr;
+  friend bool operator==(resource const& r, int i) noexcept { return *r.handle == i; }
+  friend bool operator==(int i, resource const& r) noexcept { return r == i; }
+  friend bool operator!=(int i, resource const& r) noexcept { return !(r == i); }
+  friend bool operator!=(resource const& r, int i) noexcept { return !(r == i); }
+};
+
+using darray = cont::dynamic_array<resource>;
+
 void canDefaultConstructDynamicArray() {
-  cont::dynamic_array<int> da;
+  darray da;
   EXPECT_EQ(0u, da.capacity());
   EXPECT_TRUE(da.empty());
 }
 
 void canCreateDynamicArrayWithGivenCapacity() {
-  cont::dynamic_array<int> da1(1);
+  darray da1(1);
   EXPECT_EQ(1u, da1.capacity());
   EXPECT_TRUE(da1.empty());
 
-  cont::dynamic_array<int> da3(3);
+  darray da3(3);
   EXPECT_EQ(3u, da3.capacity());
   EXPECT_TRUE(da3.empty());
 }
 
 void canMoveConstructDynamicArray() {
-  cont::dynamic_array<int> da1(1);
+  darray da1(1);
   EXPECT_EQ(1u, da1.capacity());
   EXPECT_TRUE(da1.empty());
 
-  cont::dynamic_array<int> da(std::move(da1));
+  darray da(std::move(da1));
   EXPECT_EQ(0u, da1.capacity());
   EXPECT_TRUE(da1.empty());
   EXPECT_EQ(1u, da.capacity());
@@ -159,21 +236,37 @@ void canMoveConstructDynamicArray() {
 }
 
 void canEmplaceBackElement() {
-  cont::dynamic_array<int> da(1);
+  darray da(1);
   EXPECT_EQ(1u, da.capacity());
   EXPECT_EQ(0u, da.size());
   EXPECT_TRUE(da.empty());
 
   da.emplace_back(7);
   EXPECT_EQ(1u, da.capacity());
-  EXPECT_FALSE(da.empty());
   EXPECT_EQ(1u, da.size());
+  EXPECT_FALSE(da.empty());
   EXPECT_EQ(7, da[0]);
+}
+
+void canPopBackElement() {
+  darray da(1);
+  EXPECT_EQ(1u, da.capacity());
+  da.emplace_back(7);
+  EXPECT_EQ(1u, da.capacity());
+  EXPECT_EQ(1u, da.size());
+  EXPECT_FALSE(da.empty());
+
+  da.pop_back();
+  EXPECT_EQ(1u, da.capacity());
+  EXPECT_EQ(0u, da.size());
+  EXPECT_TRUE(da.empty());
 }
 
 int main() {
   canDefaultConstructDynamicArray();
   canCreateDynamicArrayWithGivenCapacity();
   canMoveConstructDynamicArray();
+  canEmplaceBackElement();
+  canPopBackElement();
   return 0;
 }
