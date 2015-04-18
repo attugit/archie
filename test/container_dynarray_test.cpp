@@ -1,4 +1,5 @@
 #include <memory>
+#include <tuple>
 
 #define IMPLEMENT_ME std::terminate();
 
@@ -100,7 +101,7 @@ namespace utils {
 
       ~dynamic_array() noexcept {
         clear();
-        impl_.destroy_storage();
+        if (capacity() != 0u) impl_.destroy_storage();
       }
 
       size_type capacity() const noexcept {
@@ -126,9 +127,7 @@ namespace utils {
       void pop_back() noexcept { impl_.destroy(--impl_.finish_); }
 
       void erase(iterator pos) /* noexcept if move assign */ {
-        auto current = pos;
-        ++pos;
-        for (; pos != end(); ++pos, ++current) { *current = std::move(*pos); }
+        std::move(pos + 1, end(), pos);
         pop_back();
       }
 
@@ -156,20 +155,20 @@ namespace utils {
 
       const_pointer data() const noexcept { return impl_.start_; }
 
-      pointer release() noexcept {
-        auto ptr = data();
+      std::tuple<pointer, pointer, pointer> release() noexcept {
+        auto ret = std::make_tuple(impl_.start_, impl_.finish_, impl_.end_of_storage_);
         impl_.start_ = nullptr;
         impl_.finish_ = nullptr;
         impl_.end_of_storage_ = nullptr;
-        return ptr;
+        return ret;
       }
 
       allocator_type& get_allocator() noexcept {
-        static_cast<allocator_type&>(impl_.get_allocator());
+        return static_cast<allocator_type&>(impl_.get_allocator());
       }
 
       allocator_type const& get_allocator() const noexcept {
-        static_cast<allocator_type const&>(impl_.get_allocator());
+        return static_cast<allocator_type const&>(impl_.get_allocator());
       }
     };
   }
@@ -270,6 +269,27 @@ void canPopBackElement() {
   EXPECT_TRUE(da.empty());
 }
 
+void canUseBeginAndEnd() {
+  darray da0;
+  darray da1(1);
+  darray da2(2);
+  {
+    EXPECT_EQ(da0.begin(), da0.end());
+    EXPECT_EQ(da1.begin(), da1.end());
+    EXPECT_EQ(da2.begin(), da2.end());
+  }
+
+  da1.emplace_back(11);
+  da2.emplace_back(13);
+  {
+    EXPECT_EQ(da1.begin() + 1, da1.end());
+    EXPECT_EQ(da2.begin() + 1, da2.end());
+  }
+
+  da2.emplace_back(17);
+  EXPECT_EQ(da2.begin() + 2, da2.end());
+}
+
 void canEraseElement() {
   darray da(3);
   {
@@ -302,12 +322,30 @@ void canEraseElement() {
   EXPECT_TRUE(da.empty());
 }
 
+void canReleaseContent() {
+  darray da(7);
+  {
+    da.emplace_back(5);
+    da.emplace_back(7);
+    da.emplace_back(11);
+    da.emplace_back(13);
+  }
+
+  auto alloc = da.get_allocator();
+  darray::pointer first, last, end;
+  std::tie(first, last, end) = da.release();
+  EXPECT_EQ(4, last - first);
+  alloc.deallocate(first, end - first);
+}
+
 int main() {
   canDefaultConstructDynamicArray();
   canCreateDynamicArrayWithGivenCapacity();
   canMoveConstructDynamicArray();
   canEmplaceBackElement();
   canPopBackElement();
+  canUseBeginAndEnd();
   canEraseElement();
+  canReleaseContent();
   return 0;
 }
