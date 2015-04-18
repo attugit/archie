@@ -73,6 +73,20 @@ namespace utils {
 
       impl impl_;
 
+      void realloc(size_type n) {
+        if (capacity() != n) {
+          if (capacity() != 0u) impl_.destroy_storage();
+          if (n != 0u) impl_.create_storage(n);
+        }
+      }
+
+      template <typename Iter>
+      void reset(Iter first, Iter last, size_type addon = 0u) {
+        clear();
+        realloc(std::distance(first, last) + addon);
+        std::copy(first, last, std::back_inserter(*this));
+      }
+
     public:
       dynamic_array() = default;
 
@@ -84,7 +98,7 @@ namespace utils {
 
       dynamic_array& operator=(dynamic_array&& x) noexcept {
         clear();
-        if (capacity() != 0u) impl_.destroy_storage();
+        realloc(0u);
         impl_.swap(x.impl_);
         return *this;
       }
@@ -94,32 +108,27 @@ namespace utils {
       }
 
       dynamic_array& operator=(dynamic_array const& x) {
-        clear();
-        if (capacity() != x.capacity() && capacity() != 0u) {
-          impl_.destroy_storage();
-          impl_.create_storage(x.capacity());
-        }
-        std::copy(std::begin(x), std::end(x), std::back_inserter(*this));
+        reset(std::begin(x), std::end(x), x.capacity() - x.size());
         return *this;
       }
 
       dynamic_array(std::initializer_list<value_type> list)
           : dynamic_array(std::begin(list), std::end(list)) {}
 
-      dynamic_array& operator=(std::initializer_list<value_type>) {
-        IMPLEMENT_ME
+      dynamic_array& operator=(std::initializer_list<value_type> list) {
+        reset(std::begin(list), std::end(list));
         return *this;
       }
 
       template <typename InputIterator>
       dynamic_array(InputIterator first, InputIterator last)
           : dynamic_array(std::distance(first, last)) {
-        std::copy(first, last, std::back_inserter(*this));
+        reset(first, last);
       }
 
       ~dynamic_array() noexcept {
         clear();
-        if (capacity() != 0u) impl_.destroy_storage();
+        realloc(0u);
       }
 
       size_type capacity() const noexcept {
