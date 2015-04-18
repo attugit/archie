@@ -32,8 +32,7 @@ namespace utils {
       size_type taken_ = 0u;
     };
 
-    template <typename Tp, std::size_t N,
-              typename Alloc = stack_allocator<Tp, N>>
+    template <typename Tp, std::size_t N, typename Alloc = stack_allocator<Tp, N>>
     struct fixed_buffer {
       using allocator_type = Alloc;
       using value_type = typename allocator_type::value_type;
@@ -63,9 +62,7 @@ namespace utils {
         }
       }
 
-      const_reference operator[](size_type n) const {
-        return *(impl_.begin_ + n);
-      }
+      const_reference operator[](size_type n) const { return *(impl_.begin_ + n); }
       const_reference front() const { return operator[](0); }
       const_reference back() const { return operator[](size() - 1u); }
       const_iterator begin() const { return &front(); }

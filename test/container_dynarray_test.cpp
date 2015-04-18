@@ -1,5 +1,7 @@
 #include <memory>
 
+#define IMPLEMENT_ME std::terminate();
+
 namespace archie {
 namespace utils {
   namespace containers {
@@ -77,24 +79,48 @@ namespace utils {
 
       dynamic_array& operator=(dynamic_array&&) = default;
 
-      dynamic_array(dynamic_array const&) {}
+      dynamic_array(dynamic_array const&) { IMPLEMENT_ME }
 
-      dynamic_array& operator=(dynamic_array const&) { return *this; }
+      dynamic_array& operator=(dynamic_array const&) {
+        IMPLEMENT_ME
+        return *this;
+      }
 
-      dynamic_array(std::initializer_list<value_type>) {}
+      dynamic_array(std::initializer_list<value_type>) { IMPLEMENT_ME }
 
-      dynamic_array& operator=(std::initializer_list<value_type>) {}
+      dynamic_array& operator=(std::initializer_list<value_type>) {
+        IMPLEMENT_ME
+        return *this;
+      }
 
       template <typename InputIterator>
-      dynamic_array(InputIterator, InputIterator) {}
+      dynamic_array(InputIterator, InputIterator) /*noexcept if copy ctor */ {
+        IMPLEMENT_ME
+      }
 
-      ~dynamic_array() noexcept { impl_.destroy_storage(); }
+      ~dynamic_array() noexcept {
+        while (!empty()) pop_back();
+        impl_.destroy_storage();
+      }
 
-      size_type capacity() const { return size_type(impl_.end_of_storage_ - impl_.start_); }
+      size_type capacity() const noexcept {
+        return size_type(impl_.end_of_storage_ - impl_.start_);
+      }
 
-      size_type size() const { return size_type(impl_.finish_ - impl_.start_); }
+      size_type size() const noexcept { return size_type(impl_.finish_ - impl_.start_); }
 
-      bool empty() const { return size() == 0u; }
+      bool empty() const noexcept { return size() == 0u; }
+
+      template <typename... Args>
+      void emplace_back(Args&&... args) /*noexcept if ctor */ {
+        impl_.construct(impl_.finish_++, std::forward<Args>(args)...);
+      }
+
+      const_reference operator[](size_type n) const noexcept { return *(impl_.start_ + n); }
+
+      reference operator[](size_type n) noexcept { return *(impl_.start_ + n); }
+
+      void pop_back() noexcept { impl_.destroy(--impl_.finish_); }
     };
   }
 }
@@ -130,6 +156,19 @@ void canMoveConstructDynamicArray() {
   EXPECT_TRUE(da1.empty());
   EXPECT_EQ(1u, da.capacity());
   EXPECT_TRUE(da.empty());
+}
+
+void canEmplaceBackElement() {
+  cont::dynamic_array<int> da(1);
+  EXPECT_EQ(1u, da.capacity());
+  EXPECT_EQ(0u, da.size());
+  EXPECT_TRUE(da.empty());
+
+  da.emplace_back(7);
+  EXPECT_EQ(1u, da.capacity());
+  EXPECT_FALSE(da.empty());
+  EXPECT_EQ(1u, da.size());
+  EXPECT_EQ(7, da[0]);
 }
 
 int main() {
