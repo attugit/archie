@@ -103,7 +103,8 @@ namespace utils {
         return *this;
       }
 
-      dynamic_array(std::initializer_list<value_type>) { IMPLEMENT_ME }
+      dynamic_array(std::initializer_list<value_type> list)
+          : dynamic_array(std::begin(list), std::end(list)) {}
 
       dynamic_array& operator=(std::initializer_list<value_type>) {
         IMPLEMENT_ME
@@ -111,8 +112,9 @@ namespace utils {
       }
 
       template <typename InputIterator>
-      dynamic_array(InputIterator, InputIterator) {
-        IMPLEMENT_ME
+      dynamic_array(InputIterator first, InputIterator last)
+          : dynamic_array(std::distance(first, last)) {
+        std::copy(first, last, std::back_inserter(*this));
       }
 
       ~dynamic_array() noexcept {
