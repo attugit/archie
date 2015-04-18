@@ -215,18 +215,20 @@ void canDefaultConstructDynamicArray() {
 
 void canCreateDynamicArrayWithGivenCapacity() {
   darray da1(1);
+  darray da3(3);
   EXPECT_EQ(1u, da1.capacity());
   EXPECT_TRUE(da1.empty());
 
-  darray da3(3);
   EXPECT_EQ(3u, da3.capacity());
   EXPECT_TRUE(da3.empty());
 }
 
 void canMoveConstructDynamicArray() {
   darray da1(1);
-  EXPECT_EQ(1u, da1.capacity());
-  EXPECT_TRUE(da1.empty());
+  {
+    EXPECT_EQ(1u, da1.capacity());
+    EXPECT_TRUE(da1.empty());
+  }
 
   darray da(std::move(da1));
   EXPECT_EQ(0u, da1.capacity());
@@ -237,9 +239,11 @@ void canMoveConstructDynamicArray() {
 
 void canEmplaceBackElement() {
   darray da(1);
-  EXPECT_EQ(1u, da.capacity());
-  EXPECT_EQ(0u, da.size());
-  EXPECT_TRUE(da.empty());
+  {
+    EXPECT_EQ(1u, da.capacity());
+    EXPECT_EQ(0u, da.size());
+    EXPECT_TRUE(da.empty());
+  }
 
   da.emplace_back(7);
   EXPECT_EQ(1u, da.capacity());
@@ -250,16 +254,35 @@ void canEmplaceBackElement() {
 
 void canPopBackElement() {
   darray da(1);
-  EXPECT_EQ(1u, da.capacity());
-  da.emplace_back(7);
-  EXPECT_EQ(1u, da.capacity());
-  EXPECT_EQ(1u, da.size());
-  EXPECT_FALSE(da.empty());
+  {
+    EXPECT_EQ(1u, da.capacity());
+    da.emplace_back(7);
+    EXPECT_EQ(1u, da.capacity());
+    EXPECT_EQ(1u, da.size());
+    EXPECT_FALSE(da.empty());
+  }
 
   da.pop_back();
   EXPECT_EQ(1u, da.capacity());
   EXPECT_EQ(0u, da.size());
   EXPECT_TRUE(da.empty());
+}
+
+void canEraseElement() {
+  darray da(2);
+  {
+    da.emplace_back(7);
+    da.emplace_back(11);
+    EXPECT_EQ(2u, da.capacity());
+    EXPECT_EQ(2u, da.size());
+    EXPECT_EQ(7, da[0]);
+    EXPECT_EQ(11, da[1]);
+  }
+
+  da.erase(da.begin());
+  EXPECT_EQ(2u, da.capacity());
+  EXPECT_EQ(1, da.size());
+  EXPECT_EQ(11, da[0]);
 }
 
 int main() {
@@ -268,5 +291,6 @@ int main() {
   canMoveConstructDynamicArray();
   canEmplaceBackElement();
   canPopBackElement();
+  canEraseElement();
   return 0;
 }
