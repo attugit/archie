@@ -338,6 +338,29 @@ void canCopyAssign() {
   }
 }
 
+void canConstructAndAssignWithInitializerList() {
+  darray da = {5, 7, 11, 13};
+  {
+    EXPECT_EQ(4u, da.capacity());
+    EXPECT_EQ(4u, da.size());
+    EXPECT_EQ(5, da[0]);
+    EXPECT_EQ(7, da[1]);
+    EXPECT_EQ(11, da[2]);
+    EXPECT_EQ(13, da[3]);
+  }
+
+  da = {17, 19, 23, 29, 31};
+  {
+    EXPECT_EQ(5u, da.capacity());
+    EXPECT_EQ(5u, da.size());
+    EXPECT_EQ(17, da[0]);
+    EXPECT_EQ(19, da[1]);
+    EXPECT_EQ(23, da[2]);
+    EXPECT_EQ(29, da[3]);
+    EXPECT_EQ(31, da[4]);
+  }
+}
+
 void canEmplaceBackElement() {
   darray da(1);
   {
@@ -445,6 +468,7 @@ int main() {
   canMoveAssign();
   canCopyConstruct();
   canCopyAssign();
+  canConstructAndAssignWithInitializerList();
   canEmplaceBackElement();
   canPopBackElement();
   canUseBeginAndEnd();
