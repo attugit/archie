@@ -3,17 +3,27 @@
 #include <memory>
 #include <tuple>
 #include <type_traits>
+#include <archie/utils/containers/tags.h>
 
 namespace archie {
 namespace utils {
   namespace containers {
     namespace detail {
-      template <typename pointer, typename const_pointer, typename size_type, typename alloc>
-      struct disabled_sbo : private alloc {
-        using alloc::allocate;
-        using alloc::deallocate;
-        using alloc::construct;
-        using alloc::destroy;
+      template <typename Alloc>
+      struct disabled_sbo : private Alloc {
+        using allocator_type = Alloc;
+        using pointer = typename allocator_type::pointer;
+        using const_pointer = typename allocator_type::const_pointer;
+        using value_type = typename allocator_type::value_type;
+        using reference = typename allocator_type::reference;
+        using const_reference = typename allocator_type::const_reference;
+        using size_type = typename allocator_type::size_type;
+        using difference_type = typename allocator_type::difference_type;
+
+        using allocator_type::allocate;
+        using allocator_type::deallocate;
+        using allocator_type::construct;
+        using allocator_type::destroy;
 
       private:
         pointer start_ = nullptr;
@@ -29,7 +39,7 @@ namespace utils {
       public:
         disabled_sbo() noexcept = default;
 
-        explicit disabled_sbo(alloc const& a) noexcept : alloc(a) { clear(); }
+        explicit disabled_sbo(allocator_type const& a) noexcept : allocator_type(a) { clear(); }
 
         void create_storage(size_type n) {
           if (n != size_type(end_of_storage_ - start_)) {
@@ -69,9 +79,11 @@ namespace utils {
           clear();
         }
 
-        alloc& get_allocator() noexcept { return static_cast<alloc&>(*this); }
+        allocator_type& get_allocator() noexcept { return static_cast<allocator_type&>(*this); }
 
-        alloc const& get_allocator() const noexcept { return static_cast<alloc const&>(*this); }
+        allocator_type const& get_allocator() const noexcept {
+          return static_cast<allocator_type const&>(*this);
+        }
 
         void swap(disabled_sbo& x) noexcept {
           std::swap(start_, x.start_);
@@ -80,8 +92,17 @@ namespace utils {
           std::swap(get_allocator(), x.get_allocator());
         }
       };
+
+      template <typename>
+      struct buffer;
+
+      template <>
+      struct buffer<containers::disable_sbo> {
+        template <typename alloc>
+        using type = detail::disabled_sbo<alloc>;
+      };
     }
-    template <typename Tp, typename Alloc = std::allocator<Tp>>
+    template <typename Tp, typename Alloc = std::allocator<Tp>, typename Tag = disable_sbo>
     struct dynamic_array {
       using allocator_type = Alloc;
       using pointer = typename allocator_type::pointer;
@@ -98,8 +119,7 @@ namespace utils {
       using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
     private:
-      using tp_alloc = typename allocator_type::template rebind<Tp>::other;
-      using impl_t = detail::disabled_sbo<pointer, const_pointer, size_type, tp_alloc>;
+      using impl_t = typename detail::buffer<Tag>::template type<allocator_type>;
 
       impl_t impl_;
 
