@@ -254,6 +254,10 @@ void canReleaseContent() {
   darray::pointer first, last, end;
   std::tie(first, last, end) = da.release();
   EXPECT_EQ(4, last - first);
+  for (; first != last;) {
+    --last;
+    last->~resource();
+  }
   alloc.deallocate(first, end - first);
 }
 
