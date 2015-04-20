@@ -7,6 +7,80 @@
 namespace archie {
 namespace utils {
   namespace containers {
+    namespace detail {
+      template <typename pointer, typename const_pointer, typename size_type, typename alloc>
+      struct disabled_sbo : private alloc {
+        using alloc::allocate;
+        using alloc::deallocate;
+        using alloc::construct;
+        using alloc::destroy;
+
+      private:
+        pointer start_ = nullptr;
+        pointer finish_ = nullptr;
+        pointer end_of_storage_ = nullptr;
+
+        void clear() {
+          start_ = nullptr;
+          finish_ = nullptr;
+          end_of_storage_ = nullptr;
+        }
+
+      public:
+        disabled_sbo() noexcept = default;
+
+        explicit disabled_sbo(alloc const& a) noexcept : alloc(a) { clear(); }
+
+        void create_storage(size_type n) {
+          if (n != size_type(end_of_storage_ - start_)) {
+            start_ = (n != 0u) ? allocate(n) : nullptr;
+            finish_ = start_;
+            end_of_storage_ = start_ + n;
+          }
+        }
+
+        pointer begin() noexcept { return start_; }
+
+        const_pointer begin() const noexcept { return start_; }
+
+        pointer end() noexcept { return finish_; }
+
+        const_pointer end() const noexcept { return finish_; }
+
+        pointer advance_end(size_type n) noexcept {
+          finish_ += n;
+          return finish_;
+        }
+
+        size_type size() const noexcept { return size_type(finish_ - start_); }
+
+        size_type capacity() const noexcept { return size_type(end_of_storage_ - start_); }
+
+        bool full() const noexcept { return finish_ == end_of_storage_; }
+
+        std::tuple<pointer, pointer, pointer> release() noexcept {
+          auto ret = std::make_tuple(start_, finish_, end_of_storage_);
+          clear();
+          return ret;
+        }
+
+        void destroy_storage() noexcept {
+          if (start_ != nullptr) deallocate(start_, end_of_storage_ - start_);
+          clear();
+        }
+
+        alloc& get_allocator() noexcept { return static_cast<alloc&>(*this); }
+
+        alloc const& get_allocator() const noexcept { return static_cast<alloc const&>(*this); }
+
+        void swap(disabled_sbo& x) noexcept {
+          std::swap(start_, x.start_);
+          std::swap(finish_, x.finish_);
+          std::swap(end_of_storage_, x.end_of_storage_);
+          std::swap(get_allocator(), x.get_allocator());
+        }
+      };
+    }
     template <typename Tp, typename Alloc = std::allocator<Tp>>
     struct dynamic_array {
       using allocator_type = Alloc;
@@ -25,53 +99,9 @@ namespace utils {
 
     private:
       using tp_alloc = typename allocator_type::template rebind<Tp>::other;
-      struct impl : private tp_alloc {
-        using tp_alloc::allocate;
-        using tp_alloc::deallocate;
-        using tp_alloc::construct;
-        using tp_alloc::destroy;
+      using impl_t = detail::disabled_sbo<pointer, const_pointer, size_type, tp_alloc>;
 
-        pointer start_ = nullptr;
-        pointer finish_ = nullptr;
-        pointer end_of_storage_ = nullptr;
-
-        impl() noexcept = default;
-
-        explicit impl(tp_alloc const& a) noexcept : tp_alloc(a),
-                                                    start_(nullptr),
-                                                    finish_(nullptr),
-                                                    end_of_storage_(nullptr) {}
-
-        void create_storage(size_type n) {
-          if (n != size_type(end_of_storage_ - start_)) {
-            start_ = (n != 0u) ? allocate(n) : nullptr;
-            finish_ = start_;
-            end_of_storage_ = start_ + n;
-          }
-        }
-
-        void destroy_storage() noexcept {
-          if (start_ != nullptr) deallocate(start_, end_of_storage_ - start_);
-          start_ = nullptr;
-          finish_ = nullptr;
-          end_of_storage_ = nullptr;
-        }
-
-        tp_alloc& get_allocator() noexcept { return static_cast<tp_alloc&>(*this); }
-
-        tp_alloc const& get_allocator() const noexcept {
-          return static_cast<tp_alloc const&>(*this);
-        }
-
-        void swap(impl& x) noexcept {
-          std::swap(start_, x.start_);
-          std::swap(finish_, x.finish_);
-          std::swap(end_of_storage_, x.end_of_storage_);
-          std::swap(get_allocator(), x.get_allocator());
-        }
-      };
-
-      impl impl_;
+      impl_t impl_;
 
       void realloc(size_type n) {
         if (capacity() != n) {
@@ -131,21 +161,19 @@ namespace utils {
         impl_.destroy_storage();
       }
 
-      size_type capacity() const noexcept {
-        return size_type(impl_.end_of_storage_ - impl_.start_);
-      }
+      size_type capacity() const noexcept { return impl_.capacity(); }
 
-      size_type size() const noexcept { return size_type(impl_.finish_ - impl_.start_); }
+      size_type size() const noexcept { return impl_.size(); }
 
       bool empty() const noexcept { return cbegin() == cend(); }
 
-      bool full() const noexcept { return impl_.finish_ == impl_.end_of_storage_; }
+      bool full() const noexcept { return impl_.full(); }
 
       template <typename... Args>
       void emplace_back(Args&&... args) noexcept(
           std::is_nothrow_constructible<value_type, Args...>::value) {
-        impl_.construct(impl_.finish_, std::forward<Args>(args)...);
-        ++impl_.finish_;
+        impl_.construct(impl_.end(), std::forward<Args>(args)...);
+        impl_.advance_end(1);
       }
 
       void push_back(const_reference x) noexcept(
@@ -158,7 +186,7 @@ namespace utils {
         emplace_back(std::move(x));
       }
 
-      void pop_back() noexcept { impl_.destroy(--impl_.finish_); }
+      void pop_back() noexcept { impl_.destroy(impl_.advance_end(-1)); }
 
       void erase(iterator pos) noexcept(std::is_nothrow_move_assignable<value_type>::value) {
         std::move(pos + 1, end(), pos);
@@ -169,33 +197,27 @@ namespace utils {
         while (!empty()) pop_back();
       }
 
-      const_reference operator[](size_type n) const noexcept { return *(impl_.start_ + n); }
+      const_reference operator[](size_type n) const noexcept { return *(impl_.begin() + n); }
 
-      reference operator[](size_type n) noexcept { return *(impl_.start_ + n); }
+      reference operator[](size_type n) noexcept { return *(impl_.begin() + n); }
 
-      iterator begin() noexcept { return iterator(impl_.start_); }
+      iterator begin() noexcept { return iterator(impl_.begin()); }
 
-      iterator end() noexcept { return iterator(impl_.finish_); }
+      iterator end() noexcept { return iterator(impl_.end()); }
 
-      const_iterator cbegin() const noexcept { return const_iterator(impl_.start_); }
+      const_iterator cbegin() const noexcept { return const_iterator(impl_.begin()); }
 
       const_iterator begin() const noexcept { return cbegin(); }
 
-      const_iterator cend() const noexcept { return const_iterator(impl_.finish_); }
+      const_iterator cend() const noexcept { return const_iterator(impl_.end()); }
 
       const_iterator end() const noexcept { return cend(); }
 
-      pointer data() noexcept { return impl_.start_; }
+      pointer data() noexcept { return impl_.begin(); }
 
-      const_pointer data() const noexcept { return impl_.start_; }
+      const_pointer data() const noexcept { return impl_.begin(); }
 
-      std::tuple<pointer, pointer, pointer> release() noexcept {
-        auto ret = std::make_tuple(impl_.start_, impl_.finish_, impl_.end_of_storage_);
-        impl_.start_ = nullptr;
-        impl_.finish_ = nullptr;
-        impl_.end_of_storage_ = nullptr;
-        return ret;
-      }
+      std::tuple<pointer, pointer, pointer> release() noexcept { return impl_.release(); }
 
       allocator_type& get_allocator() noexcept {
         return static_cast<allocator_type&>(impl_.get_allocator());
