@@ -174,6 +174,7 @@ namespace utils {
         }
 
         std::tuple<pointer, pointer, pointer> release() noexcept {
+          // FIXME
           auto ret = std::make_tuple(nullptr, nullptr, nullptr);
           return ret;
         }
@@ -187,6 +188,119 @@ namespace utils {
             variant_.heap.start_ = x.begin();
             variant_.heap.end_of_storage_ = x.end_of_storage();
             x.finish_ = x.stack_begin();
+          }
+          std::swap(static_cast<allocator_type&>(*this), static_cast<allocator_type&>(x));
+        }
+      };
+
+      template <typename Alloc>
+      struct buffer<containers::enable_ra_sbo, Alloc> : Alloc {
+        using allocator_type = Alloc;
+        using pointer = typename allocator_type::pointer;
+        using const_pointer = typename allocator_type::const_pointer;
+        using value_type = typename allocator_type::value_type;
+        using size_type = typename allocator_type::size_type;
+        using difference_type = typename allocator_type::difference_type;
+
+        using allocator_type::allocate;
+        using allocator_type::deallocate;
+        using allocator_type::construct;
+        using allocator_type::destroy;
+
+      private:
+        struct heap_data {
+          heap_data() = default;
+          pointer end_of_storage_ = nullptr;
+        };
+
+        static constexpr auto const stack_size = sizeof(heap_data) / sizeof(value_type);
+        static_assert(stack_size > 0u, "");
+
+        union variant {
+          variant() : heap() {}
+          ~variant() {}
+          heap_data heap;
+          value_type stack[stack_size];
+        };
+
+        pointer start_ = nullptr;
+        pointer finish_ = nullptr;
+        variant variant_;
+
+        pointer stack_begin() noexcept { return pointer(&variant_.stack[0]); }
+
+        const_pointer stack_begin() const noexcept { return pointer(&variant_.stack[0]); }
+
+        pointer stack_end() noexcept { return pointer(&variant_.stack[stack_size]); }
+
+        const_pointer stack_end() const noexcept {
+          return const_pointer(&variant_.stack[stack_size]);
+        }
+
+        bool is_on_stack() const noexcept { return begin() == stack_begin(); }
+
+        pointer end_of_storage() noexcept {
+          return is_on_stack() ? stack_end() : variant_.heap.end_of_storage_;
+        }
+
+        const_pointer end_of_storage() const noexcept {
+          return is_on_stack() ? stack_end() : variant_.heap.end_of_storage_;
+        }
+
+        void clear() {
+          start_ = stack_begin();
+          finish_ = start_;
+        }
+
+      public:
+        buffer() noexcept : start_(stack_begin()), finish_(stack_begin()) {}
+
+        pointer begin() noexcept { return start_; }
+
+        const_pointer begin() const noexcept { return start_; }
+
+        pointer end() noexcept { return finish_; }
+
+        const_pointer end() const noexcept { return finish_; }
+
+        pointer advance_end(int n) noexcept {
+          finish_ += n;
+          return finish_;
+        }
+
+        size_type capacity() const noexcept { return size_type(end_of_storage() - begin()); }
+
+        bool full() const noexcept { return end() == end_of_storage(); }
+
+        void create_storage(size_type n) {
+          if (n > stack_size) {
+            start_ = allocate(n);
+            variant_.heap.end_of_storage_ = start_ + n;
+          } else { start_ = stack_begin(); }
+          finish_ = start_;
+        }
+
+        void destroy_storage() {
+          if (!is_on_stack()) { deallocate(begin(), capacity()); }
+          clear();
+        }
+
+        std::tuple<pointer, pointer, pointer> release() noexcept {
+          // FIXME
+          auto ret = std::make_tuple(nullptr, nullptr, nullptr);
+          return ret;
+        }
+
+        void swap(buffer& x) noexcept {
+          if (x.is_on_stack()) {
+            std::move(x.begin(), x.end(), begin());
+            start_ = stack_begin();
+            finish_ = start_ + size_type(x.end() - x.begin());
+          } else {
+            start_ = x.begin();
+            finish_ = x.end();
+            variant_.heap.end_of_storage_ = x.end_of_storage();
+            x.clear();
           }
           std::swap(static_cast<allocator_type&>(*this), static_cast<allocator_type&>(x));
         }

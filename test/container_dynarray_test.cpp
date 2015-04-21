@@ -264,6 +264,9 @@ void canReleaseContent() {
 template <typename Tp, typename Alloc = std::allocator<Tp>>
 using sbo = cont::dynamic_array<Tp, Alloc, cont::enable_sbo>;
 
+template <typename Tp, typename Alloc = std::allocator<Tp>>
+using rasbo = cont::dynamic_array<Tp, Alloc, cont::enable_ra_sbo>;
+
 void canUseSboArray() {
   sbo<resource> sa;
   sbo<resource> other(4);
@@ -293,6 +296,35 @@ void canUseSboArray() {
   }
 }
 
+void canUseRaSboArray() {
+  rasbo<resource> sa;
+  rasbo<resource> other(4);
+  {
+    EXPECT_EQ(1u, sa.capacity());
+    EXPECT_EQ(0u, sa.size());
+    other.emplace_back(7);
+    other.emplace_back(11);
+    other.emplace_back(13);
+  }
+
+  sa.emplace_back(5);
+  {
+    EXPECT_EQ(1u, sa.size());
+    EXPECT_EQ(5, sa[0]);
+  }
+
+  sa = std::move(other);
+  {
+    EXPECT_EQ(1u, other.capacity());
+    EXPECT_EQ(0u, other.size());
+    EXPECT_EQ(4u, sa.capacity());
+    EXPECT_EQ(3u, sa.size());
+    EXPECT_EQ(7, sa[0]);
+    EXPECT_EQ(11, sa[1]);
+    EXPECT_EQ(13, sa[2]);
+  }
+}
+
 int main() {
   canDefaultConstructDynamicArray();
   canCreateDynamicArrayWithGivenCapacity();
@@ -307,5 +339,6 @@ int main() {
   canEraseElement();
   canReleaseContent();
   canUseSboArray();
+  canUseRaSboArray();
   return 0;
 }
