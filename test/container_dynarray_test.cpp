@@ -261,6 +261,38 @@ void canReleaseContent() {
   alloc.deallocate(first, end - first);
 }
 
+template <typename Tp, typename Alloc = std::allocator<Tp>>
+using sbo = cont::dynamic_array<Tp, Alloc, cont::enable_sbo>;
+
+void canUseSboArray() {
+  sbo<resource> sa;
+  sbo<resource> other(4);
+  {
+    EXPECT_EQ(2u, sa.capacity());
+    EXPECT_EQ(0u, sa.size());
+    other.emplace_back(7);
+    other.emplace_back(11);
+    other.emplace_back(13);
+  }
+
+  sa.emplace_back(5);
+  {
+    EXPECT_EQ(1u, sa.size());
+    EXPECT_EQ(5, sa[0]);
+  }
+
+  sa = std::move(other);
+  {
+    EXPECT_EQ(2u, other.capacity());
+    EXPECT_EQ(0u, other.size());
+    EXPECT_EQ(4u, sa.capacity());
+    EXPECT_EQ(3u, sa.size());
+    EXPECT_EQ(7, sa[0]);
+    EXPECT_EQ(11, sa[1]);
+    EXPECT_EQ(13, sa[2]);
+  }
+}
+
 int main() {
   canDefaultConstructDynamicArray();
   canCreateDynamicArrayWithGivenCapacity();
@@ -274,5 +306,6 @@ int main() {
   canUseBeginAndEnd();
   canEraseElement();
   canReleaseContent();
+  canUseSboArray();
   return 0;
 }

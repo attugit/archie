@@ -9,8 +9,11 @@ namespace archie {
 namespace utils {
   namespace containers {
     namespace detail {
+      template <typename, typename>
+      struct buffer;
+
       template <typename Alloc>
-      struct disabled_sbo : private Alloc {
+      struct buffer<containers::disable_sbo, Alloc> : private Alloc {
         using allocator_type = Alloc;
         using pointer = typename allocator_type::pointer;
         using const_pointer = typename allocator_type::const_pointer;
@@ -37,9 +40,9 @@ namespace utils {
         }
 
       public:
-        disabled_sbo() noexcept = default;
+        buffer() noexcept = default;
 
-        explicit disabled_sbo(allocator_type const& a) noexcept : allocator_type(a) { clear(); }
+        explicit buffer(allocator_type const& a) noexcept : allocator_type(a) { clear(); }
 
         void create_storage(size_type n) {
           if (n != size_type(end_of_storage_ - start_)) {
@@ -57,7 +60,7 @@ namespace utils {
 
         const_pointer end() const noexcept { return finish_; }
 
-        pointer advance_end(size_type n) noexcept {
+        pointer advance_end(int n) noexcept {
           finish_ += n;
           return finish_;
         }
@@ -75,7 +78,7 @@ namespace utils {
         }
 
         void destroy_storage() noexcept {
-          if (start_ != nullptr) deallocate(start_, end_of_storage_ - start_);
+          if (start_ != nullptr) deallocate(begin(), capacity());
           clear();
         }
 
@@ -85,7 +88,7 @@ namespace utils {
           return static_cast<allocator_type const&>(*this);
         }
 
-        void swap(disabled_sbo& x) noexcept {
+        void swap(buffer& x) noexcept {
           std::swap(start_, x.start_);
           std::swap(finish_, x.finish_);
           std::swap(end_of_storage_, x.end_of_storage_);
@@ -93,15 +96,125 @@ namespace utils {
         }
       };
 
-      template <typename>
-      struct buffer;
+      template <typename Alloc>
+      struct buffer<containers::enable_sbo, Alloc> : private Alloc {
+        using allocator_type = Alloc;
+        using pointer = typename allocator_type::pointer;
+        using const_pointer = typename allocator_type::const_pointer;
+        using value_type = typename allocator_type::value_type;
+        using reference = typename allocator_type::reference;
+        using const_reference = typename allocator_type::const_reference;
+        using size_type = typename allocator_type::size_type;
+        using difference_type = typename allocator_type::difference_type;
 
-      template <>
-      struct buffer<containers::disable_sbo> {
-        template <typename alloc>
-        using type = detail::disabled_sbo<alloc>;
+        using allocator_type::allocate;
+        using allocator_type::deallocate;
+        using allocator_type::construct;
+        using allocator_type::destroy;
+
+      private:
+        struct heap_data {
+          heap_data() = default;
+          pointer start_ = nullptr;
+          pointer end_of_storage_ = nullptr;
+        };
+
+        static constexpr auto const stack_size = sizeof(heap_data) / sizeof(value_type);
+        static_assert(stack_size > 0u, "");
+
+        union variant {
+          variant() : heap() {}
+          ~variant() {}
+          heap_data heap;
+          value_type stack[stack_size];
+        };
+
+        pointer finish_ = nullptr;
+        variant variant_;
+
+        pointer stack_begin() noexcept { return pointer(&variant_.stack[0]); }
+
+        const_pointer stack_begin() const noexcept { return pointer(&variant_.stack[0]); }
+
+        pointer stack_end() noexcept { return pointer(&variant_.stack[stack_size]); }
+
+        const_pointer stack_end() const noexcept {
+          return const_pointer(&variant_.stack[stack_size]);
+        }
+
+        bool is_on_stack() const noexcept { return end() >= stack_begin() && end() < stack_end(); }
+
+        pointer end_of_storage() noexcept {
+          return is_on_stack() ? stack_end() : variant_.heap.end_of_storage_;
+        }
+
+        const_pointer end_of_storage() const noexcept {
+          return is_on_stack() ? stack_end() : variant_.heap.end_of_storage_;
+        }
+
+      public:
+        buffer() noexcept : finish_(stack_begin()) {}
+
+        pointer begin() noexcept { return is_on_stack() ? stack_begin() : variant_.heap.start_; }
+
+        const_pointer begin() const noexcept {
+          return is_on_stack() ? stack_begin() : variant_.heap.start_;
+        }
+
+        pointer end() noexcept { return finish_; }
+
+        const_pointer end() const noexcept { return finish_; }
+
+        pointer advance_end(int n) noexcept {
+          finish_ += n;
+          return finish_;
+        }
+
+        size_type size() const noexcept { return size_type(end() - begin()); }
+
+        size_type capacity() const noexcept { return size_type(end_of_storage() - begin()); }
+
+        bool full() const noexcept { return end() == end_of_storage(); }
+
+        void create_storage(size_type n) {
+          if (n > stack_size) {
+            variant_.heap.start_ = allocate(n);
+            finish_ = variant_.heap.start_;
+            variant_.heap.end_of_storage_ = finish_ + n;
+          } else { finish_ = stack_begin(); }
+        }
+
+        void destroy_storage() {
+          if (!is_on_stack()) { deallocate(begin(), capacity()); }
+          finish_ = stack_begin();
+        }
+
+        std::tuple<pointer, pointer, pointer> release() noexcept {
+          auto ret = std::make_tuple(nullptr, nullptr, nullptr);
+          return ret;
+        }
+
+        allocator_type& get_allocator() noexcept { return static_cast<allocator_type&>(*this); }
+
+        allocator_type const& get_allocator() const noexcept {
+          return static_cast<allocator_type const&>(*this);
+        }
+
+        void swap(buffer& x) noexcept {
+          if (x.is_on_stack()) {
+            std::move(x.begin(), x.end(), begin());
+            finish_ = stack_begin() + x.size();
+          } else {
+            finish_ = x.end();
+            variant_.heap.start_ = x.begin();
+            variant_.heap.end_of_storage_ = x.end_of_storage();
+            x.finish_ = x.stack_begin();
+          }
+          std::swap(get_allocator(), x.get_allocator());
+        }
       };
     }
+
     template <typename Tp, typename Alloc = std::allocator<Tp>, typename Tag = disable_sbo>
     struct dynamic_array {
       using allocator_type = Alloc;
@@ -119,7 +232,7 @@ namespace utils {
       using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
     private:
-      using impl_t = typename detail::buffer<Tag>::template type<allocator_type>;
+      using impl_t = detail::buffer<Tag, allocator_type>;
 
       impl_t impl_;
 
@@ -237,7 +350,10 @@ namespace utils {
 
       const_pointer data() const noexcept { return impl_.begin(); }
 
-      std::tuple<pointer, pointer, pointer> release() noexcept { return impl_.release(); }
+      std::tuple<pointer, pointer, pointer> release() noexcept(
+          noexcept(std::declval<impl_t>().release())) {
+        return impl_.release();
+      }
 
       allocator_type& get_allocator() noexcept {
         return static_cast<allocator_type&>(impl_.get_allocator());
