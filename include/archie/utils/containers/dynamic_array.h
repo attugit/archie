@@ -13,15 +13,11 @@ namespace utils {
       struct buffer;
 
       template <typename Alloc>
-      struct buffer<containers::disable_sbo, Alloc> : private Alloc {
+      struct buffer<containers::disable_sbo, Alloc> : Alloc {
         using allocator_type = Alloc;
         using pointer = typename allocator_type::pointer;
         using const_pointer = typename allocator_type::const_pointer;
-        using value_type = typename allocator_type::value_type;
-        using reference = typename allocator_type::reference;
-        using const_reference = typename allocator_type::const_reference;
         using size_type = typename allocator_type::size_type;
-        using difference_type = typename allocator_type::difference_type;
 
         using allocator_type::allocate;
         using allocator_type::deallocate;
@@ -65,8 +61,6 @@ namespace utils {
           return finish_;
         }
 
-        size_type size() const noexcept { return size_type(finish_ - start_); }
-
         size_type capacity() const noexcept { return size_type(end_of_storage_ - start_); }
 
         bool full() const noexcept { return finish_ == end_of_storage_; }
@@ -82,28 +76,20 @@ namespace utils {
           clear();
         }
 
-        allocator_type& get_allocator() noexcept { return static_cast<allocator_type&>(*this); }
-
-        allocator_type const& get_allocator() const noexcept {
-          return static_cast<allocator_type const&>(*this);
-        }
-
         void swap(buffer& x) noexcept {
           std::swap(start_, x.start_);
           std::swap(finish_, x.finish_);
           std::swap(end_of_storage_, x.end_of_storage_);
-          std::swap(get_allocator(), x.get_allocator());
+          std::swap(static_cast<allocator_type&>(*this), static_cast<allocator_type&>(x));
         }
       };
 
       template <typename Alloc>
-      struct buffer<containers::enable_sbo, Alloc> : private Alloc {
+      struct buffer<containers::enable_sbo, Alloc> : Alloc {
         using allocator_type = Alloc;
         using pointer = typename allocator_type::pointer;
         using const_pointer = typename allocator_type::const_pointer;
         using value_type = typename allocator_type::value_type;
-        using reference = typename allocator_type::reference;
-        using const_reference = typename allocator_type::const_reference;
         using size_type = typename allocator_type::size_type;
         using difference_type = typename allocator_type::difference_type;
 
@@ -170,8 +156,6 @@ namespace utils {
           return finish_;
         }
 
-        size_type size() const noexcept { return size_type(end() - begin()); }
-
         size_type capacity() const noexcept { return size_type(end_of_storage() - begin()); }
 
         bool full() const noexcept { return end() == end_of_storage(); }
@@ -194,23 +178,17 @@ namespace utils {
           return ret;
         }
 
-        allocator_type& get_allocator() noexcept { return static_cast<allocator_type&>(*this); }
-
-        allocator_type const& get_allocator() const noexcept {
-          return static_cast<allocator_type const&>(*this);
-        }
-
         void swap(buffer& x) noexcept {
           if (x.is_on_stack()) {
             std::move(x.begin(), x.end(), begin());
-            finish_ = stack_begin() + x.size();
+            finish_ = stack_begin() + size_type(x.end() - x.begin());
           } else {
             finish_ = x.end();
             variant_.heap.start_ = x.begin();
             variant_.heap.end_of_storage_ = x.end_of_storage();
             x.finish_ = x.stack_begin();
           }
-          std::swap(get_allocator(), x.get_allocator());
+          std::swap(static_cast<allocator_type&>(*this), static_cast<allocator_type&>(x));
         }
       };
     }
@@ -296,7 +274,7 @@ namespace utils {
 
       size_type capacity() const noexcept { return impl_.capacity(); }
 
-      size_type size() const noexcept { return impl_.size(); }
+      size_type size() const noexcept { return size_type(impl_.end() - impl_.begin()); }
 
       bool empty() const noexcept { return cbegin() == cend(); }
 
@@ -355,12 +333,10 @@ namespace utils {
         return impl_.release();
       }
 
-      allocator_type& get_allocator() noexcept {
-        return static_cast<allocator_type&>(impl_.get_allocator());
-      }
+      allocator_type& get_allocator() noexcept { return static_cast<allocator_type&>(impl_); }
 
       allocator_type const& get_allocator() const noexcept {
-        return static_cast<allocator_type const&>(impl_.get_allocator());
+        return static_cast<allocator_type const&>(impl_);
       }
     };
   }
