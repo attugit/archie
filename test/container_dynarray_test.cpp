@@ -251,14 +251,15 @@ void canReleaseContent() {
   }
 
   auto alloc = da.get_allocator();
-  darray::pointer first, last, end;
-  std::tie(first, last, end) = da.release();
-  EXPECT_EQ(4, last - first);
+  auto size = da.size();
+  auto first = da.release();
+  auto last = std::next(first, size);
+  EXPECT_EQ(4, size);
   for (; first != last;) {
     --last;
     last->~resource();
   }
-  alloc.deallocate(first, end - first);
+  alloc.deallocate(first, size);
 }
 
 template <typename Tp, typename Alloc = std::allocator<Tp>>

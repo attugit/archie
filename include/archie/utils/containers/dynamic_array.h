@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <tuple>
 #include <type_traits>
 #include <archie/utils/containers/tags.h>
 
@@ -65,8 +64,8 @@ namespace utils {
 
         bool full() const noexcept { return finish_ == end_of_storage_; }
 
-        std::tuple<pointer, pointer, pointer> release() noexcept {
-          auto ret = std::make_tuple(start_, finish_, end_of_storage_);
+        pointer release() noexcept {
+          auto ret = start_;
           clear();
           return ret;
         }
@@ -173,10 +172,9 @@ namespace utils {
           finish_ = stack_begin();
         }
 
-        std::tuple<pointer, pointer, pointer> release() noexcept {
+        pointer release() noexcept {
           // FIXME
-          auto ret = std::make_tuple(nullptr, nullptr, nullptr);
-          return ret;
+          return nullptr;
         }
 
         void swap(buffer& x) noexcept {
@@ -285,10 +283,9 @@ namespace utils {
           clear();
         }
 
-        std::tuple<pointer, pointer, pointer> release() noexcept {
+        pointer release() noexcept {
           // FIXME
-          auto ret = std::make_tuple(nullptr, nullptr, nullptr);
-          return ret;
+          return nullptr;
         }
 
         void swap(buffer& x) noexcept {
@@ -442,8 +439,7 @@ namespace utils {
 
       const_pointer data() const noexcept { return impl_.begin(); }
 
-      std::tuple<pointer, pointer, pointer> release() noexcept(
-          noexcept(std::declval<impl_t>().release())) {
+      pointer release() noexcept(noexcept(std::declval<impl_t>().release())) {
         return impl_.release();
       }
 
