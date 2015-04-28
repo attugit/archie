@@ -28,11 +28,7 @@ namespace utils {
         pointer finish_ = nullptr;
         pointer end_of_storage_ = nullptr;
 
-        void clear() {
-          start_ = nullptr;
-          finish_ = nullptr;
-          end_of_storage_ = nullptr;
-        }
+        void clear() { acquire(nullptr, 0u, 0u); }
 
       public:
         buffer() noexcept = default;
@@ -40,15 +36,10 @@ namespace utils {
         explicit buffer(allocator_type const& a) noexcept : allocator_type(a) { clear(); }
 
         void create_storage(size_type n) {
-          if (n != size_type(end_of_storage_ - start_)) {
-            start_ = (n != 0u) ? allocate(n) : nullptr;
-            finish_ = start_;
-            end_of_storage_ = start_ + n;
-          }
+          if (n != capacity()) acquire((n != 0u) ? allocate(n) : nullptr, 0u, n);
         }
 
         void acquire(pointer ptr, size_type s, size_type c) noexcept {
-          if (start_ != nullptr) deallocate(begin(), capacity());
           start_ = ptr;
           finish_ = ptr + s;
           end_of_storage_ = ptr + c;
@@ -64,7 +55,7 @@ namespace utils {
 
         pointer advance_end(int n) noexcept {
           finish_ += n;
-          return finish_;
+          return end();
         }
 
         size_type capacity() const noexcept { return size_type(end_of_storage_ - start_); }
@@ -72,13 +63,13 @@ namespace utils {
         bool full() const noexcept { return finish_ == end_of_storage_; }
 
         pointer release() noexcept {
-          auto ret = start_;
+          auto ret = begin();
           clear();
           return ret;
         }
 
         void destroy_storage() noexcept {
-          if (start_ != nullptr) deallocate(begin(), capacity());
+          if (begin() != nullptr) deallocate(begin(), capacity());
           clear();
         }
 
@@ -454,12 +445,20 @@ namespace utils {
 
       const_pointer data() const noexcept { return impl_.begin(); }
 
-      void acquire(pointer first, pointer last) noexcept { acquire(first, last - first); }
+      void acquire(pointer first, pointer last) noexcept(
+          noexcept(std::declval<dynamic_array>().acquire(nullptr, nullptr))) {
+        acquire(first, last - first);
+      }
 
-      void acquire(pointer ptr, size_type s) noexcept { acquire(ptr, s, s); }
+      void acquire(pointer ptr, size_type s) noexcept(
+          noexcept(std::declval<dynamic_array>().acquire(nullptr, 0u, 0u))) {
+        acquire(ptr, s, s);
+      }
 
-      void acquire(pointer ptr, size_type s, size_type c) noexcept {
+      void acquire(pointer ptr, size_type s, size_type c) noexcept(
+          noexcept(std::declval<impl_t>().acquire(nullptr, 0u, 0u))) {
         clear();
+        impl_.destroy_storage();
         impl_.acquire(ptr, s, c);
       }
 
