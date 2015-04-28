@@ -135,6 +135,8 @@ namespace utils {
           return is_on_stack() ? stack_end() : variant_.heap.end_of_storage_;
         }
 
+        void clear() noexcept { finish_ = stack_begin(); }
+
       public:
         buffer() noexcept : finish_(stack_begin()) {}
 
@@ -162,21 +164,29 @@ namespace utils {
             variant_.heap.start_ = allocate(n);
             finish_ = variant_.heap.start_;
             variant_.heap.end_of_storage_ = finish_ + n;
-          } else { finish_ = stack_begin(); }
+          } else { clear(); }
         }
 
-        void acquire(pointer, size_type, size_type) {
-          // FIXME
+        void acquire(pointer b, size_type s, size_type c) noexcept {
+          variant_.heap.start_ = b;
+          finish_ = variant_.heap.start_ + s;
+          variant_.heap.end_of_storage_ = variant_.heap.start_ + c;
         }
 
         void destroy_storage() {
           if (!is_on_stack()) { deallocate(begin(), capacity()); }
-          finish_ = stack_begin();
+          clear();
         }
 
-        pointer release() noexcept {
-          // FIXME
-          return nullptr;
+        pointer release() {
+          pointer ret = nullptr;
+          if (is_on_stack()) {
+            ret = allocate(capacity());
+            std::move(begin(), end(), ret);
+            while (end() != begin()) destroy(advance_end(-1));
+          } else { ret = begin(); }
+          clear();
+          return ret;
         }
 
         void swap(buffer& x) noexcept {
@@ -187,7 +197,7 @@ namespace utils {
             finish_ = x.end();
             variant_.heap.start_ = x.begin();
             variant_.heap.end_of_storage_ = x.end_of_storage();
-            x.finish_ = x.stack_begin();
+            x.clear();
           }
           std::swap(static_cast<allocator_type&>(*this), static_cast<allocator_type&>(x));
         }
