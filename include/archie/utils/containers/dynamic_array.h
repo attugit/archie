@@ -47,6 +47,13 @@ namespace utils {
           }
         }
 
+        void acquire(pointer ptr, size_type s, size_type c) noexcept {
+          if (start_ != nullptr) deallocate(begin(), capacity());
+          start_ = ptr;
+          finish_ = ptr + s;
+          end_of_storage_ = ptr + c;
+        }
+
         pointer begin() noexcept { return start_; }
 
         const_pointer begin() const noexcept { return start_; }
@@ -167,6 +174,10 @@ namespace utils {
           } else { finish_ = stack_begin(); }
         }
 
+        void acquire(pointer, size_type, size_type) {
+          // FIXME
+        }
+
         void destroy_storage() {
           if (!is_on_stack()) { deallocate(begin(), capacity()); }
           finish_ = stack_begin();
@@ -276,6 +287,10 @@ namespace utils {
             variant_.heap.end_of_storage_ = start_ + n;
           } else { start_ = stack_begin(); }
           finish_ = start_;
+        }
+
+        void acquire(pointer, size_type, size_type) {
+          // FIXME
         }
 
         void destroy_storage() {
@@ -438,6 +453,15 @@ namespace utils {
       pointer data() noexcept { return impl_.begin(); }
 
       const_pointer data() const noexcept { return impl_.begin(); }
+
+      void acquire(pointer first, pointer last) noexcept { acquire(first, last - first); }
+
+      void acquire(pointer ptr, size_type s) noexcept { acquire(ptr, s, s); }
+
+      void acquire(pointer ptr, size_type s, size_type c) noexcept {
+        clear();
+        impl_.acquire(ptr, s, c);
+      }
 
       pointer release() noexcept(noexcept(std::declval<impl_t>().release())) {
         return impl_.release();

@@ -262,6 +262,34 @@ void canReleaseContent() {
   alloc.deallocate(first, size);
 }
 
+void canAcquire() {
+  darray da(7);
+  {
+    da.emplace_back(5);
+    da.emplace_back(7);
+    da.emplace_back(11);
+    da.emplace_back(13);
+  }
+
+  auto alloc = da.get_allocator();
+  auto size = da.size();
+  auto capacity = da.capacity();
+  auto first = da.release();
+  EXPECT_EQ(0u, da.capacity());
+
+  darray acc(0, alloc);
+  EXPECT_EQ(0u, acc.capacity());
+  {
+    acc.acquire(first, size, capacity);
+    EXPECT_EQ(7u, acc.capacity());
+    EXPECT_EQ(4u, acc.size());
+    EXPECT_EQ(5, acc[0]);
+    EXPECT_EQ(7, acc[1]);
+    EXPECT_EQ(11, acc[2]);
+    EXPECT_EQ(13, acc[3]);
+  }
+}
+
 template <typename Tp, typename Alloc = std::allocator<Tp>>
 using sbo = cont::dynamic_array<Tp, Alloc, cont::enable_sbo>;
 
@@ -339,6 +367,7 @@ int main() {
   canUseBeginAndEnd();
   canEraseElement();
   canReleaseContent();
+  canAcquire();
   canUseSboArray();
   canUseRaSboArray();
   return 0;
