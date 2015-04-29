@@ -293,8 +293,11 @@ void canAcquire() {
 template <typename Tp, typename Alloc = std::allocator<Tp>>
 using sbo = cont::dynamic_array<Tp, Alloc, cont::enable_sbo>;
 
-template <typename Tp, std::size_t Stock = 0u, typename Alloc = std::allocator<Tp>>
-using rasbo = cont::dynamic_array<Tp, Alloc, cont::enable_ra_sbo, Stock>;
+template <typename Tp, typename Alloc = std::allocator<Tp>>
+using rasbo = cont::dynamic_array<Tp, Alloc, cont::enable_ra_sbo>;
+
+template <typename Tp, std::size_t Stock, typename Alloc = std::allocator<Tp>>
+using stock = cont::dynamic_array<Tp, Alloc, cont::enable_ra_sbo, Stock>;
 
 void canUseSboArray() {
   sbo<resource> sa;
@@ -385,8 +388,8 @@ void canUseRaSboArray() {
 }
 
 void canUseRaSboArrayWithStock() {
-  rasbo<resource, 8u> sa;
-  rasbo<resource, 8u> other(10);
+  stock<resource, 8u> sa;
+  stock<resource, 8u> other(10);
   {
     EXPECT_EQ(8u, sa.capacity());
     sa.emplace_back(3);
@@ -449,6 +452,42 @@ void canUseRaSboArrayWithStock() {
  *  9 stock  heap   heap
  */
 
+void canMoveSbo() {
+  {
+    // A1
+    sbo<resource> src;
+    sbo<resource> dst;
+    dst = std::move(src);
+    EXPECT_EQ(2u, dst.capacity());
+    EXPECT_EQ(0u, dst.size());
+  }
+  {
+    // A2
+    sbo<resource> src = {3, 5};
+    sbo<resource> dst;
+    dst = std::move(src);
+    EXPECT_EQ(2u, src.capacity());
+    EXPECT_EQ(0u, src.size());
+    EXPECT_EQ(2u, dst.capacity());
+    EXPECT_EQ(2u, dst.size());
+    EXPECT_EQ(3, dst[0]);
+    EXPECT_EQ(5, dst[1]);
+  }
+  {
+    // A3
+    sbo<resource> src = {3, 5, 7};
+    sbo<resource> dst;
+    dst = std::move(src);
+    EXPECT_EQ(2u, src.capacity());
+    EXPECT_EQ(0u, src.size());
+    EXPECT_EQ(3u, dst.capacity());
+    EXPECT_EQ(3u, dst.size());
+    EXPECT_EQ(3, dst[0]);
+    EXPECT_EQ(5, dst[1]);
+    EXPECT_EQ(7, dst[2]);
+  }
+}
+
 int main() {
   canDefaultConstructDynamicArray();
   canCreateDynamicArrayWithGivenCapacity();
@@ -466,5 +505,6 @@ int main() {
   canUseSboArray();
   canUseRaSboArray();
   canUseRaSboArrayWithStock();
+  canMoveSbo();
   return 0;
 }

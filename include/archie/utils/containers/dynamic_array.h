@@ -134,7 +134,7 @@ namespace utils {
           return const_pointer(&variant_.stack[stack_size]);
         }
 
-        bool is_on_stack() const noexcept { return end() >= stack_begin() && end() < stack_end(); }
+        bool is_on_stack() const noexcept { return end() >= stack_begin() && end() <= stack_end(); }
 
         pointer end_of_storage() noexcept {
           return is_on_stack() ? stack_end() : variant_.heap.end_of_storage_;
@@ -176,11 +176,15 @@ namespace utils {
           } else { clear(); }
         }
 
-        void acquire(pointer b, size_type s, size_type c) noexcept {
+        void acquire(pointer a, pointer b, pointer c) noexcept {
           destroy_storage();
-          variant_.heap.start_ = b;
-          finish_ = variant_.heap.start_ + s;
-          variant_.heap.end_of_storage_ = variant_.heap.start_ + c;
+          variant_.heap.start_ = a;
+          finish_ = b;
+          variant_.heap.end_of_storage_ = c;
+        }
+
+        void acquire(pointer ptr, size_type s, size_type c) noexcept {
+          acquire(ptr, ptr + s, ptr + c);
         }
 
         void destroy_storage() noexcept {
@@ -200,16 +204,19 @@ namespace utils {
           return ret;
         }
 
-        void swap(buffer& x) noexcept {
+        void move_in(buffer&& x) noexcept /* condition */ {
           if (x.is_on_stack()) {
-            std::move(x.begin(), x.end(), begin());
-            finish_ = stack_begin() + size_type(x.end() - x.begin());
-          } else {
-            finish_ = x.end();
-            variant_.heap.start_ = x.begin();
-            variant_.heap.end_of_storage_ = x.end_of_storage();
-            x.clear();
-          }
+            destroy_storage();
+            for (auto it = x.begin(); it != x.end(); ++it) {
+              construct(finish_++, std::move(*it));
+              it->~value_type();
+            }
+          } else { acquire(x.begin(), x.end(), x.end_of_storage()); }
+          x.clear();
+        }
+
+        void swap(buffer& x) noexcept {
+          move_in(std::move(x));
           std::swap(static_cast<allocator_type&>(*this), static_cast<allocator_type&>(x));
         }
       };
@@ -378,7 +385,7 @@ namespace utils {
       void reset(Iter first, Iter last, size_type addon = 0u) {
         clear();
         realloc(std::distance(first, last) + addon);
-        std::copy(first, last, std::back_inserter(*this));
+        for (; first != last; ++first) emplace_back(*first);
       }
 
     public:
