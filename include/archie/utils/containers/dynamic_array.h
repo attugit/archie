@@ -28,7 +28,15 @@ namespace utils {
         pointer finish_ = nullptr;
         pointer end_of_storage_ = nullptr;
 
-        void clear() { acquire(nullptr, 0u, 0u); }
+        void reset(pointer a, size_type s, size_type c) noexcept { reset(a, a + s, a + c); }
+
+        void reset(pointer a, pointer b, pointer c) noexcept {
+          start_ = a;
+          finish_ = b;
+          end_of_storage_ = c;
+        }
+
+        void clear() { reset(nullptr, nullptr, nullptr); }
 
       public:
         buffer() noexcept = default;
@@ -40,9 +48,8 @@ namespace utils {
         }
 
         void acquire(pointer ptr, size_type s, size_type c) noexcept {
-          start_ = ptr;
-          finish_ = ptr + s;
-          end_of_storage_ = ptr + c;
+          destroy_storage();
+          reset(ptr, s, c);
         }
 
         pointer begin() noexcept { return start_; }
@@ -173,7 +180,7 @@ namespace utils {
           variant_.heap.end_of_storage_ = variant_.heap.start_ + c;
         }
 
-        void destroy_storage() {
+        void destroy_storage() noexcept {
           if (!is_on_stack()) { deallocate(begin(), capacity()); }
           clear();
         }
@@ -296,7 +303,7 @@ namespace utils {
           // FIXME
         }
 
-        void destroy_storage() {
+        void destroy_storage() noexcept {
           if (!is_on_stack()) { deallocate(begin(), capacity()); }
           clear();
         }
@@ -457,20 +464,12 @@ namespace utils {
 
       const_pointer data() const noexcept { return impl_.begin(); }
 
-      void acquire(pointer first, pointer last) noexcept(
-          noexcept(std::declval<dynamic_array>().acquire(nullptr, nullptr))) {
-        acquire(first, last - first);
-      }
+      void acquire(pointer first, pointer last) noexcept { acquire(first, last - first); }
 
-      void acquire(pointer ptr, size_type s) noexcept(
-          noexcept(std::declval<dynamic_array>().acquire(nullptr, 0u, 0u))) {
-        acquire(ptr, s, s);
-      }
+      void acquire(pointer ptr, size_type s) noexcept { acquire(ptr, s, s); }
 
-      void acquire(pointer ptr, size_type s, size_type c) noexcept(
-          noexcept(std::declval<impl_t>().acquire(nullptr, 0u, 0u))) {
+      void acquire(pointer ptr, size_type s, size_type c) noexcept {
         clear();
-        impl_.destroy_storage();
         impl_.acquire(ptr, s, c);
       }
 
