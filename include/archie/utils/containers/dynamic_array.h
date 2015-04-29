@@ -8,7 +8,7 @@ namespace archie {
 namespace utils {
   namespace containers {
     namespace detail {
-      template <typename, typename>
+      template <typename, typename, std::size_t = 0u>
       struct buffer;
 
       template <typename Alloc>
@@ -203,8 +203,8 @@ namespace utils {
         }
       };
 
-      template <typename Alloc>
-      struct buffer<containers::enable_ra_sbo, Alloc> : Alloc {
+      template <typename Alloc, std::size_t Stock>
+      struct buffer<containers::enable_ra_sbo, Alloc, Stock> : Alloc {
         using allocator_type = Alloc;
         using pointer = typename allocator_type::pointer;
         using const_pointer = typename allocator_type::const_pointer;
@@ -223,7 +223,9 @@ namespace utils {
           pointer end_of_storage_ = nullptr;
         };
 
-        static constexpr auto const stack_size = sizeof(heap_data) / sizeof(value_type);
+        static constexpr auto const stack_size = Stock > (sizeof(heap_data) / sizeof(value_type))
+                                                     ? Stock
+                                                     : (sizeof(heap_data) / sizeof(value_type));
         static_assert(stack_size > 0u, "");
 
         union variant {
