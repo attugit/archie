@@ -38,6 +38,8 @@ namespace utils {
 
         void clear() { reset(nullptr, nullptr, nullptr); }
 
+        bool is_on_heap() const noexcept { return begin() != nullptr; }
+
       public:
         buffer() noexcept = default;
 
@@ -76,7 +78,7 @@ namespace utils {
         }
 
         void destroy_storage() noexcept {
-          if (begin() != nullptr) deallocate(begin(), capacity());
+          if (is_on_heap()) deallocate(begin(), capacity());
           clear();
         }
 
@@ -175,6 +177,7 @@ namespace utils {
         }
 
         void acquire(pointer b, size_type s, size_type c) noexcept {
+          destroy_storage();
           variant_.heap.start_ = b;
           finish_ = variant_.heap.start_ + s;
           variant_.heap.end_of_storage_ = variant_.heap.start_ + c;
@@ -189,7 +192,8 @@ namespace utils {
           pointer ret = nullptr;
           if (is_on_stack()) {
             ret = allocate(capacity());
-            std::move(begin(), end(), ret);
+            auto dest = ret;
+            for (auto& val : *this) construct(dest++, std::move(val));
             while (end() != begin()) destroy(advance_end(-1));
           } else { ret = begin(); }
           clear();
@@ -299,8 +303,11 @@ namespace utils {
           finish_ = start_;
         }
 
-        void acquire(pointer, size_type, size_type) {
-          // FIXME
+        void acquire(pointer ptr, size_type s, size_type c) noexcept {
+          destroy_storage();
+          start_ = ptr;
+          finish_ = start_ + s;
+          variant_.heap.end_of_storage_ = start_ + c;
         }
 
         void destroy_storage() noexcept {
@@ -309,8 +316,15 @@ namespace utils {
         }
 
         pointer release() noexcept {
-          // FIXME
-          return nullptr;
+          pointer ret = nullptr;
+          if (is_on_stack()) {
+            ret = allocate(capacity());
+            auto dest = ret;
+            for (auto& val : *this) construct(dest++, std::move(val));
+            while (end() != begin()) destroy(advance_end(-1));
+          } else { ret = begin(); }
+          clear();
+          return ret;
         }
 
         void swap(buffer& x) noexcept {
@@ -474,6 +488,11 @@ namespace utils {
       void acquire(pointer ptr, size_type s, size_type c) noexcept {
         clear();
         impl_.acquire(ptr, s, c);
+      }
+
+      void acquire(allocator_type alloc, pointer ptr, size_type s, size_type c) noexcept {
+        acquire(ptr, s, c);
+        get_allocator() = std::move(alloc);
       }
 
       pointer release() noexcept(noexcept(std::declval<impl_t>().release())) {
