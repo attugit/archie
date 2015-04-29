@@ -323,6 +323,12 @@ void canUseSboArray() {
     EXPECT_EQ(11, sa[1]);
     EXPECT_EQ(13, sa[2]);
   }
+  sbo<resource> st;
+  sa = std::move(st);
+  {
+    EXPECT_EQ(2u, sa.capacity());
+    EXPECT_EQ(0u, sa.size());
+  }
   {
     sbo<resource> acc;
     acc.emplace_back(5);
@@ -405,6 +411,43 @@ void canUseRaSboArrayWithStock() {
     EXPECT_EQ(9u, sa.size());
   }
 }
+
+/**
+ * Test plan:
+ * func: release/acquire/move/copy
+ * A  class  src    dst
+ *  1 sbo    empty  empty
+ *  2 sbo    empty  stack
+ *  3 sbo    empty  heap
+ *  4 sbo    stack  empty
+ *  5 sbo    stack  stack
+ *  6 sbo    stack  heap
+ *  7 sbo    heap   empty
+ *  8 sbo    heap   stack
+ *  9 sbo    heap   heap
+ *
+ * B  class  src    dst
+ *  1 rasbo  empty  empty
+ *  2 rasbo  empty  stack
+ *  3 rasbo  empty  heap
+ *  4 rasbo  stack  empty
+ *  5 rasbo  stack  stack
+ *  6 rasbo  stack  heap
+ *  7 rasbo  heap   empty
+ *  8 rasbo  heap   stack
+ *  9 rasbo  heap   heap
+ *
+ * C  class  src    dst
+ *  1 stock  empty  empty
+ *  2 stock  empty  stack
+ *  3 stock  empty  heap
+ *  4 stock  stack  empty
+ *  5 stock  stack  stack
+ *  6 stock  stack  heap
+ *  7 stock  heap   empty
+ *  8 stock  heap   stack
+ *  9 stock  heap   heap
+ */
 
 int main() {
   canDefaultConstructDynamicArray();
