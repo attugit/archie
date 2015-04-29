@@ -323,6 +323,19 @@ void canUseSboArray() {
     EXPECT_EQ(11, sa[1]);
     EXPECT_EQ(13, sa[2]);
   }
+  {
+    sbo<resource> acc;
+    acc.emplace_back(5);
+    auto size = acc.size();
+    auto capacity = acc.capacity();
+    auto ptr = acc.release();
+    sa.acquire(ptr, size, capacity);
+  }
+  {
+    EXPECT_EQ(2u, sa.capacity());
+    EXPECT_EQ(1u, sa.size());
+    EXPECT_EQ(5, sa[0]);
+  }
 }
 
 void canUseRaSboArray() {
