@@ -293,8 +293,8 @@ void canAcquire() {
 template <typename Tp, typename Alloc = std::allocator<Tp>>
 using sbo = cont::dynamic_array<Tp, Alloc, cont::enable_sbo>;
 
-template <typename Tp, typename Alloc = std::allocator<Tp>>
-using rasbo = cont::dynamic_array<Tp, Alloc, cont::enable_ra_sbo>;
+template <typename Tp, std::size_t Stock = 0u, typename Alloc = std::allocator<Tp>>
+using rasbo = cont::dynamic_array<Tp, Alloc, cont::enable_ra_sbo, Stock>;
 
 void canUseSboArray() {
   sbo<resource> sa;
@@ -354,6 +354,34 @@ void canUseRaSboArray() {
   }
 }
 
+void canUseRaSboArrayWithStock() {
+  rasbo<resource, 8u> sa;
+  rasbo<resource, 8u> other(10);
+  {
+    EXPECT_EQ(8u, sa.capacity());
+    sa.emplace_back(3);
+    EXPECT_EQ(1u, sa.size());
+    EXPECT_EQ(10u, other.capacity());
+    other.emplace_back(5);
+    other.emplace_back(7);
+    other.emplace_back(11);
+    other.emplace_back(13);
+    other.emplace_back(17);
+    other.emplace_back(19);
+    other.emplace_back(23);
+    other.emplace_back(29);
+    other.emplace_back(31);
+    EXPECT_EQ(9u, other.size());
+  }
+  sa = std::move(other);
+  {
+    EXPECT_EQ(8u, other.capacity());
+    EXPECT_EQ(0u, other.size());
+    EXPECT_EQ(10u, sa.capacity());
+    EXPECT_EQ(9u, sa.size());
+  }
+}
+
 int main() {
   canDefaultConstructDynamicArray();
   canCreateDynamicArrayWithGivenCapacity();
@@ -370,5 +398,6 @@ int main() {
   canAcquire();
   canUseSboArray();
   canUseRaSboArray();
+  canUseRaSboArrayWithStock();
   return 0;
 }

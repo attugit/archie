@@ -329,7 +329,10 @@ namespace utils {
       };
     }
 
-    template <typename Tp, typename Alloc = std::allocator<Tp>, typename Tag = disable_sbo>
+    template <typename Tp,
+              typename Alloc = std::allocator<Tp>,
+              typename Tag = disable_sbo,
+              std::size_t Stock = 0u>
     struct dynamic_array {
       using allocator_type = Alloc;
       using pointer = typename allocator_type::pointer;
@@ -346,7 +349,7 @@ namespace utils {
       using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
     private:
-      using impl_t = detail::buffer<Tag, allocator_type>;
+      using impl_t = detail::buffer<Tag, allocator_type, Stock>;
 
       impl_t impl_;
 
