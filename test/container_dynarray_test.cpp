@@ -556,6 +556,95 @@ void canMoveSbo() {
   }
 }
 
+void canReleaseAcquireSbo() {
+  {
+    sbo<resource> src;
+    sbo<resource> dst_empty;
+    sbo<resource> dst_stack = {11, 13};
+    sbo<resource> dst_heap = {17, 19, 23};
+    auto const capa = cont::capacity(src);
+    auto const size = cont::size(src);
+
+    // A1
+    dst_empty.acquire(src.release(), size, capa);
+    { EXPECT_TRUE(dst_empty.empty()); }
+    // A4
+    dst_stack.acquire(dst_empty.release(), size, capa);
+    { EXPECT_TRUE(dst_stack.empty()); }
+    // A7
+    dst_heap.acquire(dst_stack.release(), size, capa);
+    { EXPECT_TRUE(dst_heap.empty()); }
+  }
+  {
+    sbo<resource> src = {3, 5};
+    sbo<resource> dst_empty;
+    sbo<resource> dst_stack = {11, 13};
+    sbo<resource> dst_heap = {17, 19, 23};
+    auto const capa = cont::capacity(src);
+    auto const size = cont::size(src);
+
+    // A2
+    dst_empty.acquire(src.release(), size, capa);
+    {
+      EXPECT_EQ(2u, cont::capacity(dst_empty));
+      EXPECT_EQ(2u, cont::size(dst_empty));
+      EXPECT_EQ(3, dst_empty[0]);
+      EXPECT_EQ(5, dst_empty[1]);
+    }
+    // A5
+    dst_stack.acquire(dst_empty.release(), size, capa);
+    {
+      EXPECT_EQ(2u, cont::capacity(dst_stack));
+      EXPECT_EQ(2u, cont::size(dst_stack));
+      EXPECT_EQ(3, dst_stack[0]);
+      EXPECT_EQ(5, dst_stack[1]);
+    }
+    // A8
+    dst_heap.acquire(dst_stack.release(), size, capa);
+    {
+      EXPECT_EQ(2u, cont::capacity(dst_heap));
+      EXPECT_EQ(2u, cont::size(dst_heap));
+      EXPECT_EQ(3, dst_heap[0]);
+      EXPECT_EQ(5, dst_heap[1]);
+    }
+  }
+  {
+    sbo<resource> src = {3, 5, 7};
+    sbo<resource> dst_empty;
+    sbo<resource> dst_stack = {11, 13};
+    sbo<resource> dst_heap = {17, 19, 23};
+    auto const capa = cont::capacity(src);
+    auto const size = cont::size(src);
+    // A3
+    dst_empty.acquire(src.release(), size, capa);
+    {
+      EXPECT_EQ(3u, cont::capacity(dst_empty));
+      EXPECT_EQ(3u, cont::size(dst_empty));
+      EXPECT_EQ(3, dst_empty[0]);
+      EXPECT_EQ(5, dst_empty[1]);
+      EXPECT_EQ(7, dst_empty[2]);
+    }
+    // A6
+    dst_stack.acquire(dst_empty.release(), size, capa);
+    {
+      EXPECT_EQ(3u, cont::capacity(dst_stack));
+      EXPECT_EQ(3u, cont::size(dst_stack));
+      EXPECT_EQ(3, dst_stack[0]);
+      EXPECT_EQ(5, dst_stack[1]);
+      EXPECT_EQ(7, dst_stack[2]);
+    }
+    // A9
+    dst_heap.acquire(dst_stack.release(), size, capa);
+    {
+      EXPECT_EQ(3u, cont::capacity(dst_heap));
+      EXPECT_EQ(3u, cont::size(dst_heap));
+      EXPECT_EQ(3, dst_heap[0]);
+      EXPECT_EQ(5, dst_heap[1]);
+      EXPECT_EQ(7, dst_heap[2]);
+    }
+  }
+}
+
 int main() {
   canDefaultConstructDynamicArray();
   canCreateDynamicArrayWithGivenCapacity();
@@ -574,5 +663,6 @@ int main() {
   canUseRaSboArray();
   canUseRaSboArrayWithStock();
   canMoveSbo();
+  canReleaseAcquireSbo();
   return 0;
 }
