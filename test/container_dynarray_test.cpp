@@ -483,6 +483,7 @@ void canMoveSbo() {
     sbo<resource> src = {3, 5};
     sbo<resource> dst_empty;
     sbo<resource> dst_stack = {11, 13};
+    sbo<resource> dst_heap = {17, 19, 23};
     // A2
     dst_empty = std::move(src);
     {
@@ -503,11 +504,22 @@ void canMoveSbo() {
       EXPECT_EQ(3, dst_stack[0]);
       EXPECT_EQ(5, dst_stack[1]);
     }
+    // A8
+    dst_heap = std::move(dst_stack);
+    {
+      EXPECT_EQ(2u, cont::capacity(dst_stack));
+      EXPECT_EQ(0u, cont::size(dst_stack));
+      EXPECT_EQ(2u, cont::capacity(dst_heap));
+      EXPECT_EQ(2u, cont::size(dst_heap));
+      EXPECT_EQ(3, dst_heap[0]);
+      EXPECT_EQ(5, dst_heap[1]);
+    }
   }
   {
     sbo<resource> src = {3, 5, 7};
     sbo<resource> dst_empty;
     sbo<resource> dst_stack = {11, 13};
+    sbo<resource> dst_heap = {17, 19, 23};
     // A3
     dst_empty = std::move(src);
     {
@@ -529,6 +541,17 @@ void canMoveSbo() {
       EXPECT_EQ(3, dst_stack[0]);
       EXPECT_EQ(5, dst_stack[1]);
       EXPECT_EQ(7, dst_stack[2]);
+    }
+    // A9
+    dst_heap = std::move(dst_stack);
+    {
+      EXPECT_EQ(2u, cont::capacity(dst_stack));
+      EXPECT_EQ(0u, cont::size(dst_stack));
+      EXPECT_EQ(3u, cont::capacity(dst_heap));
+      EXPECT_EQ(3u, cont::size(dst_heap));
+      EXPECT_EQ(3, dst_heap[0]);
+      EXPECT_EQ(5, dst_heap[1]);
+      EXPECT_EQ(7, dst_heap[2]);
     }
   }
 }
