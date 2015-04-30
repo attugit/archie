@@ -454,37 +454,73 @@ void canUseRaSboArrayWithStock() {
 
 void canMoveSbo() {
   {
-    // A1
     sbo<resource> src;
-    sbo<resource> dst;
-    dst = std::move(src);
-    EXPECT_EQ(2u, dst.capacity());
-    EXPECT_EQ(0u, dst.size());
+    sbo<resource> dst_empty;
+    sbo<resource> dst_stack = {11, 13};
+    // A1
+    dst_empty = std::move(src);
+    {
+      EXPECT_EQ(2u, dst_empty.capacity());
+      EXPECT_EQ(0u, dst_empty.size());
+    }
+    // A4
+    dst_stack = std::move(dst_empty);
+    {
+      EXPECT_EQ(2u, dst_stack.capacity());
+      EXPECT_EQ(0u, dst_stack.size());
+    }
   }
   {
-    // A2
     sbo<resource> src = {3, 5};
-    sbo<resource> dst;
-    dst = std::move(src);
-    EXPECT_EQ(2u, src.capacity());
-    EXPECT_EQ(0u, src.size());
-    EXPECT_EQ(2u, dst.capacity());
-    EXPECT_EQ(2u, dst.size());
-    EXPECT_EQ(3, dst[0]);
-    EXPECT_EQ(5, dst[1]);
+    sbo<resource> dst_empty;
+    sbo<resource> dst_stack = {11, 13};
+    // A2
+    dst_empty = std::move(src);
+    {
+      EXPECT_EQ(2u, src.capacity());
+      EXPECT_EQ(0u, src.size());
+      EXPECT_EQ(2u, dst_empty.capacity());
+      EXPECT_EQ(2u, dst_empty.size());
+      EXPECT_EQ(3, dst_empty[0]);
+      EXPECT_EQ(5, dst_empty[1]);
+    }
+    // A5
+    dst_stack = std::move(dst_empty);
+    {
+      EXPECT_EQ(2u, dst_empty.capacity());
+      EXPECT_EQ(0u, dst_empty.size());
+      EXPECT_EQ(2u, dst_stack.capacity());
+      EXPECT_EQ(2u, dst_stack.size());
+      EXPECT_EQ(3, dst_stack[0]);
+      EXPECT_EQ(5, dst_stack[1]);
+    }
   }
   {
-    // A3
     sbo<resource> src = {3, 5, 7};
-    sbo<resource> dst;
-    dst = std::move(src);
-    EXPECT_EQ(2u, src.capacity());
-    EXPECT_EQ(0u, src.size());
-    EXPECT_EQ(3u, dst.capacity());
-    EXPECT_EQ(3u, dst.size());
-    EXPECT_EQ(3, dst[0]);
-    EXPECT_EQ(5, dst[1]);
-    EXPECT_EQ(7, dst[2]);
+    sbo<resource> dst_empty;
+    sbo<resource> dst_stack = {11, 13};
+    // A3
+    dst_empty = std::move(src);
+    {
+      EXPECT_EQ(2u, src.capacity());
+      EXPECT_EQ(0u, src.size());
+      EXPECT_EQ(3u, dst_empty.capacity());
+      EXPECT_EQ(3u, dst_empty.size());
+      EXPECT_EQ(3, dst_empty[0]);
+      EXPECT_EQ(5, dst_empty[1]);
+      EXPECT_EQ(7, dst_empty[2]);
+    }
+    // A6
+    dst_stack = std::move(dst_empty);
+    {
+      EXPECT_EQ(2u, dst_empty.capacity());
+      EXPECT_EQ(0u, dst_empty.size());
+      EXPECT_EQ(3u, dst_stack.capacity());
+      EXPECT_EQ(3u, dst_stack.size());
+      EXPECT_EQ(3, dst_stack[0]);
+      EXPECT_EQ(5, dst_stack[1]);
+      EXPECT_EQ(7, dst_stack[2]);
+    }
   }
 }
 
