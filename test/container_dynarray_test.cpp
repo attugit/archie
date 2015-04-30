@@ -645,6 +645,67 @@ void canReleaseAcquireSbo() {
   }
 }
 
+#include <vector>
+void canCopySbo() {
+  enum { empty = 0, stack, heap };
+  std::vector<sbo<resource>> const input = {{}, {3, 5}, {3, 5, 7}};
+  std::vector<sbo<resource>> const data = {{}, {11, 13}, {17, 19, 23}};
+  {
+    auto const& src = input[empty];
+    auto dst = data;
+    auto const test = [](sbo<resource> const& dst) { EXPECT_TRUE(dst.empty()); };
+    // A1
+    dst[empty] = src;
+    test(dst[empty]);
+    // A4
+    dst[stack] = src;
+    test(dst[stack]);
+    // A7
+    dst[heap] = src;
+    test(dst[heap]);
+  }
+  {
+    auto const& src = input[stack];
+    auto dst = data;
+    auto const test = [](sbo<resource> const& dst) {
+      EXPECT_EQ(2u, cont::capacity(dst));
+      EXPECT_EQ(2u, cont::size(dst));
+      EXPECT_EQ(3, dst[0]);
+      EXPECT_EQ(5, dst[1]);
+    };
+    // A2
+    dst[empty] = src;
+    test(dst[empty]);
+    // A5
+    dst[stack] = src;
+    test(dst[stack]);
+    // A8
+    dst[heap] = src;
+    test(dst[heap]);
+  }
+  {
+    auto const& src = input[heap];
+    auto dst = data;
+    // A3
+    auto const test = [](sbo<resource> const& dst) {
+      EXPECT_EQ(3u, cont::capacity(dst));
+      EXPECT_EQ(3u, cont::size(dst));
+      EXPECT_EQ(3, dst[0]);
+      EXPECT_EQ(5, dst[1]);
+      EXPECT_EQ(7, dst[2]);
+    };
+    dst[empty] = src;
+    test(dst[empty]);
+    // A6
+    dst[stack] = src;
+    test(dst[stack]);
+
+    // A9
+    dst[heap] = src;
+    test(dst[heap]);
+  }
+}
+
 int main() {
   canDefaultConstructDynamicArray();
   canCreateDynamicArrayWithGivenCapacity();
@@ -664,5 +725,6 @@ int main() {
   canUseRaSboArrayWithStock();
   canMoveSbo();
   canReleaseAcquireSbo();
+  canCopySbo();
   return 0;
 }
