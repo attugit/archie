@@ -455,152 +455,53 @@ void canUseRaSboArrayWithStock() {
  */
 
 #include <vector>
-void canReleaseAcquireSbo() {
-  {
-    sbo<resource> src;
-    sbo<resource> dst_empty;
-    sbo<resource> dst_stack = {11, 13};
-    sbo<resource> dst_heap = {17, 19, 23};
-    auto const capa = cont::capacity(src);
-    auto const size = cont::size(src);
-
-    // A1
-    dst_empty.acquire(src.release(), size, capa);
-    { EXPECT_TRUE(dst_empty.empty()); }
-    // A4
-    dst_stack.acquire(dst_empty.release(), size, capa);
-    { EXPECT_TRUE(dst_stack.empty()); }
-    // A7
-    dst_heap.acquire(dst_stack.release(), size, capa);
-    { EXPECT_TRUE(dst_heap.empty()); }
-  }
-  {
-    sbo<resource> src = {3, 5};
-    sbo<resource> dst_empty;
-    sbo<resource> dst_stack = {11, 13};
-    sbo<resource> dst_heap = {17, 19, 23};
-    auto const capa = cont::capacity(src);
-    auto const size = cont::size(src);
-
-    // A2
-    dst_empty.acquire(src.release(), size, capa);
-    {
-      EXPECT_EQ(2u, cont::capacity(dst_empty));
-      EXPECT_EQ(2u, cont::size(dst_empty));
-      EXPECT_EQ(3, dst_empty[0]);
-      EXPECT_EQ(5, dst_empty[1]);
-    }
-    // A5
-    dst_stack.acquire(dst_empty.release(), size, capa);
-    {
-      EXPECT_EQ(2u, cont::capacity(dst_stack));
-      EXPECT_EQ(2u, cont::size(dst_stack));
-      EXPECT_EQ(3, dst_stack[0]);
-      EXPECT_EQ(5, dst_stack[1]);
-    }
-    // A8
-    dst_heap.acquire(dst_stack.release(), size, capa);
-    {
-      EXPECT_EQ(2u, cont::capacity(dst_heap));
-      EXPECT_EQ(2u, cont::size(dst_heap));
-      EXPECT_EQ(3, dst_heap[0]);
-      EXPECT_EQ(5, dst_heap[1]);
-    }
-  }
-  {
-    sbo<resource> src = {3, 5, 7};
-    sbo<resource> dst_empty;
-    sbo<resource> dst_stack = {11, 13};
-    sbo<resource> dst_heap = {17, 19, 23};
-    auto const capa = cont::capacity(src);
-    auto const size = cont::size(src);
-    // A3
-    dst_empty.acquire(src.release(), size, capa);
-    {
-      EXPECT_EQ(3u, cont::capacity(dst_empty));
-      EXPECT_EQ(3u, cont::size(dst_empty));
-      EXPECT_EQ(3, dst_empty[0]);
-      EXPECT_EQ(5, dst_empty[1]);
-      EXPECT_EQ(7, dst_empty[2]);
-    }
-    // A6
-    dst_stack.acquire(dst_empty.release(), size, capa);
-    {
-      EXPECT_EQ(3u, cont::capacity(dst_stack));
-      EXPECT_EQ(3u, cont::size(dst_stack));
-      EXPECT_EQ(3, dst_stack[0]);
-      EXPECT_EQ(5, dst_stack[1]);
-      EXPECT_EQ(7, dst_stack[2]);
-    }
-    // A9
-    dst_heap.acquire(dst_stack.release(), size, capa);
-    {
-      EXPECT_EQ(3u, cont::capacity(dst_heap));
-      EXPECT_EQ(3u, cont::size(dst_heap));
-      EXPECT_EQ(3, dst_heap[0]);
-      EXPECT_EQ(5, dst_heap[1]);
-      EXPECT_EQ(7, dst_heap[2]);
-    }
-  }
-}
-
 #include <functional>
-void canMoveSbo() {
+void verifySboMemoryManagement() {
   enum { empty = 0, stack, heap };
   enum { src = 0, func };
-  auto const test1 = [](sbo<resource> const& dst) { EXPECT_TRUE(dst.empty()); };
-  auto const test2 = [](sbo<resource> const& dst) {
+  using check_t = std::function<void(sbo<resource> const&)>;
+  using verif_t = std::pair<sbo<resource>, check_t>;
+  using testcase_t = std::function<void(sbo<resource>, verif_t const&)>;
+  auto const check1 = [](sbo<resource> const& dst) { EXPECT_TRUE(dst.empty()); };
+  auto const check2 = [](sbo<resource> const& dst) {
     EXPECT_EQ(2u, cont::capacity(dst));
     EXPECT_EQ(2u, cont::size(dst));
     EXPECT_EQ(3, dst[0]);
     EXPECT_EQ(5, dst[1]);
   };
-  auto const test3 = [](sbo<resource> const& dst) {
+  auto const check3 = [](sbo<resource> const& dst) {
     EXPECT_EQ(3u, cont::capacity(dst));
     EXPECT_EQ(3u, cont::size(dst));
     EXPECT_EQ(3, dst[0]);
     EXPECT_EQ(5, dst[1]);
     EXPECT_EQ(7, dst[2]);
   };
-  std::vector<std::pair<sbo<resource>, std::function<void(sbo<resource> const&)>>> const input = {
-      {{}, test1}, {{3, 5}, test2}, {{3, 5, 7}, test3}};
-  std::vector<sbo<resource>> const data = {{}, {11, 13}, {17, 19, 23}};
-  for (auto const& in : input) {
-    for (auto dst : data) {
-      auto s = std::get<src>(in);
-      auto const& test = std::get<func>(in);
-      dst = std::move(s);
-      test(dst);
-    }
-  }
-}
-
-void canCopySbo() {
-  enum { empty = 0, stack, heap };
-  enum { src = 0, func };
-  auto const test1 = [](sbo<resource> const& dst) { EXPECT_TRUE(dst.empty()); };
-  auto const test2 = [](sbo<resource> const& dst) {
-    EXPECT_EQ(2u, cont::capacity(dst));
-    EXPECT_EQ(2u, cont::size(dst));
-    EXPECT_EQ(3, dst[0]);
-    EXPECT_EQ(5, dst[1]);
+  auto tc_move = [](sbo<resource> sut, verif_t const& v) {
+    auto s = std::get<src>(v);
+    auto const& check = std::get<func>(v);
+    sut = std::move(s);
+    check(sut);
   };
-  auto const test3 = [](sbo<resource> const& dst) {
-    EXPECT_EQ(3u, cont::capacity(dst));
-    EXPECT_EQ(3u, cont::size(dst));
-    EXPECT_EQ(3, dst[0]);
-    EXPECT_EQ(5, dst[1]);
-    EXPECT_EQ(7, dst[2]);
+  auto tc_release_acquire = [](sbo<resource> sut, verif_t const& v) {
+    auto s = std::get<src>(v);
+    auto const size = cont::size(s);
+    auto const capacity = cont::capacity(s);
+    auto const& check = std::get<func>(v);
+    sut.acquire(s.release(), size, capacity);
+    check(sut);
   };
-  std::vector<std::pair<sbo<resource>, std::function<void(sbo<resource> const&)>>> const input = {
-      {{}, test1}, {{3, 5}, test2}, {{3, 5, 7}, test3}};
+  auto tc_copy = [](sbo<resource> sut, verif_t const& v) {
+    auto const& s = std::get<src>(v);
+    auto const& check = std::get<func>(v);
+    sut = s;
+    check(sut);
+  };
+  std::vector<testcase_t> testcases = {tc_move, tc_copy, tc_release_acquire};
+  std::vector<verif_t> const input = {{{}, check1}, {{3, 5}, check2}, {{3, 5, 7}, check3}};
   std::vector<sbo<resource>> const data = {{}, {11, 13}, {17, 19, 23}};
-  for (auto const& in : input) {
-    for (auto dst : data) {
-      auto const& s = std::get<src>(in);
-      auto const& test = std::get<func>(in);
-      dst = s;
-      test(dst);
+  for (auto const& tc : testcases) {
+    for (auto const& in : input) {
+      for (auto const& dst : data) { tc(dst, in); }
     }
   }
 }
@@ -622,8 +523,6 @@ int main() {
   canUseSboArray();
   canUseRaSboArray();
   canUseRaSboArrayWithStock();
-  canMoveSbo();
-  canReleaseAcquireSbo();
-  canCopySbo();
+  verifySboMemoryManagement();
   return 0;
 }
