@@ -454,108 +454,7 @@ void canUseRaSboArrayWithStock() {
  *  9 stock  heap   heap
  */
 
-void canMoveSbo() {
-  {
-    sbo<resource> src;
-    sbo<resource> dst_empty;
-    sbo<resource> dst_stack = {11, 13};
-    sbo<resource> dst_heap = {17, 19, 23};
-    // A1
-    dst_empty = std::move(src);
-    {
-      EXPECT_EQ(2u, cont::capacity(dst_empty));
-      EXPECT_EQ(0u, cont::size(dst_empty));
-    }
-    // A4
-    dst_stack = std::move(dst_empty);
-    {
-      EXPECT_EQ(2u, cont::capacity(dst_stack));
-      EXPECT_EQ(0u, cont::size(dst_stack));
-    }
-    // A7
-    dst_heap = std::move(dst_stack);
-    {
-      EXPECT_EQ(2u, cont::capacity(dst_heap));
-      EXPECT_EQ(0u, cont::size(dst_heap));
-    }
-  }
-  {
-    sbo<resource> src = {3, 5};
-    sbo<resource> dst_empty;
-    sbo<resource> dst_stack = {11, 13};
-    sbo<resource> dst_heap = {17, 19, 23};
-    // A2
-    dst_empty = std::move(src);
-    {
-      EXPECT_EQ(2u, cont::capacity(src));
-      EXPECT_EQ(0u, cont::size(src));
-      EXPECT_EQ(2u, cont::capacity(dst_empty));
-      EXPECT_EQ(2u, cont::size(dst_empty));
-      EXPECT_EQ(3, dst_empty[0]);
-      EXPECT_EQ(5, dst_empty[1]);
-    }
-    // A5
-    dst_stack = std::move(dst_empty);
-    {
-      EXPECT_EQ(2u, cont::capacity(dst_empty));
-      EXPECT_EQ(0u, cont::size(dst_empty));
-      EXPECT_EQ(2u, cont::capacity(dst_stack));
-      EXPECT_EQ(2u, cont::size(dst_stack));
-      EXPECT_EQ(3, dst_stack[0]);
-      EXPECT_EQ(5, dst_stack[1]);
-    }
-    // A8
-    dst_heap = std::move(dst_stack);
-    {
-      EXPECT_EQ(2u, cont::capacity(dst_stack));
-      EXPECT_EQ(0u, cont::size(dst_stack));
-      EXPECT_EQ(2u, cont::capacity(dst_heap));
-      EXPECT_EQ(2u, cont::size(dst_heap));
-      EXPECT_EQ(3, dst_heap[0]);
-      EXPECT_EQ(5, dst_heap[1]);
-    }
-  }
-  {
-    sbo<resource> src = {3, 5, 7};
-    sbo<resource> dst_empty;
-    sbo<resource> dst_stack = {11, 13};
-    sbo<resource> dst_heap = {17, 19, 23};
-    // A3
-    dst_empty = std::move(src);
-    {
-      EXPECT_EQ(2u, cont::capacity(src));
-      EXPECT_EQ(0u, cont::size(src));
-      EXPECT_EQ(3u, cont::capacity(dst_empty));
-      EXPECT_EQ(3u, cont::size(dst_empty));
-      EXPECT_EQ(3, dst_empty[0]);
-      EXPECT_EQ(5, dst_empty[1]);
-      EXPECT_EQ(7, dst_empty[2]);
-    }
-    // A6
-    dst_stack = std::move(dst_empty);
-    {
-      EXPECT_EQ(2u, cont::capacity(dst_empty));
-      EXPECT_EQ(0u, cont::size(dst_empty));
-      EXPECT_EQ(3u, cont::capacity(dst_stack));
-      EXPECT_EQ(3u, cont::size(dst_stack));
-      EXPECT_EQ(3, dst_stack[0]);
-      EXPECT_EQ(5, dst_stack[1]);
-      EXPECT_EQ(7, dst_stack[2]);
-    }
-    // A9
-    dst_heap = std::move(dst_stack);
-    {
-      EXPECT_EQ(2u, cont::capacity(dst_stack));
-      EXPECT_EQ(0u, cont::size(dst_stack));
-      EXPECT_EQ(3u, cont::capacity(dst_heap));
-      EXPECT_EQ(3u, cont::size(dst_heap));
-      EXPECT_EQ(3, dst_heap[0]);
-      EXPECT_EQ(5, dst_heap[1]);
-      EXPECT_EQ(7, dst_heap[2]);
-    }
-  }
-}
-
+#include <vector>
 void canReleaseAcquireSbo() {
   {
     sbo<resource> src;
@@ -645,7 +544,71 @@ void canReleaseAcquireSbo() {
   }
 }
 
-#include <vector>
+void canMoveSbo() {
+  enum { empty = 0, stack, heap };
+  std::vector<sbo<resource>> const input = {{}, {3, 5}, {3, 5, 7}};
+  std::vector<sbo<resource>> const data = {{}, {11, 13}, {17, 19, 23}};
+  {
+    auto src = input[empty];
+    auto dst = data;
+    auto const test = [](sbo<resource> const& dst) { EXPECT_TRUE(dst.empty()); };
+    // A1
+    dst[empty] = std::move(src);
+    test(dst[empty]);
+    // A4
+    src = input[empty];
+    dst[stack] = std::move(src);
+    test(dst[stack]);
+    // A7
+    src = input[empty];
+    dst[heap] = std::move(src);
+    test(dst[heap]);
+  }
+  {
+    auto src = input[stack];
+    auto dst = data;
+    auto const test = [](sbo<resource> const& dst) {
+      EXPECT_EQ(2u, cont::capacity(dst));
+      EXPECT_EQ(2u, cont::size(dst));
+      EXPECT_EQ(3, dst[0]);
+      EXPECT_EQ(5, dst[1]);
+    };
+    // A2
+    dst[empty] = std::move(src);
+    test(dst[empty]);
+    // A5
+    src = input[stack];
+    dst[stack] = std::move(src);
+    test(dst[stack]);
+    // A8
+    src = input[stack];
+    dst[heap] = std::move(src);
+    test(dst[heap]);
+  }
+  {
+    auto src = input[heap];
+    auto dst = data;
+    auto const test = [](sbo<resource> const& dst) {
+      EXPECT_EQ(3u, cont::capacity(dst));
+      EXPECT_EQ(3u, cont::size(dst));
+      EXPECT_EQ(3, dst[0]);
+      EXPECT_EQ(5, dst[1]);
+      EXPECT_EQ(7, dst[2]);
+    };
+    // A3
+    dst[empty] = std::move(src);
+    test(dst[empty]);
+    // A6
+    src = input[heap];
+    dst[stack] = std::move(src);
+    test(dst[stack]);
+    // A9
+    src = input[heap];
+    dst[heap] = std::move(src);
+    test(dst[heap]);
+  }
+}
+
 void canCopySbo() {
   enum { empty = 0, stack, heap };
   std::vector<sbo<resource>> const input = {{}, {3, 5}, {3, 5, 7}};
@@ -686,7 +649,6 @@ void canCopySbo() {
   {
     auto const& src = input[heap];
     auto dst = data;
-    // A3
     auto const test = [](sbo<resource> const& dst) {
       EXPECT_EQ(3u, cont::capacity(dst));
       EXPECT_EQ(3u, cont::size(dst));
@@ -694,12 +656,12 @@ void canCopySbo() {
       EXPECT_EQ(5, dst[1]);
       EXPECT_EQ(7, dst[2]);
     };
+    // A3
     dst[empty] = src;
     test(dst[empty]);
     // A6
     dst[stack] = src;
     test(dst[stack]);
-
     // A9
     dst[heap] = src;
     test(dst[heap]);
