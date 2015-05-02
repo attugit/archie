@@ -301,6 +301,12 @@ using rasbo = cont::dynamic_array<Tp, Alloc, cont::enable_ra_sbo>;
 template <typename Tp, std::size_t Stock, typename Alloc = std::allocator<Tp>>
 using stock = cont::dynamic_array<Tp, Alloc, cont::enable_ra_sbo, Stock>;
 
+template <std::size_t Stock>
+struct make_stock {
+  template <typename Tp>
+  using type = stock<Tp, Stock>;
+};
+
 void canUseSboArray() {
   sbo<resource> sa;
   sbo<resource> other(4);
@@ -456,10 +462,21 @@ void canUseRaSboArrayWithStock() {
 
 #include <vector>
 #include <functional>
+
+template <typename Tp>
+struct setup {
+  constexpr static auto stock_size() noexcept { return reinterpret_cast<Tp*>(0)->stock(); }
+  static Tp make_data(std::size_t first, std::size_t size) {
+    Tp data(size);
+    while (size--) { data.emplace_back(first++); }
+    return data;
+  }
+};
+
+template <template <typename...> class SuT>
 void verifySboMemoryManagement() {
-  enum { empty = 0, stack, heap };
-  enum { src = 0, func };
-  using sut_t = sbo<resource>;
+  using sut_t = SuT<resource>;
+  auto stock_size = setup<sut_t>::stock_size();
   using verif_t = sut_t;
   using testcase_t = std::function<void(sut_t, verif_t const&)>;
   auto make_check = [](sut_t const& expected) {
@@ -489,8 +506,20 @@ void verifySboMemoryManagement() {
     check(sut);
   };
   std::vector<testcase_t> testcases = {tc_move, tc_copy, tc_release_acquire};
-  std::vector<verif_t> const expected = {{}, {3, 5}, {3, 5, 7}};
-  std::vector<sut_t> const data = {{}, {11, 13}, {17, 19, 23}};
+  std::vector<sut_t> expected;
+  std::vector<sut_t> data;
+  {
+    expected.emplace_back();
+    data.emplace_back();
+  }
+  {
+    expected.emplace_back(setup<sut_t>::make_data(3, stock_size));
+    data.emplace_back(setup<sut_t>::make_data(11, stock_size));
+  }
+  {
+    expected.emplace_back(setup<sut_t>::make_data(3, stock_size + 2));
+    data.emplace_back(setup<sut_t>::make_data(11, stock_size + 2));
+  }
   for (auto const& tc : testcases) {
     for (auto const& ex : expected) {
       for (auto const& dst : data) { tc(dst, ex); }
@@ -515,6 +544,8 @@ int main() {
   canUseSboArray();
   canUseRaSboArray();
   canUseRaSboArrayWithStock();
-  verifySboMemoryManagement();
+  verifySboMemoryManagement<sbo>();
+  // verifySboMemoryManagement<rasbo>();
+  // verifySboMemoryManagement<make_stock<7u>::type>();
   return 0;
 }
