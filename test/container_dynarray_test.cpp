@@ -459,49 +459,41 @@ void canUseRaSboArrayWithStock() {
 void verifySboMemoryManagement() {
   enum { empty = 0, stack, heap };
   enum { src = 0, func };
-  using check_t = std::function<void(sbo<resource> const&)>;
-  using verif_t = std::pair<sbo<resource>, check_t>;
-  using testcase_t = std::function<void(sbo<resource>, verif_t const&)>;
-  auto const check1 = [](sbo<resource> const& dst) { EXPECT_TRUE(dst.empty()); };
-  auto const check2 = [](sbo<resource> const& dst) {
-    EXPECT_EQ(2u, cont::capacity(dst));
-    EXPECT_EQ(2u, cont::size(dst));
-    EXPECT_EQ(3, dst[0]);
-    EXPECT_EQ(5, dst[1]);
+  using sut_t = sbo<resource>;
+  using verif_t = sut_t;
+  using testcase_t = std::function<void(sut_t, verif_t const&)>;
+  auto make_check = [](sut_t const& expected) {
+    return [exp = expected](sut_t const& dst) {
+      EXPECT_EQ(cont::capacity(exp), cont::capacity(dst));
+      EXPECT_EQ(cont::size(exp), cont::size(dst));
+      for (auto idx = 0u; idx < cont::size(exp); ++idx) EXPECT_EQ(exp[idx], dst[idx]);
+    };
   };
-  auto const check3 = [](sbo<resource> const& dst) {
-    EXPECT_EQ(3u, cont::capacity(dst));
-    EXPECT_EQ(3u, cont::size(dst));
-    EXPECT_EQ(3, dst[0]);
-    EXPECT_EQ(5, dst[1]);
-    EXPECT_EQ(7, dst[2]);
-  };
-  auto tc_move = [](sbo<resource> sut, verif_t const& v) {
-    auto s = std::get<src>(v);
-    auto const& check = std::get<func>(v);
-    sut = std::move(s);
+  auto tc_move = [make_check](sut_t sut, verif_t const& v) {
+    auto check = make_check(v);
+    auto cpy = v;
+    sut = std::move(cpy);
     check(sut);
   };
-  auto tc_release_acquire = [](sbo<resource> sut, verif_t const& v) {
-    auto s = std::get<src>(v);
-    auto const size = cont::size(s);
-    auto const capacity = cont::capacity(s);
-    auto const& check = std::get<func>(v);
-    sut.acquire(s.release(), size, capacity);
+  auto tc_release_acquire = [make_check](sut_t sut, verif_t const& v) {
+    auto const size = cont::size(v);
+    auto const capacity = cont::capacity(v);
+    auto check = make_check(v);
+    auto cpy = v;
+    sut.acquire(cpy.release(), size, capacity);
     check(sut);
   };
-  auto tc_copy = [](sbo<resource> sut, verif_t const& v) {
-    auto const& s = std::get<src>(v);
-    auto const& check = std::get<func>(v);
-    sut = s;
+  auto tc_copy = [make_check](sut_t sut, verif_t const& v) {
+    auto check = make_check(v);
+    sut = v;
     check(sut);
   };
   std::vector<testcase_t> testcases = {tc_move, tc_copy, tc_release_acquire};
-  std::vector<verif_t> const input = {{{}, check1}, {{3, 5}, check2}, {{3, 5, 7}, check3}};
-  std::vector<sbo<resource>> const data = {{}, {11, 13}, {17, 19, 23}};
+  std::vector<verif_t> const expected = {{}, {3, 5}, {3, 5, 7}};
+  std::vector<sut_t> const data = {{}, {11, 13}, {17, 19, 23}};
   for (auto const& tc : testcases) {
-    for (auto const& in : input) {
-      for (auto const& dst : data) { tc(dst, in); }
+    for (auto const& ex : expected) {
+      for (auto const& dst : data) { tc(dst, ex); }
     }
   }
 }

@@ -23,6 +23,8 @@ namespace utils {
         using allocator_type::construct;
         using allocator_type::destroy;
 
+        constexpr size_type stock() const noexcept { return 0u; }
+
       private:
         pointer start_ = nullptr;
         pointer finish_ = nullptr;
@@ -114,6 +116,10 @@ namespace utils {
         static constexpr auto const stack_size = sizeof(heap_data) / sizeof(value_type);
         static_assert(stack_size > 0u, "");
 
+      public:
+        constexpr size_type stock() const noexcept { return stack_size; }
+
+      private:
         union variant {
           variant() : heap() {}
           ~variant() {}
@@ -128,11 +134,9 @@ namespace utils {
 
         const_pointer stack_begin() const noexcept { return pointer(&variant_.stack[0]); }
 
-        pointer stack_end() noexcept { return pointer(&variant_.stack[stack_size]); }
+        pointer stack_end() noexcept { return pointer(&variant_.stack[stock()]); }
 
-        const_pointer stack_end() const noexcept {
-          return const_pointer(&variant_.stack[stack_size]);
-        }
+        const_pointer stack_end() const noexcept { return const_pointer(&variant_.stack[stock()]); }
 
         bool is_on_stack() const noexcept { return end() >= stack_begin() && end() <= stack_end(); }
 
@@ -169,7 +173,7 @@ namespace utils {
         bool full() const noexcept { return end() == end_of_storage(); }
 
         void create_storage(size_type n) {
-          if (n > stack_size) {
+          if (n > stock()) {
             variant_.heap.start_ = allocate(n);
             finish_ = variant_.heap.start_;
             variant_.heap.end_of_storage_ = finish_ + n;
@@ -246,6 +250,10 @@ namespace utils {
                                                      : (sizeof(heap_data) / sizeof(value_type));
         static_assert(stack_size > 0u, "");
 
+      public:
+        constexpr size_type stock() const noexcept { return stack_size; }
+
+      private:
         union variant {
           variant() : heap() {}
           ~variant() {}
@@ -261,11 +269,9 @@ namespace utils {
 
         const_pointer stack_begin() const noexcept { return pointer(&variant_.stack[0]); }
 
-        pointer stack_end() noexcept { return pointer(&variant_.stack[stack_size]); }
+        pointer stack_end() noexcept { return pointer(&variant_.stack[stock()]); }
 
-        const_pointer stack_end() const noexcept {
-          return const_pointer(&variant_.stack[stack_size]);
-        }
+        const_pointer stack_end() const noexcept { return const_pointer(&variant_.stack[stock()]); }
 
         bool is_on_stack() const noexcept { return begin() == stack_begin(); }
 
@@ -303,7 +309,7 @@ namespace utils {
         bool full() const noexcept { return end() == end_of_storage(); }
 
         void create_storage(size_type n) {
-          if (n > stack_size) {
+          if (n > stock()) {
             start_ = allocate(n);
             variant_.heap.end_of_storage_ = start_ + n;
           } else { start_ = stack_begin(); }
@@ -435,6 +441,8 @@ namespace utils {
       size_type capacity() const noexcept { return impl_.capacity(); }
 
       size_type size() const noexcept { return size_type(impl_.end() - impl_.begin()); }
+
+      constexpr size_type stock() const noexcept { return impl_.stock(); }
 
       bool empty() const noexcept { return cbegin() == cend(); }
 
