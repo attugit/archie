@@ -288,6 +288,29 @@ namespace utils {
           finish_ = start_;
         }
 
+        size_type size() const noexcept { return size_type(end() - begin()); }
+
+        std::pair<pointer, pointer> swap_stack_range(pointer sfirts,
+                                                     pointer slast,
+                                                     pointer dfirst,
+                                                     pointer dlast) {
+          for (; sfirts != slast; ++sfirts, ++dfirst) std::iter_swap(sfirts, dfirst);
+          auto dret = dfirst;
+          for (; dfirst != dlast; ++sfirts, ++dfirst) {
+            construct(sfirts, std::move(*dfirst));
+            destroy(dfirst);
+          }
+          return std::make_pair(sfirts, dret);
+        }
+
+        void swap_stack(buffer& x) {
+          if (x.size() < size()) {
+            std::tie(x.finish_, finish_) = swap_stack_range(begin(), end(), x.begin(), x.end());
+          } else {
+            std::tie(finish_, x.finish_) = swap_stack_range(x.begin(), x.end(), begin(), end());
+          }
+        }
+
       public:
         buffer() noexcept : start_(stack_begin()), finish_(stack_begin()) {}
 
@@ -341,6 +364,7 @@ namespace utils {
         }
 
         void swap(buffer& x) noexcept {
+          if (is_on_stack() && x.is_on_stack()) return swap_stack(x);
           if (x.is_on_stack()) {
             std::move(x.begin(), x.end(), begin());
             start_ = stack_begin();
