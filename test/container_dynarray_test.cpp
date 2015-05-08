@@ -293,67 +293,16 @@ void canAcquire() {
 }
 
 template <typename Tp, typename Alloc = std::allocator<Tp>>
-using sbo = cont::dynamic_array<Tp, Alloc, cont::enable_sbo>;
-
-template <typename Tp, typename Alloc = std::allocator<Tp>>
-using rasbo = cont::dynamic_array<Tp, Alloc, cont::enable_ra_sbo>;
+using rasbo = cont::dynamic_array<Tp, Alloc, cont::enable_sbo>;
 
 template <typename Tp, std::size_t Stock, typename Alloc = std::allocator<Tp>>
-using stock = cont::dynamic_array<Tp, Alloc, cont::enable_ra_sbo, Stock>;
+using stock = cont::dynamic_array<Tp, Alloc, cont::enable_sbo, Stock>;
 
 template <std::size_t Stock>
 struct make_stock {
   template <typename Tp>
   using type = stock<Tp, Stock>;
 };
-
-void canUseSboArray() {
-  sbo<resource> sa;
-  sbo<resource> other(4);
-  {
-    EXPECT_EQ(2u, cont::capacity(sa));
-    EXPECT_EQ(0u, cont::size(sa));
-    other.emplace_back(7);
-    other.emplace_back(11);
-    other.emplace_back(13);
-  }
-
-  sa.emplace_back(5);
-  {
-    EXPECT_EQ(1u, cont::size(sa));
-    EXPECT_EQ(5, sa[0]);
-  }
-
-  sa = std::move(other);
-  {
-    EXPECT_EQ(2u, cont::capacity(other));
-    EXPECT_EQ(0u, cont::size(other));
-    EXPECT_EQ(4u, cont::capacity(sa));
-    EXPECT_EQ(3u, cont::size(sa));
-    EXPECT_EQ(7, sa[0]);
-    EXPECT_EQ(11, sa[1]);
-    EXPECT_EQ(13, sa[2]);
-  }
-  sbo<resource> st;
-  sa = std::move(st);
-  {
-    EXPECT_EQ(2u, cont::capacity(sa));
-    EXPECT_EQ(0u, cont::size(sa));
-  }
-  {
-    sbo<resource> acc;
-    acc.emplace_back(5);
-    auto size = cont::size(acc);
-    auto capacity = cont::capacity(acc);
-    auto ptr = acc.release();
-    sa.acquire(ptr, size, capacity);
-  }
-  {
-    EXPECT_EQ(2u, cont::capacity(sa));
-    EXPECT_EQ(1u, cont::size(sa));
-    EXPECT_EQ(5, sa[0]);
-  }
-}
 
 void canUseRaSboArray() {
   rasbo<resource> sa;
@@ -426,17 +375,6 @@ void canUseRaSboArrayWithStock() {
 /**
  * Test plan:
  * func: release/acquire/move/copy
- * A  class  src    dst
- *  1 sbo    empty  empty
- *  2 sbo    empty  stack
- *  3 sbo    empty  heap
- *  4 sbo    stack  empty
- *  5 sbo    stack  stack
- *  6 sbo    stack  heap
- *  7 sbo    heap   empty
- *  8 sbo    heap   stack
- *  9 sbo    heap   heap
- *
  * B  class  src    dst
  *  1 rasbo  empty  empty
  *  2 rasbo  empty  stack
@@ -541,10 +479,8 @@ int main() {
   canEraseElement();
   canReleaseContent();
   canAcquire();
-  canUseSboArray();
   canUseRaSboArray();
   canUseRaSboArrayWithStock();
-  verifySboMemoryManagement<sbo>();
   verifySboMemoryManagement<rasbo>();
   // verifySboMemoryManagement<make_stock<7u>::type>();
   return 0;
