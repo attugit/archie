@@ -527,15 +527,6 @@ void verifySboMemoryManagement() {
   }
 }
 
-void temp() {
-  rasbo<resource> a(1);
-  rasbo<resource> b(1);
-  a.emplace_back(3);
-  b.emplace_back(5);
-  a = std::move(b);
-  EXPECT_EQ(5, a[0]);
-}
-
 int main() {
   canDefaultConstructDynamicArray();
   canCreateDynamicArrayWithGivenCapacity();
@@ -554,7 +545,7 @@ int main() {
   canUseRaSboArray();
   canUseRaSboArrayWithStock();
   verifySboMemoryManagement<sbo>();
-  // verifySboMemoryManagement<rasbo>();
+  verifySboMemoryManagement<rasbo>();
   // verifySboMemoryManagement<make_stock<7u>::type>();
   return 0;
 }

@@ -290,28 +290,35 @@ namespace utils {
 
         size_type size() const noexcept { return size_type(end() - begin()); }
 
-        std::pair<pointer, pointer> swap_stack_range(pointer sfirts,
-                                                     pointer slast,
-                                                     pointer dfirst,
-                                                     pointer dlast) {
-          for (; sfirts != slast; ++sfirts, ++dfirst) std::iter_swap(sfirts, dfirst);
-          auto dret = dfirst;
-          for (; dfirst != dlast; ++sfirts, ++dfirst) {
-            construct(sfirts, std::move(*dfirst));
-            destroy(dfirst);
-          }
-          return std::make_pair(sfirts, dret);
+        void erase_all() {
+          while (end() != begin()) { destroy(--finish_); }
+          clear();
         }
 
-        void swap_stack(buffer& x) {
-          if (x.size() < size()) {
-            std::tie(x.finish_, finish_) = swap_stack_range(begin(), end(), x.begin(), x.end());
-          } else {
-            std::tie(finish_, x.finish_) = swap_stack_range(x.begin(), x.end(), begin(), end());
+        void move_stack(buffer& x) {
+          auto size = std::min(end() - begin(), x.end() - x.begin());
+          auto src = x.begin();
+          auto dst = begin();
+          for (auto idx = 0; idx < size; ++idx, ++src, ++dst) (*src) = std::move(*dst);
+          while (src != x.end()) {
+            construct(dst, std::move(*src));
+            ++src;
+            ++dst;
           }
+          while (finish_ > dst) { destroy(--finish_); }
+          finish_ = dst;
         }
 
       public:
+        void move_assing(buffer& x) {
+          if (!is_on_stack() || !x.is_on_stack()) erase_all();
+          if (x.is_on_stack()) { move_stack(x); } else {
+            auto s = x.end() - x.begin();
+            auto c = x.end_of_storage() - x.begin();
+            acquire(x.release(), s, c);
+          }
+        }
+
         buffer() noexcept : start_(stack_begin()), finish_(stack_begin()) {}
 
         pointer begin() noexcept { return start_; }
@@ -364,17 +371,7 @@ namespace utils {
         }
 
         void swap(buffer& x) noexcept {
-          if (is_on_stack() && x.is_on_stack()) return swap_stack(x);
-          if (x.is_on_stack()) {
-            std::move(x.begin(), x.end(), begin());
-            start_ = stack_begin();
-            finish_ = start_ + size_type(x.end() - x.begin());
-          } else {
-            start_ = x.begin();
-            finish_ = x.end();
-            variant_.heap.end_of_storage_ = x.end_of_storage();
-            x.clear();
-          }
+          move_assing(x);
           std::swap(static_cast<allocator_type&>(*this), static_cast<allocator_type&>(x));
         }
       };
