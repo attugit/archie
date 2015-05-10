@@ -4,15 +4,13 @@
 #include <type_traits>
 #include <archie/utils/containers/tags.h>
 #include <archie/utils/containers/types.h>
+#include <archie/utils/containers/detail/buffer.h>
 #include <archie/utils/containers/iterator_range.h>
 
 namespace archie {
 namespace utils {
   namespace containers {
     namespace detail {
-      template <typename, typename, std::size_t = 0u>
-      struct buffer;
-
       template <typename Alloc>
       struct buffer<containers::disable_sbo, Alloc> : iterator_range<Pointer<Alloc>>, Alloc {
         using allocator_type = Alloc;
