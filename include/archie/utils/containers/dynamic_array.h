@@ -3,6 +3,7 @@
 #include <memory>
 #include <type_traits>
 #include <archie/utils/containers/tags.h>
+#include <archie/utils/containers/iterator_range.h>
 
 namespace archie {
 namespace utils {
@@ -12,7 +13,8 @@ namespace utils {
       struct buffer;
 
       template <typename Alloc>
-      struct buffer<containers::disable_sbo, Alloc> : Alloc {
+      struct buffer<containers::disable_sbo, Alloc> : iterator_range<typename Alloc::pointer>,
+                                                      Alloc {
         using allocator_type = Alloc;
         using pointer = typename allocator_type::pointer;
         using const_pointer = typename allocator_type::const_pointer;
@@ -23,77 +25,109 @@ namespace utils {
         using allocator_type::construct;
         using allocator_type::destroy;
 
-        constexpr size_type stock() const noexcept { return 0u; }
+        iterator_range<pointer> stock() const noexcept;
 
       private:
-        pointer start_ = nullptr;
-        pointer finish_ = nullptr;
+        iterator_range<pointer>& range() noexcept;
+        iterator_range<pointer> const& range() const noexcept;
+
         pointer end_of_storage_ = nullptr;
 
-        void reset(pointer a, size_type s, size_type c) noexcept { reset(a, a + s, a + c); }
-
-        void reset(pointer a, pointer b, pointer c) noexcept {
-          start_ = a;
-          finish_ = b;
-          end_of_storage_ = c;
-        }
-
-        void clear() { reset(nullptr, nullptr, nullptr); }
-
-        bool is_on_heap() const noexcept { return begin() != nullptr; }
-
       public:
+        void reset(pointer, pointer, pointer) noexcept;
+        void reset(pointer, size_type, size_type) noexcept;
+        void clear() noexcept;
+        bool is_on_heap() const noexcept;
+
         buffer() noexcept = default;
+        explicit buffer(allocator_type const&) noexcept;
 
-        explicit buffer(allocator_type const& a) noexcept : allocator_type(a) { clear(); }
-
-        void create_storage(size_type n) {
-          if (n != capacity()) acquire((n != 0u) ? allocate(n) : nullptr, 0u, n);
-        }
+        void create_storage(size_type);
 
         void acquire(pointer ptr, size_type s, size_type c) noexcept {
           destroy_storage();
           reset(ptr, s, c);
         }
 
-        pointer begin() noexcept { return start_; }
+        size_type capacity() const noexcept { return size_type(end_of_storage_ - range().begin()); }
 
-        const_pointer begin() const noexcept { return start_; }
-
-        pointer end() noexcept { return finish_; }
-
-        const_pointer end() const noexcept { return finish_; }
-
-        pointer advance_end(int n) noexcept {
-          finish_ += n;
-          return end();
-        }
-
-        size_type capacity() const noexcept { return size_type(end_of_storage_ - start_); }
-
-        bool full() const noexcept { return finish_ == end_of_storage_; }
+        bool full() const noexcept { return range().end() == end_of_storage_; }
 
         pointer release() noexcept {
-          auto ret = begin();
+          auto ret = range().begin();
           clear();
           return ret;
         }
 
         void destroy_storage() noexcept {
-          if (is_on_heap()) deallocate(begin(), capacity());
+          if (is_on_heap()) deallocate(range().begin(), capacity());
           clear();
         }
 
         void swap(buffer& x) noexcept {
-          std::swap(start_, x.start_);
-          std::swap(finish_, x.finish_);
-          std::swap(end_of_storage_, x.end_of_storage_);
-          std::swap(static_cast<allocator_type&>(*this), static_cast<allocator_type&>(x));
+          using std::swap;
+          swap(static_cast<iterator_range<pointer>&>(*this),
+               static_cast<iterator_range<pointer>&>(x));
+          swap(end_of_storage_, x.end_of_storage_);
+          swap(static_cast<allocator_type&>(*this), static_cast<allocator_type&>(x));
         }
       };
 
+      template <typename Alloc>
+      iterator_range<typename buffer<containers::disable_sbo, Alloc>::pointer>
+      buffer<containers::disable_sbo, Alloc>::stock() const noexcept {
+        return iterator_range<pointer>(nullptr, nullptr);
+      }
+
+      template <typename Alloc>
+      iterator_range<typename buffer<containers::disable_sbo, Alloc>::pointer>&
+      buffer<containers::disable_sbo, Alloc>::range() noexcept {
+        return static_cast<iterator_range<pointer>&>(*this);
+      }
+
+      template <typename Alloc>
+      iterator_range<typename buffer<containers::disable_sbo, Alloc>::pointer> const&
+      buffer<containers::disable_sbo, Alloc>::range() const noexcept {
+        return static_cast<iterator_range<pointer> const&>(*this);
+      }
+
+      template <typename Alloc>
+      void buffer<containers::disable_sbo, Alloc>::reset(pointer a, pointer b, pointer c) noexcept {
+        range() = iterator_range<pointer>(a, b);
+        end_of_storage_ = c;
+      }
+
+      template <typename Alloc>
+      void buffer<containers::disable_sbo, Alloc>::reset(pointer a,
+                                                         size_type s,
+                                                         size_type c) noexcept {
+        reset(a, a + s, a + c);
+      }
+
+      template <typename Alloc>
+      void buffer<containers::disable_sbo, Alloc>::clear() noexcept {
+        reset(nullptr, nullptr, nullptr);
+      }
+
+      template <typename Alloc>
+      bool buffer<containers::disable_sbo, Alloc>::is_on_heap() const noexcept {
+        return range().begin() != nullptr;
+      }
+
+      template <typename Alloc>
+      buffer<containers::disable_sbo, Alloc>::buffer(allocator_type const& a) noexcept
+          : allocator_type(a) {
+        clear();
+      }
+
+      template <typename Alloc>
+      void buffer<containers::disable_sbo, Alloc>::create_storage(size_type n) {
+        if (n != capacity()) acquire((n != 0u) ? allocate(n) : nullptr, 0u, n);
+      }
+
       template <typename Alloc, std::size_t Stock>
-      struct buffer<containers::enable_sbo, Alloc, Stock> : Alloc {
+      struct buffer<containers::enable_sbo, Alloc, Stock> : iterator_range<typename Alloc::pointer>,
+                                                            Alloc {
         using allocator_type = Alloc;
         using pointer = typename allocator_type::pointer;
         using const_pointer = typename allocator_type::const_pointer;
@@ -107,6 +141,13 @@ namespace utils {
         using allocator_type::destroy;
 
       private:
+        iterator_range<pointer>& range() noexcept {
+          return static_cast<iterator_range<pointer>&>(*this);
+        };
+        iterator_range<pointer> const& range() const noexcept {
+          return static_cast<iterator_range<pointer> const&>(*this);
+        };
+
         struct heap_data {
           heap_data() = default;
           pointer end_of_storage_ = nullptr;
@@ -117,9 +158,6 @@ namespace utils {
                                                      : (sizeof(heap_data) / sizeof(value_type));
         static_assert(stack_size > 0u, "");
 
-      public:
-        constexpr size_type stock() const noexcept { return stack_size; }
-
       private:
         union variant {
           variant() : heap() {}
@@ -128,52 +166,48 @@ namespace utils {
           value_type stack[stack_size];
         };
 
-        pointer start_ = nullptr;
-        pointer finish_ = nullptr;
         variant variant_;
 
-        pointer stack_begin() noexcept { return pointer(&variant_.stack[0]); }
+      public:
+        iterator_range<pointer> stock() const noexcept {
+          return iterator_range<pointer>(pointer(&variant_.stack[0u]), stack_size);
+        }
 
-        const_pointer stack_begin() const noexcept { return pointer(&variant_.stack[0]); }
-
-        pointer stack_end() noexcept { return pointer(&variant_.stack[stock()]); }
-
-        const_pointer stack_end() const noexcept { return const_pointer(&variant_.stack[stock()]); }
-
-        bool is_on_stack() const noexcept { return begin() == stack_begin(); }
+      private:
+        bool is_on_stack() const noexcept { return range().begin() == stock().begin(); }
 
         pointer end_of_storage() noexcept {
-          return is_on_stack() ? stack_end() : variant_.heap.end_of_storage_;
+          return is_on_stack() ? stock().end() : variant_.heap.end_of_storage_;
         }
 
         const_pointer end_of_storage() const noexcept {
-          return is_on_stack() ? stack_end() : variant_.heap.end_of_storage_;
+          return is_on_stack() ? stock().end() : variant_.heap.end_of_storage_;
         }
 
         void clear() {
-          start_ = stack_begin();
-          finish_ = start_;
+          range().set_begin(stock().begin());
+          range().set_end(stock().begin());
         }
 
-        size_type size() const noexcept { return size_type(end() - begin()); }
+        size_type size() const noexcept { return size_type(range().size()); }
 
         void erase_all() {
-          while (end() != begin()) { destroy(--finish_); }
+          while (!range().empty()) { destroy(range().advance_end(-1).end()); }
           clear();
         }
 
         void move_stack(buffer& x) {
-          auto size = std::min(end() - begin(), x.end() - x.begin());
+          auto size = std::min(size_type(range().size()), size_type(x.size()));
           auto src = x.begin();
-          auto dst = begin();
-          for (auto idx = 0; idx < size; ++idx, ++src, ++dst) (*src) = std::move(*dst);
+          auto dst = range().begin();
+          for (auto idx = 0u; idx < size; ++idx, ++src, ++dst) (*src) = std::move(*dst);
           while (src != x.end()) {
             construct(dst, std::move(*src));
             ++src;
             ++dst;
           }
-          while (finish_ > dst) { destroy(--finish_); }
-          finish_ = dst;
+          while (range().end() > dst) { destroy(range().advance_end(-1).end()); }
+          range().set_end(dst);
         }
 
       public:
@@ -186,42 +220,31 @@ namespace utils {
           }
         }
 
-        buffer() noexcept : start_(stack_begin()), finish_(stack_begin()) {}
+        buffer() noexcept : iterator_range<pointer>(stock().begin(), 0) {}
 
-        pointer begin() noexcept { return start_; }
-
-        const_pointer begin() const noexcept { return start_; }
-
-        pointer end() noexcept { return finish_; }
-
-        const_pointer end() const noexcept { return finish_; }
-
-        pointer advance_end(int n) noexcept {
-          finish_ += n;
-          return finish_;
+        size_type capacity() const noexcept {
+          return size_type(end_of_storage() - range().begin());
         }
 
-        size_type capacity() const noexcept { return size_type(end_of_storage() - begin()); }
-
-        bool full() const noexcept { return end() == end_of_storage(); }
+        bool full() const noexcept { return range().end() == end_of_storage(); }
 
         void create_storage(size_type n) {
-          if (n > stock()) {
-            start_ = allocate(n);
-            variant_.heap.end_of_storage_ = start_ + n;
-          } else { start_ = stack_begin(); }
-          finish_ = start_;
+          if (n > size_type(stock().size())) {
+            range().set_begin(allocate(n));
+            variant_.heap.end_of_storage_ = range().begin() + n;
+          } else { range().set_begin(stock().begin()); }
+          range().set_end(range().begin());
         }
 
         void acquire(pointer ptr, size_type s, size_type c) noexcept {
           destroy_storage();
-          start_ = ptr;
-          finish_ = start_ + s;
-          variant_.heap.end_of_storage_ = start_ + c;
+          range().set_begin(ptr);
+          range().set_end(ptr + s);
+          variant_.heap.end_of_storage_ = ptr + c;
         }
 
         void destroy_storage() noexcept {
-          if (!is_on_stack()) { deallocate(begin(), capacity()); }
+          if (!is_on_stack()) { deallocate(range().begin(), capacity()); }
           clear();
         }
 
@@ -231,8 +254,8 @@ namespace utils {
             ret = allocate(capacity());
             auto dest = ret;
             for (auto& val : *this) construct(dest++, std::move(val));
-            while (end() != begin()) destroy(advance_end(-1));
-          } else { ret = begin(); }
+            while (!range().empty()) destroy(range().advance_end(-1).end());
+          } else { ret = range().begin(); }
           clear();
           return ret;
         }
@@ -353,7 +376,7 @@ namespace utils {
         emplace_back(std::move(x));
       }
 
-      void pop_back() noexcept { impl_.destroy(impl_.advance_end(-1)); }
+      void pop_back() noexcept { impl_.destroy(impl_.advance_end(-1).end()); }
 
       void erase(iterator pos) noexcept(std::is_nothrow_move_assignable<value_type>::value) {
         std::move(pos + 1, end(), pos);
