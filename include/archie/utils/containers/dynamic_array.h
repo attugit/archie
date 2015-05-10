@@ -3,6 +3,7 @@
 #include <memory>
 #include <type_traits>
 #include <archie/utils/containers/tags.h>
+#include <archie/utils/containers/types.h>
 #include <archie/utils/containers/iterator_range.h>
 
 namespace archie {
@@ -13,23 +14,23 @@ namespace utils {
       struct buffer;
 
       template <typename Alloc>
-      struct buffer<containers::disable_sbo, Alloc> : iterator_range<typename Alloc::pointer>,
-                                                      Alloc {
+      struct buffer<containers::disable_sbo, Alloc> : iterator_range<Pointer<Alloc>>, Alloc {
         using allocator_type = Alloc;
-        using pointer = typename allocator_type::pointer;
-        using const_pointer = typename allocator_type::const_pointer;
-        using size_type = typename allocator_type::size_type;
+        using pointer = Pointer<allocator_type>;
+        using const_pointer = ConstPointer<allocator_type>;
+        using size_type = SizeType<allocator_type>;
+        using range_type = iterator_range<pointer>;
 
         using allocator_type::allocate;
         using allocator_type::deallocate;
         using allocator_type::construct;
         using allocator_type::destroy;
 
-        iterator_range<pointer> stock() const noexcept;
+        RangeType<buffer> stock() const noexcept;
 
       private:
-        iterator_range<pointer>& range() noexcept;
-        iterator_range<pointer> const& range() const noexcept;
+        RangeType<buffer>& range() noexcept;
+        RangeType<buffer> const& range() const noexcept;
 
         pointer end_of_storage_ = nullptr;
 
@@ -43,21 +44,11 @@ namespace utils {
         explicit buffer(allocator_type const&) noexcept;
 
         void create_storage(size_type);
-
-        void acquire(pointer ptr, size_type s, size_type c) noexcept {
-          destroy_storage();
-          reset(ptr, s, c);
-        }
-
-        size_type capacity() const noexcept { return size_type(end_of_storage_ - range().begin()); }
-
-        bool full() const noexcept { return range().end() == end_of_storage_; }
-
-        pointer release() noexcept {
-          auto ret = range().begin();
-          clear();
-          return ret;
-        }
+        void acquire(pointer, size_type, size_type) noexcept;
+        pointer release() noexcept;
+        size_type size() const noexcept;
+        size_type capacity() const noexcept;
+        bool full() const noexcept;
 
         void destroy_storage() noexcept {
           if (is_on_heap()) deallocate(range().begin(), capacity());
@@ -74,21 +65,21 @@ namespace utils {
       };
 
       template <typename Alloc>
-      iterator_range<typename buffer<containers::disable_sbo, Alloc>::pointer>
+      RangeType<buffer<containers::disable_sbo, Alloc>>
       buffer<containers::disable_sbo, Alloc>::stock() const noexcept {
-        return iterator_range<pointer>(nullptr, nullptr);
+        return range_type(nullptr, nullptr);
       }
 
       template <typename Alloc>
-      iterator_range<typename buffer<containers::disable_sbo, Alloc>::pointer>&
+      RangeType<buffer<containers::disable_sbo, Alloc>>&
       buffer<containers::disable_sbo, Alloc>::range() noexcept {
-        return static_cast<iterator_range<pointer>&>(*this);
+        return static_cast<range_type&>(*this);
       }
 
       template <typename Alloc>
-      iterator_range<typename buffer<containers::disable_sbo, Alloc>::pointer> const&
+      RangeType<buffer<containers::disable_sbo, Alloc>> const&
       buffer<containers::disable_sbo, Alloc>::range() const noexcept {
-        return static_cast<iterator_range<pointer> const&>(*this);
+        return static_cast<range_type const&>(*this);
       }
 
       template <typename Alloc>
@@ -125,6 +116,39 @@ namespace utils {
         if (n != capacity()) acquire((n != 0u) ? allocate(n) : nullptr, 0u, n);
       }
 
+      template <typename Alloc>
+      void buffer<containers::disable_sbo, Alloc>::acquire(pointer ptr,
+                                                           size_type s,
+                                                           size_type c) noexcept {
+        destroy_storage();
+        reset(ptr, s, c);
+      }
+
+      template <typename Alloc>
+      typename buffer<containers::disable_sbo, Alloc>::pointer
+      buffer<containers::disable_sbo, Alloc>::release() noexcept {
+        auto ret = range().begin();
+        clear();
+        return ret;
+      }
+
+      template <typename Alloc>
+      typename buffer<containers::disable_sbo, Alloc>::size_type
+      buffer<containers::disable_sbo, Alloc>::size() const noexcept {
+        return size_type(range().size());
+      }
+
+      template <typename Alloc>
+      typename buffer<containers::disable_sbo, Alloc>::size_type
+      buffer<containers::disable_sbo, Alloc>::capacity() const noexcept {
+        return size_type(end_of_storage_ - range().begin());
+      }
+
+      template <typename Alloc>
+      bool buffer<containers::disable_sbo, Alloc>::full() const noexcept {
+        return size() == capacity();
+      }
+
       template <typename Alloc, std::size_t Stock>
       struct buffer<containers::enable_sbo, Alloc, Stock> : iterator_range<typename Alloc::pointer>,
                                                             Alloc {
@@ -158,7 +182,6 @@ namespace utils {
                                                      : (sizeof(heap_data) / sizeof(value_type));
         static_assert(stack_size > 0u, "");
 
-      private:
         union variant {
           variant() : heap() {}
           ~variant() {}
