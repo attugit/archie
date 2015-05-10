@@ -28,10 +28,6 @@ namespace utils {
 
       Iterator<iterator_range> begin() const noexcept;
       Iterator<iterator_range> end() const noexcept;
-      template <typename Tp>
-      iterator_range& set_begin(Tp) noexcept;
-      template <typename Tp>
-      iterator_range& set_end(Tp) noexcept;
       DifferenceType<iterator_range> size() const noexcept;
       iterator_range& advance_begin(difference_type) noexcept;
       iterator_range& advance_end(difference_type) noexcept;
@@ -39,7 +35,7 @@ namespace utils {
       bool empty() const noexcept;
       explicit operator bool() const noexcept;
       template <typename Tp>
-      bool in(Tp) const noexcept;
+      bool contains(Tp) const noexcept;
       void swap(iterator_range&) noexcept;
 
     private:
@@ -61,8 +57,8 @@ namespace utils {
     template <typename Iter>
     template <typename Tp>
     iterator_range<Iter>& iterator_range<Iter>::operator=(iterator_range<Tp> const& rhs) noexcept {
-      set_begin(rhs.begin());
-      set_end(rhs.end());
+      start_ = rhs.begin();
+      finish_ = rhs.end();
     }
 
     template <typename Iter>
@@ -73,20 +69,6 @@ namespace utils {
     template <typename Iter>
     Iterator<iterator_range<Iter>> iterator_range<Iter>::end() const noexcept {
       return finish_;
-    }
-
-    template <typename Iter>
-    template <typename Tp>
-    iterator_range<Iter>& iterator_range<Iter>::set_begin(Tp n) noexcept {
-      start_ = n;
-      return *this;
-    }
-
-    template <typename Iter>
-    template <typename Tp>
-    iterator_range<Iter>& iterator_range<Iter>::set_end(Tp n) noexcept {
-      finish_ = n;
-      return *this;
     }
 
     template <typename Iter>
@@ -124,7 +106,7 @@ namespace utils {
 
     template <typename Iter>
     template <typename Tp>
-    bool iterator_range<Iter>::in(Tp t) const noexcept {
+    bool iterator_range<Iter>::contains(Tp t) const noexcept {
       return (begin() <= t) && (t < end());
     }
 
