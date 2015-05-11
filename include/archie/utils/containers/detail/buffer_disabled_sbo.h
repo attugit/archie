@@ -17,6 +17,10 @@ namespace utils {
         using size_type = SizeType<allocator_type>;
         using range_type = iterator_range<pointer>;
 
+        using range_type::begin;
+        using range_type::end;
+        using range_type::empty;
+
         using allocator_type::allocate;
         using allocator_type::deallocate;
         using allocator_type::construct;
@@ -33,6 +37,7 @@ namespace utils {
 
         buffer() noexcept = default;
         explicit buffer(allocator_type const&) noexcept;
+        buffer& operator=(buffer&&) noexcept;
 
         void create_storage(size_type);
         void destroy_storage() noexcept;
@@ -47,6 +52,16 @@ namespace utils {
       private:
         pointer end_of_storage_ = nullptr;
       };
+
+      template <typename Alloc>
+      buffer<containers::disable_sbo, Alloc>& buffer<containers::disable_sbo, Alloc>::operator=(
+          buffer&& x) noexcept {
+        auto s = x.size();
+        auto c = x.capacity();
+        acquire(x.release(), s, c);
+        static_cast<allocator_type&>(*this) = std::move(static_cast<allocator_type&>(x));
+        return *this;
+      }
 
       template <typename Alloc>
       RangeType<buffer<containers::disable_sbo, Alloc>>
@@ -86,7 +101,7 @@ namespace utils {
 
       template <typename Alloc>
       bool buffer<containers::disable_sbo, Alloc>::is_on_heap() const noexcept {
-        return range().begin() != nullptr;
+        return begin() != nullptr;
       }
 
       template <typename Alloc>
@@ -102,7 +117,7 @@ namespace utils {
 
       template <typename Alloc>
       void buffer<containers::disable_sbo, Alloc>::destroy_storage() noexcept {
-        if (is_on_heap()) deallocate(range().begin(), capacity());
+        if (is_on_heap()) deallocate(begin(), capacity());
         clear();
       }
 
@@ -125,7 +140,7 @@ namespace utils {
       template <typename Alloc>
       typename buffer<containers::disable_sbo, Alloc>::pointer
       buffer<containers::disable_sbo, Alloc>::release() noexcept {
-        auto ret = range().begin();
+        auto ret = begin();
         clear();
         return ret;
       }
@@ -139,7 +154,7 @@ namespace utils {
       template <typename Alloc>
       typename buffer<containers::disable_sbo, Alloc>::size_type
       buffer<containers::disable_sbo, Alloc>::capacity() const noexcept {
-        return size_type(end_of_storage_ - range().begin());
+        return size_type(end_of_storage_ - begin());
       }
 
       template <typename Alloc>

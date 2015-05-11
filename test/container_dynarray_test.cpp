@@ -478,10 +478,8 @@ int main() {
   canReleaseContent();
   canAcquire();
   canUseRaSboArray();
-#if 0
   canUseRaSboArrayWithStock();
   verifySboMemoryManagement<rasbo>();
   // verifySboMemoryManagement<make_stock<7u>::type>();
-#endif
   return 0;
 }

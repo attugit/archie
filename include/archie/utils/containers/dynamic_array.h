@@ -60,8 +60,7 @@ namespace utils {
 
       dynamic_array& operator=(dynamic_array&& x) noexcept {
         clear();
-        realloc(0u);
-        impl_.swap(x.impl_);
+        impl_ = std::move(x.impl_);
         return *this;
       }
 
@@ -97,7 +96,7 @@ namespace utils {
 
       size_type size() const noexcept { return size_type(impl_.end() - impl_.begin()); }
 
-      constexpr size_type stock() const noexcept { return impl_.stock(); }
+      constexpr RangeType<impl_t> stock() const noexcept { return impl_.stock(); }
 
       bool empty() const noexcept { return cbegin() == cend(); }
 

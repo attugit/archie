@@ -122,6 +122,7 @@ namespace utils {
       template <typename Alloc, std::size_t Stock>
       void buffer<enable_sbo, Alloc, Stock>::erase() {
         while (!empty()) { destroy(range().advance_end(-1).end()); }
+        destroy_storage();
         clear();
       }
 
