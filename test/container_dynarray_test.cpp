@@ -67,24 +67,24 @@ struct TestFixture {
   void canCreateDynamicArrayWithGivenCapacity() {
     darray da1(1);
     darray da3(3);
-    EXPECT_EQ(1u, cont::capacity(da1));
+    EXPECT_TRUE(cont::capacity(da1) >= 1u);
     EXPECT_TRUE(da1.empty());
 
-    EXPECT_EQ(3u, cont::capacity(da3));
+    EXPECT_TRUE(cont::capacity(da3) >= 3u);
     EXPECT_TRUE(da3.empty());
   }
 
   void canMoveConstructDynamicArray() {
     darray da1(1);
     {
-      EXPECT_EQ(1u, cont::capacity(da1));
+      EXPECT_TRUE(cont::capacity(da1) >= 1u);
       EXPECT_TRUE(da1.empty());
     }
 
     darray da(std::move(da1));
     EXPECT_EQ(stock_size(), cont::capacity(da1));
     EXPECT_TRUE(da1.empty());
-    EXPECT_EQ(1u, cont::capacity(da));
+    EXPECT_TRUE(cont::capacity(da) >= 1u);
     EXPECT_TRUE(da.empty());
   }
 
@@ -96,15 +96,14 @@ struct TestFixture {
       orig.emplace_back(7);
       orig.emplace_back(11);
       copy.emplace_back(13);
-      EXPECT_EQ(4u, cont::capacity(orig));
+      EXPECT_TRUE(cont::capacity(orig) >= 4u);
       EXPECT_EQ(3u, cont::size(orig));
-      EXPECT_EQ(1u, cont::capacity(copy));
-      EXPECT_TRUE(copy.full());
+      EXPECT_TRUE(cont::capacity(copy) >= 1u);
     }
 
     copy = std::move(orig);
     EXPECT_EQ(stock_size(), cont::capacity(orig));
-    EXPECT_EQ(4u, cont::capacity(copy));
+    EXPECT_TRUE(cont::capacity(copy) >= 4u);
     EXPECT_EQ(3u, cont::size(copy));
     EXPECT_EQ(5, copy[0]);
     EXPECT_EQ(7, copy[1]);
@@ -161,7 +160,7 @@ struct TestFixture {
   void canConstructAndAssignWithInitializerList() {
     darray da = {5, 7, 11, 13};
     {
-      EXPECT_EQ(4u, cont::capacity(da));
+      EXPECT_TRUE(cont::capacity(da) >= 4u);
       EXPECT_EQ(4u, cont::size(da));
       EXPECT_EQ(5, da[0]);
       EXPECT_EQ(7, da[1]);
@@ -171,7 +170,7 @@ struct TestFixture {
 
     da = {17, 19, 23, 29, 31};
     {
-      EXPECT_EQ(5u, cont::capacity(da));
+      EXPECT_TRUE(cont::capacity(da) >= 5u);
       EXPECT_EQ(5u, cont::size(da));
       EXPECT_EQ(17, da[0]);
       EXPECT_EQ(19, da[1]);
@@ -184,13 +183,13 @@ struct TestFixture {
   void canEmplaceBackElement() {
     darray da(1);
     {
-      EXPECT_EQ(1u, cont::capacity(da));
+      EXPECT_TRUE(cont::capacity(da) >= 1u);
       EXPECT_EQ(0u, cont::size(da));
       EXPECT_TRUE(da.empty());
     }
 
     da.emplace_back(7);
-    EXPECT_EQ(1u, cont::capacity(da));
+    EXPECT_TRUE(cont::capacity(da) >= 1u);
     EXPECT_EQ(1u, cont::size(da));
     EXPECT_FALSE(da.empty());
     EXPECT_EQ(7, da[0]);
@@ -199,15 +198,15 @@ struct TestFixture {
   void canPopBackElement() {
     darray da(1);
     {
-      EXPECT_EQ(1u, cont::capacity(da));
+      EXPECT_TRUE(cont::capacity(da) >= 1u);
       da.emplace_back(7);
-      EXPECT_EQ(1u, cont::capacity(da));
+      EXPECT_TRUE(cont::capacity(da) >= 1u);
       EXPECT_EQ(1u, cont::size(da));
       EXPECT_FALSE(da.empty());
     }
 
     da.pop_back();
-    EXPECT_EQ(1u, cont::capacity(da));
+    EXPECT_TRUE(cont::capacity(da) >= 1u);
     EXPECT_EQ(0u, cont::size(da));
     EXPECT_TRUE(da.empty());
   }
@@ -240,7 +239,6 @@ struct TestFixture {
       da.emplace_back(11);
       da.emplace_back(13);
       EXPECT_EQ(3u, cont::size(da));
-      EXPECT_TRUE(da.full());
       EXPECT_EQ(7, da[0]);
       EXPECT_EQ(11, da[1]);
       EXPECT_EQ(13, da[2]);
@@ -261,7 +259,7 @@ struct TestFixture {
     }
 
     da.erase(da.begin());
-    EXPECT_EQ(3u, cont::capacity(da));
+    EXPECT_TRUE(cont::capacity(da) >= 3u);
     EXPECT_TRUE(da.empty());
   }
 
@@ -315,85 +313,14 @@ struct TestFixture {
   }
 };
 
-using nsbo = cont::dynamic_array<resource>;
+template <typename Tp, typename Alloc = std::allocator<Tp>>
+using disbo = cont::dynamic_array<Tp, Alloc, cont::disable_sbo>;
 
 template <typename Tp, typename Alloc = std::allocator<Tp>>
-using rasbo = cont::dynamic_array<Tp, Alloc, cont::enable_sbo>;
+using ensbo = cont::dynamic_array<Tp, Alloc, cont::enable_sbo>;
 
-template <typename Tp, std::size_t Stock, typename Alloc = std::allocator<Tp>>
-using stock = cont::dynamic_array<Tp, Alloc, cont::enable_sbo, Stock>;
-
-template <std::size_t Stock>
-struct make_stock {
-  template <typename Tp>
-  using type = stock<Tp, Stock>;
-};
-
-void canUseRaSboArray() {
-  rasbo<resource> sa;
-  rasbo<resource> other(4);
-  {
-    EXPECT_EQ(1u, cont::capacity(sa));
-    EXPECT_EQ(0u, cont::size(sa));
-    other.emplace_back(7);
-    other.emplace_back(11);
-    other.emplace_back(13);
-  }
-  sa.emplace_back(5);
-  {
-    EXPECT_EQ(1u, cont::size(sa));
-    EXPECT_EQ(5, sa[0]);
-  }
-  sa = std::move(other);
-  {
-    EXPECT_EQ(1u, cont::capacity(other));
-    EXPECT_EQ(0u, cont::size(other));
-    EXPECT_EQ(4u, cont::capacity(sa));
-    EXPECT_EQ(3u, cont::size(sa));
-    EXPECT_EQ(7, sa[0]);
-    EXPECT_EQ(11, sa[1]);
-    EXPECT_EQ(13, sa[2]);
-  }
-  rasbo<resource> acc;
-  acc.emplace_back(5);
-  auto size = cont::size(acc);
-  auto capacity = cont::capacity(acc);
-  auto ptr = acc.release();
-  sa.acquire(ptr, size, capacity);
-  {
-    EXPECT_EQ(1u, cont::capacity(sa));
-    EXPECT_EQ(1u, cont::size(sa));
-    EXPECT_EQ(5, sa[0]);
-  }
-}
-
-void canUseRaSboArrayWithStock() {
-  stock<resource, 8u> sa;
-  stock<resource, 8u> other(10);
-  {
-    EXPECT_EQ(8u, cont::capacity(sa));
-    sa.emplace_back(3);
-    EXPECT_EQ(1u, cont::size(sa));
-    EXPECT_EQ(10u, cont::capacity(other));
-    other.emplace_back(5);
-    other.emplace_back(7);
-    other.emplace_back(11);
-    other.emplace_back(13);
-    other.emplace_back(17);
-    other.emplace_back(19);
-    other.emplace_back(23);
-    other.emplace_back(29);
-    other.emplace_back(31);
-    EXPECT_EQ(9u, cont::size(other));
-  }
-  sa = std::move(other);
-  {
-    EXPECT_EQ(8u, cont::capacity(other));
-    EXPECT_EQ(0u, cont::size(other));
-    EXPECT_EQ(10u, cont::capacity(sa));
-    EXPECT_EQ(9u, cont::size(sa));
-  }
-}
+template <typename Tp, std::size_t N = 0u, typename Alloc = std::allocator<Tp>>
+using stock = cont::dynamic_array<Tp, Alloc, cont::enable_sbo, N>;
 
 #include <vector>
 #include <functional>
@@ -463,11 +390,9 @@ void verifySboMemoryManagement() {
 }
 
 int main() {
-  TestFixture<nsbo>::run();
-  TestFixture<rasbo<resource>>::run();
-  canUseRaSboArray();
-  canUseRaSboArrayWithStock();
-  verifySboMemoryManagement<rasbo>();
-  verifySboMemoryManagement<make_stock<7u>::type>();
+  TestFixture<disbo<resource>>::run();
+  TestFixture<ensbo<resource>>::run();
+  TestFixture<stock<resource, 7u>>::run();
+  verifySboMemoryManagement<ensbo>();
   return 0;
 }
