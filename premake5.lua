@@ -11,7 +11,7 @@ TARGETDIR = _OPTIONS["targetdir"] or "build"
 local archie = solution "archie"
   location ( TARGETDIR )
   targetdir ( TARGETDIR )
-  configurations { "debug", "release" }
+  configurations { "debug", "release", "coverage" }
   language "C++"
   flags {
     "C++14",
@@ -24,5 +24,13 @@ local archie = solution "archie"
     flags { "OptimizeSpeed" }
   configuration "debug"
     flags { "Symbols" }
+  configuration "coverage"
+    buildoptions {
+      "-ftest-coverage",
+      "-fprofile-arcs",
+      "-pg"}
+    linkoptions { "-pg" }
+    links { "gcov" }
+
 
   include "test"
