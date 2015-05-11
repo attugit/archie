@@ -34,263 +34,284 @@ struct resource {
   friend bool operator!=(resource const& r, int i) noexcept { return !(r == i); }
 };
 
-using darray = cont::dynamic_array<resource>;
+template <typename SuT>
+struct TestFixture {
+  using darray = SuT;
+  static void run() {
+    TestFixture tf;
+    tf.canDefaultConstructDynamicArray();
+    tf.canCreateDynamicArrayWithGivenCapacity();
+    tf.canMoveConstructDynamicArray();
+    tf.canMoveAssign();
+    tf.canCopyConstruct();
+    tf.canCopyAssign();
+    tf.canConstructAndAssignWithInitializerList();
+    tf.canEmplaceBackElement();
+    tf.canPopBackElement();
+    tf.canUseBeginAndEnd();
+    tf.canEraseElement();
+    tf.canReleaseContent();
+    tf.canAcquire();
+  }
 
-void canDefaultConstructDynamicArray() {
-  darray da;
-  EXPECT_EQ(0u, cont::capacity(da));
-  EXPECT_TRUE(da.empty());
-}
+  void canDefaultConstructDynamicArray() {
+    darray da;
+    EXPECT_EQ(0u, cont::capacity(da));
+    EXPECT_TRUE(da.empty());
+  }
 
-void canCreateDynamicArrayWithGivenCapacity() {
-  darray da1(1);
-  darray da3(3);
-  EXPECT_EQ(1u, cont::capacity(da1));
-  EXPECT_TRUE(da1.empty());
-
-  EXPECT_EQ(3u, cont::capacity(da3));
-  EXPECT_TRUE(da3.empty());
-}
-
-void canMoveConstructDynamicArray() {
-  darray da1(1);
-  {
+  void canCreateDynamicArrayWithGivenCapacity() {
+    darray da1(1);
+    darray da3(3);
     EXPECT_EQ(1u, cont::capacity(da1));
     EXPECT_TRUE(da1.empty());
+
+    EXPECT_EQ(3u, cont::capacity(da3));
+    EXPECT_TRUE(da3.empty());
   }
 
-  darray da(std::move(da1));
-  EXPECT_EQ(0u, cont::capacity(da1));
-  EXPECT_TRUE(da1.empty());
-  EXPECT_EQ(1u, cont::capacity(da));
-  EXPECT_TRUE(da.empty());
-}
+  void canMoveConstructDynamicArray() {
+    darray da1(1);
+    {
+      EXPECT_EQ(1u, cont::capacity(da1));
+      EXPECT_TRUE(da1.empty());
+    }
 
-void canMoveAssign() {
-  darray orig(4);
-  darray copy(1);
-  {
-    orig.emplace_back(5);
-    orig.emplace_back(7);
-    orig.emplace_back(11);
-    copy.emplace_back(13);
-    EXPECT_EQ(4u, cont::capacity(orig));
-    EXPECT_EQ(3u, cont::size(orig));
-    EXPECT_EQ(1u, cont::capacity(copy));
-    EXPECT_TRUE(copy.full());
+    darray da(std::move(da1));
+    EXPECT_EQ(0u, cont::capacity(da1));
+    EXPECT_TRUE(da1.empty());
+    EXPECT_EQ(1u, cont::capacity(da));
+    EXPECT_TRUE(da.empty());
   }
 
-  copy = std::move(orig);
-  EXPECT_EQ(0u, cont::capacity(orig));
-  EXPECT_EQ(4u, cont::capacity(copy));
-  EXPECT_EQ(3u, cont::size(copy));
-  EXPECT_EQ(5, copy[0]);
-  EXPECT_EQ(7, copy[1]);
-  EXPECT_EQ(11, copy[2]);
-}
+  void canMoveAssign() {
+    darray orig(4);
+    darray copy(1);
+    {
+      orig.emplace_back(5);
+      orig.emplace_back(7);
+      orig.emplace_back(11);
+      copy.emplace_back(13);
+      EXPECT_EQ(4u, cont::capacity(orig));
+      EXPECT_EQ(3u, cont::size(orig));
+      EXPECT_EQ(1u, cont::capacity(copy));
+      EXPECT_TRUE(copy.full());
+    }
 
-void canCopyConstruct() {
-  darray orig(4);
-  {
-    orig.emplace_back(5);
-    orig.emplace_back(7);
-    orig.emplace_back(11);
+    copy = std::move(orig);
+    EXPECT_EQ(0u, cont::capacity(orig));
+    EXPECT_EQ(4u, cont::capacity(copy));
+    EXPECT_EQ(3u, cont::size(copy));
+    EXPECT_EQ(5, copy[0]);
+    EXPECT_EQ(7, copy[1]);
+    EXPECT_EQ(11, copy[2]);
   }
 
-  darray copy(orig);
-  {
-    EXPECT_EQ(cont::capacity(orig), cont::capacity(copy));
-    EXPECT_EQ(cont::size(orig), cont::size(copy));
-    EXPECT_NE(orig.data(), copy.data());
-    EXPECT_EQ(orig[0], copy[0]);
-    EXPECT_EQ(orig[1], copy[1]);
-    EXPECT_EQ(orig[2], copy[2]);
-  }
-}
+  void canCopyConstruct() {
+    darray orig(4);
+    {
+      orig.emplace_back(5);
+      orig.emplace_back(7);
+      orig.emplace_back(11);
+    }
 
-void canCopyAssign() {
-  darray orig(4);
-  darray copy(1);
-  {
-    orig.emplace_back(5);
-    orig.emplace_back(7);
-    orig.emplace_back(11);
-    copy.emplace_back(13);
+    darray copy(orig);
+    {
+      EXPECT_EQ(cont::capacity(orig), cont::capacity(copy));
+      EXPECT_EQ(cont::size(orig), cont::size(copy));
+      EXPECT_NE(orig.data(), copy.data());
+      EXPECT_EQ(orig[0], copy[0]);
+      EXPECT_EQ(orig[1], copy[1]);
+      EXPECT_EQ(orig[2], copy[2]);
+    }
   }
 
-  copy = orig;
-  {
-    EXPECT_EQ(cont::capacity(orig), cont::capacity(copy));
-    EXPECT_EQ(cont::size(orig), cont::size(copy));
-    EXPECT_NE(orig.data(), copy.data());
-    EXPECT_EQ(orig[0], copy[0]);
-    EXPECT_EQ(orig[1], copy[1]);
-    EXPECT_EQ(orig[2], copy[2]);
+  void canCopyAssign() {
+    darray orig(4);
+    darray copy(1);
+    {
+      orig.emplace_back(5);
+      orig.emplace_back(7);
+      orig.emplace_back(11);
+      copy.emplace_back(13);
+    }
+
+    copy = orig;
+    {
+      EXPECT_EQ(cont::capacity(orig), cont::capacity(copy));
+      EXPECT_EQ(cont::size(orig), cont::size(copy));
+      EXPECT_NE(orig.data(), copy.data());
+      EXPECT_EQ(orig[0], copy[0]);
+      EXPECT_EQ(orig[1], copy[1]);
+      EXPECT_EQ(orig[2], copy[2]);
+    }
+
+    darray empty;
+    copy = empty;
+    {
+      EXPECT_EQ(0u, cont::capacity(copy));
+      EXPECT_TRUE(copy.empty());
+    }
   }
 
-  darray empty;
-  copy = empty;
-  {
-    EXPECT_EQ(0u, cont::capacity(copy));
-    EXPECT_TRUE(copy.empty());
-  }
-}
+  void canConstructAndAssignWithInitializerList() {
+    darray da = {5, 7, 11, 13};
+    {
+      EXPECT_EQ(4u, cont::capacity(da));
+      EXPECT_EQ(4u, cont::size(da));
+      EXPECT_EQ(5, da[0]);
+      EXPECT_EQ(7, da[1]);
+      EXPECT_EQ(11, da[2]);
+      EXPECT_EQ(13, da[3]);
+    }
 
-void canConstructAndAssignWithInitializerList() {
-  darray da = {5, 7, 11, 13};
-  {
-    EXPECT_EQ(4u, cont::capacity(da));
-    EXPECT_EQ(4u, cont::size(da));
-    EXPECT_EQ(5, da[0]);
-    EXPECT_EQ(7, da[1]);
-    EXPECT_EQ(11, da[2]);
-    EXPECT_EQ(13, da[3]);
+    da = {17, 19, 23, 29, 31};
+    {
+      EXPECT_EQ(5u, cont::capacity(da));
+      EXPECT_EQ(5u, cont::size(da));
+      EXPECT_EQ(17, da[0]);
+      EXPECT_EQ(19, da[1]);
+      EXPECT_EQ(23, da[2]);
+      EXPECT_EQ(29, da[3]);
+      EXPECT_EQ(31, da[4]);
+    }
   }
 
-  da = {17, 19, 23, 29, 31};
-  {
-    EXPECT_EQ(5u, cont::capacity(da));
-    EXPECT_EQ(5u, cont::size(da));
-    EXPECT_EQ(17, da[0]);
-    EXPECT_EQ(19, da[1]);
-    EXPECT_EQ(23, da[2]);
-    EXPECT_EQ(29, da[3]);
-    EXPECT_EQ(31, da[4]);
-  }
-}
+  void canEmplaceBackElement() {
+    darray da(1);
+    {
+      EXPECT_EQ(1u, cont::capacity(da));
+      EXPECT_EQ(0u, cont::size(da));
+      EXPECT_TRUE(da.empty());
+    }
 
-void canEmplaceBackElement() {
-  darray da(1);
-  {
+    da.emplace_back(7);
+    EXPECT_EQ(1u, cont::capacity(da));
+    EXPECT_EQ(1u, cont::size(da));
+    EXPECT_FALSE(da.empty());
+    EXPECT_EQ(7, da[0]);
+  }
+
+  void canPopBackElement() {
+    darray da(1);
+    {
+      EXPECT_EQ(1u, cont::capacity(da));
+      da.emplace_back(7);
+      EXPECT_EQ(1u, cont::capacity(da));
+      EXPECT_EQ(1u, cont::size(da));
+      EXPECT_FALSE(da.empty());
+    }
+
+    da.pop_back();
     EXPECT_EQ(1u, cont::capacity(da));
     EXPECT_EQ(0u, cont::size(da));
     EXPECT_TRUE(da.empty());
   }
 
-  da.emplace_back(7);
-  EXPECT_EQ(1u, cont::capacity(da));
-  EXPECT_EQ(1u, cont::size(da));
-  EXPECT_FALSE(da.empty());
-  EXPECT_EQ(7, da[0]);
-}
+  void canUseBeginAndEnd() {
+    darray da0;
+    darray da1(1);
+    darray da2(2);
+    {
+      EXPECT_EQ(da0.begin(), da0.end());
+      EXPECT_EQ(da1.begin(), da1.end());
+      EXPECT_EQ(da2.begin(), da2.end());
+    }
 
-void canPopBackElement() {
-  darray da(1);
-  {
-    EXPECT_EQ(1u, cont::capacity(da));
-    da.emplace_back(7);
-    EXPECT_EQ(1u, cont::capacity(da));
-    EXPECT_EQ(1u, cont::size(da));
-    EXPECT_FALSE(da.empty());
+    da1.emplace_back(11);
+    da2.emplace_back(13);
+    {
+      EXPECT_EQ(da1.begin() + 1, da1.end());
+      EXPECT_EQ(da2.begin() + 1, da2.end());
+    }
+
+    da2.emplace_back(17);
+    EXPECT_EQ(da2.begin() + 2, da2.end());
   }
 
-  da.pop_back();
-  EXPECT_EQ(1u, cont::capacity(da));
-  EXPECT_EQ(0u, cont::size(da));
-  EXPECT_TRUE(da.empty());
-}
+  void canEraseElement() {
+    darray da(3);
+    {
+      da.emplace_back(7);
+      da.emplace_back(11);
+      da.emplace_back(13);
+      EXPECT_EQ(3u, cont::size(da));
+      EXPECT_TRUE(da.full());
+      EXPECT_EQ(7, da[0]);
+      EXPECT_EQ(11, da[1]);
+      EXPECT_EQ(13, da[2]);
+    }
 
-void canUseBeginAndEnd() {
-  darray da0;
-  darray da1(1);
-  darray da2(2);
-  {
-    EXPECT_EQ(da0.begin(), da0.end());
-    EXPECT_EQ(da1.begin(), da1.end());
-    EXPECT_EQ(da2.begin(), da2.end());
+    da.erase(da.begin());
+    {
+      EXPECT_EQ(2u, cont::size(da));
+      EXPECT_FALSE(da.full());
+      EXPECT_EQ(11, da[0]);
+      EXPECT_EQ(13, da[1]);
+    }
+
+    da.erase(da.begin() + 1);
+    {
+      EXPECT_EQ(1u, cont::size(da));
+      EXPECT_EQ(11, da[0]);
+    }
+
+    da.erase(da.begin());
+    EXPECT_EQ(3u, cont::capacity(da));
+    EXPECT_TRUE(da.empty());
   }
 
-  da1.emplace_back(11);
-  da2.emplace_back(13);
-  {
-    EXPECT_EQ(da1.begin() + 1, da1.end());
-    EXPECT_EQ(da2.begin() + 1, da2.end());
+  void canReleaseContent() {
+    darray da(7);
+    {
+      da.emplace_back(5);
+      da.emplace_back(7);
+      da.emplace_back(11);
+      da.emplace_back(13);
+    }
+
+    auto alloc = da.get_allocator();
+    auto size = cont::size(da);
+    auto first = da.release();
+    auto last = std::next(first, size);
+    EXPECT_EQ(4, size);
+    for (; first != last;) {
+      --last;
+      last->~resource();
+    }
+    alloc.deallocate(first, size);
   }
 
-  da2.emplace_back(17);
-  EXPECT_EQ(da2.begin() + 2, da2.end());
-}
+  void canAcquire() {
+    darray da(7);
+    {
+      da.emplace_back(5);
+      da.emplace_back(7);
+      da.emplace_back(11);
+      da.emplace_back(13);
+    }
 
-void canEraseElement() {
-  darray da(3);
-  {
-    da.emplace_back(7);
-    da.emplace_back(11);
-    da.emplace_back(13);
-    EXPECT_EQ(3u, cont::size(da));
-    EXPECT_TRUE(da.full());
-    EXPECT_EQ(7, da[0]);
-    EXPECT_EQ(11, da[1]);
-    EXPECT_EQ(13, da[2]);
+    auto alloc = da.get_allocator();
+    auto size = cont::size(da);
+    auto capacity = cont::capacity(da);
+    auto first = da.release();
+    EXPECT_EQ(0u, cont::capacity(da));
+
+    darray acc(0, alloc);
+    EXPECT_EQ(0u, cont::capacity(acc));
+    {
+      acc.acquire(first, size, capacity);
+      EXPECT_EQ(7u, cont::capacity(acc));
+      EXPECT_EQ(4u, cont::size(acc));
+      EXPECT_EQ(5, acc[0]);
+      EXPECT_EQ(7, acc[1]);
+      EXPECT_EQ(11, acc[2]);
+      EXPECT_EQ(13, acc[3]);
+    }
   }
+};
 
-  da.erase(da.begin());
-  {
-    EXPECT_EQ(2u, cont::size(da));
-    EXPECT_FALSE(da.full());
-    EXPECT_EQ(11, da[0]);
-    EXPECT_EQ(13, da[1]);
-  }
-
-  da.erase(da.begin() + 1);
-  {
-    EXPECT_EQ(1u, cont::size(da));
-    EXPECT_EQ(11, da[0]);
-  }
-
-  da.erase(da.begin());
-  EXPECT_EQ(3u, cont::capacity(da));
-  EXPECT_TRUE(da.empty());
-}
-
-void canReleaseContent() {
-  darray da(7);
-  {
-    da.emplace_back(5);
-    da.emplace_back(7);
-    da.emplace_back(11);
-    da.emplace_back(13);
-  }
-
-  auto alloc = da.get_allocator();
-  auto size = cont::size(da);
-  auto first = da.release();
-  auto last = std::next(first, size);
-  EXPECT_EQ(4, size);
-  for (; first != last;) {
-    --last;
-    last->~resource();
-  }
-  alloc.deallocate(first, size);
-}
-
-void canAcquire() {
-  darray da(7);
-  {
-    da.emplace_back(5);
-    da.emplace_back(7);
-    da.emplace_back(11);
-    da.emplace_back(13);
-  }
-
-  auto alloc = da.get_allocator();
-  auto size = cont::size(da);
-  auto capacity = cont::capacity(da);
-  auto first = da.release();
-  EXPECT_EQ(0u, cont::capacity(da));
-
-  darray acc(0, alloc);
-  EXPECT_EQ(0u, cont::capacity(acc));
-  {
-    acc.acquire(first, size, capacity);
-    EXPECT_EQ(7u, cont::capacity(acc));
-    EXPECT_EQ(4u, cont::size(acc));
-    EXPECT_EQ(5, acc[0]);
-    EXPECT_EQ(7, acc[1]);
-    EXPECT_EQ(11, acc[2]);
-    EXPECT_EQ(13, acc[3]);
-  }
-}
+using nsbo = cont::dynamic_array<resource>;
 
 template <typename Tp, typename Alloc = std::allocator<Tp>>
 using rasbo = cont::dynamic_array<Tp, Alloc, cont::enable_sbo>;
@@ -370,32 +391,6 @@ void canUseRaSboArrayWithStock() {
   }
 }
 
-/**
- * Test plan:
- * func: release/acquire/move/copy
- * B  class  src    dst
- *  1 rasbo  empty  empty
- *  2 rasbo  empty  stack
- *  3 rasbo  empty  heap
- *  4 rasbo  stack  empty
- *  5 rasbo  stack  stack
- *  6 rasbo  stack  heap
- *  7 rasbo  heap   empty
- *  8 rasbo  heap   stack
- *  9 rasbo  heap   heap
- *
- * C  class  src    dst
- *  1 stock  empty  empty
- *  2 stock  empty  stack
- *  3 stock  empty  heap
- *  4 stock  stack  empty
- *  5 stock  stack  stack
- *  6 stock  stack  heap
- *  7 stock  heap   empty
- *  8 stock  heap   stack
- *  9 stock  heap   heap
- */
-
 #include <vector>
 #include <functional>
 
@@ -464,22 +459,10 @@ void verifySboMemoryManagement() {
 }
 
 int main() {
-  canDefaultConstructDynamicArray();
-  canCreateDynamicArrayWithGivenCapacity();
-  canMoveConstructDynamicArray();
-  canMoveAssign();
-  canCopyConstruct();
-  canCopyAssign();
-  canConstructAndAssignWithInitializerList();
-  canEmplaceBackElement();
-  canPopBackElement();
-  canUseBeginAndEnd();
-  canEraseElement();
-  canReleaseContent();
-  canAcquire();
+  TestFixture<nsbo>::run();
   canUseRaSboArray();
   canUseRaSboArrayWithStock();
   verifySboMemoryManagement<rasbo>();
-  // verifySboMemoryManagement<make_stock<7u>::type>();
+  verifySboMemoryManagement<make_stock<7u>::type>();
   return 0;
 }
