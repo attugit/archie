@@ -58,33 +58,37 @@ struct TestFixture {
     tf.canAcquire();
   }
 
+  void checkCapacity(darray const& x, typename darray::size_type n) const {
+    EXPECT_EQ((stock_size() > n ? stock_size() : n), cont::capacity(x));
+  }
+
   void canDefaultConstructDynamicArray() {
     darray da;
-    EXPECT_EQ(stock_size(), cont::capacity(da));
+    checkCapacity(da, 0u);
     EXPECT_TRUE(da.empty());
   }
 
   void canCreateDynamicArrayWithGivenCapacity() {
     darray da1(1);
     darray da3(3);
-    EXPECT_TRUE(cont::capacity(da1) >= 1u);
+    checkCapacity(da1, 1u);
     EXPECT_TRUE(da1.empty());
 
-    EXPECT_TRUE(cont::capacity(da3) >= 3u);
+    checkCapacity(da3, 3u);
     EXPECT_TRUE(da3.empty());
   }
 
   void canMoveConstructDynamicArray() {
     darray da1(1);
     {
-      EXPECT_TRUE(cont::capacity(da1) >= 1u);
+      checkCapacity(da1, 1u);
       EXPECT_TRUE(da1.empty());
     }
 
     darray da(std::move(da1));
-    EXPECT_EQ(stock_size(), cont::capacity(da1));
+    checkCapacity(da1, 0u);
     EXPECT_TRUE(da1.empty());
-    EXPECT_TRUE(cont::capacity(da) >= 1u);
+    checkCapacity(da, 1u);
     EXPECT_TRUE(da.empty());
   }
 
@@ -96,14 +100,14 @@ struct TestFixture {
       orig.emplace_back(7);
       orig.emplace_back(11);
       copy.emplace_back(13);
-      EXPECT_TRUE(cont::capacity(orig) >= 4u);
+      checkCapacity(orig, 4u);
       EXPECT_EQ(3u, cont::size(orig));
-      EXPECT_TRUE(cont::capacity(copy) >= 1u);
+      checkCapacity(copy, 1u);
     }
 
     copy = std::move(orig);
-    EXPECT_EQ(stock_size(), cont::capacity(orig));
-    EXPECT_TRUE(cont::capacity(copy) >= 4u);
+    checkCapacity(orig, 0u);
+    checkCapacity(copy, 4u);
     EXPECT_EQ(3u, cont::size(copy));
     EXPECT_EQ(5, copy[0]);
     EXPECT_EQ(7, copy[1]);
@@ -152,7 +156,7 @@ struct TestFixture {
     darray empty;
     copy = empty;
     {
-      EXPECT_EQ(stock_size(), cont::capacity(copy));
+      checkCapacity(copy, 0u);
       EXPECT_TRUE(copy.empty());
     }
   }
@@ -160,7 +164,7 @@ struct TestFixture {
   void canConstructAndAssignWithInitializerList() {
     darray da = {5, 7, 11, 13};
     {
-      EXPECT_TRUE(cont::capacity(da) >= 4u);
+      checkCapacity(da, 4u);
       EXPECT_EQ(4u, cont::size(da));
       EXPECT_EQ(5, da[0]);
       EXPECT_EQ(7, da[1]);
@@ -170,7 +174,7 @@ struct TestFixture {
 
     da = {17, 19, 23, 29, 31};
     {
-      EXPECT_TRUE(cont::capacity(da) >= 5u);
+      checkCapacity(da, 5u);
       EXPECT_EQ(5u, cont::size(da));
       EXPECT_EQ(17, da[0]);
       EXPECT_EQ(19, da[1]);
@@ -183,13 +187,13 @@ struct TestFixture {
   void canEmplaceBackElement() {
     darray da(1);
     {
-      EXPECT_TRUE(cont::capacity(da) >= 1u);
+      checkCapacity(da, 1u);
       EXPECT_EQ(0u, cont::size(da));
       EXPECT_TRUE(da.empty());
     }
 
     da.emplace_back(7);
-    EXPECT_TRUE(cont::capacity(da) >= 1u);
+    checkCapacity(da, 1u);
     EXPECT_EQ(1u, cont::size(da));
     EXPECT_FALSE(da.empty());
     EXPECT_EQ(7, da[0]);
@@ -198,15 +202,15 @@ struct TestFixture {
   void canPopBackElement() {
     darray da(1);
     {
-      EXPECT_TRUE(cont::capacity(da) >= 1u);
+      checkCapacity(da, 1u);
       da.emplace_back(7);
-      EXPECT_TRUE(cont::capacity(da) >= 1u);
+      checkCapacity(da, 1u);
       EXPECT_EQ(1u, cont::size(da));
       EXPECT_FALSE(da.empty());
     }
 
     da.pop_back();
-    EXPECT_TRUE(cont::capacity(da) >= 1u);
+    checkCapacity(da, 1u);
     EXPECT_EQ(0u, cont::size(da));
     EXPECT_TRUE(da.empty());
   }
@@ -259,7 +263,7 @@ struct TestFixture {
     }
 
     da.erase(da.begin());
-    EXPECT_TRUE(cont::capacity(da) >= 3u);
+    checkCapacity(da, 3u);
     EXPECT_TRUE(da.empty());
   }
 
@@ -297,13 +301,13 @@ struct TestFixture {
     auto size = cont::size(da);
     auto capacity = cont::capacity(da);
     auto first = da.release();
-    EXPECT_EQ(stock_size(), cont::capacity(da));
+    checkCapacity(da, 0u);
 
     darray acc(0, alloc);
-    EXPECT_EQ(stock_size(), cont::capacity(acc));
+    checkCapacity(acc, 0u);
     {
       acc.acquire(first, size, capacity);
-      EXPECT_EQ(7u, cont::capacity(acc));
+      checkCapacity(acc, 7u);
       EXPECT_EQ(4u, cont::size(acc));
       EXPECT_EQ(5, acc[0]);
       EXPECT_EQ(7, acc[1]);
