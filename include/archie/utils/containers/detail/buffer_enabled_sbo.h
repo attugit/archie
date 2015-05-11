@@ -30,6 +30,7 @@ namespace utils {
         using range_type::empty;
 
         buffer() noexcept;
+        buffer(allocator_type const&) noexcept;
         // buffer(buffer&&) noexcept;
         // buffer(buffer const&) noexcept;
         buffer& operator=(buffer&&);
@@ -140,6 +141,11 @@ namespace utils {
       template <typename Alloc, std::size_t Stock>
       buffer<enable_sbo, Alloc, Stock>::buffer() noexcept
           : iterator_range<pointer>(stock().begin(), 0) {}
+
+      template <typename Alloc, std::size_t Stock>
+      buffer<enable_sbo, Alloc, Stock>::buffer(allocator_type const& a) noexcept
+          : iterator_range<pointer>(stock().begin(), 0),
+            Alloc(a) {}
 
       template <typename Alloc, std::size_t Stock>
       buffer<enable_sbo, Alloc, Stock>& buffer<enable_sbo, Alloc, Stock>::operator=(buffer&& x) {

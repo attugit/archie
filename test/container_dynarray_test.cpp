@@ -37,6 +37,10 @@ struct resource {
 template <typename SuT>
 struct TestFixture {
   using darray = SuT;
+  using size_type = typename darray::size_type;
+  constexpr static size_type stock_size() noexcept {
+    return size_type(reinterpret_cast<darray*>(0)->stock().size());
+  }
   static void run() {
     TestFixture tf;
     tf.canDefaultConstructDynamicArray();
@@ -56,7 +60,7 @@ struct TestFixture {
 
   void canDefaultConstructDynamicArray() {
     darray da;
-    EXPECT_EQ(0u, cont::capacity(da));
+    EXPECT_EQ(stock_size(), cont::capacity(da));
     EXPECT_TRUE(da.empty());
   }
 
@@ -78,7 +82,7 @@ struct TestFixture {
     }
 
     darray da(std::move(da1));
-    EXPECT_EQ(0u, cont::capacity(da1));
+    EXPECT_EQ(stock_size(), cont::capacity(da1));
     EXPECT_TRUE(da1.empty());
     EXPECT_EQ(1u, cont::capacity(da));
     EXPECT_TRUE(da.empty());
@@ -99,7 +103,7 @@ struct TestFixture {
     }
 
     copy = std::move(orig);
-    EXPECT_EQ(0u, cont::capacity(orig));
+    EXPECT_EQ(stock_size(), cont::capacity(orig));
     EXPECT_EQ(4u, cont::capacity(copy));
     EXPECT_EQ(3u, cont::size(copy));
     EXPECT_EQ(5, copy[0]);
@@ -149,7 +153,7 @@ struct TestFixture {
     darray empty;
     copy = empty;
     {
-      EXPECT_EQ(0u, cont::capacity(copy));
+      EXPECT_EQ(stock_size(), cont::capacity(copy));
       EXPECT_TRUE(copy.empty());
     }
   }
@@ -295,10 +299,10 @@ struct TestFixture {
     auto size = cont::size(da);
     auto capacity = cont::capacity(da);
     auto first = da.release();
-    EXPECT_EQ(0u, cont::capacity(da));
+    EXPECT_EQ(stock_size(), cont::capacity(da));
 
     darray acc(0, alloc);
-    EXPECT_EQ(0u, cont::capacity(acc));
+    EXPECT_EQ(stock_size(), cont::capacity(acc));
     {
       acc.acquire(first, size, capacity);
       EXPECT_EQ(7u, cont::capacity(acc));
@@ -460,6 +464,7 @@ void verifySboMemoryManagement() {
 
 int main() {
   TestFixture<nsbo>::run();
+  TestFixture<rasbo<resource>>::run();
   canUseRaSboArray();
   canUseRaSboArrayWithStock();
   verifySboMemoryManagement<rasbo>();
