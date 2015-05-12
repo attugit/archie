@@ -100,8 +100,6 @@ namespace utils {
 
       bool empty() const noexcept { return cbegin() == cend(); }
 
-      bool full() const noexcept { return impl_.full(); }
-
       template <typename... Args>
       void emplace_back(Args&&... args) noexcept(
           std::is_nothrow_constructible<value_type, Args...>::value) {

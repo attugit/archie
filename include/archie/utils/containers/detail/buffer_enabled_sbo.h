@@ -13,24 +13,24 @@ namespace utils {
       struct buffer<containers::enable_sbo, Alloc, Stock> : iterator_range<typename Alloc::pointer>,
                                                             Alloc {
         using allocator_type = Alloc;
-        using pointer = typename allocator_type::pointer;
-        using const_pointer = typename allocator_type::const_pointer;
-        using value_type = typename allocator_type::value_type;
-        using size_type = typename allocator_type::size_type;
-        using difference_type = typename allocator_type::difference_type;
+        using pointer = Pointer<allocator_type>;
+        using const_pointer = ConstPointer<allocator_type>;
+        using value_type = ValueType<allocator_type>;
+        using size_type = SizeType<allocator_type>;
+        using difference_type = DifferenceType<allocator_type>;
+        using range_type = iterator_range<pointer>;
+
+        using range_type::begin;
+        using range_type::end;
+        using range_type::empty;
 
         using allocator_type::allocate;
         using allocator_type::deallocate;
         using allocator_type::construct;
         using allocator_type::destroy;
 
-        using range_type = iterator_range<pointer>;
-        using range_type::begin;
-        using range_type::end;
-        using range_type::empty;
-
         buffer() noexcept;
-        buffer(allocator_type const&) noexcept;
+        explicit buffer(allocator_type const&) noexcept;
         // buffer(buffer&&) noexcept;
         // buffer(buffer const&) noexcept;
         buffer& operator=(buffer&&);
@@ -41,10 +41,11 @@ namespace utils {
         RangeType<buffer>& range() noexcept;
         RangeType<buffer> const& range() const noexcept;
 
-        bool is_on_stack() const noexcept;
-
         SizeType<buffer> size() const noexcept;
         SizeType<buffer> capacity() const noexcept;
+
+        bool is_on_stack() const noexcept;
+
         bool full() const noexcept;
 
         void create_storage(size_type);
@@ -168,11 +169,6 @@ namespace utils {
       SizeType<buffer<enable_sbo, Alloc, Stock>> buffer<enable_sbo, Alloc, Stock>::capacity() const
           noexcept {
         return size_type(end_of_storage() - begin());
-      }
-
-      template <typename Alloc, std::size_t Stock>
-      bool buffer<enable_sbo, Alloc, Stock>::full() const noexcept {
-        return end() == end_of_storage();
       }
 
       template <typename Alloc, std::size_t Stock>

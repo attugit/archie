@@ -251,7 +251,6 @@ struct TestFixture {
     da.erase(da.begin());
     {
       EXPECT_EQ(2u, cont::size(da));
-      EXPECT_FALSE(da.full());
       EXPECT_EQ(11, da[0]);
       EXPECT_EQ(13, da[1]);
     }
