@@ -56,7 +56,7 @@ namespace utils {
 
       dynamic_array(size_type n, allocator_type const& a) : impl_(a) { impl_.create_storage(n); }
 
-      dynamic_array(dynamic_array&& x) noexcept { impl_.swap(x.impl_); }
+      dynamic_array(dynamic_array&& x) noexcept : impl_(std::move(x.impl_)) {}
 
       dynamic_array& operator=(dynamic_array&& x) noexcept {
         clear();

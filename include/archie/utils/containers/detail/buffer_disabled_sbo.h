@@ -43,8 +43,6 @@ namespace utils {
         size_type size() const noexcept;
         size_type capacity() const noexcept;
 
-        void reset(pointer, pointer, pointer) noexcept;
-        void reset(pointer, size_type, size_type) noexcept;
         void clear() noexcept;
         bool is_on_heap() const noexcept;
 
@@ -52,7 +50,6 @@ namespace utils {
         void destroy_storage() noexcept;
         void acquire(pointer, size_type, size_type) noexcept;
         pointer release() noexcept;
-        void swap(buffer&) noexcept;
 
       private:
         pointer end_of_storage_ = nullptr;
@@ -60,7 +57,11 @@ namespace utils {
 
       template <typename Alloc>
       buffer<containers::disable_sbo, Alloc>::buffer(buffer&& x) noexcept : buffer() {
-        swap(x);
+        range() = x.range();
+        end_of_storage_ = x.end_of_storage_;
+        x.clear();
+        using std::swap;
+        swap(static_cast<allocator_type&>(*this), static_cast<allocator_type&>(x));
       }
 
       template <typename Alloc>
@@ -92,21 +93,9 @@ namespace utils {
       }
 
       template <typename Alloc>
-      void buffer<containers::disable_sbo, Alloc>::reset(pointer a, pointer b, pointer c) noexcept {
-        range() = iterator_range<pointer>(a, b);
-        end_of_storage_ = c;
-      }
-
-      template <typename Alloc>
-      void buffer<containers::disable_sbo, Alloc>::reset(pointer a,
-                                                         size_type s,
-                                                         size_type c) noexcept {
-        reset(a, a + s, a + c);
-      }
-
-      template <typename Alloc>
       void buffer<containers::disable_sbo, Alloc>::clear() noexcept {
-        reset(nullptr, nullptr, nullptr);
+        range() = range_type(nullptr, nullptr);
+        end_of_storage_ = begin();
       }
 
       template <typename Alloc>
@@ -136,15 +125,8 @@ namespace utils {
                                                            size_type s,
                                                            size_type c) noexcept {
         destroy_storage();
-        reset(ptr, s, c);
-      }
-
-      template <typename Alloc>
-      void buffer<containers::disable_sbo, Alloc>::swap(buffer& x) noexcept {
-        using std::swap;
-        swap(range(), x.range());
-        swap(end_of_storage_, x.end_of_storage_);
-        swap(static_cast<allocator_type&>(*this), static_cast<allocator_type&>(x));
+        range() = range_type(ptr, s);
+        end_of_storage_ = begin() + c;
       }
 
       template <typename Alloc>

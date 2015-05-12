@@ -47,6 +47,7 @@ struct TestFixture {
     tf.canCreateDynamicArrayWithGivenCapacity();
     tf.canMoveConstructDynamicArray();
     tf.canMoveAssign();
+    tf.canSwap();
     tf.canCopyConstruct();
     tf.canCopyAssign();
     tf.canConstructAndAssignWithInitializerList();
@@ -112,6 +113,27 @@ struct TestFixture {
     EXPECT_EQ(5, copy[0]);
     EXPECT_EQ(7, copy[1]);
     EXPECT_EQ(11, copy[2]);
+  }
+
+  void canSwap() {
+    darray orig(4);
+    darray copy(1);
+    {
+      orig.emplace_back(5);
+      orig.emplace_back(7);
+      orig.emplace_back(11);
+      copy.emplace_back(13);
+    }
+    using std::swap;
+    swap(orig, copy);
+    {
+      EXPECT_EQ(3u, cont::size(copy));
+      EXPECT_EQ(1u, cont::size(orig));
+      EXPECT_EQ(5, copy[0]);
+      EXPECT_EQ(7, copy[1]);
+      EXPECT_EQ(11, copy[2]);
+      EXPECT_EQ(13, orig[0]);
+    }
   }
 
   void canCopyConstruct() {

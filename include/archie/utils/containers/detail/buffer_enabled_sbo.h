@@ -31,7 +31,7 @@ namespace utils {
 
         buffer() noexcept;
         explicit buffer(allocator_type const&) noexcept;
-        // buffer(buffer&&) noexcept;
+        buffer(buffer&&) noexcept;
         // buffer(buffer const&) noexcept;
         buffer& operator=(buffer&&);
         // buffer& operator=(buffer const&);
@@ -52,8 +52,6 @@ namespace utils {
         void destroy_storage() noexcept;
         void acquire(pointer, size_type, size_type) noexcept;
         Pointer<buffer> release();
-
-        void swap(buffer& x) noexcept;
 
       private:
         Pointer<buffer> end_of_storage() noexcept;
@@ -149,6 +147,22 @@ namespace utils {
             Alloc(a) {}
 
       template <typename Alloc, std::size_t Stock>
+      buffer<enable_sbo, Alloc, Stock>::buffer(buffer&& x) noexcept : buffer() {
+        using std::swap;
+        swap(static_cast<allocator_type&>(*this), static_cast<allocator_type&>(x));
+        if (x.is_on_stack()) {
+          auto it = begin();
+          for (auto&& e : x) { construct(it++, std::move(e)); }
+          range() = range_type(begin(), it);
+          x.erase();
+        } else {
+          auto s = x.size();
+          auto c = x.capacity();
+          acquire(x.release(), s, c);
+        }
+      }
+
+      template <typename Alloc, std::size_t Stock>
       buffer<enable_sbo, Alloc, Stock>& buffer<enable_sbo, Alloc, Stock>::operator=(buffer&& x) {
         if (!is_on_stack() || !x.is_on_stack()) erase();
         if (x.is_on_stack()) { move_stack(x); } else {
@@ -205,13 +219,6 @@ namespace utils {
         } else { ret = begin(); }
         clear();
         return ret;
-      }
-
-      template <typename Alloc, std::size_t Stock>
-      void buffer<enable_sbo, Alloc, Stock>::swap(buffer& x) noexcept {
-        // FIXME
-        *this = std::move(x);
-        std::swap(static_cast<allocator_type&>(*this), static_cast<allocator_type&>(x));
       }
     }
   }
