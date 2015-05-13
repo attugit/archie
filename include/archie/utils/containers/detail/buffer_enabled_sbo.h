@@ -24,8 +24,6 @@ namespace utils {
         using range_type::end;
         using range_type::empty;
 
-        using allocator_type::allocate;
-        using allocator_type::deallocate;
         using allocator_type::construct;
         using allocator_type::destroy;
 
@@ -46,36 +44,33 @@ namespace utils {
 
         bool is_on_stack() const noexcept;
 
-        bool full() const noexcept;
-
         void create_storage(size_type);
         void destroy_storage() noexcept;
         void acquire(pointer, size_type, size_type) noexcept;
         Pointer<buffer> release();
+        void clear();
 
       private:
+        using allocator_type::allocate;
+        using allocator_type::deallocate;
         Pointer<buffer> end_of_storage() noexcept;
         ConstPointer<buffer> end_of_storage() const noexcept;
 
-        void clear();
         void erase();
         void move_stack(buffer&);
 
-        struct heap_data {
-          heap_data() = default;
-          pointer end_of_storage_ = nullptr;
-        };
-
-        static constexpr auto const stack_size = Stock > (sizeof(heap_data) / sizeof(value_type))
-                                                     ? Stock
-                                                     : (sizeof(heap_data) / sizeof(value_type));
-        static_assert(stack_size > 0u, "");
-
         union variant {
+          struct heap_data {
+            heap_data() = default;
+            pointer end_of_storage_ = nullptr;
+          };
+
           variant() : heap() {}
           ~variant() {}
           heap_data heap;
-          value_type stack[stack_size];
+          value_type stack[Stock > (sizeof(heap_data) / sizeof(value_type))
+                               ? Stock
+                               : (sizeof(heap_data) / sizeof(value_type))];
         } variant_;
       };
 
@@ -94,7 +89,8 @@ namespace utils {
       template <typename Alloc, std::size_t Stock>
       RangeType<buffer<enable_sbo, Alloc, Stock>> buffer<enable_sbo, Alloc, Stock>::stock() const
           noexcept {
-        return iterator_range<pointer>(pointer(&variant_.stack[0u]), stack_size);
+        return iterator_range<pointer>(pointer(&variant_.stack[0u]),
+                                       sizeof(variant_.stack) / sizeof(value_type));
       }
 
       template <typename Alloc, std::size_t Stock>

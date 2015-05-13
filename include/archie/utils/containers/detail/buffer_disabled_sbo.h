@@ -23,8 +23,6 @@ namespace utils {
         using range_type::end;
         using range_type::empty;
 
-        using allocator_type::allocate;
-        using allocator_type::deallocate;
         using allocator_type::construct;
         using allocator_type::destroy;
 
@@ -43,15 +41,18 @@ namespace utils {
         size_type size() const noexcept;
         size_type capacity() const noexcept;
 
-        void clear() noexcept;
         bool is_on_heap() const noexcept;
 
         void create_storage(size_type);
         void destroy_storage() noexcept;
         void acquire(pointer, size_type, size_type) noexcept;
-        pointer release() noexcept;
+        Pointer<buffer> release() noexcept;
+        void clear() noexcept;
 
       private:
+        using allocator_type::allocate;
+        using allocator_type::deallocate;
+
         pointer end_of_storage_ = nullptr;
       };
 
@@ -130,7 +131,7 @@ namespace utils {
       }
 
       template <typename Alloc>
-      typename buffer<containers::disable_sbo, Alloc>::pointer
+      Pointer<buffer<containers::disable_sbo, Alloc>>
       buffer<containers::disable_sbo, Alloc>::release() noexcept {
         auto ret = begin();
         clear();
