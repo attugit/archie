@@ -13,6 +13,9 @@ namespace utils {
     using Iterator = typename Tp::iterator;
 
     template <typename Tp>
+    using ConstIterator = typename Tp::const_iterator;
+
+    template <typename Tp>
     using ValueType = typename Tp::value_type;
 
     template <typename Tp>
@@ -32,6 +35,9 @@ namespace utils {
 
     template <typename Tp>
     using RangeType = typename Tp::range_type;
+
+    template <typename Tp>
+    using Allocator = typename Tp::allocator_type;
   }
 }
 }

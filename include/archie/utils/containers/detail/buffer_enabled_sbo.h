@@ -49,6 +49,10 @@ namespace utils {
         void acquire(pointer, size_type, size_type) noexcept;
         Pointer<buffer> release();
         void clear();
+        void resize(size_type);
+
+        Allocator<buffer>& get_allocator() noexcept;
+        Allocator<buffer> const& get_allocator() const noexcept;
 
       private:
         using allocator_type::allocate;
@@ -116,6 +120,14 @@ namespace utils {
       }
 
       template <typename Alloc, std::size_t Stock>
+      void buffer<enable_sbo, Alloc, Stock>::resize(size_type n) {
+        if (n != capacity()) {
+          destroy_storage();
+          create_storage(n);
+        }
+      }
+
+      template <typename Alloc, std::size_t Stock>
       void buffer<enable_sbo, Alloc, Stock>::erase() {
         while (!empty()) { destroy(range().advance_end(-1).end()); }
         destroy_storage();
@@ -144,8 +156,6 @@ namespace utils {
 
       template <typename Alloc, std::size_t Stock>
       buffer<enable_sbo, Alloc, Stock>::buffer(buffer&& x) noexcept : buffer() {
-        using std::swap;
-        swap(static_cast<allocator_type&>(*this), static_cast<allocator_type&>(x));
         if (x.is_on_stack()) {
           auto it = begin();
           for (auto&& e : x) { construct(it++, std::move(e)); }
@@ -156,6 +166,7 @@ namespace utils {
           auto c = x.capacity();
           acquire(x.release(), s, c);
         }
+        get_allocator() = std::move(x.get_allocator());
       }
 
       template <typename Alloc, std::size_t Stock>
@@ -215,6 +226,18 @@ namespace utils {
         } else { ret = begin(); }
         clear();
         return ret;
+      }
+
+      template <typename Alloc, std::size_t Stock>
+      Allocator<buffer<enable_sbo, Alloc, Stock>>&
+      buffer<enable_sbo, Alloc, Stock>::get_allocator() noexcept {
+        return static_cast<allocator_type&>(*this);
+      }
+
+      template <typename Alloc, std::size_t Stock>
+      Allocator<buffer<enable_sbo, Alloc, Stock>> const&
+      buffer<enable_sbo, Alloc, Stock>::get_allocator() const noexcept {
+        return static_cast<allocator_type const&>(*this);
       }
     }
   }
