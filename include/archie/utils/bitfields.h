@@ -126,7 +126,7 @@ namespace utils {
         data = data & (~((1u << (at + offset())) & mask()));
         return *this;
       }
-      Field& set(IndexType at, Boolean value) noexcept { return value ? set(at) : reset(at); }
+      Field& set(IndexType at, Boolean v) noexcept { return v ? set(at) : reset(at); }
       bool all() const noexcept { return (data & mask()) == mask(); }
       bool any() const noexcept { return (data & mask()) != 0u; }
       bool none() const noexcept { return !any(); }

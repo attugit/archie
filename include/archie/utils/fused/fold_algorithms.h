@@ -20,8 +20,8 @@ namespace utils {
         }
         template <typename F>
         constexpr decltype(auto) operator()(F const& f) const {
-          return fused::make_fold([f](auto&& a, auto&& b) {
-            return f(std::forward<decltype(a)>(a), std::forward<decltype(b)>(b));
+          return fused::make_fold([f](auto&& arg_a, auto&& arg_b) {
+            return f(std::forward<decltype(arg_a)>(arg_a), std::forward<decltype(arg_b)>(arg_b));
           });
         }
       };
@@ -29,11 +29,11 @@ namespace utils {
       private:
         template <typename F>
         struct impl {
-          F const f;
-          constexpr impl(F const& f) : f(f) {}
+          F const func;
+          constexpr impl(F const& f) : func(f) {}
           template <typename Tp, typename Up>
-          constexpr decltype(auto) operator()(Tp const& a, Up const& b) const {
-            return f(a, b) ? a : b;
+          constexpr decltype(auto) operator()(Tp const& arg_a, Up const& arg_b) const {
+            return func(arg_a, arg_b) ? arg_a : arg_b;
           }
         };
 
@@ -76,11 +76,11 @@ namespace utils {
       private:
         template <typename F>
         struct impl {
-          F const f;
-          impl(F const f) : f(f){};
+          F const func;
+          impl(F const f) : func(f){};
           template <typename Tp, typename Up, typename Vp, typename... Rs>
           constexpr bool operator()(Tp const t, Up const& u, Vp const& v, Rs const&...) const {
-            return t ? f(u, v) : False;
+            return t ? func(u, v) : False;
           }
           template <typename Tp, typename Up>
           constexpr bool operator()(Tp const& t, Up) const {

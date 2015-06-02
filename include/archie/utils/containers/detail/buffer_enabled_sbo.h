@@ -136,10 +136,10 @@ namespace utils {
 
       template <typename Alloc, std::size_t Stock>
       void buffer<enable_sbo, Alloc, Stock>::move_stack(buffer& x) {
-        auto size = std::min(this->size(), x.size());
+        auto min_size = std::min(this->size(), x.size());
         auto src = x.begin();
         auto dst = begin();
-        for (auto idx = 0u; idx < size; ++idx, ++src, ++dst) (*src) = std::move(*dst);
+        for (auto idx = 0u; idx < min_size; ++idx, ++src, ++dst) (*src) = std::move(*dst);
         for (; src != x.end(); ++src, ++dst) { construct(dst, std::move(*src)); }
         while (end() > dst) { destroy(range().advance_end(-1).end()); }
         range() = range_type(begin(), dst);

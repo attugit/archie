@@ -26,15 +26,15 @@ static_assert(sizeof(au::Pack<15, 15, 2>) <= sizeof(std::uint32_t), "");
 static_assert(sizeof(au::Pack<10, 10, 13>) <= sizeof(std::uint64_t), "");
 static_assert(sizeof(au::Pack<30, 20, 10, 4>) <= sizeof(std::uint64_t), "");
 
-constexpr pack_t pack;
-static_assert(au::offset_of<0>(pack) == 0, "");
-static_assert(au::offset_of<1>(pack) == 1, "");
-static_assert(au::offset_of<2>(pack) == 3, "");
-static_assert(au::size_of<0>(pack) == 1, "");
-static_assert(au::size_of<1>(pack) == 2, "");
-static_assert(au::size_of<2>(pack) == 3, "");
-static_assert(pack.size() == 6, "");
-static_assert(pack.length() == 3, "");
+constexpr pack_t cpack;
+static_assert(au::offset_of<0>(cpack) == 0, "");
+static_assert(au::offset_of<1>(cpack) == 1, "");
+static_assert(au::offset_of<2>(cpack) == 3, "");
+static_assert(au::size_of<0>(cpack) == 1, "");
+static_assert(au::size_of<1>(cpack) == 2, "");
+static_assert(au::size_of<2>(cpack) == 3, "");
+static_assert(cpack.size() == 6, "");
+static_assert(cpack.length() == 3, "");
 
 static_assert(pack_t::mask_of<0>() == 0b000001, "");
 static_assert(pack_t::mask_of<1>() == 0b000110, "");

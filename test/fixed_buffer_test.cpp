@@ -127,13 +127,13 @@ void canAllocateWithStackAlloc() {
   EXPECT_EQ(4u, alloc.max_size());
   auto ptr1 = alloc.allocate(2);
   EXPECT_EQ(2u, alloc.max_size());
-  EXPECT_TRUE((void*)ptr1 >= (void*)&alloc);
-  EXPECT_TRUE((void*)ptr1 < (void*)(&alloc + 1));
+  EXPECT_TRUE(static_cast<void*>(ptr1) >= static_cast<void*>(&alloc));
+  EXPECT_TRUE(static_cast<void*>(ptr1) < static_cast<void*>(&alloc + 1));
 
   auto ptr2 = alloc.allocate(1);
   EXPECT_EQ(1u, alloc.max_size());
-  EXPECT_TRUE((void*)ptr2 >= (void*)&alloc);
-  EXPECT_TRUE((void*)ptr2 < (void*)(&alloc + 1));
+  EXPECT_TRUE(static_cast<void*>(ptr2) >= static_cast<void*>(&alloc));
+  EXPECT_TRUE(static_cast<void*>(ptr2) < static_cast<void*>(&alloc + 1));
 
   EXPECT_NE(ptr1, ptr2);
 }

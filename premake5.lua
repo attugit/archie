@@ -20,6 +20,14 @@ local archie = solution "archie"
     "NoExceptions",
     "NoRTTI",
     "StaticRuntime"}
+  buildoptions {
+    '-Wshadow',
+    '-Wnon-virtual-dtor',
+    '-Wold-style-cast',
+    '-Wcast-align',
+    '-Wno-parentheses',
+    '-march=native'
+  }
   configuration "release"
     flags { "OptimizeSpeed" }
   configuration "debug"
