@@ -19,8 +19,7 @@ namespace utils {
         }
         template <typename F, typename S, typename X, typename... Ys>
         constexpr decltype(auto) impl(F&& f, S&& arg_state, X&& arg_x, Ys&&... ys) const {
-          return impl(std::forward<F>(f),
-                      f(std::forward<S>(arg_state), std::forward<X>(arg_x)),
+          return impl(std::forward<F>(f), f(std::forward<S>(arg_state), std::forward<X>(arg_x)),
                       std::forward<Ys>(ys)...);
         }
       };

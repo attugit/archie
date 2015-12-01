@@ -18,10 +18,8 @@ namespace utils {
             typename = meta::requires_all<traits::is_fused_tuple<std::remove_reference_t<Tp>>,
                                           traits::is_fused_tuple<std::remove_reference_t<Up>>>>
         constexpr decltype(auto) operator()(Tp&& tp, Up&& up) const {
-          return impl(std::forward<Tp>(tp),
-                      meta::as_type_list_t<std::remove_reference_t<Tp>>{},
-                      std::forward<Up>(up),
-                      meta::as_type_list_t<std::remove_reference_t<Up>>{});
+          return impl(std::forward<Tp>(tp), meta::as_type_list_t<std::remove_reference_t<Tp>>{},
+                      std::forward<Up>(up), meta::as_type_list_t<std::remove_reference_t<Up>>{});
         }
 
       private:
@@ -40,8 +38,7 @@ namespace utils {
                   typename... Us,
                   typename = meta::requires<traits::is_fused_tuple<std::remove_reference_t<Tp>>>>
         constexpr decltype(auto) operator()(Tp&& tp, Us&&... us) const {
-          return impl(std::forward<Tp>(tp),
-                      meta::as_type_list_t<std::remove_reference_t<Tp>>{},
+          return impl(std::forward<Tp>(tp), meta::as_type_list_t<std::remove_reference_t<Tp>>{},
                       std::forward<Us>(us)...);
         }
 

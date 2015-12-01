@@ -1,12 +1,13 @@
 #pragma once
 
 #include <archie/utils/meta/type_list.h>
-#include <archie/utils/meta/variable_template.h>
+#include <archie/utils/meta/static_constexpr_storage.h>
 
 namespace archie {
 namespace utils {
   namespace fused {
-    DECL_VARIADIC_VARTEMPL(type_list, meta::type_list, typename...);
+    template <typename... T>
+    static constexpr auto const& type_list = meta::instance<meta::type_list<T...>>();
   }
 }
 }

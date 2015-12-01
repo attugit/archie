@@ -4,7 +4,7 @@
 #include <archie/utils/meta/type_list.h>
 #include <archie/utils/meta/take.h>
 #include <archie/utils/meta/indexable.h>
-#include <archie/utils/meta/variable_template.h>
+#include <archie/utils/meta/static_constexpr_storage.h>
 #include <archie/utils/meta/listed.h>
 #include <archie/utils/meta/as_type_list.h>
 #include <archie/utils/fused/tuple.h>
@@ -31,13 +31,15 @@ namespace utils {
         }
         template <typename... Ts>
         constexpr decltype(auto) operator()(Ts&&... ts) const {
-          return make_tuple(VARTEMPL(fused::nth, ids)(ts...)...);
+          return make_tuple(fused::nth<ids>(ts...)...);
         }
       };
       template <std::size_t N>
       using indexed_take_ = meta::indexable_t<detail::take_, N>;
     }
-    DECL_VARTEMPL(take, detail::indexed_take_, std::size_t);
+
+    template <std::size_t N>
+    static constexpr auto const& take = meta::instance<detail::indexed_take_<N>>();
   }
 }
 }

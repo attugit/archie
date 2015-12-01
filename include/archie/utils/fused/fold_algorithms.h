@@ -13,10 +13,8 @@ namespace utils {
         template <typename F, typename Tp>
         constexpr decltype(auto) operator()(F const& f, Tp&& t) const {
           return fused::make_fold([f](auto&& a, auto&& b) {
-                                    return f(std::forward<decltype(a)>(a),
-                                             std::forward<decltype(b)>(b));
-                                  },
-                                  std::forward<Tp>(t));
+            return f(std::forward<decltype(a)>(a), std::forward<decltype(b)>(b));
+          }, std::forward<Tp>(t));
         }
         template <typename F>
         constexpr decltype(auto) operator()(F const& f) const {

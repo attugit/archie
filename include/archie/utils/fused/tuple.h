@@ -8,7 +8,7 @@
 #endif
 
 #include <archie/utils/fused/type_tag.h>
-#include <archie/utils/meta/variable_template.h>
+#include <archie/utils/meta/static_constexpr_storage.h>
 
 namespace archie {
 namespace utils {
@@ -17,11 +17,11 @@ namespace utils {
       struct tuple_size_ {
         template <typename Tp>
         constexpr decltype(auto) operator()(type_tag<Tp>) const {
-          return impl(VARTEMPL(fused::id, std::decay_t<Tp>));
+          return impl(fused::id<std::decay_t<Tp>>);
         }
         template <typename Tp>
         constexpr decltype(auto) operator()(Tp const&) const {
-          return impl(VARTEMPL(fused::id, Tp));
+          return impl(fused::id<Tp>);
         }
 
       private:
@@ -51,12 +51,14 @@ namespace utils {
     template <std::size_t I, typename Tp>
     using tuple_element_t = meta::eval<fused::tuple_element<I, Tp>>;
 
-    constexpr auto const make_tuple = detail::make_tuple_{};
-    constexpr auto const tie = detail::tie_{};
-    constexpr auto const tuple_size = detail::tuple_size_{};
+    static constexpr auto const& make_tuple = meta::instance<detail::make_tuple_>();
+    static constexpr auto const& tie = meta::instance<detail::tie_>();
+    static constexpr auto const& tuple_size = meta::instance<detail::tuple_size_>();
 
-    DECL_VARTEMPL(at, detail::at_, std::size_t);
-    DECL_VARTEMPL(extract, detail::extract_, typename);
+    template <std::size_t N>
+    static constexpr auto const& at = meta::instance<detail::at_<N>>();
+    template <typename T>
+    static constexpr auto const& extract = meta::instance<detail::extract_<T>>();
   }
 }
 }

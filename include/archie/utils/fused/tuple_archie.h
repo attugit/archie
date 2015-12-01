@@ -9,7 +9,6 @@
 #include <archie/utils/meta/at.h>
 #include <archie/utils/meta/indexable.h>
 #include <archie/utils/meta/logic.h>
-#include <archie/utils/meta/variable_template.h>
 #include <archie/utils/traits.h>
 #include <archie/utils/fused/nth.h>
 #include <archie/utils/fused/mover.h>
@@ -24,9 +23,8 @@ namespace utils {
     private:
       template <typename... Us>
       static decltype(auto) make_storage(Us... args) {
-        return [args...](auto&& func) mutable -> decltype(auto) {
-          return std::forward<decltype(func)>(func)(args...);
-        };
+        return [args...](auto&& func) mutable
+            -> decltype(auto) { return std::forward<decltype(func)>(func)(args...); };
       }
       using storage_type = decltype(make_storage(std::declval<move_t<Ts>>()...));
 
@@ -45,7 +43,7 @@ namespace utils {
 
       template <typename... Us>
       constexpr explicit tuple(explicit_ctor_tag, Us&&... args)
-          : tuple(Ts { std::forward<Us>(args) }...) {}
+          : tuple(Ts{std::forward<Us>(args)}...) {}
 
       template <typename F, typename... Us>
       using requires_callable = meta::requires<traits::is_callable<F, Us...>>;
@@ -58,7 +56,7 @@ namespace utils {
                              explicit_ctor_tag>{},
                   std::forward<Us>(args)...) {}
 
-      constexpr tuple() : tuple(Ts {}...) {}
+      constexpr tuple() : tuple(Ts{}...) {}
       tuple(tuple& other) : tuple(const_cast<tuple const&>(other)) {}
 
       tuple(tuple&&) = default;
@@ -124,7 +122,7 @@ namespace utils {
 
     template <std::size_t N, typename Tp>
     decltype(auto) get(Tp&& tp) {
-      return tp.apply(VARTEMPL(fused::nth, N));
+      return tp.apply(fused::nth<N>);
     }
 
     template <typename Tp, typename... Us>

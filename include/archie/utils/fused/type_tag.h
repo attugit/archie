@@ -1,7 +1,7 @@
 #pragma once
 
 #include <archie/utils/meta/identity.h>
-#include <archie/utils/meta/variable_template.h>
+#include <archie/utils/meta/static_constexpr_storage.h>
 #include <archie/utils/fused/boolean.h>
 #include <utility>
 
@@ -36,8 +36,9 @@ namespace utils {
         }
       };
     }
-    constexpr auto make_tag = detail::make_tag_{};
-    DECL_VARTEMPL(id, type_tag, typename);
+    static constexpr auto const& make_tag = meta::instance<detail::make_tag_>();
+    template <typename T>
+    static constexpr auto const& id = meta::instance<type_tag<T>>();
   }
 }
 }

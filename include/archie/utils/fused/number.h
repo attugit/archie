@@ -1,12 +1,13 @@
 #pragma once
 
 #include <archie/utils/meta/number.h>
-#include <archie/utils/meta/variable_template.h>
+#include <archie/utils/meta/static_constexpr_storage.h>
 
 namespace archie {
 namespace utils {
   namespace fused {
-    DECL_VARTEMPL(number, meta::number, std::size_t);
+    template <std::size_t N>
+    static constexpr auto const& number = meta::instance<meta::number<N>>();
   }
 }
 }

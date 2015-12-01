@@ -4,7 +4,7 @@
 #include <archie/utils/meta/ignore.h>
 #include <archie/utils/meta/number.h>
 #include <archie/utils/meta/indexable.h>
-#include <archie/utils/meta/variable_template.h>
+#include <archie/utils/meta/static_constexpr_storage.h>
 
 namespace archie {
 namespace utils {
@@ -13,8 +13,7 @@ namespace utils {
       template <std::size_t... other>
       struct placeholder {
         template <typename Tp, typename... Us>
-        constexpr decltype(auto) operator()(meta::eat_n<other>..., Tp&& x, Us&&...) const
-            noexcept {
+        constexpr decltype(auto) operator()(meta::eat_n<other>..., Tp&& x, Us&&...) const noexcept {
           return std::forward<Tp>(x);
         }
       };
@@ -28,19 +27,20 @@ namespace utils {
       return [f, xs...](auto&&... ys) { return f(xs(ys...)...); };
     }
 
-    DECL_VARTEMPL(nth, placeholder, std::size_t);
+    template <std::size_t N>
+    static constexpr auto const& nth = meta::instance<placeholder<N>>();
 
     inline namespace placeholders {
-      constexpr auto const& _0 = VARTEMPL(fused::nth, 0);
-      constexpr auto const& _1 = VARTEMPL(fused::nth, 1);
-      constexpr auto const& _2 = VARTEMPL(fused::nth, 2);
-      constexpr auto const& _3 = VARTEMPL(fused::nth, 3);
-      constexpr auto const& _4 = VARTEMPL(fused::nth, 4);
-      constexpr auto const& _5 = VARTEMPL(fused::nth, 5);
-      constexpr auto const& _6 = VARTEMPL(fused::nth, 6);
-      constexpr auto const& _7 = VARTEMPL(fused::nth, 7);
-      constexpr auto const& _8 = VARTEMPL(fused::nth, 8);
-      constexpr auto const& _9 = VARTEMPL(fused::nth, 9);
+      static constexpr auto const& _0 = fused::nth<0>;
+      static constexpr auto const& _1 = fused::nth<1>;
+      static constexpr auto const& _2 = fused::nth<2>;
+      static constexpr auto const& _3 = fused::nth<3>;
+      static constexpr auto const& _4 = fused::nth<4>;
+      static constexpr auto const& _5 = fused::nth<5>;
+      static constexpr auto const& _6 = fused::nth<6>;
+      static constexpr auto const& _7 = fused::nth<7>;
+      static constexpr auto const& _8 = fused::nth<8>;
+      static constexpr auto const& _9 = fused::nth<9>;
     }
   }
 }

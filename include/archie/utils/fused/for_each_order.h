@@ -18,7 +18,7 @@ namespace utils {
       struct for_each_order {
         template <std::size_t n, typename... Ts>
         constexpr decltype(auto) get_n(meta::number<n>, Ts&&... args) const noexcept {
-          return VARTEMPL(fused::nth, n)(std::forward<Ts>(args)...);
+          return fused::nth<n>(std::forward<Ts>(args)...);
         }
         template <typename F, typename... Ts>
         decltype(auto) go(order_forward, F&& f, Ts&&... args) const {

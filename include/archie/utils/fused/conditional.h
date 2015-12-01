@@ -20,8 +20,8 @@ namespace utils {
         constexpr explicit conditional_(Up&& u)
             : F(std::forward<Up>(u)) {}
         template <typename... Ts, typename = meta::requires<traits::is_callable<F, Ts&&...>>>
-        constexpr auto operator()(
-            Ts&&... xs) const -> decltype(std::declval<F const&>()(std::forward<Ts>(xs)...)) {
+        constexpr auto operator()(Ts&&... xs) const
+            -> decltype(std::declval<F const&>()(std::forward<Ts>(xs)...)) {
           return F::operator()(std::forward<Ts>(xs)...);
         }
       };
@@ -33,13 +33,13 @@ namespace utils {
         constexpr explicit conditional_(Up&& u, Vs&&... vs)
             : F1(std::forward<Up>(u)), F2(std::forward<Vs>(vs)...) {}
         template <typename... Ts, typename = meta::requires<traits::is_callable<F1, Ts&&...>>>
-        constexpr auto operator()(
-            Ts&&... xs) const -> decltype(std::declval<F1 const&>()(std::forward<Ts>(xs)...)) {
+        constexpr auto operator()(Ts&&... xs) const
+            -> decltype(std::declval<F1 const&>()(std::forward<Ts>(xs)...)) {
           return F1::operator()(std::forward<Ts>(xs)...);
         }
         template <typename... Ts, typename = meta::requires_none<traits::is_callable<F1, Ts&&...>>>
-        constexpr auto operator()(
-            Ts&&... xs) const -> decltype(std::declval<F2 const&>()(std::forward<Ts>(xs)...)) {
+        constexpr auto operator()(Ts&&... xs) const
+            -> decltype(std::declval<F2 const&>()(std::forward<Ts>(xs)...)) {
           return F2::operator()(std::forward<Ts>(xs)...);
         }
       };

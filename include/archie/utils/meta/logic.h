@@ -19,7 +19,7 @@ namespace utils {
       static decltype(fused::False) test(Ts...);
 
     public:
-      using type = decltype(test(eval<std::conditional<Xs, int*, int>> {}...));
+      using type = decltype(test(eval<std::conditional<Xs, int*, int>>{}...));
     };
 
     template <bool... Xs>
@@ -35,7 +35,7 @@ namespace utils {
       static decltype(fused::True) test(Ts...);
 
     public:
-      using type = decltype(test(eval<std::conditional<Xs, int, int*>> {}...));
+      using type = decltype(test(eval<std::conditional<Xs, int, int*>>{}...));
     };
 
     template <bool... Xs>

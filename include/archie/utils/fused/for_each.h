@@ -2,6 +2,7 @@
 
 #include <utility>
 #include <archie/utils/meta/ignore.h>
+#include <archie/utils/meta/static_constexpr_storage.h>
 
 namespace archie {
 namespace utils {
@@ -15,7 +16,8 @@ namespace utils {
         }
       };
     }
-    constexpr auto const for_each = detail::for_each_{};
+
+    static constexpr auto const& for_each = meta::instance<detail::for_each_>();
   }
 }
 }
