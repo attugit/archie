@@ -1,20 +1,22 @@
 sudo: false
-language: cpp
 cache: apt
 
 matrix:
   include:
     - env: COMPILER=g++-4.9
+      language: cpp
       addons:
         apt:
           sources: ubuntu-toolchain-r-test
           packages: g++-4.9
     - env: COMPILER=g++-5
+      language: cpp
       addons:
         apt:
           sources: ubuntu-toolchain-r-test
           packages: g++-5
     - env: COMPILER=clang++-3.7
+      language: cpp
       addons:
         apt:
           sources:
@@ -22,11 +24,14 @@ matrix:
             - llvm-toolchain-precise-3.7
           packages: clang-3.7
     - env: COMPILER=clang++-3.8
+      language: cpp
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.8
+            - llvm-toolchain-precise-3.7
+            - llvm-toolchain-precise
           packages: clang-3.8
 
 before_install:
