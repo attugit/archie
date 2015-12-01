@@ -9,10 +9,8 @@ void canCreateTags() {
   auto t3 = fused::make_tuple(1, 2u, '3');
   auto tags = fused::transform(fused::make_tag, t3);
   static_assert(
-      std::is_same<
-          decltype(tags),
-          fused::tuple<fused::type_tag<int>, fused::type_tag<unsigned>, fused::type_tag<char>>>::
-          value,
+      std::is_same<decltype(tags), fused::tuple<fused::type_tag<int>, fused::type_tag<unsigned>,
+                                                fused::type_tag<char>>>::value,
       "");
 }
 

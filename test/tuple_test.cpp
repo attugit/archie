@@ -54,10 +54,8 @@ void canConstruct() {
     EXPECT_LE(sizeof(unsigned) + sizeof(double) + sizeof(char), sizeof(t));
   }
   {
-    static_assert(std::is_constructible < fused::tuple<unsigned, std::unique_ptr<double>, char>,
-                  unsigned,
-                  std::unique_ptr<double>&&,
-                  char > ::value,
+    static_assert(std::is_constructible<fused::tuple<unsigned, std::unique_ptr<double>, char>,
+                                        unsigned, std::unique_ptr<double>&&, char>::value,
                   "");
     auto t =
         fused::tuple<unsigned, std::unique_ptr<double>, char>(1u, std::unique_ptr<double>{}, '3');
@@ -68,10 +66,8 @@ void canConstruct() {
 }
 
 void canConstructTupleWithUncopyableElement() {
-  static_assert(std::is_constructible < fused::tuple<unsigned, std::unique_ptr<double>, char>,
-                unsigned,
-                std::unique_ptr<double>&&,
-                char > ::value,
+  static_assert(std::is_constructible<fused::tuple<unsigned, std::unique_ptr<double>, char>,
+                                      unsigned, std::unique_ptr<double>&&, char>::value,
                 "");
   auto t =
       fused::tuple<unsigned, std::unique_ptr<double>, char>(1u, std::make_unique<double>(2.0), '3');

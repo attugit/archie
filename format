@@ -1,1 +1,3 @@
-.clang-format
+#! /bin/sh
+
+clang-format -i `find . -name *.cpp` `find . -name *.hpp -name *.h ! -name catch.hpp`

@@ -13,8 +13,8 @@ namespace utils {
       template <std::size_t... other>
       struct placeholder {
         template <typename Tp, typename... Us>
-        constexpr auto operator()(meta::eat_n<other>..., Tp&& x, Us&&...) const
-            noexcept -> decltype(x) {
+        constexpr decltype(auto) operator()(meta::eat_n<other>..., Tp&& x, Us&&...) const
+            noexcept {
           return std::forward<Tp>(x);
         }
       };
