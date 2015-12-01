@@ -11,7 +11,7 @@ flags = [
   '-Wall',
   '-Wextra',
   '-Wshadow',
-  '-Wconversion',
+  #'-Wconversion',
   '-Wnon-virtual-dtor',
   '-Wold-style-cast',
   '-Wcast-align',
