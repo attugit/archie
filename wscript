@@ -19,7 +19,7 @@ flags = [
   '-Woverloaded-virtual',
   '-pedantic',
   '-pedantic-errors',
-#  '-Werror'
+  '-Werror'
 ]
 
 def options(opt):

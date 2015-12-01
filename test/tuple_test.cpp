@@ -468,8 +468,8 @@ void canExtractElement() {
 struct conv {
   explicit conv(std::string s) : value(s.size()) {}
   conv(unsigned i) : value(i) {}
-  operator unsigned() const { return value; }
-  unsigned value = 0;
+  operator std::size_t() const { return value; }
+  std::size_t value = 0;
 };
 
 #if defined(USE_ARCHIE_TUPLE)

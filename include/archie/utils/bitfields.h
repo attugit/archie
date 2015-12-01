@@ -114,16 +114,18 @@ namespace utils {
       size_type index() const noexcept { return I; }
       data_type mask() const noexcept { return Pack::mask_of<I>(); }
       using field_type = Storage<size_of<I>(Pack{})>;
-      field_type value() const noexcept { return (data & mask()) >> offset(); }
+      field_type value() const noexcept {
+        return static_cast<field_type>((data & mask()) >> offset());
+      }
 
       bool test(IndexType at) const noexcept { return (value() & (1u << at)) != 0u; }
 
       Field& set(IndexType at) noexcept {
-        data = data | ((1u << (at + offset())) & mask());
+        data = static_cast<data_type>(data | ((1u << (at + offset())) & mask()));
         return *this;
       }
       Field& reset(IndexType at) noexcept {
-        data = data & (~((1u << (at + offset())) & mask()));
+        data = static_cast<data_type>(data & (~((1u << (at + offset())) & mask())));
         return *this;
       }
       Field& set(IndexType at, Boolean v) noexcept { return v ? set(at) : reset(at); }

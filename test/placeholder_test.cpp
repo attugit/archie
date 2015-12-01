@@ -20,9 +20,9 @@ void canAccessArgumentWithPlaceholder() {
 
 void canBindPlaceHolders() {
   auto inc = [](auto&& x, auto&& y, auto&& z) {
-    x += 1;
-    y += 2;
-    z += 3;
+    ++x;
+    ++++y;
+    ++++++z;
   };
 
   auto func = fused::reorder(inc, _1, _2, _0);
