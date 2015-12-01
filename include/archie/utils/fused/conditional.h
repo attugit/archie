@@ -4,7 +4,7 @@
 #include <type_traits>
 #include <archie/utils/traits/is_callable.h>
 #include <archie/utils/meta/requires.h>
-#include <archie/utils/meta/variable_template.h>
+#include <archie/utils/meta/static_constexpr_storage.h>
 
 namespace archie {
 namespace utils {
@@ -63,7 +63,8 @@ namespace utils {
     template <typename... Fs>
     using conditional_t = detail::conditional_<Fs...>;
 
-    DECL_VARIADIC_VARTEMPL(conditional, conditional_t, typename...);
+    template <typename... T>
+    static constexpr auto const& conditional = meta::instance<conditional_t<T...>>();
 
     constexpr auto const make_conditional = detail::make_conditional_{};
   }

@@ -11,7 +11,7 @@ flags = [
   '-Wall',
   '-Wextra',
   '-Wshadow',
-#  '-Wconversion',
+  '-Wconversion',
   '-Wnon-virtual-dtor',
   '-Wold-style-cast',
   '-Wcast-align',
@@ -19,7 +19,7 @@ flags = [
   '-Woverloaded-virtual',
   '-pedantic',
   '-pedantic-errors',
-  '-Werror'
+#  '-Werror'
 ]
 
 def options(opt):

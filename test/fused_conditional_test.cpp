@@ -1,4 +1,3 @@
-#include <archie/utils/meta/variable_template.h>
 #include <archie/utils/fused/conditional.h>
 #include <archie/utils/test.h>
 
@@ -20,8 +19,8 @@ void canUseConditionalT() {
 }
 
 void canUseConditional() {
-  auto x = VARTEMPL(fused::conditional, goo, hoo)();
-  auto y = VARTEMPL(fused::conditional, goo, hoo)(1);
+  auto x = fused::conditional<goo, hoo>();
+  auto y = fused::conditional<goo, hoo>(1);
   ASSERT_EQ(3, x);
   ASSERT_EQ(4, y);
 }

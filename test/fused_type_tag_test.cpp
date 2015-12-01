@@ -1,4 +1,3 @@
-#include <archie/utils/meta/variable_template.h>
 #include <archie/utils/fused/type_tag.h>
 #include <archie/utils/fused/transform.h>
 #include <archie/utils/test.h>
@@ -25,14 +24,14 @@ void canExpandTags() {
 }
 
 void canUseVariableTemplate() {
-  auto x = VARTEMPL(fused::id, int)(1);
+  auto x = fused::id<int>(1);
   static_assert(std::is_same<decltype(x), int>::value, "");
   EXPECT_EQ(1, x);
 }
 
 void canCompareTags() {
-  constexpr auto const& x = VARTEMPL(fused::id, int);
-  constexpr auto const& y = VARTEMPL(fused::id, unsigned);
+  constexpr auto const& x = fused::id<int>;
+  constexpr auto const& y = fused::id<unsigned>;
   EXPECT_EQ(x, fused::make_tag(1));
   EXPECT_EQ(y, fused::make_tag(1u));
   EXPECT_NE(x, y);
