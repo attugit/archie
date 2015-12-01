@@ -138,7 +138,7 @@ void canUseGetByIdToWrite() {
   EXPECT_EQ(5u, x);
 
   ASSERT_EQ(2.0, *fused::get<1>(t));
-  fused::get<1>(t) = std::move(std::make_unique<double>(3.0));
+  fused::get<1>(t) = std::make_unique<double>(3.0);
   EXPECT_EQ(3.0, *fused::get<1>(t));
 }
 
