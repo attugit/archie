@@ -1,36 +1,32 @@
 language: cpp
 sudo: false
-compiler: clang
-
-addons: &addons
-  apt:
-    sources: &sources
-      - ubuntu-toolchain-r-test
-      - llvm-toolchain-precise-3.7
-      - llvm-toolchain-precise-3.8
-      - llvm-toolchain-precise
+os: linux
 
 matrix:
   include:
     - env: COMPILER=g++-4.9
       addons:
         apt:
-          sources: *sources
+          sources: ubuntu-toolchain-r-test
           packages: g++-4.9
     - env: COMPILER=g++-5
       addons:
         apt:
-          sources: *sources
+          sources: ubuntu-toolchain-r-test
           packages: g++-5
     - env: COMPILER=clang++-3.7
       addons:
         apt:
-          sources: *sources
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.7
           packages: clang-3.7
     - env: COMPILER=clang++-3.8
       addons:
         apt:
-          sources: *sources
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.8
           packages: clang-3.8
 
 before_install:
