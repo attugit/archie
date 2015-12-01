@@ -66,7 +66,7 @@ namespace utils {
     template <typename... T>
     static constexpr auto const& conditional = meta::instance<conditional_t<T...>>();
 
-    constexpr auto const make_conditional = detail::make_conditional_{};
+    static constexpr auto const& make_conditional = meta::instance<detail::make_conditional_>();
   }
 }
 }

@@ -4,6 +4,7 @@
 #include <functional>
 #include <archie/utils/fused/fold.h>
 #include <archie/utils/fused/boolean.h>
+#include <archie/utils/meta/static_constexpr_storage.h>
 
 namespace archie {
 namespace utils {
@@ -95,15 +96,15 @@ namespace utils {
         }
       };
     }
-    constexpr auto const accumulate = detail::accumulate_{};
-    constexpr auto const extremum = detail::extremum_{};
-    constexpr auto const max = extremum(std::greater_equal<>{});
-    constexpr auto const min = extremum(std::less_equal<>{});
-    constexpr auto const all_of = detail::all_of_{};
-    constexpr auto const any_of = detail::any_of_{};
-    constexpr auto const none_of = detail::none_of_{};
-    constexpr auto const count_if = detail::count_if_{};
-    constexpr auto const is_sorted = detail::is_sorted_{};
+    static constexpr auto const& accumulate = meta::instance<detail::accumulate_>();
+    static constexpr auto const& extremum = meta::instance<detail::extremum_>();
+    static constexpr auto const max = extremum(std::greater_equal<>{});
+    static constexpr auto const min = extremum(std::less_equal<>{});
+    static constexpr auto const& all_of = meta::instance<detail::all_of_>();
+    static constexpr auto const& any_of = meta::instance<detail::any_of_>();
+    static constexpr auto const& none_of = meta::instance<detail::none_of_>();
+    static constexpr auto const& count_if = meta::instance<detail::count_if_>();
+    static constexpr auto const& is_sorted = meta::instance<detail::is_sorted_>();
   }
 }
 }

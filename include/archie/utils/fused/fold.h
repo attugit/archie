@@ -1,6 +1,7 @@
 #pragma once
 
 #include <utility>
+#include <archie/utils/meta/static_constexpr_storage.h>
 
 namespace archie {
 namespace utils {
@@ -40,8 +41,8 @@ namespace utils {
         }
       };
     }
-    constexpr auto const fold = detail::fold_{};
-    constexpr auto const greedy_fold = detail::greedy_fold_{};
+    static constexpr auto const& fold = meta::instance<detail::fold_>();
+    static constexpr auto const& greedy_fold = meta::instance<detail::greedy_fold_>();
     namespace detail {
       struct make_fold_ {
       private:
@@ -76,7 +77,7 @@ namespace utils {
         }
       };
     }
-    constexpr auto const make_fold = detail::make_fold_{};
+    static constexpr auto const& make_fold = meta::instance<detail::make_fold_>();
   }
 }
 }

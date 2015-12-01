@@ -38,7 +38,8 @@ namespace utils {
       };
     }
 
-    constexpr auto const apply = make_conditional(detail::apply_tuple_{}, detail::apply_args_{});
+    static constexpr auto const apply =
+        make_conditional(detail::apply_tuple_{}, detail::apply_args_{});
   }
 }
 }

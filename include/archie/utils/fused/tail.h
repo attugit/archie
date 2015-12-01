@@ -6,6 +6,7 @@
 #include <archie/utils/meta/listed.h>
 #include <archie/utils/meta/ignore.h>
 #include <archie/utils/meta/as_type_list.h>
+#include <archie/utils/meta/static_constexpr_storage.h>
 
 namespace archie {
 namespace utils {
@@ -29,7 +30,7 @@ namespace utils {
         }
       };
     }
-    constexpr auto const tail = detail::tail_{};
+    static constexpr auto const& tail = meta::instance<detail::tail_>();
   }
 }
 }

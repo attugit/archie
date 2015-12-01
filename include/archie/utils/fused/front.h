@@ -5,10 +5,7 @@
 namespace archie {
 namespace utils {
   namespace fused {
-    namespace detail {
-      struct front_ : fused::placeholder<0> {};
-    }
-    constexpr auto const front = detail::front_{};
+    static constexpr auto const& front = nth<0>;
   }
 }
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <archie/utils/meta/indexable.h>
+#include <archie/utils/meta/static_constexpr_storage.h>
 #include <archie/utils/fused/tuple.h>
 
 namespace archie {
@@ -46,8 +47,8 @@ namespace utils {
         }
       };
     }
-    constexpr auto const zip = detail::zip_{};
-    constexpr auto const zip_view = detail::zip_view_{};
+    static constexpr auto const& zip = meta::instance<detail::zip_>();
+    static constexpr auto const& zip_view = meta::instance<detail::zip_view_>();
   }
 }
 }

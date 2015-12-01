@@ -3,6 +3,7 @@
 #include <archie/utils/fused/tuple.h>
 #include <archie/utils/fused/tuple_view.h>
 #include <archie/utils/fused/apply.h>
+#include <archie/utils/meta/static_constexpr_storage.h>
 #include <utility>
 
 namespace archie {
@@ -28,8 +29,8 @@ namespace utils {
         }
       };
     }
-    constexpr auto const transform = detail::transform_{};
-    constexpr auto const transform_view = detail::transform_view_{};
+    static constexpr auto const& transform = meta::instance<detail::transform_>();
+    static constexpr auto const& transform_view = meta::instance<detail::transform_view_>();
   }
 }
 }
