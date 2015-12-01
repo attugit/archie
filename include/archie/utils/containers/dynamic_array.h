@@ -141,7 +141,7 @@ namespace utils {
     }
 
     template <typename Tp, typename Alloc, typename Tag, std::size_t Stock>
-    dynamic_array<Tp, Alloc, Tag, Stock>::dynamic_array(std::initializer_list<value_type> list)
+    dynamic_array<Tp, Alloc, Tag, Stock>::dynamic_array(std::initializer_list<value_type> list) noexcept(is_nothrow::copy_constructible)
         : dynamic_array(std::begin(list), std::end(list)) {}
 
     template <typename Tp, typename Alloc, typename Tag, std::size_t Stock>

@@ -1,4 +1,9 @@
+#if defined(DEBUG)
 #include <cassert>
+#elif defined(TEST_BUILD)
+#include <exception>
+#define assert(x) do { if((x) == false) { std::terminate(); } } while(0)
+#endif
 
 #define ASSERT_TRUE(x) assert((x) == true);
 #define ASSERT_FALSE(x) assert((x) == false);

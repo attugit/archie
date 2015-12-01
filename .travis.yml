@@ -1,86 +1,44 @@
+sudo: false
 language: cpp
-os: linux
-
-env:
-  global:
-    - GCC_VERSION="4.9"
-    - CLANG_VERSION="3.5"
+cache:
+  - apt
 
 matrix:
   include:
-    - compiler: gcc
-      env: STDLIB=libstdc++ TUPLE_IMPL=archie
-    - compiler: gcc
-      env: STDLIB=libstdc++ TUPLE_IMPL=std
-    - compiler: clang
-      env: STDLIB=libstdc++ TUPLE_IMPL=archie
-    - compiler: clang
-      env: STDLIB=libstdc++ TUPLE_IMPL=std
-    - compiler: clang
-      env: STDLIB=libc++ TUPLE_IMPL=archie
-    - compiler: clang
-      env: STDLIB=libc++ TUPLE_IMPL=std
-  exclude:
-    - env: ignore=this
-  allow_failures:
-    - compiler: clang
-      env: STDLIB=libc++ TUPLE_IMPL=archie
-    - compiler: clang
-      env: STDLIB=libc++ TUPLE_IMPL=std
-  fast_finish: true
+    - env: COMPILER=g++-4.9
+      os: linux
+      addons: &gcc49
+        apt:
+          sources: &sources
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-4.9
+            - g++-4.9
+    - env: COMPILER=g++-5
+      os: linux
+      addons: &gcc5
+        apt:
+          sources: &sources
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-5
+            - g++-5
+    - env: COMPILER=clang++-3.7
+      os: linux
+      addons: &clang37
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.7
+            - llvm-toolchain-precise
+          packages:
+            - clang-3.7
 
 before_install:
-  - git log --name-status HEAD^..HEAD
-  - if [ "$CXX" == "g++" ];
-    then
-      echo sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test;
-      sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test;
-    fi
-  - if [ "$CXX" == "clang++" ];
-    then
-      echo sudo add-apt-repository --yes ppa:h-rayflood/gcc-upper;
-      sudo add-apt-repository --yes ppa:h-rayflood/gcc-upper;
-      echo sudo add-apt-repository --yes ppa:h-rayflood/llvm-upper;
-      sudo add-apt-repository --yes ppa:h-rayflood/llvm-upper;
-    fi
-  - sudo apt-get update -qq
-
-install:
-  - if [ "$CXX" = "g++" ];
-    then
-      echo sudo apt-get install -qq g++-${GCC_VERSION};
-      sudo apt-get install -qq g++-${GCC_VERSION};
-      echo export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}";
-      export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}";
-    fi
-  - if [ "$CXX" == "clang++" ];
-    then
-      echo sudo apt-get install -qq clang-${CLANG_VERSION};
-      sudo apt-get install -qq clang-${CLANG_VERSION};
-      echo export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}";
-      export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}";
-    fi
-  - if [ "$STDLIB" == "libstdc++" ];
-    then
-      echo sudo apt-get install -qq libstdc++6-${GCC_VERSION}-dbg;
-      sudo apt-get install -qq libstdc++6-${GCC_VERSION}-dbg;
-    fi
-  - export USE_STDLIB="";
-  - if [ "$STDLIB" == "libc++" ];
-    then
-      echo sudo apt-get install -qq libc++1 libc++-dev;
-      sudo apt-get install -qq libc++1 libc++-dev;
-      export USE_STDLIB="--libc++";
-    fi
-  - export USE_TUPLE="";
-  - if [ "TUPLE_IMPL" == "std" ];
-    then
-      export USE_TUPLE="--use-std-tuple";
-    fi
-  - sudo apt-get -qq install valgrind;
+  - export CXX=$COMPILER
+  - which $CXX
 
 script:
   - rm -rf build;
-  - ./configure --targetdir=build ${USE_STDLIB} ${USE_TUPLE} --testcmd="valgrind -q --error-exitcode=1";
-  - make config=debug verbose=1 -C build -f Makefile;
-  - make config=release verbose=1 -C build -f Makefile;
+  - CXX=$COMPILER ./waf distclean configure build --alltests
+  - CXX=$COMPILER ./waf distclean configure build_debug --alltests
