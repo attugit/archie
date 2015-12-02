@@ -19,13 +19,8 @@ namespace utils {
     template <typename Tp>
     using is_move_constructible = is_constructible<Tp, Tp&&>;
 
-#if defined(USE_LIBCPP) || (defined(__GNUC__) && (__GNUC__ > 4))
     template <typename Tp>
     using is_trivially_copy_constructible = std::is_trivially_copy_constructible<Tp>;
-#else
-    template <typename Tp>
-    using is_trivially_copy_constructible = std::has_trivial_copy_constructor<Tp>;
-#endif
   }
 }
 }
