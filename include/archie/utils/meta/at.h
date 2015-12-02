@@ -15,7 +15,7 @@ namespace utils {
       template <std::size_t... other>
       struct at {
         template <typename Tp>
-        static constexpr auto skip(eat_n<other>..., Tp&&, ...) noexcept -> returns<Tp>;
+        static auto skip(eat_n<other>..., Tp&&, ...) noexcept -> returns<Tp>;
 
         template <typename... Ts>
         using apply = decltype(skip(std::declval<Ts>()...));
