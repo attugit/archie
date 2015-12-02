@@ -22,6 +22,14 @@ flags = [
   '-Werror'
 ]
 
+trait_check = """
+#include <type_traits>
+int main() {
+  (void)std::is_trivially_copy_constructible<int>::value;
+  return 0;
+}
+"""
+
 def options(opt):
   opt.load('compiler_cxx')
   opt.load('waf_unit_test')
@@ -49,6 +57,10 @@ def configure(conf):
           msg='Checking for link time optimization'):
     conf.env.CXXFLAGS += ['-flto']
     conf.env.LINKFLAGS += ['-flto']
+  if conf.check_cxx(fragment=trait_check,
+    mandatory=False,
+    msg='Checking for traits'):
+    conf.env.DEFINES += ['USE_IS_TRIVIALLY_COPY_CONSTRUCTIBLE_TRAIT']
 
 from waflib.Tools import waf_unit_test
 def build(bld):
