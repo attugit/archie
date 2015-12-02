@@ -38,6 +38,10 @@ def configure(conf):
   conf.load('waf_unit_test')
   conf.define('APPNAME', APPNAME)
   conf.define('VERSION', VERSION)
+  if conf.check_cxx(fragment=trait_check,
+    mandatory=False,
+    msg='Checking for traits'):
+    conf.env.DEFINES += ['USE_IS_TRIVIALLY_COPY_CONSTRUCTIBLE_TRAIT']
 
   conf.setenv('debug')
   conf.load('compiler_cxx')
@@ -57,10 +61,6 @@ def configure(conf):
           msg='Checking for link time optimization'):
     conf.env.CXXFLAGS += ['-flto']
     conf.env.LINKFLAGS += ['-flto']
-  if conf.check_cxx(fragment=trait_check,
-    mandatory=False,
-    msg='Checking for traits'):
-    conf.env.DEFINES += ['USE_IS_TRIVIALLY_COPY_CONSTRUCTIBLE_TRAIT']
 
 from waflib.Tools import waf_unit_test
 def build(bld):
