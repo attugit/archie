@@ -1,47 +1,41 @@
 #include <archie/utils/fused/tail.h>
 #include <archie/utils/fused/tuple.h>
-#include <archie/utils/test.h>
+#include <catch.hpp>
 
+namespace {
 namespace fused = archie::utils::fused;
 
-void canGetLValueFusedTupleTail() {
+TEST_CASE("canGetLValueFusedTupleTail", "[fused::tail]") {
   auto t0 = fused::make_tuple(1, 2u, '3');
   auto x = fused::tail(t0);
   static_assert(fused::tuple_size(fused::id<decltype(x)>) == 2u, "");
-  EXPECT_EQ(2u, fused::get<0>(x));
-  EXPECT_EQ('3', fused::get<1>(x));
+  REQUIRE(2u == fused::get<0>(x));
+  REQUIRE('3' == fused::get<1>(x));
 }
 
-void canGetRValueFusedTupleTail() {
+TEST_CASE("canGetRValueFusedTupleTail", "[fused::tail]") {
   auto x = fused::tail(fused::make_tuple(1, 2u, '3'));
   static_assert(fused::tuple_size(fused::id<decltype(x)>) == 2u, "");
-  EXPECT_EQ(2u, fused::get<0>(x));
-  EXPECT_EQ('3', fused::get<1>(x));
+  REQUIRE(2u == fused::get<0>(x));
+  REQUIRE('3' == fused::get<1>(x));
 }
 
-void canGetConstValueFusedTupleTail() {
+TEST_CASE("canGetConstValueFusedTupleTail", "[fused::tail]") {
   auto const t0 = fused::make_tuple(1, 2u, '3');
   auto x = fused::tail(t0);
   static_assert(fused::tuple_size(fused::id<decltype(x)>) == 2u, "");
-  EXPECT_EQ(2u, fused::get<0>(x));
-  EXPECT_EQ('3', fused::get<1>(x));
+  REQUIRE(2u == fused::get<0>(x));
+  REQUIRE('3' == fused::get<1>(x));
 }
 
-void canGetFusedTupleOfReferencesTail() {
+TEST_CASE("canGetFusedTupleOfReferencesTail", "[fused::tail]") {
   auto a = 1;
   auto b = 2u;
   auto c = '3';
   auto t0 = fused::tie(a, b, c);
   auto x = fused::tail(t0);
   static_assert(fused::tuple_size(fused::id<decltype(x)>) == 2u, "");
-  EXPECT_EQ(&b, &fused::get<0>(x));
-  EXPECT_EQ(&c, &fused::get<1>(x));
+  REQUIRE(&b == &fused::get<0>(x));
+  REQUIRE(&c == &fused::get<1>(x));
 }
-
-int main() {
-  canGetLValueFusedTupleTail();
-  canGetRValueFusedTupleTail();
-  canGetConstValueFusedTupleTail();
-  canGetFusedTupleOfReferencesTail();
-  return 0;
 }

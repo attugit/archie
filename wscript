@@ -40,7 +40,7 @@ def configure(conf):
   conf.setenv('release')
   conf.load('compiler_cxx')
   conf.env.CXXFLAGS += flags
-  conf.env.CXXFLAGS += ['-O3', '-march=native', '-fPIC', '-fno-rtti']
+  conf.env.CXXFLAGS += ['-O3', '-march=native', '-fPIC', '-fno-rtti', '-fwhole-program']
   conf.env.DEFINES += ['NDEBUG']
   if conf.check_cxx(fragment='int main() {}\n',
           cxxflags='-flto',
@@ -65,14 +65,19 @@ def build(bld):
   )
   bld.env.INCLUDES += ['test']
   bld.env.DEFINES += ['TEST_BUILD']
-  for t in bld.path.ant_glob(['test/**/*.cpp']):
-    bld(
-     source       = t,
-     target       = 'ut_' + t.name,
-     features     = 'cxx cxxprogram test',
-     use          = APPNAME,
-     install_path = None,
-    )
+  bld(
+    source       = bld.path.ant_glob(['test/test_main.cpp']),
+    target       = 'catch',
+    features     = 'cxx',
+    install_path = None,
+  )
+  bld(
+    source       = bld.path.ant_glob(['test/fused/**/*.cpp']),
+    target       = 'ut_fused',
+    features     = 'cxx cxxprogram test',
+    use          = [APPNAME, 'catch'],
+    install_path = None,
+  )
   bld.add_post_fun(waf_unit_test.summary)
   bld.add_post_fun(waf_unit_test.set_exit_code)
   inc = bld.path.find_dir('include')

@@ -1,10 +1,11 @@
 #include <archie/utils/fused/type_tag.h>
 #include <archie/utils/fused/transform.h>
-#include <archie/utils/test.h>
+#include <catch.hpp>
 
+namespace {
 namespace fused = archie::utils::fused;
 
-void canCreateTags() {
+TEST_CASE("canCreateTags", "[fused::tags]") {
   auto t3 = fused::make_tuple(1, 2u, '3');
   auto tags = fused::transform(fused::make_tag, t3);
   static_assert(
@@ -13,35 +14,28 @@ void canCreateTags() {
       "");
 }
 
-void canExpandTags() {
+TEST_CASE("canExpandTags", "[fused::tags]") {
   auto expand = [](auto x) { return x.construct(static_cast<typename decltype(x)::type>(0)); };
   auto tags = fused::transform(fused::make_tag, 1, 2u, '3');
   auto defs = fused::transform(expand, tags);
   static_assert(std::is_same<decltype(defs), fused::tuple<int, unsigned, char>>::value, "");
-  EXPECT_EQ(0, fused::get<0>(defs));
-  EXPECT_EQ(0, fused::get<1>(defs));
-  EXPECT_EQ(0, fused::get<2>(defs));
+  REQUIRE(0 == fused::get<0>(defs));
+  REQUIRE(0 == fused::get<1>(defs));
+  REQUIRE(0 == fused::get<2>(defs));
 }
 
-void canUseVariableTemplate() {
+TEST_CASE("canUseVariableTemplate", "[fused::tags]") {
   auto x = fused::id<int>(1);
   static_assert(std::is_same<decltype(x), int>::value, "");
-  EXPECT_EQ(1, x);
+  REQUIRE(1 == x);
 }
 
-void canCompareTags() {
+TEST_CASE("canCompareTags", "[fused::tags]") {
   constexpr auto const& x = fused::id<int>;
   constexpr auto const& y = fused::id<unsigned>;
-  EXPECT_EQ(x, fused::make_tag(1));
-  EXPECT_EQ(y, fused::make_tag(1u));
-  EXPECT_NE(x, y);
-  EXPECT_NE(fused::make_tag(1), fused::make_tag(1u));
+  REQUIRE(x == fused::make_tag(1));
+  REQUIRE(y == fused::make_tag(1u));
+  REQUIRE(x != y);
+  REQUIRE(fused::make_tag(1) != fused::make_tag(1u));
 }
-
-int main() {
-  canCreateTags();
-  canExpandTags();
-  canUseVariableTemplate();
-  canCompareTags();
-  return 0;
 }

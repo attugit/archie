@@ -1,20 +1,21 @@
 #include <archie/utils/fused/fold.h>
 #include <archie/utils/fused/tuple.h>
 #include <archie/utils/fused/apply.h>
-#include <archie/utils/test.h>
+#include <catch.hpp>
 
+namespace {
 namespace fused = archie::utils::fused;
 
-void canUseFold() {
+TEST_CASE("canUseFold", "[fused::fold]") {
   auto const mkt = [](auto&& s, auto&& e) { return fused::make_tuple(s, e); };
-  EXPECT_EQ(fused::make_tuple(0, 1), fused::fold(mkt, 0, 1));
-  EXPECT_EQ(fused::make_tuple(fused::make_tuple(0, 1), 2), fused::fold(mkt, 0, 1, 2));
+  REQUIRE(fused::make_tuple(0, 1) == fused::fold(mkt, 0, 1));
+  REQUIRE(fused::make_tuple(fused::make_tuple(0, 1), 2) == fused::fold(mkt, 0, 1, 2));
 }
 
-void canApplyFold() {
+TEST_CASE("canApplyFold", "[fused::fold]") {
   auto const mkt = [](auto&& s, auto&& e) { return fused::make_tuple(s, e); };
   auto const t = fused::make_tuple(0, 1, 2);
-  EXPECT_EQ(fused::make_tuple(fused::make_tuple(0, 1), 2), fused::apply(fused::make_fold(mkt), t));
+  REQUIRE(fused::make_tuple(fused::make_tuple(0, 1), 2) == fused::apply(fused::make_fold(mkt), t));
 }
 
 struct sorted {
@@ -28,18 +29,12 @@ struct sorted {
   }
 };
 
-void canUseGreedyFold() {
+TEST_CASE("canUseGreedyFold", "[fused::fold]") {
   auto const sf = sorted{};
-  EXPECT_TRUE(fused::greedy_fold(sf, true, 0, 1));
-  EXPECT_TRUE(fused::greedy_fold(sf, true, 0, 1, 2));
-  EXPECT_TRUE(fused::greedy_fold(sf, true, 0, 1, 2, 3));
-  EXPECT_FALSE(fused::greedy_fold(sf, true, 0, 1, 2, 1));
-  EXPECT_FALSE(fused::greedy_fold(sf, true, 0, 1, 0, 3));
+  REQUIRE(fused::greedy_fold(sf, true, 0, 1));
+  REQUIRE(fused::greedy_fold(sf, true, 0, 1, 2));
+  REQUIRE(fused::greedy_fold(sf, true, 0, 1, 2, 3));
+  REQUIRE_FALSE(fused::greedy_fold(sf, true, 0, 1, 2, 1));
+  REQUIRE_FALSE(fused::greedy_fold(sf, true, 0, 1, 0, 3));
 }
-
-int main() {
-  canUseFold();
-  canApplyFold();
-  canUseGreedyFold();
-  return 0;
 }

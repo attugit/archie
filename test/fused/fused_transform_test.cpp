@@ -1,7 +1,8 @@
 #include <archie/utils/fused/transform.h>
 #include <type_traits>
-#include <archie/utils/test.h>
+#include <catch.hpp>
 
+namespace {
 namespace fused = archie::utils::fused;
 
 template <typename Tp>
@@ -16,25 +17,25 @@ struct tag {
 auto id = [](auto const& x) { return x; };
 auto make_tag = [](auto&& x) { return tag<std::decay_t<decltype(x)>>{}; };
 
-void canUseTransformWithArgsWithoutTypeChange() {
+TEST_CASE("canUseTransformWithArgsWithoutTypeChange", "[fused::transform]") {
   auto ret = fused::transform(id, 1, 2, 3);
   static_assert(std::is_same<decltype(ret), fused::tuple<int, int, int>>::value, "");
-  EXPECT_EQ(1, fused::get<0>(ret));
-  EXPECT_EQ(2, fused::get<1>(ret));
-  EXPECT_EQ(3, fused::get<2>(ret));
+  REQUIRE(1 == fused::get<0>(ret));
+  REQUIRE(2 == fused::get<1>(ret));
+  REQUIRE(3 == fused::get<2>(ret));
 }
 
-void canUseTransformWithTupleWithoutTypeChange() {
+TEST_CASE("canUseTransformWithTupleWithoutTypeChange", "[fused::transform]") {
   auto t3 = fused::make_tuple(1, 2, 3);
   auto ret = fused::transform(id, t3);
   static_assert(std::is_same<decltype(ret), fused::tuple<int, int, int>>::value, "");
 
-  EXPECT_EQ(1, fused::get<0>(ret));
-  EXPECT_EQ(2, fused::get<1>(ret));
-  EXPECT_EQ(3, fused::get<2>(ret));
+  REQUIRE(1 == fused::get<0>(ret));
+  REQUIRE(2 == fused::get<1>(ret));
+  REQUIRE(3 == fused::get<2>(ret));
 }
 
-void canUseTransformView() {
+TEST_CASE("canUseTransformView", "[fused::transform]") {
 // FIXME -Werror=conversion
 #if 0
   auto t = fused::make_tuple(1u, 2.0, '3');
@@ -50,20 +51,20 @@ void canUseTransformView() {
 #endif
 }
 
-void canUseTransformWithArgsWithTypeChange() {
+TEST_CASE("canUseTransformWithArgsWithTypeChange", "[fused::transform]") {
   auto ret = fused::transform(make_tag, 1, 2u, '3');
   static_assert(
       std::is_same<decltype(ret), fused::tuple<tag<int>, tag<unsigned>, tag<char>>>::value, "");
 }
 
-void canUseTransformWithTupleWithTypeChange() {
+TEST_CASE("canUseTransformWithTupleWithTypeChange", "[fused::transform]") {
   auto t3 = fused::make_tuple(1, 2u, '3');
   auto ret = fused::transform(make_tag, t3);
   static_assert(
       std::is_same<decltype(ret), fused::tuple<tag<int>, tag<unsigned>, tag<char>>>::value, "");
 }
 
-void canUseTransformWithRValueTupleWithTypeChange() {
+TEST_CASE("canUseTransformWithRValueTupleWithTypeChange", "[fused::transform]") {
   auto ret = fused::transform(make_tag, fused::make_tuple(1, 2u, '3'));
   static_assert(
       std::is_same<decltype(ret), fused::tuple<tag<int>, tag<unsigned>, tag<char>>>::value, "");
@@ -71,18 +72,8 @@ void canUseTransformWithRValueTupleWithTypeChange() {
 
 auto create = [](auto&& x) { return x.construct(); };
 
-void canUseTransformWithTupleToCallElemntsMemberFunctions() {
+TEST_CASE("canUseTransformWithTupleToCallElemntsMemberFunctions", "[fused::transform]") {
   auto defs = fused::transform(create, fused::tuple<tag<int>, tag<unsigned>, tag<char>>{});
   static_assert(std::is_same<decltype(defs), fused::tuple<int, unsigned, char>>::value, "");
 }
-
-int main() {
-  canUseTransformWithArgsWithoutTypeChange();
-  canUseTransformWithTupleWithoutTypeChange();
-  canUseTransformView();
-  canUseTransformWithArgsWithTypeChange();
-  canUseTransformWithTupleWithTypeChange();
-  canUseTransformWithRValueTupleWithTypeChange();
-  canUseTransformWithTupleToCallElemntsMemberFunctions();
-  return 0;
 }

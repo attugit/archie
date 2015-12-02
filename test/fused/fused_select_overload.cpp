@@ -1,9 +1,10 @@
 #include <archie/utils/fused/select_overload.h>
 #include <archie/utils/meta/number.h>
-#include <archie/utils/test.h>
 #include <utility>
 #include <type_traits>
+#include <catch.hpp>
 
+namespace {
 namespace fused = archie::utils::fused;
 namespace meta = archie::utils::meta;
 
@@ -22,14 +23,14 @@ constexpr decltype(auto) foo(fused::otherwise) {
   return 11u;
 }
 
-void canSelectOverload() {
+TEST_CASE("canSelectOverload", "[fused::overload]") {
   auto x = foo<8>(fused::select_overload);
   auto y = foo<16>(fused::select_overload);
   auto z = foo<17>(fused::select_overload);
 
-  EXPECT_EQ(1u, x);
-  EXPECT_EQ(2u, y);
-  EXPECT_EQ(11u, z);
+  REQUIRE(1u == x);
+  REQUIRE(2u == y);
+  REQUIRE(11u == z);
 }
 
 struct overloaded {
@@ -53,15 +54,10 @@ private:
   }
 };
 
-void canSelectOverloadMember() {
+TEST_CASE("canSelectOverloadMember", "[fused::overload]") {
   constexpr overloaded over{};
-  EXPECT_EQ(4u, over(1));
-  EXPECT_EQ(7u, over(7u));
-  EXPECT_EQ(0u, over(meta::number<7u>{}));
+  REQUIRE(4u == over(1));
+  REQUIRE(7u == over(7u));
+  REQUIRE(0u == over(meta::number<7u>{}));
 }
-
-int main() {
-  canSelectOverload();
-  canSelectOverloadMember();
-  return 0;
 }

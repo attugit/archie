@@ -1,10 +1,11 @@
 #include <archie/utils/fused/find.h>
-#include <archie/utils/test.h>
 #include <type_traits>
+#include <catch.hpp>
 
+namespace {
 namespace fused = archie::utils::fused;
 
-void canUseFusedFind() {
+TEST_CASE("canUseFusedFind", "[fused::find]") {
   unsigned a = 0u;
   int b = 1;
   char c = '2';
@@ -13,13 +14,13 @@ void canUseFusedFind() {
 
   auto x = fused::find<unsigned&>(a, b, c, d, e);
   auto y = fused::find<double&>(a, b, c, d, e);
-  EXPECT_EQ(a, x);
-  EXPECT_EQ(d, y);
+  REQUIRE(a == x);
+  REQUIRE(d == y);
 
-  EXPECT_EQ(1, fused::find<int>(1, 2u, 3.0, '4'));
-  EXPECT_EQ(2u, fused::find<unsigned>(1, 2u, 3.0, '4'));
-  EXPECT_EQ(3.0, fused::find<double>(1, 2u, 3.0, '4'));
-  EXPECT_EQ('4', fused::find<char>(1, 2u, 3.0, '4'));
+  REQUIRE(1 == fused::find<int>(1, 2u, 3.0, '4'));
+  REQUIRE(2u == fused::find<unsigned>(1, 2u, 3.0, '4'));
+  REQUIRE(3.0 == fused::find<double>(1, 2u, 3.0, '4'));
+  REQUIRE('4' == fused::find<char>(1, 2u, 3.0, '4'));
 }
 
 template <typename Tp>
@@ -28,7 +29,7 @@ using is_u = std::is_unsigned<std::decay_t<Tp>>;
 template <typename Tp>
 using is_s = std::is_signed<std::decay_t<Tp>>;
 
-void canUseFusedFindIf() {
+TEST_CASE("canUseFusedFindIf", "[fused::find]") {
   unsigned a = 0u;
   int b = 1;
   char c = '2';
@@ -37,8 +38,8 @@ void canUseFusedFindIf() {
 
   auto x = fused::find_if<is_u>(a, b, c, d, e);
   auto y = fused::find_if<is_s>(a, b, c, d, e);
-  EXPECT_EQ(a, x);
-  EXPECT_EQ(b, y);
+  REQUIRE(a == x);
+  REQUIRE(b == y);
 }
 
 template <typename F, typename... Ts>
@@ -46,22 +47,16 @@ decltype(auto) foo(F&& f, Ts&&... ts) {
   return std::forward<F>(f)(std::forward<Ts>(ts)...);
 }
 
-void canUseVariableTemplate() {
+TEST_CASE("canUseVariableTemplateFind", "[fused::find]") {
   {
     auto x = foo(fused::find<int>, 1, 2u, '3', 4.0, 5);
     static_assert(std::is_same<decltype(x), int>::value, "");
-    EXPECT_EQ(1, x);
+    REQUIRE(1 == x);
   }
   {
     auto x = foo(fused::find_if<is_u>, 1, 2u, '3', 4.0, 5);
     static_assert(std::is_same<decltype(x), unsigned>::value, "");
-    EXPECT_EQ(2u, x);
+    REQUIRE(2u == x);
   }
 }
-
-int main() {
-  canUseFusedFind();
-  canUseFusedFindIf();
-  canUseVariableTemplate();
-  return 0;
 }
