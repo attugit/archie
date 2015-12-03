@@ -102,6 +102,13 @@ def build(bld):
     use          = [APPNAME, 'catch'],
     install_path = None,
   )
+  bld(
+    source       = bld.path.ant_glob(['test/meta/**/*.cpp']),
+    target       = 'ut_meta',
+    features     = 'cxx cxxprogram test',
+    use          = [APPNAME, 'catch'],
+    install_path = None,
+  )
   bld.add_post_fun(waf_unit_test.summary)
   bld.add_post_fun(waf_unit_test.set_exit_code)
   inc = bld.path.find_dir('include')
