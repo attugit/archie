@@ -3,7 +3,6 @@
 namespace archie {
 namespace utils {
   namespace meta {
-
     template <template <typename...> class...>
     struct compose;
 

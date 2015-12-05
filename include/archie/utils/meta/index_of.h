@@ -9,7 +9,6 @@ namespace archie {
 namespace utils {
   namespace meta {
     namespace detail {
-
       template <typename Tp>
       struct no_convert {};
 

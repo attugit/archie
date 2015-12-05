@@ -8,7 +8,6 @@
 namespace archie {
 namespace utils {
   namespace meta {
-
     template <std::size_t i, std::size_t j, typename... Ts>
     struct slice : returns<tail_t<i, take_t<j, Ts...>>> {};
 

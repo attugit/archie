@@ -8,7 +8,6 @@
 namespace archie {
 namespace utils {
   namespace meta {
-
     namespace detail {
       template <typename...>
       struct is_distinct;

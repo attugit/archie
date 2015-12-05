@@ -6,7 +6,6 @@
 namespace archie {
 namespace utils {
   namespace meta {
-
     template <template <typename> class F, typename... Xs>
     struct transform {
       using type = type_list<typename F<Xs>::type...>;

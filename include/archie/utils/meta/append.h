@@ -9,7 +9,6 @@
 namespace archie {
 namespace utils {
   namespace meta {
-
     template <typename, typename>
     struct append;
 

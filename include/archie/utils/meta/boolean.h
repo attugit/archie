@@ -5,7 +5,6 @@
 namespace archie {
 namespace utils {
   namespace meta {
-
     template <bool B>
     using boolean = std::integral_constant<bool, B>;
 

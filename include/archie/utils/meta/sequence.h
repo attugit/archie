@@ -10,7 +10,6 @@
 namespace archie {
 namespace utils {
   namespace meta {
-
     template <typename... Ts>
     struct sequence {
       using size = meta::number<sizeof...(Ts)>;

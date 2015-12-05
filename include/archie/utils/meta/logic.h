@@ -8,7 +8,6 @@
 namespace archie {
 namespace utils {
   namespace meta {
-
     template <bool... Xs>
     struct conjunction {
     private:
