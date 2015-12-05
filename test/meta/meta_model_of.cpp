@@ -3,7 +3,10 @@
 #include <archie/utils/fused/ignore.h>
 #include <archie/utils/models.h>
 #include <archie/utils/test.h>
+#include <vector>
+#include <catch.hpp>
 
+namespace {
 using archie::utils::meta::requires;
 using archie::utils::traits::model_of;
 using archie::utils::models::Callable;
@@ -30,13 +33,13 @@ struct hoo {
   int operator()(int) { return 4; }
 };
 
-void canUseModelOf() {
+TEST_CASE("canUseModelOf") {
   foo f;
   goo g;
   hoo h;
 
-  ASSERT_EQ(0, f.func(g));
-  ASSERT_EQ(1, f.func(h));
+  REQUIRE(0 == f.func(g));
+  REQUIRE(1 == f.func(h));
 }
 
 template <typename Tp>
@@ -48,12 +51,7 @@ struct iter {
   no_iter* end();
 };
 
-#include <vector>
 static_assert(!is_iterable<no_iter>::value, "");
 static_assert(is_iterable<std::vector<no_iter>>::value, "");
 static_assert(is_iterable<iter>::value, "");
-
-int main() {
-  canUseModelOf();
-  return 0;
 }
