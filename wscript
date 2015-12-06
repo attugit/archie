@@ -49,6 +49,17 @@ def configure(conf):
     define_name = 'USE_IS_TRIVIALLY_COPY_CONSTRUCTIBLE_TRAIT',
     msg='Checking for traits')
 
+  conf.setenv('coverage')
+  conf.load('compiler_cxx')
+  conf.env.CXXFLAGS += flags
+  conf.env.CXXFLAGS += ['-g', '-O0', '-fprofile-arcs', '-ftest-coverage', '-pg']
+  conf.env.DEFINES += ['NDEBUG']
+  conf.env.LIB += ['gcov']
+  conf.env.LINKFLAGS += ['-pg']
+  conf.check_cxx(fragment=trait_check,
+    mandatory=False,
+    define_name = 'USE_IS_TRIVIALLY_COPY_CONSTRUCTIBLE_TRAIT',
+    msg='Checking for traits')
 
   conf.setenv('release')
   conf.load('compiler_cxx')
@@ -108,3 +119,6 @@ for ctx in (BuildContext, CleanContext, InstallContext, UninstallContext):
   class release(ctx):
     cmd = name
     variant = 'release'
+  class coverage(ctx):
+    cmd = name + '_coverage'
+    variant = 'coverage'
