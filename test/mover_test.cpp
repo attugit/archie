@@ -1,9 +1,9 @@
-#include <archie/utils/fused/mover.h>
+#include <archie/fused/mover.h>
 
 #include <type_traits>
 
 namespace {
-namespace fused = archie::utils::fused;
+namespace fused = archie::fused;
 
 struct empty {};
 struct def {
@@ -30,7 +30,7 @@ static_assert(
     "");
 }
 
-#include <archie/utils/test.h>
+#include <archie/test.h>
 
 void canCastToConstValue() {
   auto i = 1;

@@ -1,14 +1,14 @@
 #pragma once
 #include <utility>
 #include <experimental/optional>
-#include <archie/utils/meta/static_constexpr_storage.h>
+#include <archie/meta/static_constexpr_storage.h>
 
 namespace archie {
 
 static constexpr auto const& in_place = std::experimental::in_place;
 
 struct null_resource_t {};
-static constexpr auto const& null_resource = utils::meta::instance<null_resource_t>();
+static constexpr auto const& null_resource = meta::instance<null_resource_t>();
 
 template <typename T, typename Deleter>
 struct resource {
@@ -72,5 +72,5 @@ namespace detail {
   };
 }
 
-static constexpr auto const& make_resource = utils::meta::instance<detail::make_resource_>();
+static constexpr auto const& make_resource = meta::instance<detail::make_resource_>();
 }

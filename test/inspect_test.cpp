@@ -1,12 +1,11 @@
-#include <archie/utils/traits/has_member.h>
+#include <archie/traits/has_member.h>
 
 #include <vector>
 #include <utility>
 #include <memory>
 
 namespace {
-
-namespace au = archie::utils;
+namespace au = archie;
 namespace meta = au::meta;
 namespace traits = au::traits;
 

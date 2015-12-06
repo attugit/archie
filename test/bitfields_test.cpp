@@ -1,7 +1,7 @@
-#include <archie/utils/bitfields.h>
-#include <archie/utils/test.h>
+#include <archie/bitfields.h>
+#include <archie/test.h>
 
-namespace au = archie::utils;
+namespace au = archie;
 using pack_t = au::Pack<1, 2, 3>;
 using field_t = decltype(std::declval<pack_t>().make_field<1>());
 const au::IndexType i0 = au::IndexType(0);

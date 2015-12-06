@@ -1,11 +1,11 @@
-#include <archie/utils/fused/apply.h>
-#include <archie/utils/fused/front.h>
+#include <archie/fused/apply.h>
+#include <archie/fused/front.h>
 #include <catch.hpp>
 
 namespace {
 auto count = [](auto const&... xs) { return sizeof...(xs); };
 
-namespace fused = archie::utils::fused;
+namespace fused = archie::fused;
 
 TEST_CASE("canUseApplyWithRegularArgs", "[fused::apply]") {
   REQUIRE(1u == fused::apply(count, 3));

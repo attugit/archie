@@ -1,12 +1,12 @@
-#include <archie/utils/types/strong_typedef.h>
-#include <archie/utils/types/policies.h>
-#include <archie/utils/fused/tuple.h>
-#include <archie/utils/fused/tuple_view.h>
+#include <archie/types/strong_typedef.h>
+#include <archie/types/policies.h>
+#include <archie/fused/tuple.h>
+#include <archie/fused/tuple_view.h>
 #include <string>
-#include <archie/utils/test.h>
+#include <archie/test.h>
 
-namespace types = archie::utils::types;
-namespace fused = archie::utils::fused;
+namespace types = archie::types;
+namespace fused = archie::fused;
 
 namespace detail {
 struct PackedStruct {

@@ -1,35 +1,32 @@
-#include <archie/utils/meta/type_list.h>
+#include <archie/meta/type_list.h>
 
 namespace archie {
-namespace utils {
-  namespace meta {
+namespace meta {
+  template <typename Tp, typename Up>
+  struct append {
+    using type = type_list<Tp, Up>;
+  };
 
-    template <typename Tp, typename Up>
-    struct append {
-      using type = type_list<Tp, Up>;
-    };
+  template <typename Tp, typename... Us>
+  struct append<type_list<Us...>, Tp> {
+    using type = type_list<Us..., Tp>;
+  };
 
-    template <typename Tp, typename... Us>
-    struct append<type_list<Us...>, Tp> {
-      using type = type_list<Us..., Tp>;
-    };
+  template <typename...>
+  struct zip;
 
-    template <typename...>
-    struct zip;
+  template <typename... Xs, typename... Ys>
+  struct zip<type_list<Xs...>, type_list<Ys...>> {
+    static_assert(sizeof...(Xs) == sizeof...(Ys), "");
+    using type = type_list<type_list<Xs, Ys>...>;
+  };
 
-    template <typename... Xs, typename... Ys>
-    struct zip<type_list<Xs...>, type_list<Ys...>> {
-      static_assert(sizeof...(Xs) == sizeof...(Ys), "");
-      using type = type_list<type_list<Xs, Ys>...>;
-    };
-
-    template <typename Tp, typename Up>
-    using zip_t = typename zip<Tp, Up>::type;
-  }
+  template <typename Tp, typename Up>
+  using zip_t = typename zip<Tp, Up>::type;
 }
 }
 
-namespace meta = archie::utils::meta;
+namespace meta = archie::meta;
 using meta::type_list;
 
 #include <type_traits>

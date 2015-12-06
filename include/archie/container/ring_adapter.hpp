@@ -1,7 +1,7 @@
 #pragma once
 #include <utility>
 #include <archie/container/ring_iterator.hpp>
-#include <archie/utils/traits/model_of.h>
+#include <archie/traits/model_of.h>
 
 namespace archie {
 template <typename Container>
@@ -19,7 +19,7 @@ private:
     auto requires(C, Args...) -> decltype(std::declval<C>().emplace_back(std::declval<Args>()...),
                                           typename C::value_type{std::declval<Args>()...});
   };
-  static_assert(utils::traits::model_of<is_valid_container(Container)>::value == true, "");
+  static_assert(traits::model_of<is_valid_container(Container)>::value == true, "");
 
 public:
   using value_type = typename Container::value_type;
@@ -43,7 +43,7 @@ public:
 
   template <typename... Args>
   void emplace_back(Args&&... args) {
-    static_assert(utils::traits::model_of<can_emplace(Container, Args...)>::value, "");
+    static_assert(traits::model_of<can_emplace(Container, Args...)>::value, "");
     if (size() != capacity()) {
       container_.emplace_back(std::forward<Args>(args)...);
       pos_ = iterator{container_, 0};

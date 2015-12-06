@@ -1,7 +1,7 @@
-#include <archie/utils/meta/is_distinct.h>
+#include <archie/meta/is_distinct.h>
 
 namespace {
-namespace meta = archie::utils::meta;
+namespace meta = archie::meta;
 
 static_assert(meta::is_distinct<int>::value, "");
 static_assert(meta::is_distinct<int, char, float>::value, "");

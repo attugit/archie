@@ -1,7 +1,7 @@
-#include <archie/utils/test.h>
-#include <archie/utils/fused/back.h>
+#include <archie/test.h>
+#include <archie/fused/back.h>
 
-namespace meta = archie::utils::meta;
+namespace meta = archie::meta;
 
 template <typename Tp>
 decltype(auto) second(meta::ignore, Tp&& t, ...) {
@@ -13,7 +13,7 @@ void canUseEatToTakeSecondArgument() {
   EXPECT_EQ(2.0, sec);
 }
 
-namespace fused = archie::utils::fused;
+namespace fused = archie::fused;
 
 #include <memory>
 

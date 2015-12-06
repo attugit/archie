@@ -1,9 +1,9 @@
-#include <archie/utils/meta/as_type_list.h>
+#include <archie/meta/as_type_list.h>
 #include <type_traits>
 #include <catch.hpp>
 
 namespace {
-namespace meta = archie::utils::meta;
+namespace meta = archie::meta;
 
 template <typename... Ts>
 struct test {};

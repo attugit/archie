@@ -1,8 +1,8 @@
-#include <archie/utils/fused/zip.h>
+#include <archie/fused/zip.h>
 #include <catch.hpp>
 
 namespace {
-namespace fused = archie::utils::fused;
+namespace fused = archie::fused;
 
 TEST_CASE("canZipTwoTuples", "[fused::zip]") {
   auto a = fused::make_tuple(1, 2u, '3');

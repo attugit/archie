@@ -1,9 +1,9 @@
-#include <archie/utils/traits/is_fused_tuple.h>
-#include <archie/utils/fused/tuple.h>
+#include <archie/traits/is_fused_tuple.h>
+#include <archie/fused/tuple.h>
 
-namespace meta = archie::utils::meta;
-namespace fused = archie::utils::fused;
-namespace traits = archie::utils::traits;
+namespace meta = archie::meta;
+namespace fused = archie::fused;
+namespace traits = archie::traits;
 
 static_assert(traits::is_fused_tuple<fused::tuple<int>>::value, "");
 static_assert(!traits::is_fused_tuple<int>::value, "");

@@ -1,8 +1,8 @@
-#include <archie/utils/meta/compose.h>
-#include <archie/utils/meta/number.h>
+#include <archie/meta/compose.h>
+#include <archie/meta/number.h>
 #include <memory>
 namespace {
-namespace au = archie::utils;
+namespace au = archie;
 
 using _0 = au::meta::number<0>;
 using _1 = au::meta::number<1>;

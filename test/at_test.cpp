@@ -1,8 +1,8 @@
-#include <archie/utils/meta/at.h>
-#include <archie/utils/test.h>
+#include <archie/meta/at.h>
+#include <archie/test.h>
 #include <type_traits>
 
-namespace au = archie::utils;
+namespace au = archie;
 
 static_assert(std::is_same<int, au::meta::at_t<1, char, int, float>>::value, "");
 static_assert(std::is_same<int, au::meta::at_t<1, char, int, float>>::value, "");

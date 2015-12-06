@@ -1,8 +1,8 @@
-#include <archie/utils/fused/concat.h>
+#include <archie/fused/concat.h>
 #include <catch.hpp>
 
 namespace {
-namespace fused = archie::utils::fused;
+namespace fused = archie::fused;
 
 TEST_CASE("canConcatTuple", "[fused::concat]") {
   {

@@ -1,4 +1,4 @@
-#include <archie/utils/fused/conditional.h>
+#include <archie/fused/conditional.h>
 #include <catch.hpp>
 
 namespace {
@@ -9,7 +9,7 @@ struct hoo {
   int operator()(int) const { return 4; }
 };
 
-namespace fused = archie::utils::fused;
+namespace fused = archie::fused;
 
 TEST_CASE("canUseConditionalT", "[fused::conditional]") {
   fused::conditional_t<goo, hoo> cond;

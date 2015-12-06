@@ -1,10 +1,10 @@
-#include <archie/utils/fused/tuple.h>
-#include <archie/utils/fused/algorithm.h>
+#include <archie/fused/tuple.h>
+#include <archie/fused/algorithm.h>
 #include <memory>
 #include <catch.hpp>
 
 namespace {
-namespace fused = archie::utils::fused;
+namespace fused = archie::fused;
 
 TEST_CASE("canUseFusedCompose", "[fused::algo]") {
   {

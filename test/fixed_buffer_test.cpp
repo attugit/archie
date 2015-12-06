@@ -3,119 +3,117 @@
 #include <new>
 
 namespace archie {
-namespace utils {
-  namespace containers {
-    template <typename Tp, std::size_t N>
-    struct stack_allocator {
-      using value_type = Tp;
-      using pointer = Tp*;
-      using reference = Tp&;
-      using const_reference = Tp const&;
-      using const_pointer = Tp const*;
-      using size_type = std::size_t;
-      using difference_type = std::ptrdiff_t;
+namespace containers {
+  template <typename Tp, std::size_t N>
+  struct stack_allocator {
+    using value_type = Tp;
+    using pointer = Tp*;
+    using reference = Tp&;
+    using const_reference = Tp const&;
+    using const_pointer = Tp const*;
+    using size_type = std::size_t;
+    using difference_type = std::ptrdiff_t;
 
-      pointer allocate(size_type n) {
-        auto s = taken_;
-        taken_ += n;
-        return &store.array[s];
-      }
-      void deallocate(pointer, size_type) {}
-      size_type max_size() const { return N - taken_; }
+    pointer allocate(size_type n) {
+      auto s = taken_;
+      taken_ += n;
+      return &store.array[s];
+    }
+    void deallocate(pointer, size_type) {}
+    size_type max_size() const { return N - taken_; }
 
-    private:
-      union storage {
-        char raw[N * sizeof(value_type)];
-        value_type array[N];
-      };
-      storage store;
-      size_type taken_ = 0u;
+  private:
+    union storage {
+      char raw[N * sizeof(value_type)];
+      value_type array[N];
     };
+    storage store;
+    size_type taken_ = 0u;
+  };
 
-    template <typename Tp, std::size_t N, typename Alloc = stack_allocator<Tp, N>>
-    struct fixed_buffer {
-      using allocator_type = Alloc;
-      using value_type = typename allocator_type::value_type;
-      using pointer = typename allocator_type::pointer;
-      using reference = typename allocator_type::reference;
-      using const_reference = typename allocator_type::const_reference;
-      using const_pointer = typename allocator_type::const_pointer;
-      using size_type = typename allocator_type::size_type;
-      using iterator = pointer;
-      using const_iterator = const_pointer;
+  template <typename Tp, std::size_t N, typename Alloc = stack_allocator<Tp, N>>
+  struct fixed_buffer {
+    using allocator_type = Alloc;
+    using value_type = typename allocator_type::value_type;
+    using pointer = typename allocator_type::pointer;
+    using reference = typename allocator_type::reference;
+    using const_reference = typename allocator_type::const_reference;
+    using const_pointer = typename allocator_type::const_pointer;
+    using size_type = typename allocator_type::size_type;
+    using iterator = pointer;
+    using const_iterator = const_pointer;
 
-      explicit fixed_buffer(size_type n) : impl_() {
-        while (n--) emplace_back();
+    explicit fixed_buffer(size_type n) : impl_() {
+      while (n--) emplace_back();
+    }
+
+    template <typename Up>
+    fixed_buffer(size_type n, Up const& ref)
+        : impl_() {
+      while (n--) emplace_back(ref);
+    }
+
+    fixed_buffer() : fixed_buffer(0u) {}
+    ~fixed_buffer() {
+      while (size()) {
+        back().~value_type();
+        --impl_.size_;
       }
+    }
 
-      template <typename Up>
-      fixed_buffer(size_type n, Up const& ref)
-          : impl_() {
-        while (n--) emplace_back(ref);
-      }
+    const_reference operator[](size_type n) const { return *(impl_.begin_ + n); }
+    const_reference front() const { return operator[](0); }
+    const_reference back() const { return operator[](size() - 1u); }
+    const_iterator begin() const { return &front(); }
+    const_iterator end() const { return begin() + size(); }
 
-      fixed_buffer() : fixed_buffer(0u) {}
-      ~fixed_buffer() {
-        while (size()) {
-          back().~value_type();
-          --impl_.size_;
-        }
-      }
+    reference operator[](size_type n) { return *(impl_.begin_ + n); }
+    reference front() { return operator[](0); }
+    reference back() { return operator[](size() - 1u); }
+    iterator begin() { return &front(); }
+    iterator end() { return begin() + size(); }
 
-      const_reference operator[](size_type n) const { return *(impl_.begin_ + n); }
-      const_reference front() const { return operator[](0); }
-      const_reference back() const { return operator[](size() - 1u); }
-      const_iterator begin() const { return &front(); }
-      const_iterator end() const { return begin() + size(); }
+    size_type size() const { return impl_.size_; }
 
-      reference operator[](size_type n) { return *(impl_.begin_ + n); }
-      reference front() { return operator[](0); }
-      reference back() { return operator[](size() - 1u); }
-      iterator begin() { return &front(); }
-      iterator end() { return begin() + size(); }
+    template <typename... Us>
+    void emplace_back(Us&&... us) {
+      new (end()) value_type(std::forward<Us>(us)...);
+      ++impl_.size_;
+    }
 
-      size_type size() const { return impl_.size_; }
-
-      template <typename... Us>
-      void emplace_back(Us&&... us) {
-        new (end()) value_type(std::forward<Us>(us)...);
-        ++impl_.size_;
-      }
-
-    private:
-      struct impl : allocator_type {
-        using allocator_type::allocate;
-        using allocator_type::deallocate;
-        impl() : begin_(allocate(N)) {}
-        ~impl() { deallocate(begin_, N); }
-        pointer const begin_ = nullptr;
-        size_type size_ = 0u;
-      };
-      impl impl_;
+  private:
+    struct impl : allocator_type {
+      using allocator_type::allocate;
+      using allocator_type::deallocate;
+      impl() : begin_(allocate(N)) {}
+      ~impl() { deallocate(begin_, N); }
+      pointer const begin_ = nullptr;
+      size_type size_ = 0u;
     };
+    impl impl_;
+  };
 
-    template <typename Tp, std::size_t N>
-    struct ring_buffer {
-      using buff_t = fixed_buffer<Tp, N>;
-      using value_type = typename buff_t::value_type;
-      using pointer = typename buff_t::pointer;
-      using reference = typename buff_t::reference;
-      using const_reference = typename buff_t::const_reference;
-      using const_pointer = typename buff_t::const_pointer;
-      using size_type = typename buff_t::size_type;
+  template <typename Tp, std::size_t N>
+  struct ring_buffer {
+    using buff_t = fixed_buffer<Tp, N>;
+    using value_type = typename buff_t::value_type;
+    using pointer = typename buff_t::pointer;
+    using reference = typename buff_t::reference;
+    using const_reference = typename buff_t::const_reference;
+    using const_pointer = typename buff_t::const_pointer;
+    using size_type = typename buff_t::size_type;
 
-      size_type size() const { return 0; }
+    size_type size() const { return 0; }
 
-    private:
-      buff_t buff_;
-    };
-  }
+  private:
+    buff_t buff_;
+  };
 }
 }
 
-#include <archie/utils/test.h>
+#include <archie/test.h>
 #include <memory>
-namespace cont = archie::utils::containers;
+namespace cont = archie::containers;
 
 void canCreateStackAlloc() {
   auto alloc = cont::stack_allocator<int, 4>{};

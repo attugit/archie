@@ -1,11 +1,11 @@
 #include <type_traits>
-#include <archie/utils/fused/tuple.h>
-#include <archie/utils/traits.h>
-namespace fused = archie::utils::fused;
-namespace traits = archie::utils::traits;
-namespace meta = archie::utils::meta;
+#include <archie/fused/tuple.h>
+#include <archie/traits.h>
+namespace fused = archie::fused;
+namespace traits = archie::traits;
+namespace meta = archie::meta;
 
-#include <archie/utils/test.h>
+#include <archie/test.h>
 #include <memory>
 
 void canDefaultConstruct() {
@@ -410,7 +410,7 @@ void canTieConstElements() {
   EXPECT_EQ(&c, &fused::get<2>(t));
 }
 
-#include <archie/utils/fused/ignore.h>
+#include <archie/fused/ignore.h>
 
 void canTieWithIgnore() {
   unsigned a = 0;

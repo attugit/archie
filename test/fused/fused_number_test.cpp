@@ -1,8 +1,8 @@
-#include <archie/utils/fused/number.h>
+#include <archie/fused/number.h>
 #include <catch.hpp>
 
 namespace {
-namespace fused = archie::utils::fused;
+namespace fused = archie::fused;
 TEST_CASE("canUseFusedNumber", "[fused::number]") {
   REQUIRE(0u == fused::number<0>);
   REQUIRE(1u == fused::number<1>);

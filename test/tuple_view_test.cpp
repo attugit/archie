@@ -1,9 +1,9 @@
-#include <archie/utils/fused/tuple_view.h>
-#include <archie/utils/test.h>
+#include <archie/fused/tuple_view.h>
+#include <archie/test.h>
 #include <algorithm>
 #include <vector>
 
-namespace fused = archie::utils::fused;
+namespace fused = archie::fused;
 
 void canSelectAllNotChangingOrder() {
   auto t = fused::make_tuple(1u, 2.0, '3');

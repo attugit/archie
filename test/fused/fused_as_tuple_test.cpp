@@ -1,10 +1,10 @@
-#include <archie/utils/fused/as_tuple.h>
+#include <archie/fused/as_tuple.h>
 #include <type_traits>
 #include <catch.hpp>
 
 namespace {
-namespace meta = archie::utils::meta;
-namespace fused = archie::utils::fused;
+namespace meta = archie::meta;
+namespace fused = archie::fused;
 
 template <unsigned>
 struct utype {};

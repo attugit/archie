@@ -1,5 +1,5 @@
-#include <archie/utils/meta/sequence.h>
-#include <archie/utils/meta/transform.h>
+#include <archie/meta/sequence.h>
+#include <archie/meta/transform.h>
 #include <tuple>
 #include <type_traits>
 #include <memory>
@@ -26,7 +26,7 @@ struct uptr_ {
   using type = std::unique_ptr<Tp>;
 };
 
-namespace au = archie::utils;
+namespace au = archie;
 
 using au::meta::sequence;
 using list_ = sequence<_0, _1>;

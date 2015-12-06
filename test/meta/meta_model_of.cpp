@@ -1,18 +1,18 @@
-#include <archie/utils/traits/model_of.h>
-#include <archie/utils/meta/requires.h>
-#include <archie/utils/fused/ignore.h>
-#include <archie/utils/models.h>
-#include <archie/utils/test.h>
+#include <archie/traits/model_of.h>
+#include <archie/meta/requires.h>
+#include <archie/fused/ignore.h>
+#include <archie/models.h>
+#include <archie/test.h>
 #include <vector>
 #include <catch.hpp>
 
 namespace {
-using archie::utils::meta::requires;
-using archie::utils::traits::model_of;
-using archie::utils::models::Callable;
-using archie::utils::models::Iterable;
+using archie::meta::requires;
+using archie::traits::model_of;
+using archie::models::Callable;
+using archie::models::Iterable;
 
-namespace fused = archie::utils::fused;
+namespace fused = archie::fused;
 
 struct foo {
   template <typename Tp>

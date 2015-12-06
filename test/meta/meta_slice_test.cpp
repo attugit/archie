@@ -1,9 +1,9 @@
-#include <archie/utils/meta/slice.h>
+#include <archie/meta/slice.h>
 #include <type_traits>
 #include <catch.hpp>
 
 namespace {
-namespace meta = archie::utils::meta;
+namespace meta = archie::meta;
 
 template <unsigned>
 struct utype {};

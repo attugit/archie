@@ -1,9 +1,9 @@
-#include <archie/utils/fused/find.h>
+#include <archie/fused/find.h>
 #include <type_traits>
 #include <catch.hpp>
 
 namespace {
-namespace fused = archie::utils::fused;
+namespace fused = archie::fused;
 
 TEST_CASE("canUseFusedFind", "[fused::find]") {
   unsigned a = 0u;

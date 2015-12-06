@@ -1,12 +1,12 @@
-#include <archie/utils/meta/requires.h>
-#include <archie/utils/test.h>
+#include <archie/meta/requires.h>
+#include <archie/test.h>
 #include <type_traits>
 
-using archie::utils::meta::requires;
-using archie::utils::meta::boolean;
-using archie::utils::meta::all;
-using archie::utils::meta::any;
-using archie::utils::meta::none;
+using archie::meta::requires;
+using archie::meta::boolean;
+using archie::meta::all;
+using archie::meta::any;
+using archie::meta::none;
 
 struct foo {
   template <typename T>

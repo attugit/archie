@@ -1,10 +1,10 @@
-#include <archie/utils/traits.h>
+#include <archie/traits.h>
 
 #include <vector>
 #include <utility>
 #include <memory>
 
-namespace traits = archie::utils::traits;
+namespace traits = archie::traits;
 
 using vec_t = std::vector<int>;
 using pair_t = std::pair<int, int>;
@@ -54,7 +54,7 @@ static_assert(traits::is_callable<callable, unsigned>::value, "");
 static_assert(!traits::is_callable<callable, std::string>::value, "");
 
 static_assert(!traits::is_type_list<int>::value, "");
-static_assert(traits::is_type_list<archie::utils::meta::type_list<int>>::value, "");
+static_assert(traits::is_type_list<archie::meta::type_list<int>>::value, "");
 
 struct conv {
   explicit conv(int);

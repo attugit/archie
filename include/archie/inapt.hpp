@@ -1,6 +1,6 @@
 #pragma once
 #include <utility>
-#include <archie/utils/traits/model_of.h>
+#include <archie/traits/model_of.h>
 
 namespace archie {
 
@@ -21,7 +21,7 @@ private:
     auto requires(Policy) -> decltype(std::declval<Policy>().null(),
                                       std::declval<Policy>().is_null(std::declval<T>()));
   };
-  static_assert(utils::traits::model_of<is_valid_policy(P)>::value == true,
+  static_assert(traits::model_of<is_valid_policy(P)>::value == true,
                 "Inapt policy must provide null() and is_null(T) methods");
   struct impl_ : P {
     impl_() : P(), value(P::null()) {}

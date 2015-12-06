@@ -1,14 +1,14 @@
-#include <archie/utils/meta/returns.h>
-#include <archie/utils/meta/transform.h>
-#include <archie/utils/meta/apply.h>
-#include <archie/utils/meta/append.h>
-#include <archie/utils/meta/identity.h>
-#include <archie/utils/meta/find.h>
+#include <archie/meta/returns.h>
+#include <archie/meta/transform.h>
+#include <archie/meta/apply.h>
+#include <archie/meta/append.h>
+#include <archie/meta/identity.h>
+#include <archie/meta/find.h>
 #include <type_traits>
 #include <catch.hpp>
 
 namespace {
-namespace meta = archie::utils::meta;
+namespace meta = archie::meta;
 
 template <typename Tp>
 struct wrapper {

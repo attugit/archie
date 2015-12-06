@@ -1,8 +1,8 @@
 #pragma once
 #include <utility>
 #include <type_traits>
-#include <archie/utils/meta/static_constexpr_storage.h>
-#include <archie/utils/traits/is_constructible.h>
+#include <archie/meta/static_constexpr_storage.h>
+#include <archie/traits/is_constructible.h>
 
 namespace archie {
 namespace detail {
@@ -13,7 +13,7 @@ namespace detail {
   struct to_function_pointer_<R(Args...)> {
   private:
     template <typename T>
-    using trivial = utils::traits::is_trivially_copy_constructible<T>;
+    using trivial = traits::is_trivially_copy_constructible<T>;
 
   public:
     using pointer = R (*)(Args...);
@@ -48,11 +48,11 @@ struct pure_function<R(Args...)> {
 
   template <typename T>
   explicit pure_function(T t)
-      : fptr(utils::meta::instance<detail::to_function_pointer_<R(Args...)>>()(t)) {}
+      : fptr(meta::instance<detail::to_function_pointer_<R(Args...)>>()(t)) {}
 
   template <typename T>
   pure_function& operator=(T t) {
-    fptr = utils::meta::instance<detail::to_function_pointer_<R(Args...)>>()(t);
+    fptr = meta::instance<detail::to_function_pointer_<R(Args...)>>()(t);
     return *this;
   }
 

@@ -1,8 +1,8 @@
-#include <archie/utils/containers/dynamic_array.h>
-#include <archie/utils/containers/capacity.h>
-#include <archie/utils/containers/size.h>
-#include <archie/utils/test.h>
-namespace cont = archie::utils::containers;
+#include <archie/containers/dynamic_array.h>
+#include <archie/containers/capacity.h>
+#include <archie/containers/size.h>
+#include <archie/test.h>
+namespace cont = archie::containers;
 
 struct resource {
   resource(int i) : handle(new int(i)) {}

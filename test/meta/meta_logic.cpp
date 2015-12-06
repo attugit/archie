@@ -1,8 +1,8 @@
-#include <archie/utils/meta/logic.h>
+#include <archie/meta/logic.h>
 #include <catch.hpp>
 
 namespace {
-namespace meta = archie::utils::meta;
+namespace meta = archie::meta;
 
 using true_t = meta::boolean<true>;
 using false_t = meta::boolean<false>;

@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include <archie/utils/meta/static_constexpr_storage.h>
+#include <archie/meta/static_constexpr_storage.h>
 
 namespace archie {
 template <typename>
@@ -40,10 +40,10 @@ namespace detail {
   };
 }
 
-static constexpr auto const& alias = utils::meta::instance<detail::alias_>();
+static constexpr auto const& alias = meta::instance<detail::alias_>();
 static constexpr auto const& ref = alias;
-static constexpr auto const& rebind = utils::meta::instance<detail::rebind_>();
-static constexpr auto const& unwrap = utils::meta::instance<detail::unwrap_>();
+static constexpr auto const& rebind = meta::instance<detail::rebind_>();
+static constexpr auto const& unwrap = meta::instance<detail::unwrap_>();
 
 template <typename T>
 struct rebind_t {

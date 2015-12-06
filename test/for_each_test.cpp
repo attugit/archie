@@ -1,8 +1,8 @@
-#include <archie/utils/fused/for_each.h>
+#include <archie/fused/for_each.h>
 #include <string>
-#include <archie/utils/test.h>
+#include <archie/test.h>
 
-namespace fused = archie::utils::fused;
+namespace fused = archie::fused;
 
 struct func {
   int cnt = 0;

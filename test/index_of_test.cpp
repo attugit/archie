@@ -1,7 +1,7 @@
-#include <archie/utils/meta/index_of.h>
-#include <archie/utils/test.h>
+#include <archie/meta/index_of.h>
+#include <archie/test.h>
 
-namespace meta = archie::utils::meta;
+namespace meta = archie::meta;
 
 static_assert(decltype(meta::type_index<int>(int{}))::value == 0, "");
 static_assert(decltype(meta::type_index<int>(char{}, int{}))::value == 1, "");

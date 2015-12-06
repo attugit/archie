@@ -1,10 +1,10 @@
-#include <archie/utils/types/strong_typedef.h>
-#include <archie/utils/types/policies.h>
-#include <archie/utils/traits.h>
+#include <archie/types/strong_typedef.h>
+#include <archie/types/policies.h>
+#include <archie/traits.h>
 #include <type_traits>
 
-namespace types = archie::utils::types;
-namespace traits = archie::utils::traits;
+namespace types = archie::types;
+namespace traits = archie::traits;
 namespace policy = types::policy;
 
 struct int1_t : types::strong_typedef<int1_t, int, policy::eq> {
@@ -41,7 +41,7 @@ struct uvec_t : types::strong_typedef<uvec_t, std::vector<unsigned>, policy::ite
   using self_t::self_t;
 };
 
-#include <archie/utils/test.h>
+#include <archie/test.h>
 
 void canConstructStrongTypedef() {
   int1_t i{4};

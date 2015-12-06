@@ -1,10 +1,10 @@
-#include <archie/utils/fused/fold.h>
-#include <archie/utils/fused/tuple.h>
-#include <archie/utils/fused/apply.h>
+#include <archie/fused/fold.h>
+#include <archie/fused/tuple.h>
+#include <archie/fused/apply.h>
 #include <catch.hpp>
 
 namespace {
-namespace fused = archie::utils::fused;
+namespace fused = archie::fused;
 
 TEST_CASE("canUseFold", "[fused::fold]") {
   auto const mkt = [](auto&& s, auto&& e) { return fused::make_tuple(s, e); };

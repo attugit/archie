@@ -1,9 +1,9 @@
-#include <archie/utils/fused/type_tag.h>
-#include <archie/utils/fused/transform.h>
+#include <archie/fused/type_tag.h>
+#include <archie/fused/transform.h>
 #include <catch.hpp>
 
 namespace {
-namespace fused = archie::utils::fused;
+namespace fused = archie::fused;
 
 TEST_CASE("canCreateTags", "[fused::tags]") {
   auto t3 = fused::make_tuple(1, 2u, '3');

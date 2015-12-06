@@ -1,10 +1,10 @@
-#include <archie/utils/fused/front.h>
-#include <archie/utils/fused/tuple.h>
-#include <archie/utils/test.h>
+#include <archie/fused/front.h>
+#include <archie/fused/tuple.h>
+#include <archie/test.h>
 #include <memory>
 #include <type_traits>
 
-namespace fused = archie::utils::fused;
+namespace fused = archie::fused;
 using uptr = std::unique_ptr<unsigned>;
 
 void canUseFrontWithRValue() {

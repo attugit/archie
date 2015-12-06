@@ -1,6 +1,6 @@
-#include <archie/utils/fused/placeholder.h>
-namespace fused = archie::utils::fused;
-#include <archie/utils/test.h>
+#include <archie/fused/placeholder.h>
+namespace fused = archie::fused;
+#include <archie/test.h>
 
 using namespace fused::placeholders;
 

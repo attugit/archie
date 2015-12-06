@@ -1,8 +1,8 @@
-#include <archie/utils/meta/indexable.h>
+#include <archie/meta/indexable.h>
 #include <catch.hpp>
 
 namespace {
-namespace meta = archie::utils::meta;
+namespace meta = archie::meta;
 
 template <std::size_t... ids>
 struct with_index {

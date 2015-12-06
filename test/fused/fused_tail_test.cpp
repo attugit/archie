@@ -1,9 +1,9 @@
-#include <archie/utils/fused/tail.h>
-#include <archie/utils/fused/tuple.h>
+#include <archie/fused/tail.h>
+#include <archie/fused/tuple.h>
 #include <catch.hpp>
 
 namespace {
-namespace fused = archie::utils::fused;
+namespace fused = archie::fused;
 
 TEST_CASE("canGetLValueFusedTupleTail", "[fused::tail]") {
   auto t0 = fused::make_tuple(1, 2u, '3');

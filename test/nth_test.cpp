@@ -1,7 +1,7 @@
-#include <archie/utils/fused/nth.h>
-#include <archie/utils/test.h>
+#include <archie/fused/nth.h>
+#include <archie/test.h>
 
-namespace fused = archie::utils::fused;
+namespace fused = archie::fused;
 
 void canUseNth() {
   char a = 0;

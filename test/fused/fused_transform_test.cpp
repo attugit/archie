@@ -1,9 +1,9 @@
-#include <archie/utils/fused/transform.h>
+#include <archie/fused/transform.h>
 #include <type_traits>
 #include <catch.hpp>
 
 namespace {
-namespace fused = archie::utils::fused;
+namespace fused = archie::fused;
 
 template <typename Tp>
 struct tag {

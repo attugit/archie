@@ -1,9 +1,9 @@
-#include <archie/utils/meta/functional.h>
-#include <archie/utils/meta/number.h>
+#include <archie/meta/functional.h>
+#include <archie/meta/number.h>
 #include <catch.hpp>
 
 namespace {
-namespace meta = archie::utils::meta;
+namespace meta = archie::meta;
 
 TEST_CASE("meta::sum") {
   static_assert(std::is_same<int, meta::if_t<meta::true_t, int, char>>::value, "");

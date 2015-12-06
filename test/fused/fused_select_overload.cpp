@@ -1,12 +1,12 @@
-#include <archie/utils/fused/select_overload.h>
-#include <archie/utils/meta/number.h>
+#include <archie/fused/select_overload.h>
+#include <archie/meta/number.h>
 #include <utility>
 #include <type_traits>
 #include <catch.hpp>
 
 namespace {
-namespace fused = archie::utils::fused;
-namespace meta = archie::utils::meta;
+namespace fused = archie::fused;
+namespace meta = archie::meta;
 
 template <unsigned N, typename = typename std::enable_if<(N <= 8)>::type>
 constexpr decltype(auto) foo(fused::choice<1>) {
