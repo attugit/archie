@@ -2,7 +2,6 @@
 #include <archie/meta/requires.h>
 #include <archie/fused/ignore.h>
 #include <archie/models.h>
-#include <archie/test.h>
 #include <vector>
 #include <catch.hpp>
 
