@@ -304,7 +304,7 @@ TEST_CASE("canLexicographicalCompareLess") {
 
 TEST_CASE("canAssignSimilarTuples") {
   auto t = fused::make_tuple(1ul, 2ul, 3ul);
-  t = fused::make_tuple(4, 5, 6);
+  t = fused::make_tuple(4u, 5u, 6u);
 
   REQUIRE(4u == fused::get<0>(t));
   REQUIRE(5u == fused::get<1>(t));
