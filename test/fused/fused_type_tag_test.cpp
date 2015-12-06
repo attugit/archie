@@ -1,5 +1,5 @@
-#include <archie/fused/type_tag.h>
-#include <archie/fused/transform.h>
+#include <archie/fused/type_tag.hpp>
+#include <archie/fused/transform.hpp>
 #include <catch.hpp>
 
 namespace {

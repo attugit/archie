@@ -1,5 +1,5 @@
-#include <archie/fused/tuple.h>
-#include <archie/fused/algorithm.h>
+#include <archie/fused/tuple.hpp>
+#include <archie/fused/algorithm.hpp>
 #include <memory>
 #include <catch.hpp>
 

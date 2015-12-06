@@ -1,4 +1,4 @@
-#include <archie/fused/placeholder.h>
+#include <archie/fused/placeholder.hpp>
 #include <catch.hpp>
 
 namespace {

@@ -1,4 +1,4 @@
-#include <archie/fused/conditional.h>
+#include <archie/fused/conditional.hpp>
 #include <catch.hpp>
 
 namespace {

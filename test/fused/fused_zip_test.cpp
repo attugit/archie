@@ -1,4 +1,4 @@
-#include <archie/fused/zip.h>
+#include <archie/fused/zip.hpp>
 #include <catch.hpp>
 
 namespace {

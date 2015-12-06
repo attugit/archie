@@ -1,4 +1,4 @@
-#include <archie/meta/indexable.h>
+#include <archie/meta/indexable.hpp>
 #include <catch.hpp>
 
 namespace {

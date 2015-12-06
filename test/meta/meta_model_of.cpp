@@ -1,7 +1,7 @@
-#include <archie/traits/model_of.h>
-#include <archie/meta/requires.h>
-#include <archie/fused/ignore.h>
-#include <archie/models.h>
+#include <archie/traits/model_of.hpp>
+#include <archie/meta/requires.hpp>
+#include <archie/fused/ignore.hpp>
+#include <archie/models.hpp>
 #include <vector>
 #include <catch.hpp>
 

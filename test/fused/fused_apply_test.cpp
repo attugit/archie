@@ -1,5 +1,5 @@
-#include <archie/fused/apply.h>
-#include <archie/fused/front.h>
+#include <archie/fused/apply.hpp>
+#include <archie/fused/front.hpp>
 #include <catch.hpp>
 
 namespace {

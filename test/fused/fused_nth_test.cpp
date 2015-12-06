@@ -1,4 +1,4 @@
-#include <archie/fused/nth.h>
+#include <archie/fused/nth.hpp>
 #include <memory>
 #include <catch.hpp>
 

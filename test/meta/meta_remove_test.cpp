@@ -1,4 +1,4 @@
-#include <archie/meta/remove.h>
+#include <archie/meta/remove.hpp>
 #include <type_traits>
 #include <catch.hpp>
 

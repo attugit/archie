@@ -1,9 +1,9 @@
-#include <archie/meta/returns.h>
-#include <archie/meta/transform.h>
-#include <archie/meta/apply.h>
-#include <archie/meta/append.h>
-#include <archie/meta/identity.h>
-#include <archie/meta/find.h>
+#include <archie/meta/returns.hpp>
+#include <archie/meta/transform.hpp>
+#include <archie/meta/apply.hpp>
+#include <archie/meta/append.hpp>
+#include <archie/meta/identity.hpp>
+#include <archie/meta/find.hpp>
 #include <type_traits>
 #include <catch.hpp>
 

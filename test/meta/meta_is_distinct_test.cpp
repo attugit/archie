@@ -1,4 +1,4 @@
-#include <archie/meta/is_distinct.h>
+#include <archie/meta/is_distinct.hpp>
 #include <catch.hpp>
 
 namespace {

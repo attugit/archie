@@ -1,4 +1,4 @@
-#include <archie/traits/has_member.h>
+#include <archie/traits/has_member.hpp>
 
 #include <vector>
 #include <utility>

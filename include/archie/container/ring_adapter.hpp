@@ -1,7 +1,7 @@
 #pragma once
 #include <utility>
 #include <archie/container/ring_iterator.hpp>
-#include <archie/traits/model_of.h>
+#include <archie/traits/model_of.hpp>
 
 namespace archie {
 template <typename Container>

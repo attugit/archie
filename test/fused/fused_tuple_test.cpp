@@ -1,8 +1,8 @@
 #include <type_traits>
-#include <archie/fused/tuple.h>
-#include <archie/traits.h>
+#include <archie/fused/tuple.hpp>
+#include <archie/traits.hpp>
 #include <memory>
-#include <archie/fused/ignore.h>
+#include <archie/fused/ignore.hpp>
 #include <catch.hpp>
 
 namespace {

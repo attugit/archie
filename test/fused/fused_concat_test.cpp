@@ -1,4 +1,4 @@
-#include <archie/fused/concat.h>
+#include <archie/fused/concat.hpp>
 #include <catch.hpp>
 
 namespace {

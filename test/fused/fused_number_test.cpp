@@ -1,4 +1,4 @@
-#include <archie/fused/number.h>
+#include <archie/fused/number.hpp>
 #include <catch.hpp>
 
 namespace {

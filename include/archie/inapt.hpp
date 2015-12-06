@@ -1,6 +1,6 @@
 #pragma once
 #include <utility>
-#include <archie/traits/model_of.h>
+#include <archie/traits/model_of.hpp>
 
 namespace archie {
 

@@ -1,4 +1,4 @@
-#include <archie/meta/slice.h>
+#include <archie/meta/slice.hpp>
 #include <type_traits>
 #include <catch.hpp>
 

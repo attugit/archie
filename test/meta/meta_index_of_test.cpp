@@ -1,4 +1,4 @@
-#include <archie/meta/index_of.h>
+#include <archie/meta/index_of.hpp>
 #include <array>
 #include <catch.hpp>
 

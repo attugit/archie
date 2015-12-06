@@ -1,4 +1,4 @@
-#include <archie/fused/boolean.h>
+#include <archie/fused/boolean.hpp>
 #include <catch.hpp>
 
 namespace {

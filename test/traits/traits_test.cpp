@@ -1,4 +1,4 @@
-#include <archie/traits.h>
+#include <archie/traits.hpp>
 
 #include <vector>
 #include <utility>

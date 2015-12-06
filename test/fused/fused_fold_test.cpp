@@ -1,6 +1,6 @@
-#include <archie/fused/fold.h>
-#include <archie/fused/tuple.h>
-#include <archie/fused/apply.h>
+#include <archie/fused/fold.hpp>
+#include <archie/fused/tuple.hpp>
+#include <archie/fused/apply.hpp>
 #include <catch.hpp>
 
 namespace {

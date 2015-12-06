@@ -1,5 +1,5 @@
-#include <archie/fused/tail.h>
-#include <archie/fused/tuple.h>
+#include <archie/fused/tail.hpp>
+#include <archie/fused/tuple.hpp>
 #include <catch.hpp>
 
 namespace {

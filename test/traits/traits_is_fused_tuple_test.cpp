@@ -1,5 +1,5 @@
-#include <archie/traits/is_fused_tuple.h>
-#include <archie/fused/tuple.h>
+#include <archie/traits/is_fused_tuple.hpp>
+#include <archie/fused/tuple.hpp>
 #include <catch.hpp>
 
 namespace {

@@ -1,5 +1,5 @@
-#include <archie/meta/compose.h>
-#include <archie/meta/number.h>
+#include <archie/meta/compose.hpp>
+#include <archie/meta/number.hpp>
 #include <memory>
 #include <catch.hpp>
 namespace {

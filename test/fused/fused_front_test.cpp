@@ -1,5 +1,5 @@
-#include <archie/fused/front.h>
-#include <archie/fused/tuple.h>
+#include <archie/fused/front.hpp>
+#include <archie/fused/tuple.hpp>
 #include <memory>
 #include <type_traits>
 #include <catch.hpp>
