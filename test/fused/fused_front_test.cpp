@@ -34,7 +34,7 @@ TEST_CASE("canPassNoncopyableToFront") {
     REQUIRE(&a == &x);
   }
 }
-TEST_CASE("canUseBackWithLValue") {
+TEST_CASE("canUseFrontWithLValue") {
   {
     auto a = 1u;
     auto x = fused::front(a, 2.0, '3');

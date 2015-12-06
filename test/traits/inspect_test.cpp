@@ -3,6 +3,7 @@
 #include <vector>
 #include <utility>
 #include <memory>
+#include <catch.hpp>
 
 namespace {
 namespace au = archie;
@@ -40,18 +41,18 @@ private:
   int data;
 };
 
-static_assert(has_value_type<vec_t>::value, "");
-static_assert(!has_value_type<pair_t>::value, "");
-static_assert(!has_value_type<int>::value, "");
+TEST_CASE("traits_test") {
+  static_assert(has_value_type<vec_t>::value, "");
+  static_assert(!has_value_type<pair_t>::value, "");
+  static_assert(!has_value_type<int>::value, "");
 
-static_assert(has_reserve<vec_t>::value, "");
-static_assert(!has_reserve<pair_t>::value, "");
-static_assert(!has_reserve<int>::value, "");
+  static_assert(has_reserve<vec_t>::value, "");
+  static_assert(!has_reserve<pair_t>::value, "");
+  static_assert(!has_reserve<int>::value, "");
 
-static_assert(has_data_property<TypeWithPublicData>::value, "");
-static_assert(!has_data_property<vec_t>::value, "");
-static_assert(!has_data_property<TypeWithPrivateData>::value, "");
-static_assert(!has_data_property<int>::value, "");
+  static_assert(has_data_property<TypeWithPublicData>::value, "");
+  static_assert(!has_data_property<vec_t>::value, "");
+  static_assert(!has_data_property<TypeWithPrivateData>::value, "");
+  static_assert(!has_data_property<int>::value, "");
 }
-
-int main() { return 0; }
+}

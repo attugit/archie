@@ -1,10 +1,10 @@
 #include <archie/fused/placeholder.h>
+#include <catch.hpp>
+
+namespace {
 namespace fused = archie::fused;
-#include <archie/test.h>
-
 using namespace fused::placeholders;
-
-void canAccessArgumentWithPlaceholder() {
+TEST_CASE("canAccessArgumentWithPlaceholder") {
   auto a = 1u;
   auto b = 2.0;
   auto c = '3';
@@ -13,12 +13,12 @@ void canAccessArgumentWithPlaceholder() {
   auto const& y = _1(a, b, c);
   auto const& z = _2(a, b, c);
 
-  EXPECT_EQ(&a, &x);
-  EXPECT_EQ(&b, &y);
-  EXPECT_EQ(&c, &z);
+  REQUIRE(&a == &x);
+  REQUIRE(&b == &y);
+  REQUIRE(&c == &z);
 }
 
-void canBindPlaceHolders() {
+TEST_CASE("canBindPlaceHolders") {
   auto inc = [](auto&& x, auto&& y, auto&& z) {
     ++x;
     ++++y;
@@ -33,12 +33,12 @@ void canBindPlaceHolders() {
 
   func(a, b, c);
 
-  EXPECT_EQ(4u, a);
-  EXPECT_EQ(3.0, b);
-  EXPECT_EQ('5', c);
+  REQUIRE(4u == a);
+  REQUIRE(3.0 == b);
+  REQUIRE('5' == c);
 }
 
-void canGetExpiringValue() {
+TEST_CASE("canGetExpiringValue") {
   auto x = 0.0;
   {
     auto a = 1;
@@ -49,12 +49,6 @@ void canGetExpiringValue() {
     x = _2(std::move(b), std::move(c), std::move(d));
     static_assert(std::is_same<decltype(y), int&&>::value, "");
   }
-  EXPECT_EQ(4.0, x);
+  REQUIRE(4.0 == x);
 }
-
-int main() {
-  canAccessArgumentWithPlaceholder();
-  canBindPlaceHolders();
-  canGetExpiringValue();
-  return 0;
 }
