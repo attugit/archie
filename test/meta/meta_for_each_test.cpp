@@ -1,7 +1,8 @@
 #include <archie/fused/for_each.h>
 #include <string>
-#include <archie/test.h>
+#include <catch.hpp>
 
+namespace {
 namespace fused = archie::fused;
 
 struct func {
@@ -12,27 +13,22 @@ struct func {
   }
 };
 
-void canCallForEachWithFunctionObject() {
+TEST_CASE("canCallForEachWithFunctionObject") {
   func f;
-  ASSERT_EQ(0, f.cnt);
+  REQUIRE(0 == f.cnt);
   fused::for_each(f);
-  EXPECT_EQ(0, f.cnt);
+  REQUIRE(0 == f.cnt);
   auto& ret = fused::for_each(f, '7', 'c', std::string{});
-  EXPECT_EQ(3, f.cnt);
-  EXPECT_EQ(3, ret.cnt);
-  EXPECT_EQ(&f, &ret);
+  REQUIRE(3 == f.cnt);
+  REQUIRE(3 == ret.cnt);
+  REQUIRE(&f == &ret);
 }
 
-void canCallForEachWithLambda() {
+TEST_CASE("canCallForEachWithLambda") {
   int idx = 0;
   auto f = [&idx](auto&&) { ++idx; };
-  ASSERT_EQ(0, idx);
+  REQUIRE(0 == idx);
   fused::for_each(f, 7, 'c', 2.0);
-  EXPECT_EQ(3, idx);
+  REQUIRE(3 == idx);
 }
-
-int main() {
-  canCallForEachWithFunctionObject();
-  canCallForEachWithLambda();
-  return 0;
 }
