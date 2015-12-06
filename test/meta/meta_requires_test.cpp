@@ -1,7 +1,8 @@
 #include <archie/meta/requires.h>
-#include <archie/test.h>
 #include <type_traits>
+#include <catch.hpp>
 
+namespace {
 using archie::meta::requires;
 using archie::meta::boolean;
 using archie::meta::all;
@@ -39,13 +40,9 @@ static_assert(!none<std::is_integral<int>, std::is_unsigned<unsigned>>::value, "
 static_assert(!none<std::is_integral<int>, std::is_unsigned<int>>::value, "");
 static_assert(none<std::is_integral<float>, std::is_unsigned<int>>::value, "");
 
-void canUseRequires() {
+TEST_CASE("canUseRequires") {
   foo t;
-  EXPECT_EQ(0, t.func(0u));
-  EXPECT_EQ(1, t.func(0.0));
+  REQUIRE(0 == t.func(0u));
+  REQUIRE(1 == t.func(0.0));
 }
-
-int main() {
-  canUseRequires();
-  return 0;
 }
