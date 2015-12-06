@@ -35,35 +35,34 @@ def options(opt):
   opt.load('waf_unit_test')
 
 def configure(conf):
+  conf.setenv('base')
   conf.load('waf_unit_test')
   conf.define('APPNAME', APPNAME)
   conf.define('VERSION', VERSION)
-
-  conf.setenv('debug')
   conf.load('compiler_cxx')
   conf.env.CXXFLAGS += flags
-  conf.env.CXXFLAGS += ['-g', '-O0']
-  conf.env.DEFINES += ['DEBUG']
   conf.check_cxx(fragment=trait_check,
     mandatory=False,
     define_name = 'USE_IS_TRIVIALLY_COPY_CONSTRUCTIBLE_TRAIT',
     msg='Checking for traits')
 
+  for variant in ['debug', 'release', 'coverage']:
+    conf.setenv('base')
+    newenv = conf.env.derive()
+    newenv.detach()
+    conf.setenv(variant, newenv)
+
+  conf.setenv('debug')
+  conf.env.CXXFLAGS += ['-g', '-O0']
+  conf.env.DEFINES += ['DEBUG']
+
   conf.setenv('coverage')
-  conf.load('compiler_cxx')
-  conf.env.CXXFLAGS += flags
   conf.env.CXXFLAGS += ['-g', '-O0', '-fprofile-arcs', '-ftest-coverage', '-pg']
   conf.env.DEFINES += ['NDEBUG']
   conf.env.LIB += ['gcov']
   conf.env.LINKFLAGS += ['-pg']
-  conf.check_cxx(fragment=trait_check,
-    mandatory=False,
-    define_name = 'USE_IS_TRIVIALLY_COPY_CONSTRUCTIBLE_TRAIT',
-    msg='Checking for traits')
 
   conf.setenv('release')
-  conf.load('compiler_cxx')
-  conf.env.CXXFLAGS += flags
   conf.env.CXXFLAGS += ['-O3', '-march=native', '-fPIC', '-fno-rtti']
   conf.env.DEFINES += ['NDEBUG']
   if conf.check_cxx(fragment='int main() {}\n',
@@ -73,10 +72,6 @@ def configure(conf):
           msg='Checking for link time optimization'):
     conf.env.CXXFLAGS += ['-flto']
     conf.env.LINKFLAGS += ['-flto']
-  conf.check_cxx(fragment=trait_check,
-    mandatory=False,
-    define_name = 'USE_IS_TRIVIALLY_COPY_CONSTRUCTIBLE_TRAIT',
-    msg='Checking for traits')
 
 from waflib.Tools import waf_unit_test
 def build(bld):
