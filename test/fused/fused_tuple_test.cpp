@@ -138,7 +138,7 @@ TEST_CASE("canUseGetByIdToWrite") {
   REQUIRE(3.0 == *fused::get<1>(t));
 }
 
-TEST_CASE("canUseAt") {
+TEST_CASE("canUseAtWithTuple") {
   constexpr auto const& at_0 = fused::at<0>;
   constexpr auto const& at_1 = fused::at<1>;
   constexpr auto const& at_2 = fused::at<2>;

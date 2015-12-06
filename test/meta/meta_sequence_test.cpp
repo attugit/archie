@@ -59,7 +59,7 @@ TEST_CASE("canAppend") {
   static_assert(std::is_same<sequence<_0, _1, _2, _3>, type>::value, "");
 }
 
-TEST_CASE("canUseAt") {
+TEST_CASE("meta::canUseAt") {
   using type_0 = au::meta::at<0, _3, _2, _1, _0>::type;
   using type_1 = au::meta::at<1, _3, _2, _1, _0>::type;
   using type_2 = au::meta::at<2, _3, _2, _1, _0>::type;

@@ -83,37 +83,10 @@ def build(bld):
   bld.env.INCLUDES += ['test']
   bld.env.DEFINES += ['TEST_BUILD']
   bld(
-    source       = bld.path.ant_glob(['test/test_main.cpp']),
-    target       = 'catch',
-    features     = 'cxx',
-    install_path = None,
-  )
-  bld(
-    source       = bld.path.ant_glob(['test/fused/**/*.cpp']),
-    target       = 'ut_fused',
+    source       = bld.path.ant_glob(['test/**/*.cpp']),
+    target       = 'ut_' + APPNAME,
     features     = 'cxx cxxprogram test',
-    use          = [APPNAME, 'catch'],
-    install_path = None,
-  )
-  bld(
-    source       = bld.path.ant_glob(['test/sandbox/**/*.cpp']),
-    target       = 'ut_sandbox',
-    features     = 'cxx cxxprogram test',
-    use          = [APPNAME, 'catch'],
-    install_path = None,
-  )
-  bld(
-    source       = bld.path.ant_glob(['test/meta/**/*.cpp']),
-    target       = 'ut_meta',
-    features     = 'cxx cxxprogram test',
-    use          = [APPNAME, 'catch'],
-    install_path = None,
-  )
-  bld(
-    source       = bld.path.ant_glob(['test/traits/**/*.cpp']),
-    target       = 'ut_traits',
-    features     = 'cxx cxxprogram test',
-    use          = [APPNAME, 'catch'],
+    use          = [APPNAME],
     install_path = None,
   )
   bld.add_post_fun(waf_unit_test.summary)
