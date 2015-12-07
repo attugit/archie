@@ -75,5 +75,53 @@ TEST_CASE("alias", "[alias]") {
     REQUIRE(x == 7);
     REQUIRE(y == 42);
   }
+  SECTION("assign") {
+    auto x = 1u;
+    auto y = 2u;
+    auto a = alias(x);
+    REQUIRE(unwrap(a) == 1u);
+    a = y;
+    REQUIRE(unwrap(a) == 2u);
+    REQUIRE(x == 2u);
+    a = x;
+    REQUIRE(unwrap(a) == 2u);
+    a = std::move(x);
+    REQUIRE(unwrap(a) == 2u);
+  }
+  SECTION("cross-ctor") {
+    struct A {
+      int x = 1;
+    };
+    struct B : A {
+      int y = 2;
+    };
+    B x;
+    alias_t<A> const a(x);
+    REQUIRE((*a).x == 1);
+    alias_t<A> b(alias(x));
+    REQUIRE(a->x == 1);
+  }
+  SECTION("deref") {
+    struct Pos {
+      int x, y;
+    };
+    Pos p, q;
+    auto als = alias(p);
+    als->x = 1;
+    als->y = 2;
+    REQUIRE(p.x == 1);
+    REQUIRE(p.y == 2);
+    auto other = alias(p);
+    REQUIRE(als == other);
+    REQUIRE_FALSE(als != other);
+    auto aq = alias(q);
+    REQUIRE(std::addressof(p) > std::addressof(q));
+    REQUIRE(als > aq);
+    REQUIRE(als >= other);
+    REQUIRE(als >= aq);
+    REQUIRE(aq < als);
+    REQUIRE(other <= als);
+    REQUIRE(aq <= als);
+  }
 }
 }
