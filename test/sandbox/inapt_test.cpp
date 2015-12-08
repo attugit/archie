@@ -97,7 +97,7 @@ TEST_CASE("Can create inapt", "[inapt]") {
 
   SECTION("Can derefer") {
     status a;
-    status const b;
+    status const b(error::a);
     REQUIRE(*a == error::a);
     REQUIRE(*b == error::a);
   }
