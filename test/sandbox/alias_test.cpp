@@ -115,13 +115,14 @@ TEST_CASE("alias", "[alias]") {
     REQUIRE(als == other);
     REQUIRE_FALSE(als != other);
     auto aq = alias(q);
-    REQUIRE(std::addressof(p) > std::addressof(q));
-    REQUIRE(als > aq);
-    REQUIRE(als >= other);
-    REQUIRE(als >= aq);
-    REQUIRE(aq < als);
-    REQUIRE(other <= als);
-    REQUIRE(aq <= als);
+    if (std::addressof(p) > std::addressof(q)) {
+      REQUIRE(als > aq);
+      REQUIRE(als >= other);
+      REQUIRE(als >= aq);
+      REQUIRE(aq < als);
+      REQUIRE(other <= als);
+      REQUIRE(aq <= als);
+    }
   }
 }
 }
