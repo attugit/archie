@@ -82,5 +82,12 @@ TEST_CASE("Can create inapt", "[inapt]") {
     s = null;
     REQUIRE(s == null);
   }
+
+  SECTION("Can convert to bool") {
+    status a;
+    REQUIRE_FALSE(a);
+    a = non_null;
+    REQUIRE(a);
+  }
 }
 }
