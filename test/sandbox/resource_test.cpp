@@ -45,5 +45,22 @@ TEST_CASE("Can use resource", "[resource]") {
     }
     REQUIRE(i == 4);
   }
+
+  SECTION("Can derefere resource") {
+    auto const nothing = [](auto) {};
+    auto res = make_resource(1, nothing);
+    REQUIRE(*res == 1);
+    auto const cres = make_resource(2, nothing);
+    REQUIRE(*cres == 2);
+
+    struct point {
+      int x = 0;
+    };
+
+    auto rpoint = make_resource(point{}, nothing);
+    auto const crpoint = make_resource(point{}, nothing);
+    REQUIRE(rpoint->x == 0);
+    REQUIRE(crpoint->x == 0);
+  }
 }
 }
