@@ -43,7 +43,7 @@ def configure(conf):
   if not conf.check_cxx(fragment='int main() { [](auto... xs) { return sizeof...(xs); }; return 0; }\n',
           cxxflags='-Werror -Wunused-parameter',
           mandatory=False,
-          msg='Checking for gcc Bug 68965'):
+          msg='Checking gcc fix for bug 68965'):
     conf.env.CXXFLAGS += ['-Wno-unused-parameter']
   conf.env.CXXFLAGS += flags
   conf.check_cxx(fragment=trait_check,
