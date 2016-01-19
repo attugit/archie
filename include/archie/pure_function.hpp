@@ -2,7 +2,6 @@
 #include <utility>
 #include <type_traits>
 #include <archie/meta/static_constexpr_storage.hpp>
-#include <archie/traits/is_constructible.hpp>
 
 namespace archie {
 namespace detail {
@@ -11,27 +10,20 @@ namespace detail {
 
   template <typename R, typename... Args>
   struct to_function_pointer_<R(Args...)> {
-  private:
-    template <typename T>
-    using trivial = traits::is_trivially_copy_constructible<T>;
-
-  public:
     using pointer = R (*)(Args...);
 
     template <typename T>
-    typename std::enable_if<std::is_convertible<T, pointer>::value, pointer>::type operator()(
-        T t) const {
+    std::enable_if_t<std::is_convertible<T, pointer>::value, pointer> operator()(T t) const {
       return t;
     }
 
     template <typename T>
-    typename std::enable_if<!std::is_convertible<T, pointer>::value && std::is_empty<T>::value &&
-                                trivial<T>::value,
-                            pointer>::type
+    std::enable_if_t<!std::is_convertible<T, pointer>::value && std::is_empty<T>::value &&
+                         std::is_trivially_constructible<T>::value,
+                     pointer>
     operator()(T) const {
-      return this->operator()([](Args... args) {
-        return typename std::add_const<T>::type{}(std::forward<Args>(args)...);
-      });
+      return this->operator()(
+          [](Args... args) { return std::add_const_t<T>{}(std::forward<Args>(args)...); });
     }
   };
 }

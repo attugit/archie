@@ -68,4 +68,10 @@ TEST_CASE("pure_function conversion to function pointer", "[pure_function]") {
   REQUIRE(ptr);
   REQUIRE(ptr(std::make_unique<int>(0)) == boo(std::make_unique<int>(0)));
 }
+
+TEST_CASE("pure function returning void", "[pure_function]") {
+  pure_function<void(int)> pf{[](int) {}};
+  REQUIRE(pf);
+  pf(42);
+}
 }
