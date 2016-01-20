@@ -10,17 +10,17 @@ namespace detail {
 
   template <typename R, typename... Args>
   struct to_function_pointer_<R(Args...)> {
-    using pointer = R (*)(Args...);
+    using type = R (*)(Args...);
 
     template <typename T>
-    std::enable_if_t<std::is_convertible<T, pointer>::value, pointer> operator()(T t) const {
+    std::enable_if_t<std::is_convertible<T, type>::value, type> operator()(T t) const {
       return t;
     }
 
     template <typename T>
-    std::enable_if_t<!std::is_convertible<T, pointer>::value && std::is_empty<T>::value &&
+    std::enable_if_t<!std::is_convertible<T, type>::value && std::is_empty<T>::value &&
                          std::is_trivially_constructible<T>::value,
-                     pointer>
+                     type>
     operator()(T) const {
       return this->operator()(
           [](Args... args) { return std::add_const_t<T>{}(std::forward<Args>(args)...); });
@@ -34,7 +34,6 @@ struct pure_function;
 template <typename R, typename... Args>
 struct pure_function<R(Args...)> {
   using type = R (*)(Args...);
-  using pointer = type;
 
   pure_function() = default;
 
@@ -54,9 +53,9 @@ struct pure_function<R(Args...)> {
   }
 
   explicit operator bool() const { return fptr != nullptr; }
-  operator pointer() const { return fptr; }
+  operator type() const { return fptr; }
 
 private:
-  pointer fptr = nullptr;
+  type fptr = nullptr;
 };
 }

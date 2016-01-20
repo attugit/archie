@@ -61,7 +61,7 @@ TEST_CASE("pure_function assigment", "[pure_function]") {
 
 TEST_CASE("pure_function conversion to function pointer", "[pure_function]") {
   pf_t pf;
-  pf_t::pointer ptr = pf;
+  pf_t::type ptr = pf;
   REQUIRE(!ptr);
   pf = boo;
   ptr = pf;
