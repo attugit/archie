@@ -12,18 +12,33 @@ namespace detail {
   struct to_function_pointer_<R(Args...)> {
     using type = R (*)(Args...);
 
+  private:
+    struct convertible_tag {};
+    struct stateless_tag {};
+
     template <typename T>
-    std::enable_if_t<std::is_convertible<T, type>::value, type> operator()(T t) const {
-      return t;
+    type convert(T&& t, convertible_tag) const {
+      return std::forward<T>(t);
     }
 
     template <typename T>
-    std::enable_if_t<!std::is_convertible<T, type>::value && std::is_empty<T>::value &&
-                         std::is_trivially_constructible<T>::value,
-                     type>
-    operator()(T) const {
-      return this->operator()(
-          [](Args... args) { return std::add_const_t<T>{}(std::forward<Args>(args)...); });
+    type convert(T&&, stateless_tag) const {
+      using Func = std::decay_t<T>;
+      auto const wrap =
+          [](Args... args) { return std::add_const_t<Func>{}(std::forward<Args>(args)...); };
+      return operator()(wrap);
+    }
+
+  public:
+    template <typename T>
+    type operator()(T&& t) const {
+      using Func = std::decay_t<T>;
+      return convert(
+          std::forward<T>(t),
+          std::conditional_t<std::is_convertible<Func, type>::value, convertible_tag,
+                             std::conditional_t<std::is_empty<Func>::value &&
+                                                    std::is_trivially_constructible<Func>::value,
+                                                stateless_tag, void>>{});
     }
   };
 }
