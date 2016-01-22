@@ -24,8 +24,9 @@ namespace detail {
     template <typename T>
     type convert(T&&, stateless_tag) const {
       using Func = std::decay_t<T>;
-      auto const wrap =
-          [](Args... args) { return std::add_const_t<Func>{}(std::forward<Args>(args)...); };
+      auto const wrap = [](Args... args) {
+        return std::add_const_t<Func>{}(std::forward<Args>(args)...);
+      };
       return operator()(wrap);
     }
 

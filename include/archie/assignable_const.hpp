@@ -10,8 +10,7 @@ struct assignable_const {
   using const_reference = T const&;
 
   template <typename... Args>
-  explicit assignable_const(Args&&... args)
-      : data_(std::forward<Args>(args)...) {}
+  explicit assignable_const(Args&&... args) : data_(std::forward<Args>(args)...) {}
   assignable_const(assignable_const const&) = default;
   assignable_const(assignable_const&&) = default;
   assignable_const& operator=(assignable_const const&) = default;

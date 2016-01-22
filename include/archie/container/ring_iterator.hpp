@@ -30,8 +30,7 @@ public:
   explicit ring_iterator(Iter begin, Iter last, Distance offset)
       : ring_iterator(begin, std::distance(begin, last), offset) {}
   template <typename Iter>
-  explicit ring_iterator(Iter begin, Iter last)
-      : ring_iterator(begin, last, 0) {}
+  explicit ring_iterator(Iter begin, Iter last) : ring_iterator(begin, last, 0) {}
   template <typename Iter>
   explicit ring_iterator(Iter begin, Iter last, Iter first)
       : ring_iterator(begin, last, std::distance(begin, first)) {}
@@ -39,8 +38,7 @@ public:
   explicit ring_iterator(Range& r, typename std::remove_cv_t<Range>::difference_type n)
       : ring_iterator(std::begin(r), r.size(), n) {}
   template <typename Range>
-  explicit ring_iterator(Range& r)
-      : ring_iterator(r, 0) {}
+  explicit ring_iterator(Range& r) : ring_iterator(r, 0) {}
   ///--------------------------------------------
   ring_iterator() : ring_iterator(iterator{}, iterator{}) {}
   ring_iterator(ring_iterator const&) = default;

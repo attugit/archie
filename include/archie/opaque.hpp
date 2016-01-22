@@ -79,8 +79,7 @@ struct opaque<Tag, Tp, Fs...> final {
   using value_type = Tp;
 
   template <typename... Us>
-  explicit opaque(Us&&... args)
-      : value_(std::forward<Us>(args)...) {}
+  explicit opaque(Us&&... args) : value_(std::forward<Us>(args)...) {}
 
   template <typename T, typename U, typename... V>
   friend enabled<opaque<T, U, V...>, extractable, U const&> extract(opaque<T, U, V...> const&);

@@ -47,7 +47,9 @@ public:
     if (size() != capacity()) {
       container_.emplace_back(std::forward<Args>(args)...);
       pos_ = iterator{container_, 0};
-    } else { *pos_++ = std::move(value_type{std::forward<Args>(args)...}); }
+    } else {
+      *pos_++ = std::move(value_type{std::forward<Args>(args)...});
+    }
   }
 
   Container* operator->() { return &container_; }

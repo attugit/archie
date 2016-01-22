@@ -35,8 +35,9 @@ TEST_CASE("canWrapNthWithLambda") {
   const int b = 1;
   const float c = 2.0;
 
-  auto f = [](auto&&... args)
-               -> decltype(auto) { return fused::nth<0>(std::forward<decltype(args)>(args)...); };
+  auto f = [](auto&&... args) -> decltype(auto) {
+    return fused::nth<0>(std::forward<decltype(args)>(args)...);
+  };
   auto const& x = f(a, b, c);
   REQUIRE(&a == &x);
 }

@@ -165,14 +165,8 @@ TEST_CASE("mixed_buffer", "[array]") {
     REQUIRE(buff_s[3] == 4);
     REQUIRE(buff_s[4] == 5);
 
-    sut buff_h = {value_t(1),
-                  value_t(2),
-                  value_t(3),
-                  value_t(4),
-                  value_t(5),
-                  value_t(6),
-                  value_t(7),
-                  value_t(8)};
+    sut buff_h = {value_t(1), value_t(2), value_t(3), value_t(4),
+                  value_t(5), value_t(6), value_t(7), value_t(8)};
     REQUIRE(buff_h.size() == 8);
     REQUIRE(buff_h.capacity() == 8);
     REQUIRE(buff_h[0] == 1);
@@ -189,14 +183,8 @@ TEST_CASE("mixed_buffer", "[array]") {
     sut cpy_s{orig_s};
     REQUIRE(cpy_s == orig_s);
 
-    sut const orig_h = {value_t(1),
-                        value_t(2),
-                        value_t(3),
-                        value_t(4),
-                        value_t(5),
-                        value_t(6),
-                        value_t(7),
-                        value_t(8)};
+    sut const orig_h = {value_t(1), value_t(2), value_t(3), value_t(4),
+                        value_t(5), value_t(6), value_t(7), value_t(8)};
     sut cpy_h{orig_h};
     REQUIRE(cpy_h == orig_h);
   }
@@ -208,14 +196,8 @@ TEST_CASE("mixed_buffer", "[array]") {
     REQUIRE(orig_s.capacity() == stack_size);
     REQUIRE(orig_s.size() == ref_s.size());
 
-    sut const ref_h = {value_t(1),
-                       value_t(2),
-                       value_t(3),
-                       value_t(4),
-                       value_t(5),
-                       value_t(6),
-                       value_t(7),
-                       value_t(8)};
+    sut const ref_h = {value_t(1), value_t(2), value_t(3), value_t(4),
+                       value_t(5), value_t(6), value_t(7), value_t(8)};
     sut orig_h{ref_h};
     REQUIRE(orig_h.capacity() > stack_size);
     sut cpy_h{std::move(orig_h)};
@@ -254,14 +236,8 @@ TEST_CASE("mixed_buffer", "[array]") {
     REQUIRE(cpy5 == orig_s);
   }
   SECTION("copy assignment heap buffer") {
-    sut const orig_s = {value_t(100),
-                        value_t(101),
-                        value_t(102),
-                        value_t(103),
-                        value_t(104),
-                        value_t(105),
-                        value_t(106),
-                        value_t(107)};
+    sut const orig_s = {value_t(100), value_t(101), value_t(102), value_t(103),
+                        value_t(104), value_t(105), value_t(106), value_t(107)};
     sut cpy0;
     sut cpy1 = make_sut(1);
     sut cpy2 = make_sut(3);

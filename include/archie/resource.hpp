@@ -22,8 +22,7 @@ struct resource {
   template <typename U,
             typename D,
             typename = typename std::enable_if<!std::is_same<U, decltype(in_place)>::value>::type>
-  explicit resource(U&& u, D&& del)
-      : r(std::forward<U>(u)), d(std::forward<D>(del)) {}
+  explicit resource(U&& u, D&& del) : r(std::forward<U>(u)), d(std::forward<D>(del)) {}
 
   template <typename... Args>
   explicit resource(decltype(in_place), Args&&... args)

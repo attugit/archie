@@ -14,8 +14,7 @@ namespace fused {
       using reference = value_type&;
       using const_reference = value_type const&;
       template <typename Up>
-      move_capture(Up&& u)
-          : value(std::forward<Up>(u)) {}
+      move_capture(Up&& u) : value(std::forward<Up>(u)) {}
       move_capture(move_capture&&) = default;
       move_capture(move_capture const&) = default;
       move_capture(move_capture& other) : value(std::forward<Tp>(other.value)) {}

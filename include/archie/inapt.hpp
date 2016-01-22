@@ -27,8 +27,7 @@ private:
     impl_() : P(), value(P::null()) {}
     bool is_null() const { return P::is_null(value); }
     template <typename... U>
-    impl_(U&&... u)
-        : value(std::forward<U>(u)...) {}
+    impl_(U&&... u) : value(std::forward<U>(u)...) {}
     void set_null() { value = P::null(); }
     value_type value;
   };
@@ -42,8 +41,7 @@ public:
   inapt_t& operator=(inapt_t&&) = default;
 
   template <typename... U>
-  explicit inapt_t(U&&... u)
-      : impl(std::forward<U>(u)...) {}
+  explicit inapt_t(U&&... u) : impl(std::forward<U>(u)...) {}
 
   template <typename U>
   inapt_t& operator=(U const& u) {
