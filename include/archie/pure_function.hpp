@@ -2,6 +2,7 @@
 #include <utility>
 #include <type_traits>
 #include <archie/meta/static_constexpr_storage.hpp>
+#include <archie/fused/if_t.hpp>
 
 namespace archie {
 namespace detail {
@@ -12,34 +13,19 @@ namespace detail {
   struct to_function_pointer_<R(Args...)> {
     using type = R (*)(Args...);
 
-  private:
-    struct convertible_tag {};
-    struct stateless_tag {};
-
-    template <typename T>
-    type convert(T&& t, convertible_tag) const {
-      return std::forward<T>(t);
-    }
-
-    template <typename T>
-    type convert(T&&, stateless_tag) const {
-      using Func = std::decay_t<T>;
-      auto const wrap = [](Args... args) {
-        return std::add_const_t<Func>{}(std::forward<Args>(args)...);
-      };
-      return operator()(wrap);
-    }
-
-  public:
     template <typename T>
     type operator()(T&& t) const {
       using Func = std::decay_t<T>;
-      return convert(
-          std::forward<T>(t),
-          std::conditional_t<std::is_convertible<Func, type>::value, convertible_tag,
-                             std::conditional_t<std::is_empty<Func>::value &&
-                                                    std::is_trivially_constructible<Func>::value,
-                                                stateless_tag, void>>{});
+      return fused::if_(std::is_convertible<Func, type>{},
+                        [](auto&& x) -> type { return std::forward<decltype(x)>(x); },
+                        [](auto &&) -> type {
+                          static_assert(std::is_empty<Func>::value &&
+                                            std::is_trivially_constructible<Func>::value,
+                                        "");
+                          return [](Args... args) {
+                            return std::add_const_t<Func>{}(std::forward<Args>(args)...);
+                          };
+                        })(std::forward<T>(t));
     }
   };
 }
