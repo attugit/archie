@@ -50,7 +50,7 @@ struct pure_function<R(Args...)> {
   }
 
   template <typename... U>
-  auto operator()(U&&... u) const {
+  decltype(auto) operator()(U&&... u) const {
     return (*fptr)(std::forward<U>(u)...);
   }
 
