@@ -3,6 +3,7 @@
 #include <utility>
 #include <type_traits>
 #include <archie/traits/is_callable.hpp>
+#include <archie/fused/static_if.hpp>
 #include <archie/meta/requires.hpp>
 #include <archie/meta/static_constexpr_storage.hpp>
 
@@ -18,8 +19,7 @@ namespace fused {
       template <typename Up>
       constexpr explicit conditional_(Up&& u) : F(std::forward<Up>(u)) {}
       template <typename... Ts, typename = meta::requires<traits::is_callable<F, Ts&&...>>>
-      constexpr auto operator()(Ts&&... xs) const
-          -> decltype(std::declval<F const&>()(std::forward<Ts>(xs)...)) {
+      constexpr decltype(auto) operator()(Ts&&... xs) const {
         return F::operator()(std::forward<Ts>(xs)...);
       }
     };
@@ -30,15 +30,16 @@ namespace fused {
       template <typename Up, typename... Vs>
       constexpr explicit conditional_(Up&& u, Vs&&... vs)
           : F1(std::forward<Up>(u)), F2(std::forward<Vs>(vs)...) {}
-      template <typename... Ts, typename = meta::requires<traits::is_callable<F1, Ts&&...>>>
-      constexpr auto operator()(Ts&&... xs) const
-          -> decltype(std::declval<F1 const&>()(std::forward<Ts>(xs)...)) {
-        return F1::operator()(std::forward<Ts>(xs)...);
-      }
-      template <typename... Ts, typename = meta::requires_none<traits::is_callable<F1, Ts&&...>>>
-      constexpr auto operator()(Ts&&... xs) const
-          -> decltype(std::declval<F2 const&>()(std::forward<Ts>(xs)...)) {
-        return F2::operator()(std::forward<Ts>(xs)...);
+
+      template <typename... Ts>
+      constexpr decltype(auto) operator()(Ts&&... xs) const {
+        return fused::static_if(traits::is_callable<F1, Ts&&...>{})(
+            [this](auto&&... args) -> decltype(auto) {
+              return this->F1::operator()(std::forward<decltype(args)>(args)...);
+            },
+            [this](auto&&... args) -> decltype(auto) {
+              return this->F2::operator()(std::forward<decltype(args)>(args)...);
+            })(std::forward<Ts>(xs)...);
       }
     };
 
