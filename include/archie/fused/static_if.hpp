@@ -6,7 +6,7 @@
 namespace archie {
 namespace fused {
   namespace detail {
-    struct if_ {
+    struct static_if_ {
       template <typename Cond, typename IfTrue, typename IfFalse>
       decltype(auto) operator()(Cond const&, IfTrue&& if_true, IfFalse&& if_false) const {
         return select(std::integral_constant<bool, std::decay_t<Cond>::value>{},
@@ -25,6 +25,6 @@ namespace fused {
     };
   }
 
-  static constexpr auto const& if_ = meta::instance<detail::if_>();
+  static constexpr auto const& static_if = meta::instance<detail::static_if_>();
 }
 }
