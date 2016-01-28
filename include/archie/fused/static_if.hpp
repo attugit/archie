@@ -7,21 +7,26 @@ namespace archie {
 namespace fused {
   namespace detail {
     struct static_if_ {
-      template <typename Cond, typename IfTrue, typename IfFalse>
-      decltype(auto) operator()(Cond const&, IfTrue&& if_true, IfFalse&& if_false) const {
-        return select(std::integral_constant<bool, std::decay_t<Cond>::value>{},
-                      std::forward<IfTrue>(if_true), std::forward<IfFalse>(if_false));
+      template <typename Cond>
+      decltype(auto) operator()(Cond const&) const {
+        return select(std::integral_constant<bool, std::decay_t<Cond>::value>{});
       }
 
     private:
-      template <typename IfTrue, typename IfFalse>
-      decltype(auto) select(std::true_type, IfTrue&& if_true, IfFalse&&) const {
-        return std::forward<IfTrue>(if_true);
-      }
-      template <typename IfTrue, typename IfFalse>
-      decltype(auto) select(std::false_type, IfTrue&&, IfFalse&& if_false) const {
-        return std::forward<IfFalse>(if_false);
-      }
+      struct if_true_ {
+        template <typename T, typename U>
+        decltype(auto) operator()(T&& t, U&&) const {
+          return std::forward<T>(t);
+        }
+      };
+      struct if_false_ {
+        template <typename T, typename U>
+        decltype(auto) operator()(T&&, U&& u) const {
+          return std::forward<U>(u);
+        }
+      };
+      decltype(auto) select(std::true_type) const { return if_true_{}; }
+      decltype(auto) select(std::false_type) const { return if_false_{}; }
     };
   }
 

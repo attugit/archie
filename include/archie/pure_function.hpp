@@ -15,17 +15,15 @@ namespace detail {
 
     template <typename T>
     type operator()(T&& t) const {
-      return fused::static_if(std::is_convertible<std::decay_t<T>, type>{},
-                              [](auto&& x) -> type { return std::forward<decltype(x)>(x); },
-                              [](auto&& x) -> type {
-                                using ObjT = std::decay_t<decltype(x)>;
-                                static_assert(std::is_empty<ObjT>::value &&
-                                                  std::is_trivially_constructible<ObjT>::value,
-                                              "");
-                                return [](Args... args) {
-                                  return std::add_const_t<ObjT>{}(std::forward<Args>(args)...);
-                                };
-                              })(std::forward<T>(t));
+      return fused::static_if(std::is_convertible<std::decay_t<T>, type>{})(
+          [](auto&& x) -> type { return std::forward<decltype(x)>(x); },
+          [](auto&& x) -> type {
+            using ObjT = std::decay_t<decltype(x)>;
+            static_assert(
+                std::is_empty<ObjT>::value && std::is_trivially_constructible<ObjT>::value, "");
+            return
+                [](Args... args) { return std::add_const_t<ObjT>{}(std::forward<Args>(args)...); };
+          })(std::forward<T>(t));
     }
   };
 }
