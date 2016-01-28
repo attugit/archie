@@ -13,5 +13,11 @@ TEST_CASE("static if") {
   auto const size2 = static_if(std::false_type{})([](std::vector<int> v) { return v.size(); },
                                                   [](std::string s) { return s.size(); })("Hello");
   REQUIRE(size2 == 5);
+
+  std::vector<int> v;
+  static_if(std::true_type{})([](std::vector<int>& vv) { vv.reserve(3); })(v);
+  REQUIRE(v.capacity() == 3);
+  static_if(std::false_type{})([](std::vector<int>& vv) { vv.reserve(7); })(v);
+  REQUIRE(v.capacity() == 3);
 }
 }
