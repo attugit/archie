@@ -16,7 +16,8 @@ namespace fused {
       constexpr decltype(auto) operator()(F&& f, Ts&&... ts) const {
         return fused::static_if(traits::is_fused_tuple<std::decay_t<F>>{})(
             [this](auto&& tpl, auto&&... xs) -> decltype(auto) {
-              return fused::static_if(meta::boolean<(tuple_size(type_tag<F>{}) == 1)>{})(
+              return fused::static_if(
+                  meta::boolean<(tuple_size(type_tag<std::decay_t<decltype(tpl)>>{}) == 1)>{})(
                   [](auto&& t, auto&&... args) -> decltype(auto) {
                     return fused::apply(fused::get<0>(std::forward<decltype(t)>(t)),
                                         std::forward<decltype(args)>(args)...);
