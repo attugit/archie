@@ -28,5 +28,5 @@ before_install:
 
 script:
   - rm -rf build;
-  - CXX=$COMPILER ./waf distclean configure build --alltests
-  - CXX=$COMPILER ./waf distclean configure build_debug --alltests
+  - CXX=$COMPILER ./waf distclean configure build --alltests -j1
+  - CXX=$COMPILER ./waf distclean configure build_debug --alltests -j1
