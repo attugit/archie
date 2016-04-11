@@ -147,26 +147,21 @@ namespace fused {
   };
 
   namespace detail {
-    template <std::size_t head, std::size_t... tail>
+    template <std::size_t head>
     struct tuple_recursion {
-      template <typename F, typename L, typename R>
-      static bool call(F f, L const& x, R const& y) {
-        return fused::static_if(meta::boolean<sizeof...(tail)>{})(
-            [f](auto const& x1, auto const& y1) -> bool {
-              return get<head>(x1) == get<head>(y1) ? tuple_recursion<tail...>::call(f, x1, y1)
-                                                    : tuple_recursion<head>::call(f, x1, y1);
+      template <typename Eq, typename Cmp, typename... Ts, typename... Us>
+      static bool call(Eq eq, Cmp cmp, tuple<Ts...> const& x, tuple<Us...> const& y) {
+        return fused::static_if(meta::boolean<((head + 1) < sizeof...(Ts))>{})(
+            [eq, cmp](auto const& x1, auto const& y1, auto idx) -> bool {
+              constexpr auto const pos = decltype(idx)::value;
+              return eq(get<pos>(x1), get<pos>(y1))
+                         ? tuple_recursion<pos + 1>::call(eq, cmp, x1, y1)
+                         : cmp(get<pos>(x1), get<pos>(y1));
             },
-            [f](auto const& x2, auto const& y2) -> bool {
-              return f(get<head>(x2), get<head>(y2));
-            })(x, y);
-      }
-      template <typename... Ts, typename... Us>
-      static bool equal(tuple<Ts...> const& x, tuple<Us...> const& y) {
-        return call([](auto const& lhs, auto const& rhs) { return lhs == rhs; }, x, y);
-      }
-      template <typename... Ts>
-      static bool less(tuple<Ts...> const& x, tuple<Ts...> const& y) {
-        return call([](auto const& lhs, auto const& rhs) { return lhs < rhs; }, x, y);
+            [cmp](auto const& x2, auto const& y2, auto idx) -> bool {
+              constexpr auto const pos = decltype(idx)::value;
+              return cmp(get<pos>(x2), get<pos>(y2));
+            })(x, y, meta::number<head>{});
       }
     };
 
@@ -179,14 +174,6 @@ namespace fused {
       template <typename... Ts, typename... Us>
       static void move_assign(tuple<Ts...>& lhs, tuple<Us...>&& rhs) {
         meta::ignore{(fused::get<idx>(lhs) = std::move(fused::get<idx>(rhs)), false)...};
-      }
-      template <typename... Ts, typename... Us>
-      static bool equal(tuple<Ts...> const& lhs, tuple<Us...> const& rhs) {
-        return tuple_recursion<idx...>::equal(lhs, rhs);
-      }
-      template <typename... Ts>
-      static bool less(tuple<Ts...> const& lhs, tuple<Ts...> const& rhs) {
-        return tuple_recursion<idx...>::less(lhs, rhs);
       }
     };
   }
@@ -214,12 +201,15 @@ namespace fused {
   template <typename... Ts>
   template <typename... Us>
   bool tuple<Ts...>::operator==(tuple<Us...> const& rhs) const {
-    return meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::equal(*this, rhs);
+    auto const eq = [](auto const& x, auto const& y) { return x == y; };
+    return detail::tuple_recursion<0>::call(eq, eq, *this, rhs);
   }
 
   template <typename... Ts>
   bool tuple<Ts...>::operator<(tuple<Ts...> const& rhs) const {
-    return meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::less(*this, rhs);
+    auto const eq = [](auto const& x, auto const& y) { return x == y; };
+    auto const less = [](auto const& x, auto const& y) { return x < y; };
+    return detail::tuple_recursion<0>::call(eq, less, *this, rhs);
   }
 }
 }
