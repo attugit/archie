@@ -149,27 +149,24 @@ namespace fused {
   namespace detail {
     template <std::size_t head, std::size_t... tail>
     struct tuple_recursion {
+      template <typename F, typename L, typename R>
+      static bool call(F f, L const& x, R const& y) {
+        return fused::static_if(meta::boolean<sizeof...(tail)>{})(
+            [f](auto const& x1, auto const& y1) -> bool {
+              return get<head>(x1) == get<head>(y1) ? tuple_recursion<tail...>::call(f, x1, y1)
+                                                    : tuple_recursion<head>::call(f, x1, y1);
+            },
+            [f](auto const& x2, auto const& y2) -> bool {
+              return f(get<head>(x2), get<head>(y2));
+            })(x, y);
+      }
       template <typename... Ts, typename... Us>
       static bool equal(tuple<Ts...> const& x, tuple<Us...> const& y) {
-        return fused::static_if(meta::boolean<sizeof...(tail)>{})(
-            [](auto const& lhs, auto const& rhs) -> bool {
-              return get<head>(lhs) == get<head>(rhs) ? tuple_recursion<tail...>::equal(lhs, rhs)
-                                                      : false;
-            },
-            [](auto const& lhs, auto const& rhs) -> bool {
-              return get<head>(lhs) == get<head>(rhs);
-            })(x, y);
+        return call([](auto const& lhs, auto const& rhs) { return lhs == rhs; }, x, y);
       }
       template <typename... Ts>
       static bool less(tuple<Ts...> const& x, tuple<Ts...> const& y) {
-        return fused::static_if(meta::boolean<sizeof...(tail)>{})(
-            [](auto const& lhs, auto const& rhs) -> bool {
-              return get<head>(lhs) == get<head>(rhs) ? tuple_recursion<tail...>::less(lhs, rhs)
-                                                      : get<head>(lhs) < get<head>(rhs);
-            },
-            [](auto const& lhs, auto const& rhs) -> bool {
-              return get<head>(lhs) < get<head>(rhs);
-            })(x, y);
+        return call([](auto const& lhs, auto const& rhs) { return lhs < rhs; }, x, y);
       }
     };
 
