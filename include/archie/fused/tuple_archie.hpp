@@ -14,6 +14,8 @@
 #include <archie/fused/mover.hpp>
 #include <archie/fused/ignore.hpp>
 #include <archie/traits/is_callable.hpp>
+#include <archie/fused/static_if.hpp>
+#include <archie/fused/boolean.hpp>
 
 namespace archie {
 namespace fused {
@@ -145,32 +147,29 @@ namespace fused {
   };
 
   namespace detail {
-
-    template <std::size_t...>
-    struct tuple_recursion;
-
-    template <>
-    struct tuple_recursion<> {
-      template <typename... Ts, typename... Us>
-      static bool equal(tuple<Ts...> const&, tuple<Us...> const&) {
-        return true;
-      }
-      template <typename... Ts>
-      static bool less(tuple<Ts...> const&, tuple<Ts...> const&) {
-        return false;
-      }
-    };
-
     template <std::size_t head, std::size_t... tail>
-    struct tuple_recursion<head, tail...> {
+    struct tuple_recursion {
       template <typename... Ts, typename... Us>
-      static bool equal(tuple<Ts...> const& lhs, tuple<Us...> const& rhs) {
-        return get<head>(lhs) == get<head>(rhs) ? tuple_recursion<tail...>::equal(lhs, rhs) : false;
+      static bool equal(tuple<Ts...> const& x, tuple<Us...> const& y) {
+        return fused::static_if(meta::boolean<sizeof...(tail)>{})(
+            [](auto const& lhs, auto const& rhs) -> bool {
+              return get<head>(lhs) == get<head>(rhs) ? tuple_recursion<tail...>::equal(lhs, rhs)
+                                                      : false;
+            },
+            [](auto const& lhs, auto const& rhs) -> bool {
+              return get<head>(lhs) == get<head>(rhs);
+            })(x, y);
       }
       template <typename... Ts>
-      static bool less(tuple<Ts...> const& lhs, tuple<Ts...> const& rhs) {
-        return get<head>(lhs) == get<head>(rhs) ? tuple_recursion<tail...>::less(lhs, rhs)
-                                                : get<head>(lhs) < get<head>(rhs);
+      static bool less(tuple<Ts...> const& x, tuple<Ts...> const& y) {
+        return fused::static_if(meta::boolean<sizeof...(tail)>{})(
+            [](auto const& lhs, auto const& rhs) -> bool {
+              return get<head>(lhs) == get<head>(rhs) ? tuple_recursion<tail...>::less(lhs, rhs)
+                                                      : get<head>(lhs) < get<head>(rhs);
+            },
+            [](auto const& lhs, auto const& rhs) -> bool {
+              return get<head>(lhs) < get<head>(rhs);
+            })(x, y);
       }
     };
 
