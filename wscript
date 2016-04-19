@@ -24,6 +24,7 @@ flags = [
 
 def options(opt):
   opt.load('compiler_cxx')
+  opt.load('boost')
   opt.load('waf_unit_test')
 
 def configure(conf):
@@ -32,6 +33,8 @@ def configure(conf):
   conf.define('APPNAME', APPNAME)
   conf.define('VERSION', VERSION)
   conf.load('compiler_cxx')
+  conf.load('boost')
+  conf.check_boost()
   conf.env.CXXFLAGS += flags
 
   for variant in ['debug', 'release', 'coverage']:
