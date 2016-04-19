@@ -129,7 +129,7 @@ struct tree_t {
 
   size_type size() const {
     static auto const fun = [](size_type s, value_type const& node) { return s + node_size(node); };
-    return std::accumulate(std::begin(list_), std::end(list_), 0, fun);
+    return std::accumulate(std::begin(list_), std::end(list_), size_type{0}, fun);
   }
   bool empty() const { return list_.empty(); }
 
