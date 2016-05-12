@@ -1,6 +1,5 @@
 #pragma once
 
-#if defined(USE_ARCHIE_TUPLE)
 #include <utility>
 #include <array>
 #include <archie/meta/eval.hpp>
@@ -234,4 +233,3 @@ namespace fused {
   }
 }
 }
-#endif

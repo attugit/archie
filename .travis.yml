@@ -23,22 +23,27 @@ matrix:
           packages:
             - clang-3.8
             - g++-5
-            - python-virtualenv
 
 before_install:
   - export CXX=$COMPILER
   - which $CXX
-  - virtualenv coverage
-  - source coverage/bin/activate
-  - pip install gcovr
-  - deactivate
+  - |
+    if [[ "${COMPILER}" == "g++-5" ]]; then
+      virtualenv coverage
+      source coverage/bin/activate
+      pip install gcovr
+      deactivate
+    fi
 
 script:
   - rm -rf build;
   - CXX=$COMPILER ./waf distclean configure build --alltests -j1
-  - CXX=$COMPILER ./waf distclean configure build_debug --alltests -j1
-  - CXX=$COMPILER ./waf distclean configure build_coverage --alltests -j1
-  - source coverage/bin/activate
-  - gcovr -e test/catch.hpp -b -r .
-  - gcovr -e test/catch.hpp -r .
-  - deactivate
+  - CXX=$COMPILER ./waf distclean configure build_release --alltests -j1
+  - |
+    if [[ "${COMPILER}" == "g++-5" ]]; then
+      CXX=$COMPILER ./waf distclean configure build_coverage --alltests -j1
+      source coverage/bin/activate
+      gcovr -e test/catch.hpp -b -r .
+      gcovr -e test/catch.hpp -r .
+      deactivate
+    fi

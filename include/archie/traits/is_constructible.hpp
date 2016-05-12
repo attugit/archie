@@ -18,12 +18,7 @@ namespace traits {
   template <typename Tp>
   using is_move_constructible = is_constructible<Tp, Tp&&>;
 
-#if defined(USE_IS_TRIVIALLY_COPY_CONSTRUCTIBLE_TRAIT)
   template <typename Tp>
   using is_trivially_copy_constructible = std::is_trivially_copy_constructible<Tp>;
-#else
-  template <typename Tp>
-  using is_trivially_copy_constructible = std::has_trivial_copy_constructor<Tp>;
-#endif
 }
 }
