@@ -45,7 +45,6 @@ script:
       echo $PWD
       ls -al
       source coverage/bin/activate
-      gcovr -e test/catch.hpp -b -r .
-      gcovr -e test/catch.hpp -sr .
+      gcovr --object-directory=$PWD/build/coverage/ --root=$PWD --exclude=test/catch.hpp --print-summary
       deactivate
     fi
