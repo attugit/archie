@@ -1,4 +1,5 @@
 #pragma once
+#include <iterator>
 #include <initializer_list>
 #include <archie/container/base_buffer.hpp>
 
