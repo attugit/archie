@@ -9,7 +9,8 @@ namespace archie {
 namespace meta {
   namespace detail {
     template <typename Tp>
-    struct no_convert {};
+    struct no_convert {
+    };
 
     template <std::size_t I, std::size_t T, typename...>
     struct element;
@@ -27,14 +28,16 @@ namespace meta {
   }
 
   template <typename Tp, typename... Ts>
-  constexpr decltype(auto) index_of(type_list<Ts...>) noexcept {
+  constexpr decltype(auto) index_of(type_list<Ts...>) noexcept
+  {
     using type =
         decltype(detail::element<0, sizeof...(Ts), Ts...>{}.match(detail::no_convert<Tp>{}));
     return type{};
   }
 
   template <typename Tp, typename... Ts>
-  constexpr decltype(auto) type_index(Ts...) noexcept {
+  constexpr decltype(auto) type_index(Ts...) noexcept
+  {
     return index_of<Tp>(type_list<Ts...>{});
   }
 }

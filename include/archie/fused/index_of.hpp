@@ -11,11 +11,13 @@ namespace fused {
     template <typename Tp>
     struct index_of_ {
       template <typename... Us>
-      constexpr decltype(auto) operator()(Us&&...) const noexcept {
+      constexpr decltype(auto) operator()(Us&&...) const noexcept
+      {
         return meta::index_of<Tp>(fused::type_list<Us...>);
       }
       template <typename... Us>
-      constexpr decltype(auto) operator()(meta::type_list<Us...> x) const noexcept {
+      constexpr decltype(auto) operator()(meta::type_list<Us...> x) const noexcept
+      {
         return meta::index_of<Tp>(x);
       }
     };

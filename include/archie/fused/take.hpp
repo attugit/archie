@@ -19,16 +19,19 @@ namespace fused {
       template <typename... Ts>
       struct impl {
         template <typename Up>
-        constexpr decltype(auto) operator()(Up&& u) const {
+        constexpr decltype(auto) operator()(Up&& u) const
+        {
           return fused::tuple<meta::at_t<ids, Ts...>...>(get<ids>(std::forward<Up>(u))...);
         }
       };
       template <typename Tp>
-      constexpr decltype(auto) operator()(Tp&& t) const {
+      constexpr decltype(auto) operator()(Tp&& t) const
+      {
         return meta::listed_t<impl, meta::as_type_list_t<std::decay_t<Tp>>>{}(std::forward<Tp>(t));
       }
       template <typename... Ts>
-      constexpr decltype(auto) operator()(Ts&&... ts) const {
+      constexpr decltype(auto) operator()(Ts&&... ts) const
+      {
         return make_tuple(fused::nth<ids>(ts...)...);
       }
     };

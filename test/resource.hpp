@@ -5,7 +5,8 @@ namespace archie {
 namespace test {
   struct resource {
     using value_type = int;
-    static int get_id() {
+    static int get_id()
+    {
       static int id = 0;
       return id++;
     };
@@ -13,16 +14,19 @@ namespace test {
     resource() : resource(0) {}
     resource(resource const& r) : resource(*(r.ptr)) {}
     resource(resource&& r) : ptr(r.ptr), id_(get_id()) { r.ptr = nullptr; }
-    resource& operator=(resource const& r) {
+    resource& operator=(resource const& r)
+    {
       *ptr = *r.ptr;
       return *this;
     }
-    resource& operator=(resource&& r) {
+    resource& operator=(resource&& r)
+    {
       using std::swap;
       swap(ptr, r.ptr);
       return *this;
     }
-    ~resource() {
+    ~resource()
+    {
       if (ptr) delete ptr;
     }
     explicit operator bool() const { return ptr != nullptr; }
@@ -31,7 +35,6 @@ namespace test {
     value_type value() const { return *ptr; }
     bool operator==(resource const& r) const { return *ptr == *r.ptr; }
     bool operator!=(resource const& r) const { return !(*this == r); }
-
   private:
     value_type* ptr = nullptr;
     int id_ = 0;

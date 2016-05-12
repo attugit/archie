@@ -23,7 +23,8 @@ namespace fused {
   struct tuple {
   private:
     template <typename... Us>
-    static decltype(auto) make_storage(Us... args) {
+    static decltype(auto) make_storage(Us... args)
+    {
       return [args...](auto&& func) mutable -> decltype(auto) {
         return std::forward<decltype(func)>(func)(args...);
       };
@@ -32,19 +33,24 @@ namespace fused {
 
     storage_type storage;
 
-    struct explicit_ctor_tag {};
-    struct implicit_ctor_tag {};
-    struct move_t_ctor_tag {};
+    struct explicit_ctor_tag {
+    };
+    struct implicit_ctor_tag {
+    };
+    struct move_t_ctor_tag {
+    };
 
     template <typename... Us>
     constexpr explicit tuple(implicit_ctor_tag, Us&&... args)
-        : tuple(move_t_ctor_tag{}, move_t<Ts>(std::forward<Us>(args))...) {}
+        : tuple(move_t_ctor_tag{}, move_t<Ts>(std::forward<Us>(args))...)
+    {
+    }
 
     constexpr explicit tuple(move_t_ctor_tag, move_t<Ts>... mvs) : storage(make_storage(mvs...)) {}
-
     template <typename... Us>
-    constexpr explicit tuple(explicit_ctor_tag, Us&&... args)
-        : tuple(Ts{std::forward<Us>(args)}...) {}
+    constexpr explicit tuple(explicit_ctor_tag, Us&&... args) : tuple(Ts{std::forward<Us>(args)}...)
+    {
+    }
 
     template <typename F, typename... Us>
     using requires_callable = meta::requires<traits::is_callable<F, Us...>>;
@@ -55,11 +61,12 @@ namespace fused {
         : tuple(meta::if_t<meta::all<traits::is_convertible<Us, Ts>...>,
                            implicit_ctor_tag,
                            explicit_ctor_tag>{},
-                std::forward<Us>(args)...) {}
+                std::forward<Us>(args)...)
+    {
+    }
 
     constexpr tuple() : tuple(Ts{}...) {}
     tuple(tuple& other) : tuple(const_cast<tuple const&>(other)) {}
-
     tuple(tuple&&) = default;
     tuple(tuple const&) = default;
     tuple& operator=(tuple const&);
@@ -76,11 +83,10 @@ namespace fused {
     bool operator>(tuple const& rhs) const { return rhs < *this; }
     bool operator>=(tuple const& rhs) const { return !(*this < rhs); }
     bool operator<=(tuple const& rhs) const { return !(*this > rhs); }
-
     constexpr std::size_t size() noexcept { return sizeof...(Ts); }
-
     template <typename F>
-    decltype(auto) apply(F&& f, requires_callable<F, Ts const&...> = fused::ignore) const& {
+    decltype(auto) apply(F&& f, requires_callable<F, Ts const&...> = fused::ignore) const&
+    {
       auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
         return std::forward<decltype(f)>(f)(static_cast<Ts const&>(xs)...);
       };
@@ -89,7 +95,8 @@ namespace fused {
     }
 
     template <typename F>
-    decltype(auto) apply(F&& f, requires_callable<F, Ts&...> = fused::ignore) & {
+    decltype(auto) apply(F&& f, requires_callable<F, Ts&...> = fused::ignore) &
+    {
       auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
         return std::forward<decltype(f)>(f)(static_cast<std::add_lvalue_reference_t<Ts>>(xs)...);
       };
@@ -97,7 +104,8 @@ namespace fused {
     }
 
     template <typename F>
-    decltype(auto) apply(F&& f, requires_callable<F, Ts&&...> = fused::ignore) && {
+    decltype(auto) apply(F&& f, requires_callable<F, Ts&&...> = fused::ignore) &&
+    {
       auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
         return std::forward<decltype(f)>(f)(static_cast<Ts&&>(xs)...);
       };
@@ -108,32 +116,37 @@ namespace fused {
   namespace detail {
     struct make_tuple_ {
       template <typename... Ts>
-      constexpr decltype(auto) operator()(Ts&&... args) const {
+      constexpr decltype(auto) operator()(Ts&&... args) const
+      {
         return fused::tuple<std::remove_reference_t<Ts>...>(std::forward<Ts>(args)...);
       }
     };
 
     struct tie_ {
       template <typename... Ts>
-      constexpr decltype(auto) operator()(Ts&... args) const {
+      constexpr decltype(auto) operator()(Ts&... args) const
+      {
         return fused::tuple<Ts&...>(args...);
       }
     };
   }
 
   template <std::size_t N, typename Tp>
-  decltype(auto) get(Tp&& tp) {
+  decltype(auto) get(Tp&& tp)
+  {
     return tp.apply(fused::nth<N>);
   }
 
   template <typename Tp, typename... Us>
-  decltype(auto) get(tuple<Us...>& u) {
+  decltype(auto) get(tuple<Us...>& u)
+  {
     constexpr auto idx = meta::index_of<Tp>(meta::type_list<Us...>{});
     return get<idx>(u);
   }
 
   template <typename Tp, typename... Us>
-  decltype(auto) get(tuple<Us...> const& u) {
+  decltype(auto) get(tuple<Us...> const& u)
+  {
     constexpr auto idx = meta::index_of<Tp>(meta::type_list<Us...>{});
     return get<idx>(u);
   }
@@ -150,7 +163,8 @@ namespace fused {
     template <std::size_t head>
     struct tuple_recursion {
       template <typename Eq, typename Cmp, typename... Ts, typename... Us>
-      static bool call(Eq eq, Cmp cmp, tuple<Ts...> const& x, tuple<Us...> const& y) {
+      static bool call(Eq eq, Cmp cmp, tuple<Ts...> const& x, tuple<Us...> const& y)
+      {
         return fused::static_if(meta::boolean<((head + 1) < sizeof...(Ts))>{})(
             [eq, cmp](auto const& x1, auto const& y1, auto idx) -> bool {
               constexpr auto const pos = decltype(idx)::value;
@@ -168,31 +182,36 @@ namespace fused {
     template <std::size_t... idx>
     struct tuple_internals {
       template <typename... Ts, typename... Us>
-      static void copy_assign(tuple<Ts...>& lhs, tuple<Us...> const& rhs) {
+      static void copy_assign(tuple<Ts...>& lhs, tuple<Us...> const& rhs)
+      {
         meta::ignore{(fused::get<idx>(lhs) = fused::get<idx>(rhs), false)...};
       }
       template <typename... Ts, typename... Us>
-      static void move_assign(tuple<Ts...>& lhs, tuple<Us...>&& rhs) {
+      static void move_assign(tuple<Ts...>& lhs, tuple<Us...>&& rhs)
+      {
         meta::ignore{(fused::get<idx>(lhs) = std::move(fused::get<idx>(rhs)), false)...};
       }
     };
   }
 
   template <typename... Ts>
-  tuple<Ts...>& tuple<Ts...>::operator=(tuple<Ts...> const& orig) {
+  tuple<Ts...>& tuple<Ts...>::operator=(tuple<Ts...> const& orig)
+  {
     meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::copy_assign(*this, orig);
     return *this;
   }
 
   template <typename... Ts>
-  tuple<Ts...>& tuple<Ts...>::operator=(tuple<Ts...>&& orig) {
+  tuple<Ts...>& tuple<Ts...>::operator=(tuple<Ts...>&& orig)
+  {
     meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::move_assign(*this, std::move(orig));
     return *this;
   }
 
   template <typename... Ts>
   template <typename... Us>
-  tuple<Ts...>& tuple<Ts...>::operator=(tuple<Us...> const& orig) {
+  tuple<Ts...>& tuple<Ts...>::operator=(tuple<Us...> const& orig)
+  {
     static_assert(sizeof...(Ts) <= sizeof...(Us), "");
     meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::copy_assign(*this, orig);
     return *this;
@@ -200,13 +219,15 @@ namespace fused {
 
   template <typename... Ts>
   template <typename... Us>
-  bool tuple<Ts...>::operator==(tuple<Us...> const& rhs) const {
+  bool tuple<Ts...>::operator==(tuple<Us...> const& rhs) const
+  {
     auto const eq = [](auto const& x, auto const& y) { return x == y; };
     return detail::tuple_recursion<0>::call(eq, eq, *this, rhs);
   }
 
   template <typename... Ts>
-  bool tuple<Ts...>::operator<(tuple<Ts...> const& rhs) const {
+  bool tuple<Ts...>::operator<(tuple<Ts...> const& rhs) const
+  {
     auto const eq = [](auto const& x, auto const& y) { return x == y; };
     auto const less = [](auto const& x, auto const& y) { return x < y; };
     return detail::tuple_recursion<0>::call(eq, less, *this, rhs);

@@ -11,8 +11,10 @@ namespace fused {
   namespace detail {
     struct transform_ {
       template <typename F, typename... Ts>
-      decltype(auto) operator()(F&& f, Ts&&... x) const {
-        auto make = [g = std::forward<F>(f)](auto&&... xs) {
+      decltype(auto) operator()(F&& f, Ts&&... x) const
+      {
+        auto make = [g = std::forward<F>(f)](auto&&... xs)
+        {
           return make_tuple(g(std::forward<decltype(xs)>(xs))...);
         };
         return fused::apply(make, std::forward<Ts>(x)...);
@@ -20,8 +22,10 @@ namespace fused {
     };
     struct transform_view_ {
       template <typename F, typename... Ts>
-      decltype(auto) operator()(F&& f, Ts&&... x) const {
-        auto make = [g = std::forward<F>(f)](auto&&... xs) {
+      decltype(auto) operator()(F&& f, Ts&&... x) const
+      {
+        auto make = [g = std::forward<F>(f)](auto&&... xs)
+        {
           return make_view(g(std::forward<decltype(xs)>(xs))...);
         };
         return fused::apply(make, std::forward<Ts>(x)...);

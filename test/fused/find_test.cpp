@@ -5,7 +5,8 @@
 namespace {
 namespace fused = archie::fused;
 
-TEST_CASE("canUseFusedFind", "[fused::find]") {
+TEST_CASE("canUseFusedFind", "[fused::find]")
+{
   unsigned a = 0u;
   int b = 1;
   char c = '2';
@@ -29,7 +30,8 @@ using is_u = std::is_unsigned<std::decay_t<Tp>>;
 template <typename Tp>
 using is_s = std::is_signed<std::decay_t<Tp>>;
 
-TEST_CASE("canUseFusedFindIf", "[fused::find]") {
+TEST_CASE("canUseFusedFindIf", "[fused::find]")
+{
   unsigned a = 0u;
   int b = 1;
   char c = '2';
@@ -43,11 +45,13 @@ TEST_CASE("canUseFusedFindIf", "[fused::find]") {
 }
 
 template <typename F, typename... Ts>
-decltype(auto) foo(F&& f, Ts&&... ts) {
+decltype(auto) foo(F&& f, Ts&&... ts)
+{
   return std::forward<F>(f)(std::forward<Ts>(ts)...);
 }
 
-TEST_CASE("canUseVariableTemplateFind", "[fused::find]") {
+TEST_CASE("canUseVariableTemplateFind", "[fused::find]")
+{
   {
     auto x = foo(fused::find<int>, 1, 2u, '3', 4.0, 5);
     static_assert(std::is_same<decltype(x), int>::value, "");

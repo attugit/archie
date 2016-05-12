@@ -4,7 +4,8 @@
 namespace {
 namespace fused = archie::fused;
 
-TEST_CASE("canConcatTuple", "[fused::concat]") {
+TEST_CASE("canConcatTuple", "[fused::concat]")
+{
   {
     auto a = fused::make_tuple(1, 2u, '3');
     auto x = fused::concat(a, 4.0);
@@ -29,7 +30,8 @@ TEST_CASE("canConcatTuple", "[fused::concat]") {
   }
 }
 
-TEST_CASE("canConcatTwoTuples", "[fused::concat]") {
+TEST_CASE("canConcatTwoTuples", "[fused::concat]")
+{
   auto a = fused::make_tuple(1, 2u, '3');
   auto b = fused::make_tuple(4.0, 5, 6u);
   auto x = fused::concat(a, b);

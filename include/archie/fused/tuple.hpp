@@ -15,17 +15,20 @@ namespace fused {
   namespace detail {
     struct tuple_size_ {
       template <typename Tp>
-      constexpr decltype(auto) operator()(type_tag<Tp>) const {
+      constexpr decltype(auto) operator()(type_tag<Tp>) const
+      {
         return impl(fused::id<std::decay_t<Tp>>);
       }
       template <typename Tp>
-      constexpr decltype(auto) operator()(Tp const&) const {
+      constexpr decltype(auto) operator()(Tp const&) const
+      {
         return impl(fused::id<Tp>);
       }
 
     private:
       template <typename... Ts>
-      constexpr decltype(auto) impl(type_tag<fused::tuple<Ts...>>) const {
+      constexpr decltype(auto) impl(type_tag<fused::tuple<Ts...>>) const
+      {
         return sizeof...(Ts);
       }
     };
@@ -33,7 +36,8 @@ namespace fused {
     template <std::size_t n>
     struct at_ {
       template <typename Up>
-      constexpr decltype(auto) operator()(Up&& up) const {
+      constexpr decltype(auto) operator()(Up&& up) const
+      {
         return fused::get<n>(std::forward<Up>(up));
       }
     };
@@ -41,7 +45,8 @@ namespace fused {
     template <typename Tp>
     struct extract_ {
       template <typename Up>
-      constexpr decltype(auto) operator()(Up&& up) const {
+      constexpr decltype(auto) operator()(Up&& up) const
+      {
         return fused::get<Tp>(std::forward<Up>(up));
       }
     };

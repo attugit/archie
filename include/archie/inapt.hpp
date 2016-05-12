@@ -4,7 +4,8 @@
 
 namespace archie {
 
-struct null_inapt_t {};
+struct null_inapt_t {
+};
 
 template <typename T, typename P>
 struct inapt_t {
@@ -27,7 +28,9 @@ private:
     impl_() : P(), value(P::null()) {}
     bool is_null() const { return P::is_null(value); }
     template <typename... U>
-    impl_(U&&... u) : value(std::forward<U>(u)...) {}
+    impl_(U&&... u) : value(std::forward<U>(u)...)
+    {
+    }
     void set_null() { value = P::null(); }
     value_type value;
   };
@@ -41,34 +44,38 @@ public:
   inapt_t& operator=(inapt_t&&) = default;
 
   template <typename... U>
-  explicit inapt_t(U&&... u) : impl(std::forward<U>(u)...) {}
+  explicit inapt_t(U&&... u) : impl(std::forward<U>(u)...)
+  {
+  }
 
   template <typename U>
-  inapt_t& operator=(U const& u) {
+  inapt_t& operator=(U const& u)
+  {
     impl.value = u;
     return *this;
   }
 
-  inapt_t& operator=(null_inapt_t const&) {
+  inapt_t& operator=(null_inapt_t const&)
+  {
     impl.set_null();
     return *this;
   }
 
   explicit operator bool() const { return !is_null(); }
   explicit operator const_reference() const { return get(); }
-
   bool is_null() const { return impl.is_null(); }
   const_reference get() const { return impl.value; }
   reference get() { return impl.value; }
-
   bool operator==(null_inapt_t const&) const { return is_null(); }
   bool operator!=(null_inapt_t const&) const { return !is_null(); }
   template <typename U>
-  bool operator==(U const& rhs) const {
+  bool operator==(U const& rhs) const
+  {
     return get() == rhs;
   }
   template <typename U>
-  bool operator!=(U const& rhs) const {
+  bool operator!=(U const& rhs) const
+  {
     return !(get() == rhs);
   }
 

@@ -10,14 +10,16 @@ namespace fused {
     template <typename Tp>
     struct find_ {
       template <typename... Us>
-      constexpr decltype(auto) operator()(Us&&... us) const noexcept {
+      constexpr decltype(auto) operator()(Us&&... us) const noexcept
+      {
         return fused::nth<meta::find_t<Tp, Us...>::value>(std::forward<Us>(us)...);
       }
     };
     template <template <typename> class F>
     struct find_if_ {
       template <typename... Us>
-      constexpr decltype(auto) operator()(Us&&... us) const noexcept {
+      constexpr decltype(auto) operator()(Us&&... us) const noexcept
+      {
         return fused::nth<meta::find_if_t<F, Us...>::value>(std::forward<Us>(us)...);
       }
     };

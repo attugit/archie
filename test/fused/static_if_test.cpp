@@ -5,7 +5,8 @@
 
 namespace {
 using namespace archie::fused;
-TEST_CASE("static if") {
+TEST_CASE("static if")
+{
   auto const size1 = static_if(std::true_type{})([](std::vector<int> v) { return v.size(); },
                                                  [](std::string s) { return s.size(); })({1, 2, 3});
   REQUIRE(size1 == 3);

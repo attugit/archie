@@ -9,7 +9,8 @@ struct block_t {
   assignable_const<unsigned> number;
 };
 
-TEST_CASE("assignable_const", "[const]") {
+TEST_CASE("assignable_const", "[const]")
+{
   block_t b1(3);
   block_t b2(4);
 

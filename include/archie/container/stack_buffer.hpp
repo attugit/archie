@@ -22,7 +22,8 @@ public:
   using const_iterator = typename traits::const_iterator;
 
 private:
-  union storage {
+  union storage
+  {
     storage() {}
     ~storage() {}
     char dummy;
@@ -31,27 +32,31 @@ private:
 
 public:
   stack_buffer() = default;
-  stack_buffer(std::initializer_list<value_type> init) : base_t() {
+  stack_buffer(std::initializer_list<value_type> init) : base_t()
+  {
     for (auto const& x : init) this->emplace_back(x);
   }
-  stack_buffer(stack_buffer const& other) : base_t() {
+  stack_buffer(stack_buffer const& other) : base_t()
+  {
     for (auto const& x : other) this->emplace_back(x);
   }
-  stack_buffer(stack_buffer&& other) : base_t() {
+  stack_buffer(stack_buffer&& other) : base_t()
+  {
     for (auto& x : other) this->emplace_back(std::move(x));
   }
-  stack_buffer& operator=(stack_buffer const& other) {
+  stack_buffer& operator=(stack_buffer const& other)
+  {
     this->assign([](const_reference r) -> const_reference { return r; }, this->begin(),
                  other.begin(), other.end());
     return *this;
   }
-  stack_buffer& operator=(stack_buffer&& other) {
+  stack_buffer& operator=(stack_buffer&& other)
+  {
     this->assign([](reference r) -> value_type&& { return std::move(r); }, this->begin(),
                  other.begin(), other.end());
     return *this;
   }
   ~stack_buffer() { this->clear(); }
-
   pointer data() { return &store.data[0]; }
   const_pointer data() const { return &store.data[0]; }
   size_type capacity() const { return N; }

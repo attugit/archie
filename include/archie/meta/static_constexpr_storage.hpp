@@ -11,7 +11,8 @@ namespace meta {
   constexpr T const static_constexpr_storage<T>::value;
 
   template <typename T>
-  constexpr auto const& instance() noexcept {
+  constexpr auto const& instance() noexcept
+  {
     return static_constexpr_storage<T>::value;
   }
 }

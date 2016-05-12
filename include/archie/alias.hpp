@@ -12,29 +12,34 @@ struct rebind_t;
 namespace detail {
   struct alias_ {
     template <typename T>
-    constexpr decltype(auto) operator()(T& t) const noexcept {
+    constexpr decltype(auto) operator()(T& t) const noexcept
+    {
       return alias_t<T>(t);
     }
   };
 
   struct rebind_ {
     template <typename T>
-    constexpr decltype(auto) operator()(T& t) const noexcept {
+    constexpr decltype(auto) operator()(T& t) const noexcept
+    {
       return rebind_t<T>(t);
     }
     template <typename T>
-    constexpr decltype(auto) operator()(alias_t<T> a) const noexcept {
+    constexpr decltype(auto) operator()(alias_t<T> a) const noexcept
+    {
       return rebind_t<T>(*a);
     }
   };
 
   struct unwrap_ {
     template <typename T>
-    constexpr decltype(auto) operator()(alias_t<T> a) const noexcept {
+    constexpr decltype(auto) operator()(alias_t<T> a) const noexcept
+    {
       return *a;
     }
     template <typename T>
-    constexpr decltype(auto) operator()(rebind_t<T> r) const noexcept {
+    constexpr decltype(auto) operator()(rebind_t<T> r) const noexcept
+    {
       return *r.data_;
     }
   };
@@ -53,7 +58,9 @@ struct rebind_t {
 
   explicit rebind_t(reference x) noexcept : data_(std::addressof(x)) {}
   template <typename U>
-  explicit rebind_t(rebind_t<U> r) noexcept : rebind_t(unwrap(r)) {}
+  explicit rebind_t(rebind_t<U> r) noexcept : rebind_t(unwrap(r))
+  {
+  }
 
 private:
   pointer data_;
@@ -75,65 +82,75 @@ struct alias_t {
   alias_t& operator=(alias_t&&) noexcept = default;
 
   template <typename U>
-  explicit alias_t(rebind_t<U> r) noexcept : ref_(r) {}
+  explicit alias_t(rebind_t<U> r) noexcept : ref_(r)
+  {
+  }
   explicit alias_t(reference r) noexcept : ref_(r) {}
+  template <typename U>
+  alias_t(alias_t<U> const& a) noexcept : ref_(rebind(a))
+  {
+  }
 
   template <typename U>
-  alias_t(alias_t<U> const& a) noexcept : ref_(rebind(a)) {}
-
-  template <typename U>
-  alias_t& operator=(rebind_t<U> r) noexcept {
+  alias_t& operator=(rebind_t<U> r) noexcept
+  {
     ref_ = rebind_t<T>(r);
     return *this;
   }
 
-  alias_t& operator=(const_reference x) {
+  alias_t& operator=(const_reference x)
+  {
     if (std::addressof(unwrap(*this)) != std::addressof(x)) unwrap(*this) = x;
     return *this;
   }
 
-  alias_t& operator=(value_type&& x) {
+  alias_t& operator=(value_type&& x)
+  {
     if (std::addressof(unwrap(*this)) != std::addressof(x)) unwrap(*this) = std::move(x);
     return *this;
   }
 
   reference operator*() noexcept { return unwrap(ref_); }
   const_reference operator*() const noexcept { return unwrap(ref_); }
-
   pointer operator->() noexcept { return &unwrap(ref_); }
   const_pointer operator->() const noexcept { return &unwrap(ref_); }
-
 private:
   rebind_t<T> ref_;
 };
 
 template <typename T>
-bool operator==(alias_t<T> const& lhs, alias_t<T> const& rhs) noexcept {
+bool operator==(alias_t<T> const& lhs, alias_t<T> const& rhs) noexcept
+{
   return std::addressof(unwrap(lhs)) == std::addressof(unwrap(rhs));
 }
 
 template <typename T>
-bool operator!=(alias_t<T> const& lhs, alias_t<T> const& rhs) noexcept {
+bool operator!=(alias_t<T> const& lhs, alias_t<T> const& rhs) noexcept
+{
   return !(lhs == rhs);
 }
 
 template <typename T>
-bool operator<(alias_t<T> const& lhs, alias_t<T> const& rhs) noexcept {
+bool operator<(alias_t<T> const& lhs, alias_t<T> const& rhs) noexcept
+{
   return std::addressof(unwrap(lhs)) < std::addressof(unwrap(rhs));
 }
 
 template <typename T>
-bool operator>(alias_t<T> const& lhs, alias_t<T> const& rhs) noexcept {
+bool operator>(alias_t<T> const& lhs, alias_t<T> const& rhs) noexcept
+{
   return rhs < lhs;
 }
 
 template <typename T>
-bool operator<=(alias_t<T> const& lhs, alias_t<T> const& rhs) noexcept {
+bool operator<=(alias_t<T> const& lhs, alias_t<T> const& rhs) noexcept
+{
   return !(lhs > rhs);
 }
 
 template <typename T>
-bool operator>=(alias_t<T> const& lhs, alias_t<T> const& rhs) noexcept {
+bool operator>=(alias_t<T> const& lhs, alias_t<T> const& rhs) noexcept
+{
   return !(lhs < rhs);
 }
 }

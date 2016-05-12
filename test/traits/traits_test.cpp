@@ -34,7 +34,8 @@ struct conv {
   operator int();
 };
 
-TEST_CASE("traits") {
+TEST_CASE("traits")
+{
   static_assert(traits::is_copy_assignable<vec_t>::value, "");
   static_assert(traits::is_copy_assignable<pair_t>::value, "");
   static_assert(traits::is_copy_assignable<int>::value, "");

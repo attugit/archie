@@ -5,7 +5,8 @@
 namespace {
 namespace fused = archie::fused;
 
-TEST_CASE("canUseNth") {
+TEST_CASE("canUseNth")
+{
   char a = 0;
   int b = 1;
   float c = 2.0;
@@ -21,7 +22,8 @@ TEST_CASE("canUseNth") {
   REQUIRE(7 == a);
 }
 
-TEST_CASE("canUseConstNth") {
+TEST_CASE("canUseConstNth")
+{
   const char a = 0;
   const int b = 1;
   const float c = 2.0;
@@ -30,7 +32,8 @@ TEST_CASE("canUseConstNth") {
   REQUIRE(&a == &x);
 }
 
-TEST_CASE("canWrapNthWithLambda") {
+TEST_CASE("canWrapNthWithLambda")
+{
   const char a = 0;
   const int b = 1;
   const float c = 2.0;
@@ -42,7 +45,8 @@ TEST_CASE("canWrapNthWithLambda") {
   REQUIRE(&a == &x);
 }
 
-TEST_CASE("canUseNthWithNonCopyable") {
+TEST_CASE("canUseNthWithNonCopyable")
+{
   auto a = std::make_unique<unsigned>(1u);
   auto b = std::make_unique<int>(2);
   auto c = std::make_unique<char>('3');
@@ -56,7 +60,8 @@ TEST_CASE("canUseNthWithNonCopyable") {
   REQUIRE(*c == *z);
 }
 
-TEST_CASE("canUseNthWithRValues") {
+TEST_CASE("canUseNthWithRValues")
+{
   auto x = fused::nth<0>(1u, 2.0, '3');
   auto y = fused::nth<1>(1u, 2.0, '3');
   auto z = fused::nth<2>(1u, 2.0, '3');

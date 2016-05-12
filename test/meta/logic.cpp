@@ -7,7 +7,8 @@ namespace meta = archie::meta;
 using true_t = meta::boolean<true>;
 using false_t = meta::boolean<false>;
 
-TEST_CASE("meta::logic") {
+TEST_CASE("meta::logic")
+{
   static_assert(meta::all<>::value, "");
   static_assert(meta::all<true_t>::value, "");
   static_assert(meta::all<true_t, true_t>::value, "");

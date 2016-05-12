@@ -6,7 +6,8 @@
 namespace {
 namespace fused = archie::fused;
 
-TEST_CASE("canSelectAllNotChangingOrder") {
+TEST_CASE("canSelectAllNotChangingOrder")
+{
   auto t = fused::make_tuple(1u, 2.0, '3');
   auto view = fused::select<0, 1, 2>(t);
 
@@ -23,7 +24,8 @@ TEST_CASE("canSelectAllNotChangingOrder") {
   REQUIRE('6' == fused::get<2>(t));
 }
 
-TEST_CASE("canSelectContinousSubsetWithSameOrder") {
+TEST_CASE("canSelectContinousSubsetWithSameOrder")
+{
   auto t = fused::make_tuple(1u, 2.0, '3');
   auto view1 = fused::select<0, 1>(t);
   auto view2 = fused::select<1, 2>(t);
@@ -42,7 +44,8 @@ TEST_CASE("canSelectContinousSubsetWithSameOrder") {
   REQUIRE(4.0 == fused::get<0>(view2));
 }
 
-TEST_CASE("canSelectNonContinousSubsetWithSameOrder") {
+TEST_CASE("canSelectNonContinousSubsetWithSameOrder")
+{
   auto t = fused::make_tuple(1u, 2.0, '3');
   auto view1 = fused::select<0, 2>(t);
   auto view2 = fused::select<1, 2>(t);
@@ -61,7 +64,8 @@ TEST_CASE("canSelectNonContinousSubsetWithSameOrder") {
   REQUIRE('4' == fused::get<1>(view2));
 }
 
-TEST_CASE("canSelectWithChangedOrder") {
+TEST_CASE("canSelectWithChangedOrder")
+{
   auto t = fused::make_tuple(1u, 2.0, '3');
   auto view1 = fused::select<1, 0>(t);
   auto view2 = fused::select<2, 1, 0>(t);
@@ -84,7 +88,8 @@ TEST_CASE("canSelectWithChangedOrder") {
   REQUIRE(4u == fused::get<1>(view1));
 }
 
-TEST_CASE("canStoreItemManyTimes") {
+TEST_CASE("canStoreItemManyTimes")
+{
   auto t = fused::make_tuple(1u, 2.0, '3');
   auto view = fused::select<0, 0, 1, 1, 2, 2>(t);
 
@@ -103,7 +108,8 @@ TEST_CASE("canStoreItemManyTimes") {
   REQUIRE(4.0 == fused::get<3>(view));
 }
 
-TEST_CASE("canUseValueView") {
+TEST_CASE("canUseValueView")
+{
   unsigned a = 3u;
   unsigned b = 1u;
 
@@ -128,7 +134,8 @@ TEST_CASE("canUseValueView") {
   REQUIRE(b == y);
 }
 
-TEST_CASE("canUseTupleView") {
+TEST_CASE("canUseTupleView")
+{
   unsigned a = 3u;
   unsigned b = 1u;
 
@@ -156,7 +163,8 @@ TEST_CASE("canUseTupleView") {
   REQUIRE(b == fused::get<0>(x));
 }
 
-TEST_CASE("canStoreViewInContainer") {
+TEST_CASE("canStoreViewInContainer")
+{
   auto t = fused::make_tuple(1u, 2.0, '3');
   std::vector<fused::tuple_view<char, unsigned>> vec;
   auto t2 = fused::make_tuple('4', 5u, 6.0);

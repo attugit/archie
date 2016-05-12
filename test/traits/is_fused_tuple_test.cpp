@@ -7,7 +7,8 @@ namespace meta = archie::meta;
 namespace fused = archie::fused;
 namespace traits = archie::traits;
 
-TEST_CASE("is_fused_tuple") {
+TEST_CASE("is_fused_tuple")
+{
   static_assert(traits::is_fused_tuple<fused::tuple<int>>::value, "");
   static_assert(!traits::is_fused_tuple<int>::value, "");
   static_assert(!traits::is_fused_tuple<meta::type_list<int>>::value, "");

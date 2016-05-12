@@ -6,7 +6,8 @@
 namespace {
 namespace fused = archie::fused;
 
-TEST_CASE("canUseFusedCompose", "[fused::algo]") {
+TEST_CASE("canUseFusedCompose", "[fused::algo]")
+{
   {
     auto x = fused::compose(fused::make_tuple, 1, 2u, '3');
     static_assert(fused::tuple_size(fused::id<decltype(x)>) == 3u, "");
@@ -35,7 +36,8 @@ TEST_CASE("canUseFusedCompose", "[fused::algo]") {
 #endif
 }
 
-TEST_CASE("canComposeFusedMakeTuple", "[fused::algo]") {
+TEST_CASE("canComposeFusedMakeTuple", "[fused::algo]")
+{
   auto x = fused::apply(fused::make_tuple, 1, 2u, '3');
   static_assert(fused::tuple_size(fused::id<decltype(x)>) == 3u, "");
   REQUIRE(1 == fused::get<0>(x));
@@ -43,7 +45,8 @@ TEST_CASE("canComposeFusedMakeTuple", "[fused::algo]") {
   REQUIRE('3' == fused::get<2>(x));
 }
 
-TEST_CASE("canComposeFusedTie", "[fused::algo]") {
+TEST_CASE("canComposeFusedTie", "[fused::algo]")
+{
   auto a = 1;
   auto b = 2u;
   auto c = '3';
@@ -54,7 +57,8 @@ TEST_CASE("canComposeFusedTie", "[fused::algo]") {
   REQUIRE(&c == &fused::get<2>(x));
 }
 
-TEST_CASE("canComposeFusedFront", "[fused::algo]") {
+TEST_CASE("canComposeFusedFront", "[fused::algo]")
+{
   {
     auto a = fused::apply(fused::front, fused::make_tuple(1, 2u, '3'));
     REQUIRE(1 == a);
@@ -70,7 +74,8 @@ TEST_CASE("canComposeFusedFront", "[fused::algo]") {
 #endif
 }
 
-TEST_CASE("canComposeFusedBack", "[fused::algo]") {
+TEST_CASE("canComposeFusedBack", "[fused::algo]")
+{
   auto a = fused::apply(fused::back, fused::make_tuple(1, 2u, '3'));
   REQUIRE('3' == a);
   auto const& b = fused::apply(fused::back, 1, 2u, a);
@@ -78,7 +83,8 @@ TEST_CASE("canComposeFusedBack", "[fused::algo]") {
   REQUIRE(&a == &b);
 }
 
-TEST_CASE("canComposeFusedForEach", "[fused::algo]") {
+TEST_CASE("canComposeFusedForEach", "[fused::algo]")
+{
   {
     auto i = 0u;
     auto f = [&i](auto&&) { ++i; };
@@ -95,7 +101,8 @@ TEST_CASE("canComposeFusedForEach", "[fused::algo]") {
   }
 }
 
-TEST_CASE("canComposeFusedForEachOrder", "[fused::algo]") {
+TEST_CASE("canComposeFusedForEachOrder", "[fused::algo]")
+{
   auto i = 0u;
   auto f = [&i](auto&& x) {
     i *= 10;
@@ -108,7 +115,8 @@ TEST_CASE("canComposeFusedForEachOrder", "[fused::algo]") {
   REQUIRE(321u == i);
 }
 
-TEST_CASE("canComposeFusedTransform", "[fused::algo]") {
+TEST_CASE("canComposeFusedTransform", "[fused::algo]")
+{
   {
     auto f = [](auto&& x) { return ++x; };
     auto x = fused::apply(fused::transform, f, 1, 2u, '3');
@@ -127,7 +135,8 @@ TEST_CASE("canComposeFusedTransform", "[fused::algo]") {
   }
 }
 
-TEST_CASE("canComposeFusedConcat", "[fused::algo]") {
+TEST_CASE("canComposeFusedConcat", "[fused::algo]")
+{
   auto x = fused::apply(fused::concat, fused::make_tuple(1, 2u, '3'), 4.0);
   static_assert(fused::tuple_size(fused::id<decltype(x)>) == 4u, "");
   REQUIRE(1 == fused::get<0>(x));
@@ -146,7 +155,8 @@ TEST_CASE("canComposeFusedConcat", "[fused::algo]") {
   REQUIRE(6u == fused::get<5>(y));
 }
 
-TEST_CASE("canComposeFusedZip", "[fused::algo]") {
+TEST_CASE("canComposeFusedZip", "[fused::algo]")
+{
   auto x =
       fused::apply(fused::concat, fused::make_tuple(1, 2u, '3'), fused::make_tuple(4.0, 5, 6u));
   static_assert(fused::tuple_size(fused::id<decltype(x)>) == 6u, "");
@@ -158,28 +168,32 @@ TEST_CASE("canComposeFusedZip", "[fused::algo]") {
   REQUIRE(6u == fused::get<5>(x));
 }
 
-TEST_CASE("canComposeFusedTail", "[fused::algo]") {
+TEST_CASE("canComposeFusedTail", "[fused::algo]")
+{
   auto x = fused::tail(fused::make_tuple(1, 2u, '3'));
   static_assert(fused::tuple_size(fused::id<decltype(x)>) == 2u, "");
   REQUIRE(2u == fused::get<0>(x));
   REQUIRE('3' == fused::get<1>(x));
 }
 
-TEST_CASE("canComposeFusedFind", "[fused::algo]") {
+TEST_CASE("canComposeFusedFind", "[fused::algo]")
+{
   auto x = fused::apply(fused::find<unsigned>, 1, 2u, '3', 4u);
   REQUIRE(2u == x);
   auto y = fused::apply(fused::find<char>, 1, 2u, '3', 4u);
   REQUIRE('3' == y);
 }
 
-TEST_CASE("canComposeFusedFindIf", "[fused::algo]") {
+TEST_CASE("canComposeFusedFindIf", "[fused::algo]")
+{
   auto x = fused::apply(fused::find_if<std::is_unsigned>, 1, 2u, '3', 4u);
   REQUIRE(2u == x);
   auto y = fused::apply(fused::find_if<std::is_signed>, 1, 2u, '3', 4u);
   REQUIRE(1 == y);
 }
 
-TEST_CASE("canComposeFusedTake", "[fused::algo]") {
+TEST_CASE("canComposeFusedTake", "[fused::algo]")
+{
   auto x = fused::apply(fused::take<2>, fused::make_tuple(1, 2u, '3'));
   static_assert(fused::tuple_size(fused::id<decltype(x)>) == 2u, "");
   REQUIRE(1 == fused::get<0>(x));
@@ -192,7 +206,8 @@ TEST_CASE("canComposeFusedTake", "[fused::algo]") {
   REQUIRE(2u == fused::get<2>(y));
 }
 
-TEST_CASE("canComposeFusedNth", "[fused::algo]") {
+TEST_CASE("canComposeFusedNth", "[fused::algo]")
+{
   auto x = fused::apply(fused::nth<0>, 1, 2u, '3');
   auto y = fused::apply(fused::nth<1>, 1, 2u, '3');
   auto z = fused::apply(fused::nth<2>, 1, 2u, '3');
@@ -201,7 +216,8 @@ TEST_CASE("canComposeFusedNth", "[fused::algo]") {
   REQUIRE('3' == z);
 }
 
-TEST_CASE("canComposeFusedConstruct", "[fused::algo]") {
+TEST_CASE("canComposeFusedConstruct", "[fused::algo]")
+{
   using tuple_type = fused::tuple<int, unsigned, char>;
   constexpr auto& ctor = fused::id<tuple_type>;
   auto x = fused::apply(ctor, 1, 2u, '3');
@@ -211,7 +227,8 @@ TEST_CASE("canComposeFusedConstruct", "[fused::algo]") {
   REQUIRE('3' == fused::get<2>(x));
 }
 
-TEST_CASE("canComposeIndexOf", "[fused::algo]") {
+TEST_CASE("canComposeIndexOf", "[fused::algo]")
+{
   {
     auto x = fused::apply(fused::index_of<int>, 1, 2u, '3');
     auto y = fused::apply(fused::index_of<unsigned>, 1, 2u, '3');

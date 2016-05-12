@@ -11,12 +11,14 @@ using archie::meta::none;
 
 struct foo {
   template <typename T>
-  int func(T, requires<std::is_unsigned<T>>* = nullptr) {
+  int func(T, requires<std::is_unsigned<T>>* = nullptr)
+  {
     return 0;
   }
 
   template <typename T>
-  int func(T, requires<std::is_floating_point<T>>* = nullptr) {
+  int func(T, requires<std::is_floating_point<T>>* = nullptr)
+  {
     return 1;
   }
 };
@@ -40,7 +42,8 @@ static_assert(!none<std::is_integral<int>, std::is_unsigned<unsigned>>::value, "
 static_assert(!none<std::is_integral<int>, std::is_unsigned<int>>::value, "");
 static_assert(none<std::is_integral<float>, std::is_unsigned<int>>::value, "");
 
-TEST_CASE("canUseRequires") {
+TEST_CASE("canUseRequires")
+{
   foo t;
   REQUIRE(0 == t.func(0u));
   REQUIRE(1 == t.func(0.0));

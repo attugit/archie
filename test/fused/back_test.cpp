@@ -6,12 +6,14 @@ namespace {
 namespace meta = archie::meta;
 namespace fused = archie::fused;
 
-TEST_CASE("canUseBackWithRValue") {
+TEST_CASE("canUseBackWithRValue")
+{
   auto a = fused::back(std::make_unique<unsigned>(1u), 2.0, '3');
   REQUIRE('3' == a);
 }
 
-TEST_CASE("canUseBackWithLValue") {
+TEST_CASE("canUseBackWithLValue")
+{
   auto a = std::make_unique<unsigned>(1u);
   double b = 2.0;
   char c = '3';

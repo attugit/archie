@@ -5,7 +5,8 @@
 namespace {
 namespace fused = archie::fused;
 
-struct empty {};
+struct empty {
+};
 struct def {
   def(def&&) = default;
   def(def const&) = default;
@@ -29,7 +30,8 @@ static_assert(
     std::is_same<fused::move_t<noncopyable>, fused::detail::move_capture<noncopyable>>::value,
     "");
 
-TEST_CASE("canCastToConstValue") {
+TEST_CASE("canCastToConstValue")
+{
   auto i = 1;
   auto m = fused::move_t<const int&>(i);
   auto const& x = static_cast<const int&>(m);

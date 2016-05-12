@@ -30,24 +30,27 @@ public:
 
   template <typename... Args>
   explicit ring_adapter(Args&&... args)
-      : container_(std::forward<Args>(args)...), pos_(container_, 0) {}
+      : container_(std::forward<Args>(args)...), pos_(container_, 0)
+  {
+  }
 
   iterator begin() { return pos_; }
   const_iterator begin() const { return iterator{container_, 0}; }
   iterator end() { return begin() + size(); }
   const_iterator end() const { return begin() + size(); }
-
   size_type size() const { return container_.size(); }
   size_type capacity() const { return container_.capacity(); }
   bool empty() const { return size() == 0; }
-
   template <typename... Args>
-  void emplace_back(Args&&... args) {
+  void emplace_back(Args&&... args)
+  {
     static_assert(traits::model_of<can_emplace(Container, Args...)>::value, "");
     if (size() != capacity()) {
       container_.emplace_back(std::forward<Args>(args)...);
       pos_ = iterator{container_, 0};
-    } else {
+    }
+    else
+    {
       *pos_++ = std::move(value_type{std::forward<Args>(args)...});
     }
   }
@@ -56,7 +59,6 @@ public:
   Container const* operator->() const { return &container_; }
   Container& operator*() { return container_; }
   Container const& operator*() const { return container_; }
-
 private:
   Container container_;
   iterator pos_;

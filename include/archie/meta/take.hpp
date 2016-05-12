@@ -18,10 +18,12 @@ namespace meta {
     };
   }
   template <std::size_t n, typename... Ts>
-  struct take : indexable_t<detail::take, n>::template apply<Ts...> {};
+  struct take : indexable_t<detail::take, n>::template apply<Ts...> {
+  };
 
   template <std::size_t n, typename... Ts>
-  struct take<n, type_list<Ts...>> : take<n, Ts...> {};
+  struct take<n, type_list<Ts...>> : take<n, Ts...> {
+  };
 
   template <std::size_t n, typename... Ts>
   using take_t = eval<take<n, Ts...>>;

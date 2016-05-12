@@ -41,7 +41,8 @@ private:
   int data;
 };
 
-TEST_CASE("traits_test") {
+TEST_CASE("traits_test")
+{
   static_assert(has_value_type<vec_t>::value, "");
   static_assert(!has_value_type<pair_t>::value, "");
   static_assert(!has_value_type<int>::value, "");

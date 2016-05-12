@@ -3,7 +3,8 @@
 
 namespace {
 namespace fused = archie::fused;
-TEST_CASE("canUseFusedBoolean", "[fused::boolean]") {
+TEST_CASE("canUseFusedBoolean", "[fused::boolean]")
+{
   REQUIRE(fused::True);
   REQUIRE_FALSE(fused::False);
 }

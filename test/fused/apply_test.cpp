@@ -7,13 +7,15 @@ auto count = [](auto const&... xs) { return sizeof...(xs); };
 
 namespace fused = archie::fused;
 
-TEST_CASE("canUseApplyWithRegularArgs", "[fused::apply]") {
+TEST_CASE("canUseApplyWithRegularArgs", "[fused::apply]")
+{
   REQUIRE(1u == fused::apply(count, 3));
   REQUIRE(2u == fused::apply(count, 3, 2));
   REQUIRE(3u == fused::apply(count, 3, 2, 1));
 }
 
-TEST_CASE("canUseApplyWithTuple", "[fused::apply]") {
+TEST_CASE("canUseApplyWithTuple", "[fused::apply]")
+{
   auto t1 = fused::make_tuple(3);
   auto t2 = fused::make_tuple(3, 2);
   auto t3 = fused::make_tuple(3, 2, 1);
@@ -23,18 +25,21 @@ TEST_CASE("canUseApplyWithTuple", "[fused::apply]") {
   REQUIRE(3u == fused::apply(count, t3));
 }
 
-TEST_CASE("canUseApplyWithRValueTuple", "[fused::apply]") {
+TEST_CASE("canUseApplyWithRValueTuple", "[fused::apply]")
+{
   REQUIRE(1u == fused::apply(count, fused::make_tuple(3)));
   REQUIRE(2u == fused::apply(count, fused::make_tuple(3, 2)));
   REQUIRE(3u == fused::apply(count, fused::make_tuple(3, 2, 1)));
 }
 
-TEST_CASE("canUseApplyWithMakeTuple", "[fused::apply]") {
+TEST_CASE("canUseApplyWithMakeTuple", "[fused::apply]")
+{
   auto x = fused::apply(fused::make_tuple, 1, 2u, '3');
   static_assert(fused::tuple_size(fused::id<decltype(x)>) == 3u, "");
 }
 
-TEST_CASE("canUseApplyResultOfAnotherApply", "[fused::apply]") {
+TEST_CASE("canUseApplyResultOfAnotherApply", "[fused::apply]")
+{
   {
     auto x = fused::apply(fused::front, fused::apply(fused::make_tuple, 1, 2u, '3'));
     REQUIRE(1 == x);

@@ -24,7 +24,8 @@ struct vsize {
 };
 
 template <unsigned I>
-struct utype {};
+struct utype {
+};
 
 template <typename Tp>
 using is_0 = std::is_same<utype<0>, Tp>;
@@ -35,7 +36,8 @@ using is_1 = std::is_same<utype<1>, Tp>;
 using _0 = utype<0>;
 using _1 = utype<1>;
 
-TEST_CASE("meta::algo") {
+TEST_CASE("meta::algo")
+{
   static_assert(std::is_same<meta::transform_t<make_wrapper>, meta::type_list<>>::value, "");
 
   static_assert(

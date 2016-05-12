@@ -6,7 +6,8 @@
 #include <resource.hpp>
 namespace {
 using namespace archie;
-TEST_CASE("ring_adapter vector", "[ring]") {
+TEST_CASE("ring_adapter vector", "[ring]")
+{
   using ring_t = ring_adapter<std::vector<test::resource>>;
   ring_t ring;
   ring->reserve(4);

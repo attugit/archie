@@ -5,7 +5,8 @@
 namespace {
 namespace fused = archie::fused;
 
-TEST_CASE("canCreateTags", "[fused::tags]") {
+TEST_CASE("canCreateTags", "[fused::tags]")
+{
   auto t3 = fused::make_tuple(1, 2u, '3');
   auto tags = fused::transform(fused::make_tag, t3);
   static_assert(
@@ -14,7 +15,8 @@ TEST_CASE("canCreateTags", "[fused::tags]") {
       "");
 }
 
-TEST_CASE("canExpandTags", "[fused::tags]") {
+TEST_CASE("canExpandTags", "[fused::tags]")
+{
   auto expand = [](auto x) { return x.construct(static_cast<typename decltype(x)::type>(0)); };
   auto tags = fused::transform(fused::make_tag, 1, 2u, '3');
   auto defs = fused::transform(expand, tags);
@@ -24,13 +26,15 @@ TEST_CASE("canExpandTags", "[fused::tags]") {
   REQUIRE(0 == fused::get<2>(defs));
 }
 
-TEST_CASE("canUseVariableTemplate", "[fused::tags]") {
+TEST_CASE("canUseVariableTemplate", "[fused::tags]")
+{
   auto x = fused::id<int>(1);
   static_assert(std::is_same<decltype(x), int>::value, "");
   REQUIRE(1 == x);
 }
 
-TEST_CASE("canCompareTags", "[fused::tags]") {
+TEST_CASE("canCompareTags", "[fused::tags]")
+{
   constexpr auto const& x = fused::id<int>;
   constexpr auto const& y = fused::id<unsigned>;
   REQUIRE(x == fused::make_tag(1));

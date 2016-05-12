@@ -15,13 +15,16 @@ namespace meta {
     struct is_distinct<Tp, Ts...>
         : eval<std::conditional<sequence<Ts...>::template contains<Tp>::value,
                                 decltype(fused::False),
-                                is_distinct<Ts...>>> {};
+                                is_distinct<Ts...>>> {
+    };
 
     template <typename Tp>
-    struct is_distinct<Tp> : decltype(fused::True) {};
+    struct is_distinct<Tp> : decltype(fused::True) {
+    };
 
     template <>
-    struct is_distinct<> : decltype(fused::True) {};
+    struct is_distinct<> : decltype(fused::True) {
+    };
   }
   template <typename... Ts>
   using is_distinct = eval<detail::is_distinct<Ts...>>;

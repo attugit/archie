@@ -4,7 +4,8 @@
 namespace {
 namespace fused = archie::fused;
 
-TEST_CASE("canZipTwoTuples", "[fused::zip]") {
+TEST_CASE("canZipTwoTuples", "[fused::zip]")
+{
   auto a = fused::make_tuple(1, 2u, '3');
   auto b = fused::make_tuple('4', 5.0, 6u);
   auto x = fused::zip(a, b);
@@ -15,7 +16,8 @@ TEST_CASE("canZipTwoTuples", "[fused::zip]") {
   REQUIRE(fused::make_tuple('3', 6u) == fused::get<2>(x));
 }
 
-TEST_CASE("canZipManyTuples", "[fused::zip]") {
+TEST_CASE("canZipManyTuples", "[fused::zip]")
+{
   auto a = fused::make_tuple(1, 2u, '3');
   auto b = fused::make_tuple(4u, '5', 6);
   auto c = fused::make_tuple('7', 8, 9u);
@@ -27,7 +29,8 @@ TEST_CASE("canZipManyTuples", "[fused::zip]") {
   REQUIRE(fused::make_tuple('3', 6, 9u) == fused::get<2>(x));
 }
 
-TEST_CASE("canZipViewTwoTuples", "[fused::zip]") {
+TEST_CASE("canZipViewTwoTuples", "[fused::zip]")
+{
   auto a = fused::make_tuple(1, 2u, '3');
   auto b = fused::make_tuple('4', 5.0, 6u);
   auto x = fused::zip_view(a, b);
@@ -55,7 +58,8 @@ TEST_CASE("canZipViewTwoTuples", "[fused::zip]") {
   REQUIRE(8u == fused::get<2>(b));
 }
 
-TEST_CASE("canZipViewManyTuples", "[fused::zip]") {
+TEST_CASE("canZipViewManyTuples", "[fused::zip]")
+{
   auto a = fused::make_tuple(1, 2u, '3');
   auto b = fused::make_tuple(4u, '5', 6.0);
   auto c = fused::make_tuple('7', 8.0, 9u);
@@ -90,7 +94,8 @@ TEST_CASE("canZipViewManyTuples", "[fused::zip]") {
   REQUIRE(11.0 == fused::get<2>(b));
 }
 
-TEST_CASE("canZipViewTwoConstTuples", "[fused::zip]") {
+TEST_CASE("canZipViewTwoConstTuples", "[fused::zip]")
+{
   auto const a = fused::make_tuple(1, 2u, '3');
   auto const b = fused::make_tuple('4', 5.0, 6u);
   auto x = fused::zip_view(a, b);
@@ -108,7 +113,8 @@ TEST_CASE("canZipViewTwoConstTuples", "[fused::zip]") {
   REQUIRE(&fused::get<2>(b) == &fused::get<1>(x2));
 }
 
-TEST_CASE("canZipViewTwoTuplesWithConsts", "[fused::zip]") {
+TEST_CASE("canZipViewTwoTuplesWithConsts", "[fused::zip]")
+{
   auto const c = 2u;
   auto const d = 5.0;
   auto a = fused::tuple<int, const unsigned, char>{1, c, '3'};

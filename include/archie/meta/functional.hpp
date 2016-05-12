@@ -21,13 +21,16 @@ namespace meta {
   using greater_t = less_t<Rhs, Lhs>;
 
   template <typename Tp, typename... Us>
-  struct sum : returns<number<Tp::value + eval<sum<Us...>>::value>> {};
+  struct sum : returns<number<Tp::value + eval<sum<Us...>>::value>> {
+  };
 
   template <typename Tp>
-  struct sum<Tp> : returns<number<Tp::value>> {};
+  struct sum<Tp> : returns<number<Tp::value>> {
+  };
 
   template <typename Tp, typename... Us>
-  struct sum<type_list<Tp, Us...>> : sum<Tp, Us...> {};
+  struct sum<type_list<Tp, Us...>> : sum<Tp, Us...> {
+  };
 
   template <typename... Ts>
   using sum_t = eval<sum<Ts...>>;

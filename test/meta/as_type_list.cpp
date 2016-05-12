@@ -6,9 +6,11 @@ namespace {
 namespace meta = archie::meta;
 
 template <typename... Ts>
-struct test {};
+struct test {
+};
 
-TEST_CASE("meta::as_type_list_t") {
+TEST_CASE("meta::as_type_list_t")
+{
   static_assert(std::is_same<meta::as_type_list_t<test<>>, meta::type_list<>>::value, "");
   static_assert(std::is_same<meta::as_type_list_t<test<int>>, meta::type_list<int>>::value, "");
   static_assert(

@@ -5,8 +5,10 @@
 namespace {
 using namespace archie;
 
-TEST_CASE("alias", "[alias]") {
-  SECTION("ref") {
+TEST_CASE("alias", "[alias]")
+{
+  SECTION("ref")
+  {
     int x = 0;
     int y = 1;
     auto a = alias(x);
@@ -18,7 +20,8 @@ TEST_CASE("alias", "[alias]") {
     REQUIRE(x == 2);
     REQUIRE(y == 3);
   }
-  SECTION("const ref") {
+  SECTION("const ref")
+  {
     const int x = 0;
     const int y = 1;
     auto a = alias(x);
@@ -29,7 +32,8 @@ TEST_CASE("alias", "[alias]") {
     a = rebind(b);
     REQUIRE(unwrap(a) == 0);
   }
-  SECTION("sorting") {
+  SECTION("sorting")
+  {
     std::array<int, 3> array = {{3, 1, 2}};
     std::vector<alias_t<int>> vec;
     vec.emplace_back(array[1]);
@@ -51,7 +55,8 @@ TEST_CASE("alias", "[alias]") {
     REQUIRE(array[1] == 1);
     REQUIRE(array[2] == 2);
   }
-  SECTION("cross-const") {
+  SECTION("cross-const")
+  {
     const int ci = 1;
     int i = 2;
     auto ca = alias(ci);
@@ -59,7 +64,8 @@ TEST_CASE("alias", "[alias]") {
     ca = rebind(i);
     REQUIRE(unwrap(ca) == 2);
   }
-  SECTION("function arg") {
+  SECTION("function arg")
+  {
     int x = 10;
     int y = 12;
     auto foo = [](alias_t<int> a, alias_t<int> b) {
@@ -75,7 +81,8 @@ TEST_CASE("alias", "[alias]") {
     REQUIRE(x == 7);
     REQUIRE(y == 42);
   }
-  SECTION("assign") {
+  SECTION("assign")
+  {
     auto x = 1u;
     auto y = 2u;
     auto a = alias(x);
@@ -88,7 +95,8 @@ TEST_CASE("alias", "[alias]") {
     a = std::move(x);
     REQUIRE(unwrap(a) == 2u);
   }
-  SECTION("cross-ctor") {
+  SECTION("cross-ctor")
+  {
     struct A {
       int x = 1;
     };
@@ -101,7 +109,8 @@ TEST_CASE("alias", "[alias]") {
     alias_t<A> b(alias(x));
     REQUIRE(a->x == 1);
   }
-  SECTION("deref") {
+  SECTION("deref")
+  {
     struct Pos {
       int x, y;
     };

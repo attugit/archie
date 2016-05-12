@@ -11,7 +11,8 @@ namespace meta {
   struct remove_if;
 
   template <template <typename> class F, typename Tp>
-  struct remove_if<F, type_list<Tp>> : append_if_not<F, type_list<>, Tp> {};
+  struct remove_if<F, type_list<Tp>> : append_if_not<F, type_list<>, Tp> {
+  };
 
   template <template <typename> class F, typename Tp, typename... Us>
   struct remove_if<F, type_list<Tp, Us...>>

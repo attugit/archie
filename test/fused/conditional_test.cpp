@@ -11,7 +11,8 @@ struct hoo {
 
 namespace fused = archie::fused;
 
-TEST_CASE("canUseConditionalT", "[fused::conditional]") {
+TEST_CASE("canUseConditionalT", "[fused::conditional]")
+{
   fused::conditional_t<goo, hoo> cond;
   auto x = cond();
   auto y = cond(1);
@@ -19,20 +20,23 @@ TEST_CASE("canUseConditionalT", "[fused::conditional]") {
   REQUIRE(4 == y);
 }
 
-TEST_CASE("canUseConditional", "[fused::conditional]") {
+TEST_CASE("canUseConditional", "[fused::conditional]")
+{
   auto x = fused::conditional<goo, hoo>();
   auto y = fused::conditional<goo, hoo>(1);
   REQUIRE(3 == x);
   REQUIRE(4 == y);
 }
 
-TEST_CASE("canUseMakeConditional", "[fused::conditional]") {
+TEST_CASE("canUseMakeConditional", "[fused::conditional]")
+{
   constexpr auto f = fused::make_conditional(goo{}, hoo{});
   REQUIRE(3 == f());
   REQUIRE(4 == f(7));
 }
 
-TEST_CASE("canUseConditionalWithLambda", "[fused::conditional]") {
+TEST_CASE("canUseConditionalWithLambda", "[fused::conditional]")
+{
   auto const f = [](int i) { return i + 2; };
   auto const g = [](int i, int j) { return 2 * i + j; };
   auto const h = [](int i, int j, int k) { return i * j + k; };

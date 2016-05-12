@@ -25,10 +25,12 @@ namespace meta {
   using placeholder = indexable_t<detail::at, n>;
 
   template <std::size_t n, typename... Ts>
-  struct at : placeholder<n>::template apply<Ts...> {};
+  struct at : placeholder<n>::template apply<Ts...> {
+  };
 
   template <std::size_t n, typename... Ts>
-  struct at<n, type_list<Ts...>> : at<n, Ts...> {};
+  struct at<n, type_list<Ts...>> : at<n, Ts...> {
+  };
 
   template <std::size_t n, typename... Ts>
   using at_t = eval<at<n, Ts...>>;

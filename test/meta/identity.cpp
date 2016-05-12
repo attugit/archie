@@ -4,7 +4,8 @@
 
 namespace {
 namespace au = archie;
-TEST_CASE("meta::identity") {
+TEST_CASE("meta::identity")
+{
   static_assert(std::is_same<int, int>::value, "");
   static_assert(std::is_same<au::meta::identity<int>::type, int>::value, "");
   static_assert(std::is_same<au::meta::identity_t<int>, int>::value, "");

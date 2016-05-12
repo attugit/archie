@@ -44,65 +44,82 @@ int main() {
 namespace {
 using namespace archie;
 struct error {
-  enum codes : int { a = -1, b = -2, c = -3 };
+  enum codes : int
+  {
+    a = -1,
+    b = -2,
+    c = -3
+  };
 };
 
 using status = reserved_t<int, error::codes::a, error::codes::b, error::codes::c>;
 using failure = reserved_t<int, 0>;
 
-TEST_CASE("Can create inapt", "[inapt]") {
-  enum { non_null = 7 };
+TEST_CASE("Can create inapt", "[inapt]")
+{
+  enum
+  {
+    non_null = 7
+  };
   status s;
   null_inapt_t null;
 
-  SECTION("Default value is null") {
+  SECTION("Default value is null")
+  {
     REQUIRE(s == null);
     failure f;
     REQUIRE(f == null);
   }
 
-  SECTION("Can assign other null value") {
+  SECTION("Can assign other null value")
+  {
     REQUIRE(s != error::codes::b);
     s = error::codes::b;
     REQUIRE(s == error::codes::b);
     REQUIRE(s == null);
   }
 
-  SECTION("Can assign nonnull value") {
+  SECTION("Can assign nonnull value")
+  {
     REQUIRE(s != non_null);
     s = non_null;
     REQUIRE(s == non_null);
     REQUIRE(s != null);
   }
 
-  SECTION("Can construct nonull value") {
+  SECTION("Can construct nonull value")
+  {
     status nn{non_null};
     REQUIRE(nn == non_null);
     REQUIRE(nn != null);
   }
 
-  SECTION("Can assing null_inapt_t") {
+  SECTION("Can assing null_inapt_t")
+  {
     s = non_null;
     REQUIRE(s != null);
     s = null;
     REQUIRE(s == null);
   }
 
-  SECTION("Can convert to bool") {
+  SECTION("Can convert to bool")
+  {
     status a;
     REQUIRE_FALSE(a);
     a = non_null;
     REQUIRE(a);
   }
 
-  SECTION("Can derefer") {
+  SECTION("Can derefer")
+  {
     status a;
     status const b(error::a);
     REQUIRE(*a == error::a);
     REQUIRE(*b == error::a);
   }
 
-  SECTION("Can copy construct") {
+  SECTION("Can copy construct")
+  {
     status a(error::b);
     status b(a);
     a = b;

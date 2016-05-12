@@ -12,17 +12,20 @@ namespace fused {
     template <std::size_t... other>
     struct placeholder {
       template <typename Tp, typename... Us>
-      constexpr decltype(auto) operator()(meta::eat_n<other>..., Tp&& x, Us&&...) const noexcept {
+      constexpr decltype(auto) operator()(meta::eat_n<other>..., Tp&& x, Us&&...) const noexcept
+      {
         return std::forward<Tp>(x);
       }
     };
   }
 
   template <std::size_t n>
-  struct placeholder : meta::indexable_t<detail::placeholder, n> {};
+  struct placeholder : meta::indexable_t<detail::placeholder, n> {
+  };
 
   template <typename F, std::size_t... ids>
-  decltype(auto) reorder(F f, placeholder<ids>... xs) {
+  decltype(auto) reorder(F f, placeholder<ids>... xs)
+  {
     return [f, xs...](auto&&... ys) { return f(xs(ys...)...); };
   }
 

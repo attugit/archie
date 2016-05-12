@@ -12,7 +12,8 @@ namespace fused {
   namespace detail {
     struct apply_args_ {
       template <typename F, typename... Ts>
-      decltype(auto) operator()(F&& f, Ts&&... ts) const {
+      decltype(auto) operator()(F&& f, Ts&&... ts) const
+      {
         return std::forward<F>(f)(std::forward<Ts>(ts)...);
       }
     };
@@ -21,7 +22,8 @@ namespace fused {
       template <typename F,
                 typename Tp,
                 typename = meta::requires<traits::is_fused_tuple<std::remove_reference_t<Tp>>>>
-      constexpr decltype(auto) operator()(F&& f, Tp&& tp) const {
+      constexpr decltype(auto) operator()(F&& f, Tp&& tp) const
+      {
         return meta::indexable_t<impl_, tuple_size(type_tag<Tp>{})>{}(std::forward<F>(f),
                                                                       std::forward<Tp>(tp));
       }
@@ -30,7 +32,8 @@ namespace fused {
       template <std::size_t... ids>
       struct impl_ {
         template <typename F, typename Tp>
-        constexpr decltype(auto) operator()(F&& f, Tp&& t) const {
+        constexpr decltype(auto) operator()(F&& f, Tp&& t) const
+        {
           return apply_args_{}(std::forward<F>(f), fused::get<ids>(std::forward<Tp>(t))...);
         }
       };

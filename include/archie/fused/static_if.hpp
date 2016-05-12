@@ -8,24 +8,28 @@ namespace fused {
   namespace detail {
     struct static_if_ {
       template <typename Cond>
-      decltype(auto) operator()(Cond const&) const {
+      decltype(auto) operator()(Cond const&) const
+      {
         return select(std::integral_constant<bool, std::decay_t<Cond>::value>{});
       }
 
     private:
       struct if_true_ {
         template <typename T, typename... U>
-        decltype(auto) operator()(T&& t, U&&...) const {
+        decltype(auto) operator()(T&& t, U&&...) const
+        {
           return std::forward<T>(t);
         }
       };
       struct if_false_ {
         template <typename T>
-        decltype(auto) operator()(T&&) const {
+        decltype(auto) operator()(T&&) const
+        {
           return [](auto&&...) {};
         }
         template <typename T, typename U>
-        decltype(auto) operator()(T&&, U&& u) const {
+        decltype(auto) operator()(T&&, U&& u) const
+        {
           return std::forward<U>(u);
         }
       };

@@ -2,9 +2,11 @@
 #include <catch.hpp>
 namespace {
 using namespace archie;
-TEST_CASE("ring_iterator", "[ring]") {
+TEST_CASE("ring_iterator", "[ring]")
+{
   using sut = ring_iterator<std::vector<int>::iterator>;
-  SECTION("default ctor") {
+  SECTION("default ctor")
+  {
     std::vector<int> vec = {0, 1, 2, 3, 4, 5, 6};
     sut it0;
     sut it1(std::begin(vec), std::end(vec));
@@ -19,7 +21,8 @@ TEST_CASE("ring_iterator", "[ring]") {
     REQUIRE((&(*it2)) == (&(*it3)));
     REQUIRE(norm(it2) == norm(it3));
   }
-  SECTION("increment") {
+  SECTION("increment")
+  {
     using buff_t = std::vector<int>;
     buff_t buff = {0, 1, 2, 3, 4, 5, 6};
     ring_iterator<buff_t::const_iterator> it(buff.begin() + 1, buff.begin() + 4);

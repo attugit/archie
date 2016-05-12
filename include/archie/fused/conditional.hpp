@@ -17,9 +17,12 @@ namespace fused {
     struct conditional_<F> : private F {
       constexpr conditional_() = default;
       template <typename Up>
-      constexpr explicit conditional_(Up&& u) : F(std::forward<Up>(u)) {}
+      constexpr explicit conditional_(Up&& u) : F(std::forward<Up>(u))
+      {
+      }
       template <typename... Ts, typename = meta::requires<traits::is_callable<F, Ts&&...>>>
-      constexpr decltype(auto) operator()(Ts&&... xs) const {
+      constexpr decltype(auto) operator()(Ts&&... xs) const
+      {
         return F::operator()(std::forward<Ts>(xs)...);
       }
     };
@@ -29,10 +32,13 @@ namespace fused {
       constexpr conditional_() = default;
       template <typename Up, typename... Vs>
       constexpr explicit conditional_(Up&& u, Vs&&... vs)
-          : F1(std::forward<Up>(u)), F2(std::forward<Vs>(vs)...) {}
+          : F1(std::forward<Up>(u)), F2(std::forward<Vs>(vs)...)
+      {
+      }
 
       template <typename... Ts>
-      constexpr decltype(auto) operator()(Ts&&... xs) const {
+      constexpr decltype(auto) operator()(Ts&&... xs) const
+      {
         return fused::static_if(traits::is_callable<F1, Ts&&...>{})(
             [this](auto&&... args) -> decltype(auto) {
               return this->F1::operator()(std::forward<decltype(args)>(args)...);
@@ -48,12 +54,15 @@ namespace fused {
       using base_t = conditional_<F1, conditional_<F2, Fs...>>;
       constexpr conditional_() = default;
       template <typename... Us>
-      constexpr conditional_(Us&&... us) : base_t(std::forward<Us>(us)...) {}
+      constexpr conditional_(Us&&... us) : base_t(std::forward<Us>(us)...)
+      {
+      }
     };
 
     struct make_conditional_ {
       template <typename... Ts>
-      constexpr auto operator()(Ts const&... ts) const {
+      constexpr auto operator()(Ts const&... ts) const
+      {
         return conditional_<Ts...>{ts...};
       }
     };

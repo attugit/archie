@@ -13,7 +13,8 @@ namespace fused {
   namespace detail {
     struct compose_ {
       template <typename F, typename... Ts>
-      constexpr decltype(auto) operator()(F&& f, Ts&&... ts) const {
+      constexpr decltype(auto) operator()(F&& f, Ts&&... ts) const
+      {
         return fused::static_if(traits::is_fused_tuple<std::decay_t<F>>{})(
             [this](auto&& tpl, auto&&... xs) -> decltype(auto) {
               return fused::static_if(

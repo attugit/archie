@@ -5,9 +5,11 @@
 namespace {
 using namespace archie;
 
-TEST_CASE("Can use resource", "[resource]") {
+TEST_CASE("Can use resource", "[resource]")
+{
   auto const del = [](auto& a) { ++unwrap(a); };
-  SECTION("Can create resource") {
+  SECTION("Can create resource")
+  {
     int i = 0;
     {
       auto res = make_resource(alias(i), del);
@@ -16,7 +18,8 @@ TEST_CASE("Can use resource", "[resource]") {
     REQUIRE(i == 1);
   }
 
-  SECTION("Can release resource") {
+  SECTION("Can release resource")
+  {
     int i = 0;
     {
       auto res = make_resource(alias(i), del);
@@ -26,7 +29,8 @@ TEST_CASE("Can use resource", "[resource]") {
     REQUIRE(i == 0);
   }
 
-  SECTION("Can assign null to resource") {
+  SECTION("Can assign null to resource")
+  {
     int i = 0;
     {
       auto res = make_resource(alias(i), del);
@@ -36,7 +40,8 @@ TEST_CASE("Can use resource", "[resource]") {
     REQUIRE(i == 0);
   }
 
-  SECTION("Can engage resource") {
+  SECTION("Can engage resource")
+  {
     int i = 0;
     {
       auto res = resource<int, std::function<void(int&)>>(in_place, 4);
@@ -46,7 +51,8 @@ TEST_CASE("Can use resource", "[resource]") {
     REQUIRE(i == 4);
   }
 
-  SECTION("Can derefere resource") {
+  SECTION("Can derefere resource")
+  {
     auto const nothing = [](auto) {};
     auto res = make_resource(1, nothing);
     REQUIRE(*res == 1);

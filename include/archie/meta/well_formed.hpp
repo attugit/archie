@@ -7,7 +7,8 @@
 namespace archie {
 namespace meta {
   template <typename...>
-  struct well_formed : returns<ignore> {};
+  struct well_formed : returns<ignore> {
+  };
 
   template <typename... Ts>
   using well_formed_t = apply_t<well_formed, Ts...>;

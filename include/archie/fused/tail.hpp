@@ -16,14 +16,16 @@ namespace fused {
       template <typename, typename... Ts>
       struct impl {
         template <typename... Us>
-        constexpr decltype(auto) operator()(meta::ignore, Us&&... us) const {
+        constexpr decltype(auto) operator()(meta::ignore, Us&&... us) const
+        {
           return fused::tuple<Ts...>(std::forward<Us>(us)...);
         }
       };
 
     public:
       template <typename Tp>
-      constexpr decltype(auto) operator()(Tp&& t) const {
+      constexpr decltype(auto) operator()(Tp&& t) const
+      {
         return fused::apply(meta::listed_t<impl, meta::as_type_list_t<std::decay_t<Tp>>>{},
                             std::forward<Tp>(t));
       }

@@ -4,9 +4,12 @@
 
 namespace {
 using namespace archie;
-struct ATag {};
-struct BTag {};
-struct CTag {};
+struct ATag {
+};
+struct BTag {
+};
+struct CTag {
+};
 
 using BOpaque = opaque<BTag, double, feature::equivalent<tag<ATag>>, feature::equivalent<self>>;
 
@@ -24,38 +27,47 @@ using COpaque = opaque<CTag,
                        feature::ordered<double>,
                        feature::ordered<tag<ATag>>>;
 
-TEST_CASE("constructors", "[opaque]") {
-  SECTION("default ctor") {
+TEST_CASE("constructors", "[opaque]")
+{
+  SECTION("default ctor")
+  {
     AOpaque aopq;
     REQUIRE(sizeof(aopq) == sizeof(double));
   }
-  SECTION("param ctor") {
+  SECTION("param ctor")
+  {
     AOpaque aopq(4.0);
     REQUIRE(sizeof(aopq) == sizeof(double));
   }
-  SECTION("copy ctor") {
+  SECTION("copy ctor")
+  {
     AOpaque const aopq(5.0);
     AOpaque other = aopq;
     REQUIRE(sizeof(other) == sizeof(double));
   }
-  SECTION("move ctor") {
+  SECTION("move ctor")
+  {
     AOpaque aopq(5.0);
     AOpaque other = std::move(aopq);
     REQUIRE(sizeof(other) == sizeof(double));
   }
 }
 
-TEST_CASE("extractable", "[opaque]") {
-  SECTION("extract const opaque") {
+TEST_CASE("extractable", "[opaque]")
+{
+  SECTION("extract const opaque")
+  {
     AOpaque const aopq(4.0);
     REQUIRE(extract(aopq) == 4.0);
   }
-  SECTION("extract non const opaque") {
+  SECTION("extract non const opaque")
+  {
     AOpaque aopq(4.0);
     extract(aopq) = 3.0;
     REQUIRE(extract(aopq) == 3.0);
   }
-  SECTION("extract non-opaque type") {
+  SECTION("extract non-opaque type")
+  {
     double const x = 10.0;
     auto const& y = extract(x);
     REQUIRE(&x == &y);
@@ -64,7 +76,8 @@ TEST_CASE("extractable", "[opaque]") {
     v = 5.0;
     REQUIRE(&z == &v);
   }
-  SECTION("extract non-extractable opaque") {
+  SECTION("extract non-extractable opaque")
+  {
     BOpaque const x(1.0);
     auto const& y = extract(x);
     REQUIRE(&x == &y);
@@ -74,16 +87,19 @@ TEST_CASE("extractable", "[opaque]") {
   }
 }
 
-TEST_CASE("operators", "[opaque]") {
+TEST_CASE("operators", "[opaque]")
+{
   AOpaque const aopq(3.0);
   BOpaque const bopq(4.0);
-  SECTION("eq comparable") {
+  SECTION("eq comparable")
+  {
     REQUIRE(aopq == 3.0);
     REQUIRE(aopq == aopq);
     REQUIRE(aopq != 4.0);
     REQUIRE(bopq != aopq);
   }
-  SECTION("less comparable") {
+  SECTION("less comparable")
+  {
     AOpaque const a{5.0};
     COpaque const x{2.0};
     COpaque const y{3.0};
@@ -139,7 +155,8 @@ TEST_CASE("operators", "[opaque]") {
     REQUIRE_FALSE(a < x);
     REQUIRE_FALSE(a <= x);
   }
-  SECTION("assignable") {
+  SECTION("assignable")
+  {
     AOpaque other(3.0);
     REQUIRE(other == 3.0);
     extract(other) = 4.0;

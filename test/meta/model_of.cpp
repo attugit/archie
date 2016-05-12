@@ -15,11 +15,13 @@ namespace fused = archie::fused;
 
 struct foo {
   template <typename Tp>
-  int func(Tp, requires<model_of<Callable(Tp)>> = fused::ignore) const {
+  int func(Tp, requires<model_of<Callable(Tp)>> = fused::ignore) const
+  {
     return 0;
   }
   template <typename Tp>
-  int func(Tp, requires<model_of<Callable(Tp, int)>> = fused::ignore) const {
+  int func(Tp, requires<model_of<Callable(Tp, int)>> = fused::ignore) const
+  {
     return 1;
   }
 };
@@ -32,7 +34,8 @@ struct hoo {
   int operator()(int) { return 4; }
 };
 
-TEST_CASE("canUseModelOf") {
+TEST_CASE("canUseModelOf")
+{
   foo f;
   goo g;
   hoo h;
@@ -42,9 +45,11 @@ TEST_CASE("canUseModelOf") {
 }
 
 template <typename Tp>
-struct is_iterable : model_of<Iterable(Tp)> {};
+struct is_iterable : model_of<Iterable(Tp)> {
+};
 
-struct no_iter {};
+struct no_iter {
+};
 struct iter {
   no_iter* begin();
   no_iter* end();

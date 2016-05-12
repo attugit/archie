@@ -7,7 +7,8 @@ namespace meta = archie::meta;
 namespace fused = archie::fused;
 
 template <unsigned>
-struct utype {};
+struct utype {
+};
 using _0 = utype<0>;
 using _1 = utype<1>;
 
@@ -23,7 +24,8 @@ static_assert(std::is_same<fused::as_tuple<meta::type_list<_0, _1, _0>>::type,
                            fused::tuple<_0, _1, _0>>::value,
               "");
 
-TEST_CASE("canUseAsTuple", "[fused::as_tuple]") {
+TEST_CASE("canUseAsTuple", "[fused::as_tuple]")
+{
   auto x = fused::as_tuple<int, double, char>::make(1, 2.0, '3');
 
   REQUIRE(1 == fused::get<0>(x));
@@ -31,7 +33,8 @@ TEST_CASE("canUseAsTuple", "[fused::as_tuple]") {
   REQUIRE('3' == fused::get<2>(x));
 }
 
-TEST_CASE("canUseAsTupleWithTypeList", "[fused::as_tuple]") {
+TEST_CASE("canUseAsTupleWithTypeList", "[fused::as_tuple]")
+{
   auto x = fused::as_tuple<meta::type_list<int, double, char>>::make(1, 2.0, '3');
 
   REQUIRE(1 == fused::get<0>(x));

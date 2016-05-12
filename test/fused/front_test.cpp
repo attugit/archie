@@ -8,13 +8,15 @@ namespace {
 namespace fused = archie::fused;
 using uptr = std::unique_ptr<unsigned>;
 
-TEST_CASE("canUseFrontWithRValue") {
+TEST_CASE("canUseFrontWithRValue")
+{
   auto a = fused::front(1u, 2.0, '3');
   static_assert(std::is_same<decltype(a), unsigned>::value, "");
   REQUIRE(1u == a);
 }
 
-TEST_CASE("canPassNoncopyableToFront") {
+TEST_CASE("canPassNoncopyableToFront")
+{
   {
     auto a = fused::front(1u, 2.0, std::make_unique<char>('c'));
     static_assert(std::is_same<decltype(a), unsigned>::value, "");
@@ -34,7 +36,8 @@ TEST_CASE("canPassNoncopyableToFront") {
     REQUIRE(&a == &x);
   }
 }
-TEST_CASE("canUseFrontWithLValue") {
+TEST_CASE("canUseFrontWithLValue")
+{
   {
     auto a = 1u;
     auto x = fused::front(a, 2.0, '3');
@@ -70,16 +73,19 @@ TEST_CASE("canUseFrontWithLValue") {
 }
 
 template <typename Tp>
-decltype(auto) foo(Tp&& t) {
+decltype(auto) foo(Tp&& t)
+{
   return fused::front(fused::get<0>(std::forward<Tp>(t)));
 }
 
 template <typename... Ts>
-auto goo(Ts&&... ts) {
+auto goo(Ts&&... ts)
+{
   return foo(fused::make_tuple(std::forward<Ts>(ts)...));
 }
 
-TEST_CASE("canWrapFusedFrontWithFunction") {
+TEST_CASE("canWrapFusedFrontWithFunction")
+{
   {
     auto x = foo(fused::make_tuple(1u, 2.0, '3'));
     static_assert(std::is_same<decltype(x), unsigned>::value, "");

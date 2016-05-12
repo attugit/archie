@@ -8,12 +8,14 @@ namespace fused = archie::fused;
 struct func {
   int cnt = 0;
   template <typename Tp>
-  void operator()(Tp&&) noexcept {
+  void operator()(Tp&&) noexcept
+  {
     ++cnt;
   }
 };
 
-TEST_CASE("canCallForEachWithFunctionObject") {
+TEST_CASE("canCallForEachWithFunctionObject")
+{
   func f;
   REQUIRE(0 == f.cnt);
   fused::for_each(f);
@@ -24,7 +26,8 @@ TEST_CASE("canCallForEachWithFunctionObject") {
   REQUIRE(&f == &ret);
 }
 
-TEST_CASE("canCallForEachWithLambda") {
+TEST_CASE("canCallForEachWithLambda")
+{
   int idx = 0;
   auto f = [&idx](auto&&) { ++idx; };
   REQUIRE(0 == idx);

@@ -10,7 +10,8 @@ namespace fused = archie::fused;
 namespace traits = archie::traits;
 namespace meta = archie::meta;
 
-TEST_CASE("canDefaultConstruct") {
+TEST_CASE("canDefaultConstruct")
+{
   {
     using tuple_t = fused::tuple<unsigned, double, char>;
     static_assert(std::is_default_constructible<tuple_t>::value, "");
@@ -32,7 +33,8 @@ TEST_CASE("canDefaultConstruct") {
   }
 }
 
-TEST_CASE("canDefaultConstructTupleWithUncopyableElement") {
+TEST_CASE("canDefaultConstructTupleWithUncopyableElement")
+{
   static_assert(
       std::is_default_constructible<fused::tuple<unsigned, std::unique_ptr<double>, char>>::value,
       "");
@@ -43,7 +45,8 @@ TEST_CASE("canDefaultConstructTupleWithUncopyableElement") {
   REQUIRE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char) <= sizeof(t));
 }
 
-TEST_CASE("canConstruct") {
+TEST_CASE("canConstruct")
+{
   {
     static_assert(
         std::is_constructible<fused::tuple<unsigned, double, char>, unsigned, double, char>::value,
@@ -65,7 +68,8 @@ TEST_CASE("canConstruct") {
   }
 }
 
-TEST_CASE("canConstructTupleWithUncopyableElement") {
+TEST_CASE("canConstructTupleWithUncopyableElement")
+{
   static_assert(std::is_constructible<fused::tuple<unsigned, std::unique_ptr<double>, char>,
                                       unsigned, std::unique_ptr<double>&&, char>::value,
                 "");
@@ -76,7 +80,8 @@ TEST_CASE("canConstructTupleWithUncopyableElement") {
   REQUIRE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char) <= sizeof(t));
 }
 
-TEST_CASE("makeTupleTakesElementsByValue") {
+TEST_CASE("makeTupleTakesElementsByValue")
+{
   unsigned a = 1u;
   double b = 2.0;
   char c = '3';
@@ -94,7 +99,8 @@ TEST_CASE("makeTupleTakesElementsByValue") {
   REQUIRE(&c != &fused::get<2>(t));
 }
 
-TEST_CASE("makeTupleTakesElementsByRValue") {
+TEST_CASE("makeTupleTakesElementsByRValue")
+{
   auto ptr = std::make_unique<char>('3');
   auto t = fused::make_tuple(1u, std::make_unique<double>(2.0), std::move(ptr));
 
@@ -104,7 +110,8 @@ TEST_CASE("makeTupleTakesElementsByRValue") {
   REQUIRE('3' == *fused::get<2>(t));
 }
 
-TEST_CASE("canUseGetByIdToRead") {
+TEST_CASE("canUseGetByIdToRead")
+{
   auto t = fused::make_tuple(1u, 2.0, '3');
 
   REQUIRE(3u == fused::tuple_size(t));
@@ -119,7 +126,8 @@ TEST_CASE("canUseGetByIdToRead") {
   REQUIRE(&x == &y);
 }
 
-TEST_CASE("canUseGetByIdToWrite") {
+TEST_CASE("canUseGetByIdToWrite")
+{
   auto t = fused::make_tuple(1u, std::make_unique<double>(2.0), '3');
 
   REQUIRE(3u == fused::tuple_size(t));
@@ -138,7 +146,8 @@ TEST_CASE("canUseGetByIdToWrite") {
   REQUIRE(3.0 == *fused::get<1>(t));
 }
 
-TEST_CASE("canUseAtWithTuple") {
+TEST_CASE("canUseAtWithTuple")
+{
   constexpr auto const& at_0 = fused::at<0>;
   constexpr auto const& at_1 = fused::at<1>;
   constexpr auto const& at_2 = fused::at<2>;
@@ -160,7 +169,8 @@ TEST_CASE("canUseAtWithTuple") {
   REQUIRE(4u == x);
 }
 
-TEST_CASE("canCopyConstruct") {
+TEST_CASE("canCopyConstruct")
+{
   static_assert(
       !std::is_copy_constructible<fused::tuple<unsigned, std::unique_ptr<double>, char>>::value,
       "");
@@ -190,7 +200,8 @@ TEST_CASE("canCopyConstruct") {
   REQUIRE(&fused::get<2>(orig) != &fused::get<2>(copy2));
 }
 
-TEST_CASE("canCopyAssign") {
+TEST_CASE("canCopyAssign")
+{
   static_assert(
       std::is_copy_assignable<fused::tuple<unsigned, std::unique_ptr<double>, char>>::value, "");
   static_assert(std::is_copy_assignable<fused::tuple<unsigned, double, char>>::value, "");
@@ -213,7 +224,8 @@ TEST_CASE("canCopyAssign") {
   REQUIRE('3' == fused::get<2>(copy));
 }
 
-TEST_CASE("canMoveConstruct") {
+TEST_CASE("canMoveConstruct")
+{
   static_assert(
       std::is_move_constructible<fused::tuple<unsigned, std::unique_ptr<double>, char>>::value, "");
   static_assert(std::is_move_constructible<fused::tuple<unsigned, double, char>>::value, "");
@@ -234,7 +246,8 @@ TEST_CASE("canMoveConstruct") {
   REQUIRE('3' == fused::get<2>(copy));
 }
 
-TEST_CASE("canMoveAssign") {
+TEST_CASE("canMoveAssign")
+{
   static_assert(
       std::is_move_assignable<fused::tuple<unsigned, std::unique_ptr<double>, char>>::value, "");
   static_assert(std::is_move_assignable<fused::tuple<unsigned, double, char>>::value, "");
@@ -257,7 +270,8 @@ TEST_CASE("canMoveAssign") {
   REQUIRE('3' == fused::get<2>(copy));
 }
 
-TEST_CASE("canCompareEquality") {
+TEST_CASE("canCompareEquality")
+{
   auto t1 = fused::make_tuple(1u, 2.0, '3');
   auto t2 = fused::make_tuple(1u, 2.0, '3');
   auto t3 = fused::make_tuple(0u, 2.0, '3');
@@ -269,7 +283,8 @@ TEST_CASE("canCompareEquality") {
   REQUIRE_FALSE(t1 == t4);
 }
 
-TEST_CASE("canCompareInequality") {
+TEST_CASE("canCompareInequality")
+{
   auto t1 = fused::make_tuple(1u, 2.0, '3');
   auto t2 = fused::make_tuple(1u, 2.0, '3');
   auto t3 = fused::make_tuple(0u, 2.0, '3');
@@ -281,7 +296,8 @@ TEST_CASE("canCompareInequality") {
   REQUIRE(t1 != t4);
 }
 
-TEST_CASE("canLexicographicalCompareLess") {
+TEST_CASE("canLexicographicalCompareLess")
+{
   auto t1 = fused::make_tuple(1u, 2.0, '3');
   auto t2 = fused::make_tuple(1u, 2.0, '3');
   auto t3 = fused::make_tuple(0u, 2.0, '3');
@@ -302,7 +318,8 @@ TEST_CASE("canLexicographicalCompareLess") {
   REQUIRE_FALSE(t5 < t1);
 }
 
-TEST_CASE("canAssignSimilarTuples") {
+TEST_CASE("canAssignSimilarTuples")
+{
   auto t = fused::make_tuple(1ul, 2ul, 3ul);
   t = fused::make_tuple(4u, 5u, 6u);
 
@@ -311,7 +328,8 @@ TEST_CASE("canAssignSimilarTuples") {
   REQUIRE(6u == fused::get<2>(t));
 }
 
-TEST_CASE("canStoreValuesInTuple") {
+TEST_CASE("canStoreValuesInTuple")
+{
   unsigned a = 1u;
   double b = 2.0;
   char c = '3';
@@ -335,7 +353,8 @@ TEST_CASE("canStoreValuesInTuple") {
   REQUIRE('3' == c);
 }
 
-TEST_CASE("canStoreReferencesInTuple") {
+TEST_CASE("canStoreReferencesInTuple")
+{
   static_assert(
       std::is_constructible<fused::tuple<unsigned, double, char&>, unsigned, double, char&>::value,
       "");
@@ -364,7 +383,8 @@ TEST_CASE("canStoreReferencesInTuple") {
   REQUIRE('9' == c);
 }
 
-TEST_CASE("canTieElements") {
+TEST_CASE("canTieElements")
+{
   unsigned a = 1u;
   double b = 2.0;
   char c = '3';
@@ -394,7 +414,8 @@ TEST_CASE("canTieElements") {
   REQUIRE('9' == c);
 }
 
-TEST_CASE("canTieConstElements") {
+TEST_CASE("canTieConstElements")
+{
   auto a = 1u;
   auto const b = 2.0;
   auto c = '3';
@@ -412,7 +433,8 @@ TEST_CASE("canTieConstElements") {
   REQUIRE(&c == &fused::get<2>(t));
 }
 
-TEST_CASE("canTieWithIgnore") {
+TEST_CASE("canTieWithIgnore")
+{
   unsigned a = 0;
   char c = 0;
 
@@ -422,14 +444,16 @@ TEST_CASE("canTieWithIgnore") {
   REQUIRE('3' == c);
 }
 
-TEST_CASE("canUseTupleElement") {
+TEST_CASE("canUseTupleElement")
+{
   using t = fused::tuple<unsigned, std::unique_ptr<double>, char&>;
   static_assert(std::is_same<fused::tuple_element_t<0, t>, unsigned>::value, "");
   static_assert(std::is_same<fused::tuple_element_t<1, t>, std::unique_ptr<double>>::value, "");
   static_assert(std::is_same<fused::tuple_element_t<2, t>, char&>::value, "");
 }
 
-TEST_CASE("canGetElementByType") {
+TEST_CASE("canGetElementByType")
+{
   auto t = fused::make_tuple(1u, 2.0, '3');
 
   REQUIRE(1u == fused::get<unsigned>(t));
@@ -445,7 +469,8 @@ TEST_CASE("canGetElementByType") {
   REQUIRE('6' == fused::get<char>(t));
 }
 
-TEST_CASE("canExtractElement") {
+TEST_CASE("canExtractElement")
+{
   constexpr auto const& ex_u = fused::extract<unsigned>;
   constexpr auto const& ex_d = fused::extract<double>;
   constexpr auto const& ex_c = fused::extract<char>;
@@ -473,7 +498,8 @@ struct conv {
 };
 
 #if defined(USE_ARCHIE_TUPLE)
-TEST_CASE("canConstructTupleWithExplicitElementCtor") {
+TEST_CASE("canConstructTupleWithExplicitElementCtor")
+{
   static_assert(traits::is_convertible<unsigned, conv>::value, "");
   static_assert(!traits::is_convertible<std::string&, conv>::value, "");
 
@@ -485,7 +511,8 @@ TEST_CASE("canConstructTupleWithExplicitElementCtor") {
 }
 #endif
 
-TEST_CASE("canMakeTupleOfTuples") {
+TEST_CASE("canMakeTupleOfTuples")
+{
   auto t0 = fused::make_tuple(1, 2u);
   auto t1 = fused::tuple<fused::tuple<int, unsigned>>{};
   auto t2 = fused::tuple<fused::tuple<int, unsigned>>{t0};

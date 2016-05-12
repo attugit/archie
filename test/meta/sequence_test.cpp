@@ -7,7 +7,8 @@
 
 namespace {
 template <unsigned I>
-struct utype {};
+struct utype {
+};
 
 using _0 = utype<0>;
 using _1 = utype<1>;
@@ -31,35 +32,41 @@ namespace au = archie;
 using au::meta::sequence;
 using list_ = sequence<_0, _1>;
 
-TEST_CASE("sequence size") {
+TEST_CASE("sequence size")
+{
   static_assert(sequence<>::size::value == 0, "");
   static_assert(sequence<_0>::size::value == 1, "");
   static_assert(sequence<_0, _0>::size::value == 2, "");
   static_assert(sequence<_0, _1>::size::value == 2, "");
 }
 
-TEST_CASE("canApply") {
+TEST_CASE("canApply")
+{
   using type = list_::apply<tuple_>;
   static_assert(std::is_same<std::tuple<_0, _1>, type>::value, "");
 }
 
-TEST_CASE("canTransform") {
+TEST_CASE("canTransform")
+{
   using type = list_::transform<uptr_>::type;
   static_assert(std::is_same<sequence<std::unique_ptr<_0>, std::unique_ptr<_1>>, type>::value, "");
 }
 
-TEST_CASE("canTransformAndApply") {
+TEST_CASE("canTransformAndApply")
+{
   using type = list_::transform_t<uptr_>::apply<tuple_>;
   static_assert(std::is_same<std::tuple<std::unique_ptr<_0>, std::unique_ptr<_1>>, type>::value,
                 "");
 }
 
-TEST_CASE("canAppend") {
+TEST_CASE("canAppend")
+{
   using type = list_::append<_2, _3>;
   static_assert(std::is_same<sequence<_0, _1, _2, _3>, type>::value, "");
 }
 
-TEST_CASE("meta::canUseAt") {
+TEST_CASE("meta::canUseAt")
+{
   using type_0 = au::meta::at<0, _3, _2, _1, _0>::type;
   using type_1 = au::meta::at<1, _3, _2, _1, _0>::type;
   using type_2 = au::meta::at<2, _3, _2, _1, _0>::type;
@@ -70,7 +77,8 @@ TEST_CASE("meta::canUseAt") {
   static_assert(std::is_same<_0, type_3>::value, "");
 }
 
-TEST_CASE("canUseAtT") {
+TEST_CASE("canUseAtT")
+{
   using type_0 = au::meta::at_t<0, _3, _2, _1, _0>;
   using type_1 = au::meta::at_t<1, _3, _2, _1, _0>;
   using type_2 = au::meta::at_t<2, _3, _2, _1, _0>;
@@ -81,7 +89,8 @@ TEST_CASE("canUseAtT") {
   static_assert(std::is_same<_0, type_3>::value, "");
 }
 
-TEST_CASE("canUseTypeListAt") {
+TEST_CASE("canUseTypeListAt")
+{
   using list = sequence<_3, _2, _1, _0>;
   static_assert(std::is_same<_3, list::at<0>::type>::value, "");
   static_assert(std::is_same<_2, list::at<1>::type>::value, "");
@@ -89,7 +98,8 @@ TEST_CASE("canUseTypeListAt") {
   static_assert(std::is_same<_0, list::at<3>::type>::value, "");
 }
 
-TEST_CASE("canUseTypeListAtT") {
+TEST_CASE("canUseTypeListAtT")
+{
   using list = sequence<_3, _2, _1, _0>;
   static_assert(std::is_same<_3, list::at_t<0>>::value, "");
   static_assert(std::is_same<_2, list::at_t<1>>::value, "");
@@ -97,14 +107,16 @@ TEST_CASE("canUseTypeListAtT") {
   static_assert(std::is_same<_0, list::at_t<3>>::value, "");
 }
 
-TEST_CASE("canTransformStandalone") {
+TEST_CASE("canTransformStandalone")
+{
   using uptrs = au::meta::transform_t<uptr_, _0, _1>;
   static_assert(
       std::is_same<au::meta::type_list<std::unique_ptr<_0>, std::unique_ptr<_1>>, uptrs>::value,
       "");
 }
 
-TEST_CASE("canGetIndexOfListItem") {
+TEST_CASE("canGetIndexOfListItem")
+{
   using list = sequence<_3, _2, _1, _0>;
   static_assert(list::index_of<_0>::value == 3, "");
   static_assert(list::index_of<_1>::value == 2, "");
@@ -112,7 +124,8 @@ TEST_CASE("canGetIndexOfListItem") {
   static_assert(list::index_of<_3>::value == 0, "");
 }
 
-TEST_CASE("canCheckIfListContainsItem") {
+TEST_CASE("canCheckIfListContainsItem")
+{
   using list = sequence<_3, _2, _1, _0, _0>;
   static_assert(list::contains<_0>::value, "");
   static_assert(list::contains<_1>::value, "");
@@ -122,7 +135,8 @@ TEST_CASE("canCheckIfListContainsItem") {
   static_assert(!list::contains<_5>::value, "");
 }
 
-TEST_CASE("canFindType") {
+TEST_CASE("canFindType")
+{
   using list = sequence<_3, _2, _1, _0, _0, _1, _2, _3>;
   static_assert(list::find<_3>::value == 0, "");
   static_assert(list::find<_2>::value == 1, "");

@@ -3,6 +3,7 @@
 namespace archie {
 namespace meta {
   template <typename...>
-  struct type_list {};
+  struct type_list {
+  };
 }
 }

@@ -4,7 +4,8 @@
 namespace {
 namespace fused = archie::fused;
 using namespace fused::placeholders;
-TEST_CASE("canAccessArgumentWithPlaceholder") {
+TEST_CASE("canAccessArgumentWithPlaceholder")
+{
   auto a = 1u;
   auto b = 2.0;
   auto c = '3';
@@ -18,7 +19,8 @@ TEST_CASE("canAccessArgumentWithPlaceholder") {
   REQUIRE(&c == &z);
 }
 
-TEST_CASE("canBindPlaceHolders") {
+TEST_CASE("canBindPlaceHolders")
+{
   auto inc = [](auto&& x, auto&& y, auto&& z) {
     ++x;
     ++++y;
@@ -38,7 +40,8 @@ TEST_CASE("canBindPlaceHolders") {
   REQUIRE('5' == c);
 }
 
-TEST_CASE("canGetExpiringValue") {
+TEST_CASE("canGetExpiringValue")
+{
   auto x = 0.0;
   {
     auto a = 1;
