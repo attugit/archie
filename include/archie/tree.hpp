@@ -1,5 +1,5 @@
 #pragma once
-#include <algorithm>
+#include <numeric>
 #include <memory>
 #include <list>
 #include <experimental/optional>
