@@ -42,8 +42,10 @@ script:
   - |
     if [[ "${COMPILER}" == "g++-5" ]]; then
       CXX=$COMPILER ./waf distclean configure build_coverage --alltests -j1
+      echo $PWD
+      ls -al
       source coverage/bin/activate
       gcovr -e test/catch.hpp -b -r .
-      gcovr -e test/catch.hpp -r .
+      gcovr -e test/catch.hpp -sr .
       deactivate
     fi
