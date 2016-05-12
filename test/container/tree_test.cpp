@@ -6,7 +6,8 @@
 namespace {
 using namespace archie;
 using snode = node_t<std::string>;
-TEST_CASE("canMakeNode") {
+TEST_CASE("canMakeNode")
+{
   snode::list_type list;
   auto nit = snode::make_root(list, "lorem");
   REQUIRE(nit->is_root());
@@ -45,7 +46,8 @@ TEST_CASE("canMakeNode") {
     REQUIRE(it == end);
   }
 }
-TEST_CASE("canGetPath") {
+TEST_CASE("canGetPath")
+{
   auto const join = [](auto const& lst) {
     std::string str;
     for (auto p : lst) {
@@ -70,7 +72,8 @@ TEST_CASE("canGetPath") {
   REQUIRE(join(f->path()) == "/root/a/e/f");
 }
 using stree = tree_t<std::string>;
-TEST_CASE("canMakeTree") {
+TEST_CASE("canMakeTree")
+{
   stree tree;
   REQUIRE(tree.size() == 0);
   REQUIRE(tree.empty());
