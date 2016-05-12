@@ -9,7 +9,9 @@ matrix:
       addons:
         apt:
           sources: ubuntu-toolchain-r-test
-          packages: g++-5
+          packages:
+            - g++-5
+            - python-virtualenv
     - env: COMPILER=clang++-3.8
       compiler: clang++-3.8
       addons:
@@ -21,12 +23,22 @@ matrix:
           packages:
             - clang-3.8
             - g++-5
+            - python-virtualenv
 
 before_install:
   - export CXX=$COMPILER
   - which $CXX
+  - virtualenv coverage
+  - source coverage/bin/activate
+  - pip install gcovr
+  - deactivate
 
 script:
   - rm -rf build;
   - CXX=$COMPILER ./waf distclean configure build --alltests -j1
   - CXX=$COMPILER ./waf distclean configure build_debug --alltests -j1
+  - CXX=$COMPILER ./waf distclean configure build_coverage --alltests -j1
+  - source coverage/bin/activate
+  - gcovr -e test/catch.hpp -b -r .
+  - gcovr -e test/catch.hpp -r .
+  - deactivate
