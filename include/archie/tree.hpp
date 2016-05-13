@@ -134,22 +134,32 @@ struct tree_t {
   using size_type = typename value_type::size_type;
   using iterator = tree_iterator<value_type>;
 
+private:
+  template <typename Nodes>
+  static size_type node_size(Nodes const&);
+
+public:
   tree_t() = default;
 
-  size_type size() const
-  {
-    static auto const fun = [](size_type s, value_type const& node) { return s + node_size(node); };
-    return std::accumulate(std::begin(list_), std::end(list_), size_type{0}, fun);
-  }
+  size_type size() const { return node_size(list_); }
   bool empty() const { return list_.empty(); }
   iterator begin() { return iterator{std::begin(list_)}; }
   iterator end() { return iterator{std::end(list_)}; }
-private:
-  static size_type node_size(value_type const& n)
+  template <typename... Args>
+  void emplace(Args&&... args)
   {
-    static auto const fun = [](size_type s, value_type const& node) { return s + node_size(node); };
-    return std::accumulate(std::begin(n), std::end(n), n.size(), fun);
+    value_type::make_root(list_, std::forward<Args>(args)...);
   }
+
+private:
   typename value_type::list_type list_;
 };
+
+template <typename T, typename Allocator>
+template <typename Nodes>
+typename tree_t<T, Allocator>::size_type tree_t<T, Allocator>::node_size(Nodes const& n)
+{
+  static auto const fun = [](size_type s, value_type const& node) { return s + node_size(node); };
+  return std::accumulate(std::begin(n), std::end(n), n.size(), fun);
+}
 }

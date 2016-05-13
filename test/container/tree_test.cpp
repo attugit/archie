@@ -78,5 +78,8 @@ TEST_CASE("canMakeTree")
   REQUIRE(tree.size() == 0);
   REQUIRE(tree.empty());
   REQUIRE(std::begin(tree) == std::end(tree));
+  tree.emplace("a");
+  REQUIRE(std::begin(tree) != std::end(tree));
+  REQUIRE(tree.size() == 1);
 }
 }
