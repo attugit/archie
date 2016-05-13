@@ -24,7 +24,8 @@ namespace fused {
     template <std::size_t head>
     struct recursion {
       template <typename Eq, typename Cmp, typename... Us, typename... Vs>
-      static bool call(Eq eq, Cmp cmp, tuple<Us...> const& x, tuple<Vs...> const& y) {
+      static bool call(Eq eq, Cmp cmp, tuple<Us...> const& x, tuple<Vs...> const& y)
+      {
         return fused::static_if(meta::boolean<((head + 1) < sizeof...(Us))>{})(
             [eq, cmp](auto const& x1, auto const& y1, auto idx) -> bool {
               constexpr auto const& pos = fused::nth<decltype(idx)::value>;
@@ -93,13 +94,15 @@ namespace fused {
     tuple& operator=(tuple<Us...> const&);
 
     template <typename... Us>
-    friend bool operator==(tuple const& lhs, tuple<Us...> const& rhs) {
+    friend bool operator==(tuple const& lhs, tuple<Us...> const& rhs)
+    {
       auto const eq = [](auto const& x, auto const& y) { return x == y; };
       return tuple::recursion<0>::call(eq, eq, lhs, rhs);
     }
 
     template <typename... Us>
-    friend bool operator<(tuple const& lhs, tuple<Us...> const& rhs) {
+    friend bool operator<(tuple const& lhs, tuple<Us...> const& rhs)
+    {
       auto const eq = [](auto const& x, auto const& y) { return x == y; };
       auto const less = [](auto const& x, auto const& y) { return x < y; };
       return tuple::recursion<0>::call(eq, less, lhs, rhs);
