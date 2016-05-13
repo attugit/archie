@@ -15,7 +15,6 @@ TEST_CASE("canUseFusedCompose", "[fused::algo]")
     REQUIRE(2u == fused::get<1>(x));
     REQUIRE('3' == fused::get<2>(x));
   }
-#if 0
   {
     auto a = 1;
     auto b = 2u;
@@ -33,7 +32,6 @@ TEST_CASE("canUseFusedCompose", "[fused::algo]")
     auto const& x = fused::compose(opt, a, b, c);
     REQUIRE(&a == &x);
   }
-#endif
 }
 
 TEST_CASE("canComposeFusedMakeTuple", "[fused::algo]")
