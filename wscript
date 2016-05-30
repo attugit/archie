@@ -7,7 +7,7 @@ APPNAME='archie'
 top = '.'
 out = 'build'
 flags = [
-  '-std=c++14',
+  '-std=c++1z',
   '-Wall',
   '-Wextra',
   '-Wshadow',

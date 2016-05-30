@@ -4,12 +4,6 @@ language: cpp
 
 matrix:
   include:
-    - env: COMPILER=g++-5
-      compiler: g++-5
-      addons:
-        apt:
-          sources: ubuntu-toolchain-r-test
-          packages: g++-5
     - env: COMPILER=g++-6
       compiler: g++-6
       addons:
