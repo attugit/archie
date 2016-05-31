@@ -2,8 +2,8 @@
 
 #include <archie/fused/boolean.hpp>
 
-namespace archie {
-namespace meta {
+namespace archie::meta
+{
   template <typename... Ts>
   struct all : boolean<(... && Ts::value)> {
   };
@@ -17,5 +17,4 @@ namespace meta {
 
   template <typename T>
   using no = none<T>;
-}
 }
