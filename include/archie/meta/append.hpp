@@ -38,7 +38,7 @@ namespace meta {
 
   template <template <typename> class F, typename Tp, typename... Us>
   struct append_if_not<F, type_list<Us...>, Tp>
-      : returns<if_t<opposite_t<eval<F<Tp>>>, append_t<type_list<Us...>, Tp>, type_list<Us...>>> {
+      : returns<if_t<no<eval<F<Tp>>>, append_t<type_list<Us...>, Tp>, type_list<Us...>>> {
   };
 
   template <template <typename> class F, typename... Ts>
