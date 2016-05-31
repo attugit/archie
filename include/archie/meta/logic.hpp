@@ -7,38 +7,6 @@
 
 namespace archie {
 namespace meta {
-  template <bool... Xs>
-  struct conjunction {
-  private:
-    static decltype(fused::True) test();
-    template <typename... Ts>
-    static decltype(fused::True) test(Ts*...);
-    template <typename... Ts>
-    static decltype(fused::False) test(Ts...);
-
-  public:
-    using type = decltype(test(eval<std::conditional<Xs, int*, int>>{}...));
-  };
-
-  template <bool... Xs>
-  using conjunction_t = eval<conjunction<Xs...>>;
-
-  template <bool... Xs>
-  struct disjunction {
-  private:
-    static decltype(fused::False) test();
-    template <typename... Ts>
-    static decltype(fused::False) test(Ts*...);
-    template <typename... Ts>
-    static decltype(fused::True) test(Ts...);
-
-  public:
-    using type = decltype(test(eval<std::conditional<Xs, int, int*>>{}...));
-  };
-
-  template <bool... Xs>
-  using disjunction_t = eval<disjunction<Xs...>>;
-
   template <bool B>
   using negation = boolean<!B>;
 
@@ -52,12 +20,14 @@ namespace meta {
   using opposite_t = negation_t<Tp::value>;
 
   template <typename... Ts>
-  using all = conjunction_t<Ts::value...>;
+  struct all : boolean<(... && Ts::value)> {
+  };
 
   template <typename... Ts>
-  using any = disjunction_t<Ts::value...>;
+  struct any : boolean<(... || Ts::value)> {
+  };
 
   template <typename... Ts>
-  using none = opposite_t<any<Ts...>>;
+  using none = boolean<!any<Ts...>::value>;
 }
 }
