@@ -2,8 +2,8 @@
 
 #include <cstddef>
 
-namespace archie {
-namespace meta {
+namespace archie::meta
+{
   struct ignore final {
     template <typename... Ts>
     constexpr ignore(Ts&&...) noexcept
@@ -11,7 +11,7 @@ namespace meta {
     }
 
     template <typename Tp>
-    constexpr ignore const& operator=(Tp&&) const
+    constexpr ignore const& operator=(Tp&&) const noexcept
     {
       return *this;
     }
@@ -22,5 +22,4 @@ namespace meta {
 
   template <std::size_t>
   using eat_n = ignore;
-}
 }
