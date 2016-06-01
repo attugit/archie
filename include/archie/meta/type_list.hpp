@@ -1,9 +1,8 @@
 #pragma once
 
-namespace archie {
-namespace meta {
+namespace archie::meta
+{
   template <typename...>
   struct type_list {
   };
-}
 }
