@@ -2,7 +2,7 @@
 
 #include <archie/meta/identity.hpp>
 #include <archie/meta/static_constexpr_storage.hpp>
-#include <archie/fused/boolean.hpp>
+#include <archie/boolean.hpp>
 #include <utility>
 
 namespace archie {

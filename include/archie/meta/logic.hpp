@@ -1,6 +1,6 @@
 #pragma once
 
-#include <archie/fused/boolean.hpp>
+#include <archie/boolean.hpp>
 
 namespace archie::meta
 {

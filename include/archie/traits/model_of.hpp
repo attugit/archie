@@ -1,7 +1,7 @@
 #pragma once
 
 #include <utility>
-#include <archie/fused/boolean.hpp>
+#include <archie/boolean.hpp>
 #include <archie/meta/well_formed.hpp>
 
 namespace archie {

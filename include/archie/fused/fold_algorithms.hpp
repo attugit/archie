@@ -3,7 +3,7 @@
 #include <utility>
 #include <functional>
 #include <archie/fused/fold.hpp>
-#include <archie/fused/boolean.hpp>
+#include <archie/boolean.hpp>
 #include <archie/meta/static_constexpr_storage.hpp>
 
 namespace archie {

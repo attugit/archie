@@ -4,7 +4,7 @@
 #include <archie/type_list.hpp>
 #include <archie/meta/index_of.hpp>
 #include <archie/meta/apply.hpp>
-#include <archie/meta/boolean.hpp>
+#include <archie/boolean.hpp>
 #include <archie/meta/returns.hpp>
 
 namespace archie {

@@ -2,7 +2,7 @@
 
 #include <archie/meta/eval.hpp>
 #include <archie/meta/number.hpp>
-#include <archie/meta/boolean.hpp>
+#include <archie/boolean.hpp>
 #include <archie/meta/at.hpp>
 #include <archie/meta/index_of.hpp>
 #include <utility>

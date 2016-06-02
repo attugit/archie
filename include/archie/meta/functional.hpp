@@ -2,11 +2,10 @@
 
 #include <type_traits>
 #include <archie/meta/eval.hpp>
-#include <archie/meta/boolean.hpp>
+#include <archie/boolean.hpp>
 #include <archie/meta/number.hpp>
 #include <archie/meta/returns.hpp>
 #include <archie/type_list.hpp>
-#include <archie/fused/boolean.hpp>
 
 namespace archie {
 namespace meta {

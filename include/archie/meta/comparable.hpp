@@ -2,18 +2,31 @@
 
 namespace archie::meta
 {
-  template <typename T>
+  template <typename>
   struct comparable {
-    constexpr bool operator==(T const&) const noexcept { return true; }
-    template <typename U>
-    constexpr bool operator==(U const&) const noexcept
-    {
-      return false;
-    }
-    template <typename U>
-    constexpr bool operator!=(U const& u) const noexcept
-    {
-      return !(*this == u);
-    }
   };
+
+  template <typename T>
+  constexpr bool operator==(comparable<T> const&, comparable<T> const&) noexcept
+  {
+    return true;
+  }
+
+  template <typename T, typename U>
+  constexpr bool operator==(comparable<T> const&, comparable<U> const&) noexcept
+  {
+    return false;
+  }
+
+  template <typename T>
+  constexpr bool operator!=(comparable<T> const&, comparable<T> const&) noexcept
+  {
+    return false;
+  }
+
+  template <typename T, typename U>
+  constexpr bool operator!=(comparable<T> const&, comparable<U> const&) noexcept
+  {
+    return true;
+  }
 }

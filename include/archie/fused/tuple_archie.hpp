@@ -14,7 +14,7 @@
 #include <archie/fused/ignore.hpp>
 #include <archie/traits/is_callable.hpp>
 #include <archie/fused/static_if.hpp>
-#include <archie/fused/boolean.hpp>
+#include <archie/boolean.hpp>
 
 namespace archie {
 namespace fused {

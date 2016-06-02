@@ -3,7 +3,7 @@
 #include <archie/fused/tuple.hpp>
 #include <archie/traits/is_fused_tuple.hpp>
 #include <archie/meta/requires.hpp>
-#include <archie/fused/boolean.hpp>
+#include <archie/boolean.hpp>
 #include <archie/meta/as_type_list.hpp>
 #include <archie/fused/conditional.hpp>
 

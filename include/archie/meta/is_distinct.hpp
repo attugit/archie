@@ -3,7 +3,7 @@
 #include <type_traits>
 #include <archie/meta/eval.hpp>
 #include <archie/meta/logic.hpp>
-#include <archie/fused/boolean.hpp>
+#include <archie/boolean.hpp>
 
 namespace archie::meta
 {
