@@ -1,37 +1,41 @@
+language: c++
+os: linux
 sudo: false
-cache: apt
-language: cpp
+
+env:
+  matrix:
+    - TRAVIS_EMPTY_JOB_WORKAROUND=true
+
+addons:
+  apt:
+    sources: &gcc
+      - ubuntu-toolchain-r-test
+    #sources: &llvm
+    #  - ubuntu-toolchain-r-test
+    #  - llvm-toolchain-precise
+    #  - llvm-toolchain-precise-3.8
 
 matrix:
+  exclude:
+    - env: TRAVIS_EMPTY_JOB_WORKAROUND=true
+
   include:
     - env: COMPILER=g++-6
-      compiler: g++-6
-      addons:
+      compiler: gcc
+      addons: &gcc6
         apt:
-          sources: ubuntu-toolchain-r-test
           packages: g++-6
-  allow_failures:
-    - env: COMPILER=clang++-3.8
-      compiler: clang++-3.8
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.8
-            - llvm-toolchain-precise
-          packages:
-            - clang-3.8
-            - g++-5
-    - env: COMPILER=clang++-3.9
-      compiler: clang++-3.9
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise
-          packages:
-            - clang-3.9
-            - g++-6
+          sources: *gcc
+
+  #allow_failures:
+  #  - env: COMPILER=clang++-3.8
+  #    compiler: clang
+  #    addons: &clang38
+  #      apt:
+  #        packages: clang-3.8
+  #        sources: *llvm
+
+  fast_finish: true
 
 before_install:
   - export CXX=$COMPILER
@@ -41,4 +45,3 @@ script:
   - rm -rf build;
   - CXX=$COMPILER ./waf distclean configure build --alltests -j1
   - CXX=$COMPILER ./waf distclean configure build_release --alltests -j1
-
