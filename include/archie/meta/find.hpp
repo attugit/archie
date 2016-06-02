@@ -1,7 +1,7 @@
 #pragma once
 
 #include <archie/meta/eval.hpp>
-#include <archie/meta/type_list.hpp>
+#include <archie/type_list.hpp>
 #include <archie/meta/index_of.hpp>
 #include <archie/meta/apply.hpp>
 #include <archie/meta/boolean.hpp>

@@ -1,4 +1,4 @@
-#include <archie/fused/type_list.hpp>
+#include <archie/type_list.hpp>
 #include <catch.hpp>
 
 namespace

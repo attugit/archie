@@ -1,7 +1,7 @@
 #pragma once
 
 #include <archie/meta/index_of.hpp>
-#include <archie/fused/type_list.hpp>
+#include <archie/type_list.hpp>
 #include <archie/meta/static_constexpr_storage.hpp>
 #include <utility>
 

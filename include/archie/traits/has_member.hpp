@@ -2,7 +2,7 @@
 
 #include <archie/fused/boolean.hpp>
 #include <archie/meta/well_formed.hpp>
-#include <archie/meta/type_list.hpp>
+#include <archie/type_list.hpp>
 
 namespace archie {
 namespace traits {

@@ -3,7 +3,7 @@
 #include <utility>
 #include <archie/meta/ignore.hpp>
 #include <archie/meta/number.hpp>
-#include <archie/meta/type_list.hpp>
+#include <archie/type_list.hpp>
 
 namespace archie {
 namespace meta {

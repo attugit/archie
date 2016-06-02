@@ -3,7 +3,7 @@
 #include <archie/meta/eval.hpp>
 #include <archie/meta/take.hpp>
 #include <archie/meta/tail.hpp>
-#include <archie/meta/type_list.hpp>
+#include <archie/type_list.hpp>
 
 namespace archie {
 namespace meta {

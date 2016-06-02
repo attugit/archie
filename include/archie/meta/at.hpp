@@ -4,7 +4,7 @@
 #include <archie/meta/eval.hpp>
 #include <archie/meta/ignore.hpp>
 #include <archie/meta/returns.hpp>
-#include <archie/meta/type_list.hpp>
+#include <archie/type_list.hpp>
 #include <archie/meta/indexable.hpp>
 
 namespace archie::meta

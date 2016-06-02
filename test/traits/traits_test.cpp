@@ -63,9 +63,6 @@ TEST_CASE("traits")
   static_assert(traits::is_callable<callable, unsigned>::value, "");
   static_assert(!traits::is_callable<callable, std::string>::value, "");
 
-  static_assert(!traits::is_type_list<int>::value, "");
-  static_assert(traits::is_type_list<archie::meta::type_list<int>>::value, "");
-
   static_assert(traits::is_convertible<short, int>::value, "");
   static_assert(!traits::is_convertible<int, conv>::value, "");
   static_assert(traits::is_convertible<std::vector<int>, conv>::value, "");

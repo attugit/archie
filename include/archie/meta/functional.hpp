@@ -5,7 +5,7 @@
 #include <archie/meta/boolean.hpp>
 #include <archie/meta/number.hpp>
 #include <archie/meta/returns.hpp>
-#include <archie/meta/type_list.hpp>
+#include <archie/type_list.hpp>
 #include <archie/fused/boolean.hpp>
 
 namespace archie {

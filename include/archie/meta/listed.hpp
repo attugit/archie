@@ -1,7 +1,7 @@
 #pragma once
 
 #include <archie/meta/returns.hpp>
-#include <archie/meta/type_list.hpp>
+#include <archie/type_list.hpp>
 
 namespace archie {
 namespace meta {
