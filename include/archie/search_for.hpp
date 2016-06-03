@@ -10,8 +10,7 @@ namespace archie::fused
     struct search_for_ {
     private:
       template <std::size_t N>
-      struct state_ {
-        constexpr operator std::size_t() const noexcept { return N; }
+      struct state_ : meta::number<N> {
         template <typename U>
         constexpr auto operator&(U&&)const noexcept
         {
@@ -29,7 +28,7 @@ namespace archie::fused
       template <typename... U>
       constexpr auto impl(U... u) const noexcept
       {
-        return fused::number<(... & u)>;
+        return (... & u);
       }
 
     public:
