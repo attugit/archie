@@ -1,6 +1,7 @@
 #pragma once
 
 #include <utility>
+#include <archie/meta/static_constexpr_storage.hpp>
 #include <archie/meta/comparable.hpp>
 
 namespace archie::meta
@@ -17,6 +18,8 @@ namespace archie::meta
 
 namespace archie::fused
 {
-  static constexpr auto const True = meta::true_t{};
-  static constexpr auto const False = meta::false_t{};
+  template <bool B>
+  static constexpr auto const& boolean = meta::instance<meta::boolean<B>>();
+  static constexpr auto const True = boolean<true>;
+  static constexpr auto const False = boolean<false>;
 }
