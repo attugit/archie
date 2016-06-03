@@ -1,10 +1,10 @@
 #pragma once
 
 #include <archie/meta/eval.hpp>
-#include <archie/meta/number.hpp>
+#include <archie/number.hpp>
 #include <archie/boolean.hpp>
 #include <archie/meta/at.hpp>
-#include <archie/meta/index_of.hpp>
+#include <archie/index_of.hpp>
 #include <utility>
 
 namespace archie {
@@ -32,7 +32,7 @@ namespace meta {
     using at_t = meta::at_t<I, Ts...>;
 
     template <typename Up>
-    using find = decltype(index_of<Up>(type_list<Ts...>{}));
+    using find = decltype(fused::index_of<Up>(fused::type_list<Ts...>));
 
     template <typename Up>
     using index_of = find<Up>;

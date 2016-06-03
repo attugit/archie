@@ -1,7 +1,7 @@
 #pragma once
 
 #include <archie/fused/tuple.hpp>
-#include <archie/meta/index_of.hpp>
+#include <archie/index_of.hpp>
 #include <functional>
 
 namespace archie {
@@ -48,14 +48,14 @@ namespace fused {
   template <typename Tp, typename... Us>
   decltype(auto) get(tuple<value_view<Us>...>& t)
   {
-    constexpr auto idx = meta::index_of<Tp>(meta::type_list<Us...>{});
+    constexpr auto idx = index_of<Tp>(type_list<Us...>);
     return get<idx>(t).get();
   }
 
   template <typename Tp, typename... Us>
   decltype(auto) get(tuple<value_view<Us>...> const& t)
   {
-    constexpr auto idx = meta::index_of<Tp>(meta::type_list<Us...>{});
+    constexpr auto idx = index_of<Tp>(type_list<Us...>);
     return get<idx>(t).get();
   }
 }

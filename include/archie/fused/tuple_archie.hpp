@@ -3,7 +3,7 @@
 #include <utility>
 #include <array>
 #include <archie/meta/eval.hpp>
-#include <archie/meta/index_of.hpp>
+#include <archie/index_of.hpp>
 #include <archie/meta/requires.hpp>
 #include <archie/meta/at.hpp>
 #include <archie/meta/indexable.hpp>
@@ -169,14 +169,14 @@ namespace fused {
   template <typename Tp, typename... Us>
   decltype(auto) get(tuple<Us...>& u)
   {
-    constexpr auto idx = meta::index_of<Tp>(meta::type_list<Us...>{});
+    constexpr auto idx = index_of<Tp>(type_list<Us...>);
     return get<idx>(u);
   }
 
   template <typename Tp, typename... Us>
   decltype(auto) get(tuple<Us...> const& u)
   {
-    constexpr auto idx = meta::index_of<Tp>(meta::type_list<Us...>{});
+    constexpr auto idx = index_of<Tp>(type_list<Us...>);
     return get<idx>(u);
   }
 

@@ -2,7 +2,7 @@
 
 #include <utility>
 #include <archie/meta/ignore.hpp>
-#include <archie/meta/number.hpp>
+#include <archie/number.hpp>
 #include <archie/meta/indexable.hpp>
 #include <archie/meta/static_constexpr_storage.hpp>
 

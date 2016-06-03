@@ -5,7 +5,7 @@
 #include <archie/meta/returns.hpp>
 #include <archie/type_list.hpp>
 #include <archie/meta/ignore.hpp>
-#include <archie/meta/number.hpp>
+#include <archie/number.hpp>
 #include <archie/meta/indexable.hpp>
 
 namespace archie {

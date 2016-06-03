@@ -1,12 +1,11 @@
 #pragma once
 
 #include <utility>
-#include <archie/meta/ignore.hpp>
-#include <archie/meta/number.hpp>
+#include <archie/number.hpp>
 #include <archie/type_list.hpp>
 #include <archie/meta/static_constexpr_storage.hpp>
 
-namespace archie::meta
+namespace archie::fused
 {
   namespace detail
   {
@@ -34,12 +33,12 @@ namespace archie::meta
       template <typename... U>
       constexpr auto impl(U... u) const noexcept
       {
-        return meta::number<(... & u)>{};
+        return fused::number<(... & u)>;
       }
 
     public:
       template <typename... U>
-      constexpr auto operator()(type_list<U...>) const noexcept
+      constexpr auto operator()(meta::type_list<U...>) const noexcept
       {
         return impl(accumulator_<0>{}, std::is_same<T, U>{}...);
       }
@@ -49,9 +48,18 @@ namespace archie::meta
   template <typename T>
   static constexpr auto const& index_of = meta::instance<detail::index_of_<T>>();
 
-  template <typename Tp, typename... Ts>
-  constexpr decltype(auto) type_index(Ts...) noexcept
+  namespace detail
   {
-    return index_of<Tp>(type_list<Ts...>{});
+    template <typename T>
+    struct type_index_ {
+      template <typename... U>
+      constexpr auto operator()(U...) const noexcept
+      {
+        return index_of<T>(type_list<U...>);
+      }
+    };
   }
+
+  template <typename T>
+  static constexpr auto const& type_index = meta::instance<detail::type_index_<T>>();
 }

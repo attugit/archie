@@ -228,15 +228,15 @@ TEST_CASE("canComposeFusedConstruct", "[fused::algo]")
 TEST_CASE("canComposeIndexOf", "[fused::algo]")
 {
   {
-    auto x = fused::apply(fused::index_of<int>, 1, 2u, '3');
-    auto y = fused::apply(fused::index_of<unsigned>, 1, 2u, '3');
-    auto z = fused::apply(fused::index_of<char>, 1, 2u, '3');
+    auto x = fused::apply(fused::type_index<int>, 1, 2u, '3');
+    auto y = fused::apply(fused::type_index<unsigned>, 1, 2u, '3');
+    auto z = fused::apply(fused::type_index<char>, 1, 2u, '3');
     REQUIRE(0 == x);
     REQUIRE(1 == y);
     REQUIRE(2 == z);
   }
   {
-    auto x = fused::apply(fused::index_of<int>, 1);
+    auto x = fused::apply(fused::type_index<int>, 1);
     REQUIRE(0 == x);
   }
   {

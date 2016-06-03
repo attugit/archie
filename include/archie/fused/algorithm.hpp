@@ -14,5 +14,4 @@
 #include <archie/fused/find.hpp>
 #include <archie/fused/take.hpp>
 #include <archie/fused/nth.hpp>
-#include <archie/fused/index_of.hpp>
 #include <archie/fused/type_tag.hpp>

@@ -1,5 +1,5 @@
 #include <archie/meta/functional.hpp>
-#include <archie/meta/number.hpp>
+#include <archie/number.hpp>
 #include <catch.hpp>
 
 namespace {

@@ -2,7 +2,7 @@
 
 #include <archie/meta/eval.hpp>
 #include <archie/type_list.hpp>
-#include <archie/meta/index_of.hpp>
+#include <archie/index_of.hpp>
 #include <archie/meta/apply.hpp>
 #include <archie/boolean.hpp>
 #include <archie/meta/returns.hpp>
@@ -11,7 +11,7 @@ namespace archie {
 namespace meta {
   namespace detail {
     template <typename Tp, typename... Us>
-    using find = decltype(index_of<Tp>(type_list<Us...>{}));
+    using find = decltype(fused::index_of<Tp>(fused::type_list<Us...>));
   }
 
   template <typename Tp, typename... Us>

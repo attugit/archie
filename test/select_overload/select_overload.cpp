@@ -1,5 +1,5 @@
 #include <archie/fused/select_overload.hpp>
-#include <archie/meta/number.hpp>
+#include <archie/number.hpp>
 #include <utility>
 #include <type_traits>
 #include <catch.hpp>
