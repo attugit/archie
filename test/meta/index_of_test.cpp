@@ -2,36 +2,43 @@
 #include <array>
 #include <catch.hpp>
 
-namespace {
-namespace meta = archie::meta;
-
-static_assert(decltype(meta::type_index<int>(int{}))::value == 0, "");
-static_assert(decltype(meta::type_index<int>(char{}, int{}))::value == 1, "");
-static_assert(decltype(meta::type_index<int>(char{}, int{}, float{}))::value == 1, "");
-static_assert(decltype(meta::type_index<int>(char{}, int{}, float{}, int{}))::value == 1, "");
-
-TEST_CASE("canGetIndexOfSimpleType")
+namespace
 {
-  char a = '1';
-  int b = 2;
-  float c = 3;
-  REQUIRE(0 == meta::type_index<char>(a, b, c, b));
-  REQUIRE(1 == meta::type_index<int>(a, b, c, b));
-  REQUIRE(2 == meta::type_index<float>(a, b, c, b));
-}
+  namespace meta = archie::meta;
 
-TEST_CASE("canUseIndexOfWithTypeLists")
-{
-  REQUIRE(0 == meta::index_of<char>(meta::type_list<char, int, float>{}));
-  REQUIRE(1 == meta::index_of<int>(meta::type_list<char, int, float>{}));
-}
+  static_assert(decltype(meta::type_index<int>(int{}))::value == 0, "");
+  static_assert(decltype(meta::type_index<int>(char{}, int{}))::value == 1, "");
+  static_assert(decltype(meta::type_index<int>(char{}, int{}, float{}))::value == 1, "");
+  static_assert(decltype(meta::type_index<int>(char{}, int{}, float{}, int{}))::value == 1, "");
 
-TEST_CASE("canUseIndexOfInConsexpr")
-{
-  constexpr auto idx = meta::index_of<char>(meta::type_list<char, int, float>{});
-  REQUIRE(0 == idx);
-  constexpr auto cnt = meta::index_of<int>(meta::type_list<char, int, float>{});
-  std::array<int, cnt> arr;
-  REQUIRE(sizeof(int) == sizeof(arr));
-}
+  TEST_CASE("canGetIndexOfSimpleType")
+  {
+    char a = '1';
+    int b = 2;
+    float c = 3;
+    REQUIRE(0 == meta::type_index<char>(a, b, c, b));
+    REQUIRE(1 == meta::type_index<int>(a, b, c, b));
+    REQUIRE(2 == meta::type_index<float>(a, b, c, b));
+  }
+
+  TEST_CASE("canUseIndexOfWithTypeLists")
+  {
+    REQUIRE(0 == meta::index_of<char>(meta::type_list<char, int, float>{}));
+    REQUIRE(1 == meta::index_of<int>(meta::type_list<char, int, float>{}));
+    constexpr meta::type_list<char, int, float, int, double> tl{};
+    static_assert(0 == meta::index_of<char>(tl));
+    static_assert(1 == meta::index_of<int>(tl));
+    static_assert(2 == meta::index_of<float>(tl));
+    static_assert(4 == meta::index_of<double>(tl));
+    static_assert(5 == meta::index_of<void>(tl));
+  }
+
+  TEST_CASE("canUseIndexOfInConsexpr")
+  {
+    constexpr auto idx = meta::index_of<char>(meta::type_list<char, int, float>{});
+    REQUIRE(0 == idx);
+    constexpr auto cnt = meta::index_of<int>(meta::type_list<char, int, float>{});
+    std::array<int, cnt> arr;
+    REQUIRE(sizeof(int) == sizeof(arr));
+  }
 }
