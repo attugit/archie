@@ -11,10 +11,10 @@
 namespace archie {
 namespace meta {
   namespace detail {
-    template <std::size_t... other>
-    struct tail {
+    template <typename... other>
+    struct tail_ {
       template <typename... Ts>
-      static constexpr decltype(auto) slice(eat_n<other>..., Ts...)
+      static constexpr decltype(auto) slice(eat<other>..., Ts...)
       {
         return type_list<Ts...>{};
       }
@@ -25,7 +25,7 @@ namespace meta {
   }
 
   template <std::size_t n, typename... Ts>
-  struct tail : indexable_t<detail::tail, n>::template apply<Ts...> {
+  struct tail : indexable_t<detail::tail_, n>::template apply<Ts...> {
   };
 
   template <std::size_t n, typename... Ts>

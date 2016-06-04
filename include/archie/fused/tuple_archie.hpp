@@ -189,17 +189,17 @@ namespace fused {
   };
 
   namespace detail {
-    template <std::size_t... idx>
+    template <typename... idx>
     struct tuple_internals {
       template <typename... Ts, typename... Us>
       static void copy_assign(tuple<Ts...>& lhs, tuple<Us...> const& rhs)
       {
-        meta::ignore{(fused::get<idx>(lhs) = fused::get<idx>(rhs), false)...};
+        meta::ignore{(fused::get<idx::value>(lhs) = fused::get<idx::value>(rhs), false)...};
       }
       template <typename... Ts, typename... Us>
       static void move_assign(tuple<Ts...>& lhs, tuple<Us...>&& rhs)
       {
-        meta::ignore{(fused::get<idx>(lhs) = std::move(fused::get<idx>(rhs)), false)...};
+        meta::ignore{(fused::get<idx::value>(lhs) = std::move(fused::get<idx::value>(rhs)), false)...};
       }
     };
   }

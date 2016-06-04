@@ -17,12 +17,12 @@ namespace fused {
           return std::forward<F>(f)(fused::get<n>(std::forward<Ts>(t))...);
         }
       };
-      template <std::size_t... ns>
+      template <typename... ns>
       struct impl {
         template <typename F, typename... Ts>
         constexpr decltype(auto) operator()(F&& f, Ts&&... t) const
         {
-          return fused::make_tuple(impl_n<ns>{}(std::forward<F>(f), std::forward<Ts>(t)...)...);
+          return fused::make_tuple(impl_n<ns::value>{}(std::forward<F>(f), std::forward<Ts>(t)...)...);
         }
       };
 

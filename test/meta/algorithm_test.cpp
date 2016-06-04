@@ -1,6 +1,5 @@
 #include <archie/meta/returns.hpp>
 #include <archie/meta/transform.hpp>
-#include <archie/meta/apply.hpp>
 #include <archie/meta/append.hpp>
 #include <archie/meta/identity.hpp>
 #include <archie/meta/find.hpp>
@@ -17,11 +16,6 @@ struct wrapper {
 
 template <typename Tp>
 using make_wrapper = meta::returns<wrapper<Tp>>;
-
-template <typename... Ts>
-struct vsize {
-  using type = std::integral_constant<unsigned, sizeof...(Ts)>;
-};
 
 template <unsigned I>
 struct utype {
@@ -50,16 +44,6 @@ TEST_CASE("meta::algo")
   static_assert(std::is_same<meta::transform_t<make_wrapper, meta::type_list<int, char, int>>,
                              meta::type_list<wrapper<int>, wrapper<char>, wrapper<int>>>::value,
                 "");
-
-  static_assert(meta::apply_t<vsize>::value == 0, "");
-  static_assert(meta::apply_t<vsize, int>::value == 1, "");
-  static_assert(meta::apply_t<vsize, int, char>::value == 2, "");
-  static_assert(meta::apply_t<vsize, int, char, int>::value == 3, "");
-
-  static_assert(meta::apply_t<vsize, meta::type_list<>>::value == 0, "");
-  static_assert(meta::apply_t<vsize, meta::type_list<int>>::value == 1, "");
-  static_assert(meta::apply_t<vsize, meta::type_list<int, char>>::value == 2, "");
-  static_assert(meta::apply_t<vsize, meta::type_list<int, char, int>>::value == 3, "");
 
   static_assert(std::is_same<meta::append_t<meta::type_list<>, int>, meta::type_list<int>>::value,
                 "");

@@ -9,10 +9,10 @@
 namespace archie {
 namespace fused {
   namespace detail {
-    template <std::size_t... other>
+    template <typename... other>
     struct placeholder {
       template <typename Tp, typename... Us>
-      constexpr decltype(auto) operator()(meta::eat_n<other>..., Tp&& x, Us&&...) const noexcept
+      constexpr decltype(auto) operator()(meta::eat<other>..., Tp&& x, Us&&...) const noexcept
       {
         return std::forward<Tp>(x);
       }

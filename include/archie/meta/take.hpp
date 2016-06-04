@@ -10,15 +10,15 @@
 namespace archie {
 namespace meta {
   namespace detail {
-    template <std::size_t... other>
-    struct take {
+    template <typename... other>
+    struct take_ {
     public:
       template <typename... Us>
-      using apply = returns<type_list<at_t<other, Us...>...>>;
+      using apply = returns<type_list<at_t<other::value, Us...>...>>;
     };
   }
   template <std::size_t n, typename... Ts>
-  struct take : indexable_t<detail::take, n>::template apply<Ts...> {
+  struct take : indexable_t<detail::take_, n>::template apply<Ts...> {
   };
 
   template <std::size_t n, typename... Ts>

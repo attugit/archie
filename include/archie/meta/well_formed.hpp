@@ -1,16 +1,13 @@
 #pragma once
 
-#include <archie/meta/apply.hpp>
 #include <archie/ignore.hpp>
 #include <archie/meta/returns.hpp>
 
-namespace archie {
-namespace meta {
+namespace archie::meta {
   template <typename...>
   struct well_formed : returns<ignore> {
   };
 
   template <typename... Ts>
-  using well_formed_t = apply_t<well_formed, Ts...>;
-}
+  using well_formed_t = eval<well_formed<Ts...>>;
 }

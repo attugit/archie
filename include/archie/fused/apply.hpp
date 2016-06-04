@@ -29,12 +29,12 @@ namespace fused {
       }
 
     private:
-      template <std::size_t... ids>
+      template <typename... ids>
       struct impl_ {
         template <typename F, typename Tp>
         constexpr decltype(auto) operator()(F&& f, Tp&& t) const
         {
-          return apply_args_{}(std::forward<F>(f), fused::get<ids>(std::forward<Tp>(t))...);
+          return apply_args_{}(std::forward<F>(f), fused::get<ids::value>(std::forward<Tp>(t))...);
         }
       };
     };

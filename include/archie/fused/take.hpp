@@ -14,14 +14,14 @@
 namespace archie {
 namespace fused {
   namespace detail {
-    template <std::size_t... ids>
+    template <typename... ids>
     struct take_ {
       template <typename... Ts>
       struct impl {
         template <typename Up>
         constexpr decltype(auto) operator()(Up&& u) const
         {
-          return fused::tuple<meta::at_t<ids, Ts...>...>(get<ids>(std::forward<Up>(u))...);
+          return fused::tuple<meta::at_t<ids::value, Ts...>...>(get<ids::value>(std::forward<Up>(u))...);
         }
       };
       template <typename Tp>
@@ -32,7 +32,7 @@ namespace fused {
       template <typename... Ts>
       constexpr decltype(auto) operator()(Ts&&... ts) const
       {
-        return make_tuple(fused::nth<ids>(ts...)...);
+        return make_tuple(fused::nth<ids::value>(ts...)...);
       }
     };
     template <std::size_t N>

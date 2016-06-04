@@ -4,7 +4,7 @@
 namespace {
 namespace meta = archie::meta;
 
-template <std::size_t... ids>
+template <typename... ids>
 struct with_index {
   static const auto value = sizeof...(ids);
 };

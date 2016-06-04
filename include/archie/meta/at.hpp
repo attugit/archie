@@ -14,10 +14,10 @@ namespace archie::meta
     template <std::size_t n, typename... Ts>
     struct at_ {
     private:
-      template <std::size_t... other>
+      template <typename... other>
       struct impl_ {
         template <typename Tp>
-        static auto skip(eat_n<other>..., Tp&&, ...) noexcept -> returns<Tp>;
+        static auto skip(eat<other>..., Tp&&, ...) noexcept -> returns<Tp>;
 
         template <typename... Us>
         using apply = decltype(skip(std::declval<Us>()...));

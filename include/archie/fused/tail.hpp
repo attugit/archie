@@ -3,9 +3,7 @@
 #include <utility>
 #include <archie/fused/tuple.hpp>
 #include <archie/fused/apply.hpp>
-#include <archie/meta/listed.hpp>
 #include <archie/ignore.hpp>
-#include <archie/meta/as_type_list.hpp>
 #include <archie/meta/static_constexpr_storage.hpp>
 
 namespace archie::fused
@@ -24,11 +22,10 @@ namespace archie::fused
       };
 
     public:
-      template <typename Tp>
-      constexpr decltype(auto) operator()(Tp&& t) const
+      template <template <typename...> typename F, typename... T>
+      constexpr decltype(auto) operator()(F<T...> const& t) const
       {
-        return fused::apply(meta::listed_t<impl, meta::as_type_list_t<std::decay_t<Tp>>>{},
-                            std::forward<Tp>(t));
+        return fused::apply(impl<T...>{}, std::forward<decltype(t)>(t));
       }
     };
   }

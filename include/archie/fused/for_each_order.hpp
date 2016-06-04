@@ -15,7 +15,7 @@ namespace fused {
     struct order_backward {
     };
 
-    template <std::size_t... ids>
+    template <typename... ids>
     struct for_each_order {
       template <std::size_t n, typename... Ts>
       constexpr decltype(auto) get_n(meta::number<n>, Ts&&... args) const noexcept
@@ -25,14 +25,14 @@ namespace fused {
       template <typename F, typename... Ts>
       decltype(auto) go(order_forward, F&& f, Ts&&... args) const
       {
-        meta::ignore{(f(get_n(meta::number<ids>{}, std::forward<Ts>(args)...)), 0)...};
+        meta::ignore{(f(get_n(ids{}, std::forward<Ts>(args)...)), 0)...};
         return f;
       }
       template <typename F, typename... Ts>
       decltype(auto) go(order_backward, F&& f, Ts&&... args) const
       {
         meta::ignore{
-            (f(get_n(meta::number<sizeof...(ids)-ids - 1>{}, std::forward<Ts>(args)...)), 0)...};
+            (f(get_n(meta::number<sizeof...(ids)-ids::value - 1>{}, std::forward<Ts>(args)...)), 0)...};
         return f;
       }
       template <typename Order, typename F, typename... Ts>

@@ -3,7 +3,6 @@
 #include <archie/meta/eval.hpp>
 #include <archie/type_list.hpp>
 #include <archie/index_of.hpp>
-#include <archie/meta/apply.hpp>
 #include <archie/boolean.hpp>
 #include <archie/meta/returns.hpp>
 
@@ -23,7 +22,7 @@ namespace meta {
   };
 
   template <typename Tp, typename... Us>
-  using find_t = apply_t<find, Tp, Us...>;
+  using find_t = eval<find<Tp, Us...>>;
 
   template <template <typename> class F, typename... Ts>
   struct find_if : find<true_t, boolean<F<Ts>::value>...> {
