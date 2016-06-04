@@ -1,38 +1,21 @@
 #pragma once
 
 #include <utility>
-#include <archie/type_list.hpp>
-#include <archie/meta/take.hpp>
-#include <archie/meta/indexable.hpp>
 #include <archie/meta/static_constexpr_storage.hpp>
-#include <archie/meta/listed.hpp>
-#include <archie/meta/as_type_list.hpp>
+#include <archie/meta/indexable.hpp>
 #include <archie/fused/tuple.hpp>
 #include <archie/fused/nth.hpp>
-#include <archie/fused/as_tuple.hpp>
 
-namespace archie {
-namespace fused {
-  namespace detail {
+namespace archie::fused
+{
+  namespace detail
+  {
     template <typename... ids>
     struct take_ {
       template <typename... Ts>
-      struct impl {
-        template <typename Up>
-        constexpr decltype(auto) operator()(Up&& u) const
-        {
-          return fused::tuple<meta::at_t<ids::value, Ts...>...>(get<ids::value>(std::forward<Up>(u))...);
-        }
-      };
-      template <typename Tp>
-      constexpr decltype(auto) operator()(Tp&& t) const
-      {
-        return meta::listed_t<impl, meta::as_type_list_t<std::decay_t<Tp>>>{}(std::forward<Tp>(t));
-      }
-      template <typename... Ts>
       constexpr decltype(auto) operator()(Ts&&... ts) const
       {
-        return make_tuple(fused::nth<ids::value>(ts...)...);
+        return make_tuple(fused::nth<ids::value>(std::forward<Ts>(ts)...)...);
       }
     };
     template <std::size_t N>
@@ -41,5 +24,4 @@ namespace fused {
 
   template <std::size_t N>
   static constexpr auto const& take = meta::instance<detail::indexed_take_<N>>();
-}
 }

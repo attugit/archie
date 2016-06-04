@@ -4,12 +4,13 @@
 #include <archie/traits/is_fused_tuple.hpp>
 #include <archie/meta/requires.hpp>
 #include <archie/boolean.hpp>
-#include <archie/meta/as_type_list.hpp>
+#include <archie/type_list.hpp>
 #include <archie/fused/conditional.hpp>
 
-namespace archie {
-namespace fused {
-  namespace detail {
+namespace archie::fused
+{
+  namespace detail
+  {
     struct concat_tuples_ {
       template <typename Tp,
                 typename Up,
@@ -17,8 +18,7 @@ namespace fused {
                                               traits::is_fused_tuple<std::remove_reference_t<Up>>>>
       constexpr decltype(auto) operator()(Tp&& tp, Up&& up) const
       {
-        return impl(std::forward<Tp>(tp), meta::as_type_list_t<std::remove_reference_t<Tp>>{},
-                    std::forward<Up>(up), meta::as_type_list_t<std::remove_reference_t<Up>>{});
+        return impl(std::forward<Tp>(tp), to_type_list(tp), std::forward<Up>(up), to_type_list(up));
       }
 
     private:
@@ -39,8 +39,7 @@ namespace fused {
                 typename = meta::requires<traits::is_fused_tuple<std::remove_reference_t<Tp>>>>
       constexpr decltype(auto) operator()(Tp&& tp, Us&&... us) const
       {
-        return impl(std::forward<Tp>(tp), meta::as_type_list_t<std::remove_reference_t<Tp>>{},
-                    std::forward<Us>(us)...);
+        return impl(std::forward<Tp>(tp), to_type_list(tp), std::forward<Us>(us)...);
       }
 
     private:
@@ -53,5 +52,4 @@ namespace fused {
   }
   constexpr auto const concat =
       fused::make_conditional(detail::concat_tuples_{}, detail::append_tuple_{});
-}
 }
