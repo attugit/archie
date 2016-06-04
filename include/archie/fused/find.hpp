@@ -1,18 +1,20 @@
 #pragma once
 
+#include <archie/index_of.hpp>
 #include <archie/meta/find.hpp>
 #include <archie/meta/static_constexpr_storage.hpp>
 #include <archie/fused/nth.hpp>
 
-namespace archie {
-namespace fused {
-  namespace detail {
+namespace archie::fused
+{
+  namespace detail
+  {
     template <typename Tp>
     struct find_ {
       template <typename... Us>
       constexpr decltype(auto) operator()(Us&&... us) const noexcept
       {
-        return fused::nth<meta::find_t<Tp, Us...>::value>(std::forward<Us>(us)...);
+        return fused::nth<index_of<Tp>(type_list<Us...>)>(std::forward<Us>(us)...);
       }
     };
     template <template <typename> class F>
@@ -28,5 +30,4 @@ namespace fused {
   static constexpr auto const& find = meta::instance<detail::find_<T>>();
   template <template <typename> class F>
   static constexpr auto const& find_if = meta::instance<detail::find_if_<F>>();
-}
 }

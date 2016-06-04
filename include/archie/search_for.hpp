@@ -26,14 +26,14 @@ namespace archie::fused
         }
       };
       template <typename... U>
-      constexpr auto impl(U... u) const noexcept
+      constexpr decltype(auto) impl(U... u) const noexcept
       {
         return (... & u);
       }
 
     public:
       template <typename F, typename... U>
-      constexpr auto operator()(F f, U... u) const noexcept
+      constexpr decltype(auto) operator()(F f, U... u) const noexcept
       {
         (void)f; // unused when passing empty parameter pack
         return impl(accumulator_<0>{}, f(u)...);
