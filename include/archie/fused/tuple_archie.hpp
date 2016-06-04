@@ -11,7 +11,7 @@
 #include <archie/traits.hpp>
 #include <archie/fused/nth.hpp>
 #include <archie/fused/mover.hpp>
-#include <archie/fused/ignore.hpp>
+#include <archie/ignore.hpp>
 #include <archie/traits/is_callable.hpp>
 #include <archie/fused/static_if.hpp>
 #include <archie/boolean.hpp>

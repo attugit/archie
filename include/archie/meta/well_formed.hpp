@@ -1,7 +1,7 @@
 #pragma once
 
 #include <archie/meta/apply.hpp>
-#include <archie/meta/ignore.hpp>
+#include <archie/ignore.hpp>
 #include <archie/meta/returns.hpp>
 
 namespace archie {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <archie/meta/static_constexpr_storage.hpp>
 
 namespace archie::meta
 {
@@ -22,4 +23,8 @@ namespace archie::meta
 
   template <std::size_t>
   using eat_n = ignore;
+}
+
+namespace archie::fused {
+  static constexpr auto const& ignore = meta::instance<meta::ignore>();
 }

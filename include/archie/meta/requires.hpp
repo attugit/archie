@@ -3,7 +3,7 @@
 #include <utility>
 #include <archie/meta/eval.hpp>
 #include <archie/meta/logic.hpp>
-#include <archie/meta/ignore.hpp>
+#include <archie/ignore.hpp>
 #include <archie/meta/returns.hpp>
 
 namespace archie {

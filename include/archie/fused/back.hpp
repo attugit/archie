@@ -1,7 +1,7 @@
 #pragma once
 
 #include <utility>
-#include <archie/meta/ignore.hpp>
+#include <archie/ignore.hpp>
 #include <archie/meta/static_constexpr_storage.hpp>
 
 namespace archie {

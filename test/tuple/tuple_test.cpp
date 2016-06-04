@@ -2,7 +2,7 @@
 #include <archie/fused/tuple.hpp>
 #include <archie/traits.hpp>
 #include <memory>
-#include <archie/fused/ignore.hpp>
+#include <archie/ignore.hpp>
 #include <catch.hpp>
 
 namespace {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <archie/meta/ignore.hpp>
+#include <archie/ignore.hpp>
 
 namespace archie {
 namespace fused {

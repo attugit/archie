@@ -1,6 +1,6 @@
 #include <archie/traits/model_of.hpp>
 #include <archie/meta/requires.hpp>
-#include <archie/fused/ignore.hpp>
+#include <archie/ignore.hpp>
 #include <archie/models.hpp>
 #include <vector>
 #include <catch.hpp>

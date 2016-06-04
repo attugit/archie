@@ -4,19 +4,20 @@
 #include <archie/fused/tuple.hpp>
 #include <archie/fused/apply.hpp>
 #include <archie/meta/listed.hpp>
-#include <archie/meta/ignore.hpp>
+#include <archie/ignore.hpp>
 #include <archie/meta/as_type_list.hpp>
 #include <archie/meta/static_constexpr_storage.hpp>
 
-namespace archie {
-namespace fused {
-  namespace detail {
+namespace archie::fused
+{
+  namespace detail
+  {
     struct tail_ {
     private:
       template <typename, typename... Ts>
       struct impl {
         template <typename... Us>
-        constexpr decltype(auto) operator()(meta::ignore, Us&&... us) const
+        constexpr decltype(auto) operator()(decltype(ignore), Us&&... us) const
         {
           return fused::tuple<Ts...>(std::forward<Us>(us)...);
         }
@@ -32,5 +33,4 @@ namespace fused {
     };
   }
   static constexpr auto const& tail = meta::instance<detail::tail_>();
-}
 }
