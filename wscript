@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # encoding: utf-8
 
-VERSION='0.1.0'
+VERSION='1.0.0'
 APPNAME='archie'
 
 top = '.'
@@ -78,6 +78,9 @@ def build(bld):
       )
   bld.add_post_fun(waf_unit_test.summary)
   bld.add_post_fun(waf_unit_test.set_exit_code)
+  inc = bld.path.find_dir('include')
+  for f in bld.path.ant_glob(['include/archie/**/*.hpp']):
+    bld.install_files('${PREFIX}/include/' + f.path_from(inc).replace(f.name, ''), f)
 
 from waflib.Build import BuildContext
 from waflib.Build import CleanContext
