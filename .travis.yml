@@ -3,39 +3,16 @@ os: linux
 sudo: false
 
 env:
-  - BUILDTYPE=debug COMPILER=g++-6
-  - BUILDTYPE=release COMPILER=g++-6
+  - BUILDTYPE=debug
+  - BUILDTYPE=release
+
+compiler: g++-6
 
 addons: &gcc6
   apt:
     sources: &gcc
       - ubuntu-toolchain-r-test
     packages: g++-6
-    #sources: &llvm
-    #  - ubuntu-toolchain-r-test
-    #  - llvm-toolchain-precise
-    #  - llvm-toolchain-precise-3.8
-
-#matrix:
-#
-#  include:
-#    - env: COMPILER=g++-6
-#      addons: *gcc6
-#
-#  #allow_failures:
-#  #  - env: COMPILER=clang++-3.8
-#  #    compiler: clang
-#  #    addons: &clang38
-#  #      apt:
-#  #        packages: clang-3.8
-#  #        sources: *llvm
-
-  fast_finish: true
-
-before_install:
-  - export CXX=$COMPILER
-  - which $CXX
 
 script:
-  - rm -rf build;
-  - CXX=$COMPILER ./waf distclean configure --mode=$BUILDTYPE build install --alltests -j1 --prefix=/usr --destdir=./build/destdir
+  - ./waf distclean configure --mode=$BUILDTYPE build install --alltests -j1 --prefix=/usr --destdir=./build/destdir
