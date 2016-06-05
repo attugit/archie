@@ -41,5 +41,5 @@ before_install:
 
 script:
   - rm -rf build;
-  - CXX=$COMPILER ./waf distclean configure build install --alltests -j1 --prefix=/usr --destdir=./build/destdir
-  - CXX=$COMPILER ./waf distclean configure build_release install_release --alltests -j1 --prefix=/usr --destdir=./build/destdir
+  - CXX=$COMPILER ./waf distclean configure --mode=debug   build install --alltests -j1 --prefix=/usr --destdir=./build/destdir
+  - CXX=$COMPILER ./waf distclean configure --mode=release build install --alltests -j1 --prefix=/usr --destdir=./build/destdir
