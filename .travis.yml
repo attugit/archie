@@ -15,4 +15,5 @@ addons: &gcc6
     packages: g++-6
 
 script:
-  - ./waf distclean configure --mode=$BUILDTYPE build install --alltests -j1 --prefix=/usr --destdir=./build/destdir
+  - $CXX --version
+#  - ./waf distclean configure --mode=$BUILDTYPE build install --alltests -j1 --prefix=/usr --destdir=./build/destdir
