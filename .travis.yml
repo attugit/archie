@@ -3,10 +3,10 @@ os: linux
 sudo: false
 
 env:
-  - COMPILER=g++-6 BUILDTYPE=debug
-  - COMPILER=g++-6 BUILDTYPE=release
+  - BUILDTYPE=debug
+  - BUILDTYPE=release
 
-compiler: g++-6
+compiler: gcc
 
 addons: &gcc6
   apt:
@@ -14,5 +14,8 @@ addons: &gcc6
       - ubuntu-toolchain-r-test
     packages: g++-6
 
+install:
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-6"; fi
+
 script:
-  - CXX=$COMPILER ./waf distclean configure --mode=$BUILDTYPE build install --alltests -j1 --prefix=/usr --destdir=./build/destdir
+  - ./waf distclean configure --mode=$BUILDTYPE build install --alltests -j1 --prefix=/usr --destdir=./build/destdir
