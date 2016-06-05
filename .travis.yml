@@ -6,10 +6,11 @@ env:
   matrix:
     - TRAVIS_EMPTY_JOB_WORKAROUND=true
 
-addons:
+addons: &gcc6
   apt:
     sources: &gcc
       - ubuntu-toolchain-r-test
+    packages: g++-6
     #sources: &llvm
     #  - ubuntu-toolchain-r-test
     #  - llvm-toolchain-precise
@@ -22,10 +23,7 @@ matrix:
   include:
     - env: COMPILER=g++-6
       compiler: gcc
-      addons: &gcc6
-        apt:
-          packages: g++-6
-          sources: *gcc
+      addons: *gcc6
 
   #allow_failures:
   #  - env: COMPILER=clang++-3.8
