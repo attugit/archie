@@ -18,4 +18,4 @@ install:
   - if [ "$CXX" = "g++" ]; then export CXX="g++-6"; fi
 
 script:
-  - ./waf distclean configure --mode=$BUILDTYPE build install --alltests -j1 --prefix=/usr --destdir=./build/destdir
+  - ./waf distclean configure --mode=$BUILDTYPE build install -j1 --prefix=/usr --destdir=./build/destdir
