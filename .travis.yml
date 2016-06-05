@@ -3,8 +3,8 @@ os: linux
 sudo: false
 
 env:
-  matrix:
-    - TRAVIS_EMPTY_JOB_WORKAROUND=true
+  - BUILDTYPE=debug
+  - BUILDTYPE=release
 
 addons: &gcc6
   apt:
@@ -17,8 +17,6 @@ addons: &gcc6
     #  - llvm-toolchain-precise-3.8
 
 matrix:
-  exclude:
-    - env: TRAVIS_EMPTY_JOB_WORKAROUND=true
 
   include:
     - env: COMPILER=g++-6
@@ -41,5 +39,4 @@ before_install:
 
 script:
   - rm -rf build;
-  - CXX=$COMPILER ./waf distclean configure --mode=debug   build install --alltests -j1 --prefix=/usr --destdir=./build/destdir
-  - CXX=$COMPILER ./waf distclean configure --mode=release build install --alltests -j1 --prefix=/usr --destdir=./build/destdir
+  - CXX=$COMPILER ./waf distclean configure --mode=$BUILDTYPE build install --alltests -j1 --prefix=/usr --destdir=./build/destdir
