@@ -3,8 +3,8 @@ os: linux
 sudo: false
 
 env:
-  - BUILDTYPE=debug
-  - BUILDTYPE=release
+  - COMPILER=g++-6 BUILDTYPE=debug
+  - COMPILER=g++-6 BUILDTYPE=release
 
 compiler: g++-6
 
@@ -15,5 +15,4 @@ addons: &gcc6
     packages: g++-6
 
 script:
-  - $CXX --version
-#  - ./waf distclean configure --mode=$BUILDTYPE build install --alltests -j1 --prefix=/usr --destdir=./build/destdir
+  - CXX=$COMPILER ./waf distclean configure --mode=$BUILDTYPE build install --alltests -j1 --prefix=/usr --destdir=./build/destdir
