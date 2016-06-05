@@ -3,8 +3,8 @@ os: linux
 sudo: false
 
 env:
-  - BUILDTYPE=debug
-  - BUILDTYPE=release
+  - BUILDTYPE=debug COMPILER=g++-6
+  - BUILDTYPE=release COMPILER=g++-6
 
 addons: &gcc6
   apt:
