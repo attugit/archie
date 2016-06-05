@@ -16,20 +16,19 @@ addons: &gcc6
     #  - llvm-toolchain-precise
     #  - llvm-toolchain-precise-3.8
 
-matrix:
-
-  include:
-    - env: COMPILER=g++-6
-      compiler: gcc
-      addons: *gcc6
-
-  #allow_failures:
-  #  - env: COMPILER=clang++-3.8
-  #    compiler: clang
-  #    addons: &clang38
-  #      apt:
-  #        packages: clang-3.8
-  #        sources: *llvm
+#matrix:
+#
+#  include:
+#    - env: COMPILER=g++-6
+#      addons: *gcc6
+#
+#  #allow_failures:
+#  #  - env: COMPILER=clang++-3.8
+#  #    compiler: clang
+#  #    addons: &clang38
+#  #      apt:
+#  #        packages: clang-3.8
+#  #        sources: *llvm
 
   fast_finish: true
 
