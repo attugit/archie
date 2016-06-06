@@ -15,7 +15,4 @@ before_install:
   - docker build -t attugit/testing .
 
 script:
-  - echo $CXX
-  - $CXX --version
-  - if [ "$CXX" = "g++" ];   docker run attugit/testing /usr/bin/bash -c "pacman --noconfirm -S gcc;   export CXX=g++;     git clone --depth=5 --branch=$TRAVIS_BRANCH https://github.com/attugit/archie.git attugit/archie; cd attugit/archie; ./waf distclean configure --mode=$BUILDTYPE build install -j1 --prefix=/usr"; fi
-  - if [ "$CXX" = "clang" ]; docker run attugit/testing /usr/bin/bash -c "pacman --noconfirm -S clang; export CXX=clang++; git clone --depth=5 --branch=$TRAVIS_BRANCH https://github.com/attugit/archie.git attugit/archie; cd attugit/archie; ./waf distclean configure --mode=$BUILDTYPE build install -j1 --prefix=/usr"; fi
+  - docker run attugit/testing /usr/bin/bash -c "git clone --depth=5 --branch=$TRAVIS_BRANCH https://github.com/attugit/archie.git attugit/archie; cd attugit/archie; CXX=$CXX ./waf distclean configure --mode=$BUILDTYPE build install --prefix=/usr"
