@@ -37,15 +37,15 @@ namespace archie::meta
   }
 
   template <bool B1, bool B2>
-  constexpr decltype(auto) operator!=(boolean<B1> const& lhs, boolean<B2> const& rhs) noexcept
+  constexpr decltype(auto) operator!=(boolean<B1> const&, boolean<B2> const&) noexcept
   {
-    return fused::boolean<!(lhs == rhs)>;
+    return fused::boolean<B1 != B2>;
   }
 
   template <bool B1, bool B2>
-  constexpr decltype(auto) operator!=(boolean<B1> const& lhs,
-                                      std::integral_constant<bool, B2> const& rhs) noexcept
+  constexpr decltype(auto) operator!=(boolean<B1> const&,
+                                      std::integral_constant<bool, B2> const&) noexcept
   {
-    return fused::boolean<!(lhs == rhs)>;
+    return fused::boolean<B1 != B2>;
   }
 }
