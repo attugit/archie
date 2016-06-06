@@ -1,0 +1,6 @@
+FROM debian:testing
+
+RUN apt-get update
+RUN apt-get install -y git python g++-6 virtualenv
+ADD . attugit/archie
+
