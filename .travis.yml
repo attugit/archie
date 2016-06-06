@@ -1,21 +1,10 @@
 language: c++
-os: linux
-sudo: false
+sudo: required
+services:
+  - docker
 
-env:
-  - BUILDTYPE=debug
-  - BUILDTYPE=release
-
-compiler: gcc
-
-addons: &gcc6
-  apt:
-    sources: &gcc
-      - ubuntu-toolchain-r-test
-    packages: g++-6
-
-install:
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-6"; fi
+before_install:
+  - docker build -t attugit/testing .
 
 script:
   - ./waf distclean configure --mode=$BUILDTYPE build install -j1 --prefix=/usr --destdir=./build/destdir
