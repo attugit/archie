@@ -3,8 +3,14 @@ sudo: required
 services:
   - docker
 
+env:
+  - BUILDTYPE=debug
+  - BUILDTYPE=release
+
 before_install:
   - docker build -t attugit/testing .
 
 script:
-  - ./waf distclean configure --mode=$BUILDTYPE build install -j1 --prefix=/usr --destdir=./build/destdir
+  - $RUN git clone --depth=5 --branch=$TRAVIS_BRANCH https://github.com/attugit/archie.git attugit/archie
+  - $RUN cd attugit/archie
+  - $RUN ./waf distclean configure --mode=$BUILDTYPE build install -j1 --prefix=/usr
