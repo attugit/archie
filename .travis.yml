@@ -3,16 +3,14 @@ sudo: required
 services:
   - docker
 
-compiler:
-  - gcc
-  - clang
-
 env:
-  - BUILDTYPE=debug
-  - BUILDTYPE=release
+  - COMPILER=g++-6 BUILDTYPE=debug
+  - COMPILER=g++-6 BUILDTYPE=release
+  - COMPILER=clang++-3.8 BUILDTYPE=debug
+  - COMPILER=clang++-3.8 BUILDTYPE=release
 
 before_install:
   - docker build -t attugit/testing .
 
 script:
-  - docker run attugit/testing /usr/bin/bash -c "git clone --depth=5 --branch=$TRAVIS_BRANCH https://github.com/attugit/archie.git attugit/archie; cd attugit/archie; CXX=$CXX ./waf distclean configure --mode=$BUILDTYPE build install --prefix=/usr"
+  - docker run attugit/testing /bin/bash -c "git clone --depth=5 --branch=$TRAVIS_BRANCH https://github.com/attugit/archie.git attugit/archie; cd attugit/archie; CXX=$COMPILER ./waf distclean configure --mode=$BUILDTYPE build install --prefix=/usr"

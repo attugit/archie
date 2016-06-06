@@ -1,8 +1,5 @@
-FROM base/archlinux
+FROM debian:testing
 
-RUN pacman --noconfirm -Syy
-RUN pacman --noconfirm -S git
-RUN pacman --noconfirm -S python
-RUN pacman --noconfirm -S gcc
-RUN pacman --noconfirm -S clang
+RUN apt-get update
+RUN apt-get install -y git python g++-6 clang-3.8
 
