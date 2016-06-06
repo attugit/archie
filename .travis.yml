@@ -13,4 +13,4 @@ before_install:
   - docker build -t attugit/testing .
 
 script:
-  - docker run attugit/testing /bin/bash -c "git clone --depth=5 --branch=$TRAVIS_BRANCH https://github.com/attugit/archie.git attugit/archie; cd attugit/archie; CXX=$COMPILER ./waf distclean configure --mode=$BUILDTYPE build install --prefix=/usr"
+  - docker run --env=CXX=$COMPILER --env=MODE=$BUILDTYPE --workdir=/attugit/archie attugit/testing /bin/bash -c "./waf distclean configure build install --prefix=/usr"

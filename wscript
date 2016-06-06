@@ -28,12 +28,13 @@ modes = [
   'coverage'
 ]
 
+import os
 def options(opt):
   opt.load('compiler_cxx')
   opt.load('waf_unit_test')
   opt.add_option( '-m', '--mode',
           action  = 'store',
-          default = modes[0],
+          default = os.environ.get('MODE', modes[0]),
           metavar = 'MODE',
           dest    = 'mode',
           choices = modes,
@@ -77,7 +78,6 @@ def configure(conf):
   mode.detach()
   conf.setenv('default', mode)
 
-import os
 from waflib.Tools import waf_unit_test
 def build(bld):
   if not bld.variant:
