@@ -65,8 +65,8 @@ private:
 TEST(select_overload, canSelectOverloadMember)
 {
   constexpr overloaded over{};
-  EXPECT_EQ(4u, over(1));
-  EXPECT_EQ(7u, over(7u));
-  EXPECT_EQ(0u, over(meta::number<7u>{}));
+  EXPECT_EQ(4u, static_cast<std::size_t>(over(1)));
+  EXPECT_EQ(7u, static_cast<std::size_t>(over(7u)));
+  EXPECT_EQ(0u, static_cast<std::size_t>(over(meta::number<7u>{})));
 }
 }

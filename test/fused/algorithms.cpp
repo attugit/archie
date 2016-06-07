@@ -231,21 +231,21 @@ TEST(algorithms, canComposeIndexOf)
     auto x = fused::apply(fused::type_index<int>, 1, 2u, '3');
     auto y = fused::apply(fused::type_index<unsigned>, 1, 2u, '3');
     auto z = fused::apply(fused::type_index<char>, 1, 2u, '3');
-    EXPECT_EQ(0, x);
-    EXPECT_EQ(1, y);
-    EXPECT_EQ(2, z);
+    EXPECT_EQ(0u, static_cast<std::size_t>(x));
+    EXPECT_EQ(1u, static_cast<std::size_t>(y));
+    EXPECT_EQ(2u, static_cast<std::size_t>(z));
   }
   {
     auto x = fused::apply(fused::type_index<int>, 1);
-    EXPECT_EQ(0, x);
+    EXPECT_EQ(0u, static_cast<std::size_t>(x));
   }
   {
     auto x = fused::apply(fused::index_of<int>, fused::type_list<int, unsigned, char>);
     auto y = fused::apply(fused::index_of<unsigned>, fused::type_list<int, unsigned, char>);
     auto z = fused::apply(fused::index_of<char>, fused::type_list<int, unsigned, char>);
-    EXPECT_EQ(0, x);
-    EXPECT_EQ(1, y);
-    EXPECT_EQ(2, z);
+    EXPECT_EQ(0u, static_cast<std::size_t>(x));
+    EXPECT_EQ(1u, static_cast<std::size_t>(y));
+    EXPECT_EQ(2u, static_cast<std::size_t>(z));
   }
 }
 }

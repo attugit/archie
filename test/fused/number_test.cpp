@@ -1,12 +1,8 @@
 #include <archie/number.hpp>
-#include <gtest/gtest.h>
 
 namespace {
 namespace fused = archie::fused;
-TEST(number, canUseFusedNumber)
-{
-  EXPECT_EQ(0u, fused::number<0>);
-  EXPECT_EQ(1u, fused::number<1>);
-  EXPECT_EQ(2u, fused::number<2>);
-}
+static_assert(0 == fused::number<0>);
+static_assert(1 == fused::number<1>);
+static_assert(2 == fused::number<2>);
 }

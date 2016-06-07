@@ -89,6 +89,7 @@ def build(bld):
     target       = 'GTEST',
     features     = 'cxx',
     install_path = None,
+    cxxflags     = bld.env.CXXFLAGS + ['-Wno-sign-conversion'],
   )
   bld.env.LIB += ['pthread']
   for suite in os.listdir('./test'):

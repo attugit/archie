@@ -506,8 +506,8 @@ TEST(tuple, canConstructTupleWithExplicitElementCtor)
   std::string a{"abc"};
   auto t1 = fused::tuple<conv>(1u);
   auto t2 = fused::tuple<conv>(a);
-  EXPECT_EQ(1u, fused::get<0>(t1));
-  EXPECT_EQ(3u, fused::get<0>(t2));
+  EXPECT_EQ(1u, static_cast<std::size_t>(fused::get<0>(t1)));
+  EXPECT_EQ(3u, static_cast<std::size_t>(fused::get<0>(t2)));
 }
 #endif
 
