@@ -11,7 +11,7 @@ env:
   - COMPILER=clang++-3.8 BUILDTYPE=release
 
 before_install:
-  - docker build -t attugit/testing -f ci/$COMPILER.docker .
+  - docker build -t attugit/testing -f ci/testing.docker .
 
 script:
   - docker run --env=CXX=$COMPILER --env=MODE=$BUILDTYPE --workdir=/attugit/archie attugit/testing /bin/bash -c "./ci/run.sh"
