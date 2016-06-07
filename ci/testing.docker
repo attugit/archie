@@ -1,5 +1,4 @@
-FROM attugit/dtest:v1.0
+FROM attugit/dtest:v1.1
 
-RUN apt-get install -y valgrind
 ADD . attugit/archie
 
