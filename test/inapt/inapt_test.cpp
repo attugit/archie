@@ -40,7 +40,7 @@ int main() {
 #endif
 
 #include <archie/inapt.hpp>
-#include <catch.hpp>
+#include <gtest/gtest.h>
 namespace {
 using namespace archie;
 struct error {
@@ -55,7 +55,7 @@ struct error {
 using status = reserved_t<int, error::codes::a, error::codes::b, error::codes::c>;
 using failure = reserved_t<int, 0>;
 
-TEST_CASE("Can create inapt", "[inapt]")
+TEST(inapt, canCreateInapt)
 {
   enum
   {
@@ -64,67 +64,59 @@ TEST_CASE("Can create inapt", "[inapt]")
   status s;
   null_inapt_t null;
 
-  SECTION("Default value is null")
   {
-    REQUIRE(s == null);
+    EXPECT_EQ(s, null);
     failure f;
-    REQUIRE(f == null);
+    EXPECT_EQ(f, null);
   }
 
-  SECTION("Can assign other null value")
   {
-    REQUIRE(s != error::codes::b);
+    EXPECT_NE(s, error::codes::b);
     s = error::codes::b;
-    REQUIRE(s == error::codes::b);
-    REQUIRE(s == null);
+    EXPECT_EQ(s, error::codes::b);
+    EXPECT_EQ(s, null);
   }
 
-  SECTION("Can assign nonnull value")
   {
-    REQUIRE(s != non_null);
+    EXPECT_NE(s, non_null);
     s = non_null;
-    REQUIRE(s == non_null);
-    REQUIRE(s != null);
+    EXPECT_EQ(s, non_null);
+    EXPECT_NE(s, null);
   }
 
-  SECTION("Can construct nonull value")
   {
     status nn{non_null};
-    REQUIRE(nn == non_null);
-    REQUIRE(nn != null);
+    EXPECT_EQ(nn, non_null);
+    EXPECT_NE(nn, null);
   }
 
-  SECTION("Can assing null_inapt_t")
   {
     s = non_null;
-    REQUIRE(s != null);
+    EXPECT_NE(s, null);
     s = null;
-    REQUIRE(s == null);
+    EXPECT_EQ(s, null);
   }
 
-  SECTION("Can convert to bool")
   {
     status a;
-    REQUIRE_FALSE(a);
+    EXPECT_FALSE(a);
     a = non_null;
-    REQUIRE(a);
+    EXPECT_TRUE(a);
   }
 
-  SECTION("Can derefer")
   {
     status a;
     status const b(error::a);
-    REQUIRE(*a == error::a);
-    REQUIRE(*b == error::a);
+    EXPECT_EQ(*a, error::a);
+    EXPECT_EQ(*b, error::a);
   }
 
-  SECTION("Can copy construct")
   {
     status a(error::b);
     status b(a);
     a = b;
-    REQUIRE(a == error::b);
-    REQUIRE(b == error::b);
+    EXPECT_EQ(a, error::b);
+    EXPECT_EQ(b, error::b);
   }
 }
 }

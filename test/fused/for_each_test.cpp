@@ -1,6 +1,6 @@
 #include <archie/fused/for_each.hpp>
 #include <string>
-#include <catch.hpp>
+#include <gtest/gtest.h>
 
 namespace {
 namespace fused = archie::fused;
@@ -14,24 +14,24 @@ struct func {
   }
 };
 
-TEST_CASE("canCallForEachWithFunctionObject")
+TEST(for_each, canCallForEachWithFunctionObject)
 {
   func f;
-  REQUIRE(0 == f.cnt);
+  EXPECT_EQ(0, f.cnt);
   fused::for_each(f);
-  REQUIRE(0 == f.cnt);
+  EXPECT_EQ(0, f.cnt);
   auto& ret = fused::for_each(f, '7', 'c', std::string{});
-  REQUIRE(3 == f.cnt);
-  REQUIRE(3 == ret.cnt);
-  REQUIRE(&f == &ret);
+  EXPECT_EQ(3, f.cnt);
+  EXPECT_EQ(3, ret.cnt);
+  EXPECT_EQ(&f, &ret);
 }
 
-TEST_CASE("canCallForEachWithLambda")
+TEST(for_each, canCallForEachWithLambda)
 {
   int idx = 0;
   auto f = [&idx](auto&&) { ++idx; };
-  REQUIRE(0 == idx);
+  EXPECT_EQ(0, idx);
   fused::for_each(f, 7, 'c', 2.0);
-  REQUIRE(3 == idx);
+  EXPECT_EQ(3, idx);
 }
 }

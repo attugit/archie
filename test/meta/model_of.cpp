@@ -3,7 +3,7 @@
 #include <archie/ignore.hpp>
 #include <archie/models.hpp>
 #include <vector>
-#include <catch.hpp>
+#include <gtest/gtest.h>
 
 namespace {
 using archie::meta::requires;
@@ -34,14 +34,14 @@ struct hoo {
   int operator()(int) { return 4; }
 };
 
-TEST_CASE("canUseModelOf")
+TEST(model_of, canUseModelOf)
 {
   foo f;
   goo g;
   hoo h;
 
-  REQUIRE(0 == f.func(g));
-  REQUIRE(1 == f.func(h));
+  EXPECT_EQ(0, f.func(g));
+  EXPECT_EQ(1, f.func(h));
 }
 
 template <typename Tp>

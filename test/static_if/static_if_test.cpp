@@ -1,24 +1,24 @@
 #include <archie/fused/static_if.hpp>
-#include <catch.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 #include <string>
 
 namespace {
 using namespace archie::fused;
-TEST_CASE("static if")
+TEST(static_if, canUseStaticIf)
 {
   auto const size1 = static_if(std::true_type{})([](std::vector<int> v) { return v.size(); },
                                                  [](std::string s) { return s.size(); })({1, 2, 3});
-  REQUIRE(size1 == 3);
+  EXPECT_EQ(size1, 3u);
 
   auto const size2 = static_if(std::false_type{})([](std::vector<int> v) { return v.size(); },
                                                   [](std::string s) { return s.size(); })("Hello");
-  REQUIRE(size2 == 5);
+  EXPECT_EQ(size2, 5u);
 
   std::vector<int> v;
   static_if(std::true_type{})([](std::vector<int>& vv) { vv.reserve(3); })(v);
-  REQUIRE(v.capacity() == 3);
+  EXPECT_EQ(v.capacity(), 3u);
   static_if(std::false_type{})([](std::vector<int>& vv) { vv.reserve(7); })(v);
-  REQUIRE(v.capacity() == 3);
+  EXPECT_EQ(v.capacity(), 3u);
 }
 }

@@ -1,5 +1,5 @@
 #include <archie/assignable_const.hpp>
-#include <catch.hpp>
+#include <gtest/gtest.h>
 
 namespace {
 using namespace archie;
@@ -9,16 +9,16 @@ struct block_t {
   assignable_const<unsigned> number;
 };
 
-TEST_CASE("assignable_const", "[const]")
+TEST(assignable_const, isConst)
 {
   block_t b1(3);
   block_t b2(4);
 
-  REQUIRE(b1.number == 3);
+  EXPECT_EQ(b1.number, 3u);
   b1 = b2;
-  REQUIRE(b1.number == 4);
+  EXPECT_EQ(b1.number, 4u);
 
-  REQUIRE(std::is_copy_constructible<block_t>::value);
-  REQUIRE(std::is_copy_assignable<block_t>::value);
+  static_assert(std::is_copy_constructible<block_t>::value);
+  static_assert(std::is_copy_assignable<block_t>::value);
 }
 }

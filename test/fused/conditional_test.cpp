@@ -1,5 +1,5 @@
 #include <archie/fused/conditional.hpp>
-#include <catch.hpp>
+#include <gtest/gtest.h>
 
 namespace {
 struct goo {
@@ -11,31 +11,31 @@ struct hoo {
 
 namespace fused = archie::fused;
 
-TEST_CASE("canUseConditionalT", "[fused::conditional]")
+TEST(conditional, canUseConditionalT)
 {
   fused::conditional_t<goo, hoo> cond;
   auto x = cond();
   auto y = cond(1);
-  REQUIRE(3 == x);
-  REQUIRE(4 == y);
+  EXPECT_EQ(3, x);
+  EXPECT_EQ(4, y);
 }
 
-TEST_CASE("canUseConditional", "[fused::conditional]")
+TEST(conditional, canUseConditional)
 {
   auto x = fused::conditional<goo, hoo>();
   auto y = fused::conditional<goo, hoo>(1);
-  REQUIRE(3 == x);
-  REQUIRE(4 == y);
+  EXPECT_EQ(3, x);
+  EXPECT_EQ(4, y);
 }
 
-TEST_CASE("canUseMakeConditional", "[fused::conditional]")
+TEST(conditional, canUseMakeConditional)
 {
   constexpr auto f = fused::make_conditional(goo{}, hoo{});
-  REQUIRE(3 == f());
-  REQUIRE(4 == f(7));
+  EXPECT_EQ(3, f());
+  EXPECT_EQ(4, f(7));
 }
 
-TEST_CASE("canUseConditionalWithLambda", "[fused::conditional]")
+TEST(conditional, canUseConditionalWithLambda)
 {
   auto const f = [](int i) { return i + 2; };
   auto const g = [](int i, int j) { return 2 * i + j; };
@@ -43,17 +43,17 @@ TEST_CASE("canUseConditionalWithLambda", "[fused::conditional]")
   auto const c = fused::make_conditional(f);
   auto const d = fused::make_conditional(f, g);
   auto const e = fused::make_conditional(f, g, h);
-  REQUIRE(f(1) == c(1));
-  REQUIRE(f(3) == c(3));
-  REQUIRE(f(1) == d(1));
-  REQUIRE(f(3) == d(3));
-  REQUIRE(g(1, 1) == d(1, 1));
-  REQUIRE(g(3, 2) == d(3, 2));
-  REQUIRE(f(1) == e(1));
-  REQUIRE(f(3) == e(3));
-  REQUIRE(g(1, 1) == e(1, 1));
-  REQUIRE(g(3, 2) == e(3, 2));
-  REQUIRE(h(1, 1, 2) == e(1, 1, 2));
-  REQUIRE(h(3, 2, 3) == e(3, 2, 3));
+  EXPECT_EQ(f(1), c(1));
+  EXPECT_EQ(f(3), c(3));
+  EXPECT_EQ(f(1), d(1));
+  EXPECT_EQ(f(3), d(3));
+  EXPECT_EQ(g(1, 1), d(1, 1));
+  EXPECT_EQ(g(3, 2), d(3, 2));
+  EXPECT_EQ(f(1), e(1));
+  EXPECT_EQ(f(3), e(3));
+  EXPECT_EQ(g(1, 1), e(1, 1));
+  EXPECT_EQ(g(3, 2), e(3, 2));
+  EXPECT_EQ(h(1, 1, 2), e(1, 1, 2));
+  EXPECT_EQ(h(3, 2, 3), e(3, 2, 3));
 }
 }

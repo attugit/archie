@@ -3,14 +3,14 @@
 #include <archie/traits.hpp>
 #include <memory>
 #include <archie/ignore.hpp>
-#include <catch.hpp>
+#include <gtest/gtest.h>
 
 namespace {
 namespace fused = archie::fused;
 namespace traits = archie::traits;
 namespace meta = archie::meta;
 
-TEST_CASE("canDefaultConstruct")
+TEST(tuple, canDefaultConstruct)
 {
   {
     using tuple_t = fused::tuple<unsigned, double, char>;
@@ -19,8 +19,8 @@ TEST_CASE("canDefaultConstruct")
     auto t = fused::tuple<unsigned, double, char>();
     static_assert(fused::tuple_size(fused::id<decltype(t)>) == 3u, "");
 
-    REQUIRE(3u == fused::tuple_size(t));
-    REQUIRE(sizeof(unsigned) + sizeof(double) + sizeof(char) <= sizeof(t));
+    EXPECT_EQ(3u, fused::tuple_size(t));
+    EXPECT_LE(sizeof(unsigned) + sizeof(double) + sizeof(char), sizeof(t));
   }
   {
     static_assert(
@@ -28,12 +28,12 @@ TEST_CASE("canDefaultConstruct")
         "");
     auto t = fused::tuple<unsigned, std::unique_ptr<double>, char>();
 
-    REQUIRE(3u == fused::tuple_size(t));
-    REQUIRE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char) <= sizeof(t));
+    EXPECT_EQ(3u, fused::tuple_size(t));
+    EXPECT_LE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char), sizeof(t));
   }
 }
 
-TEST_CASE("canDefaultConstructTupleWithUncopyableElement")
+TEST(tuple, canDefaultConstructTupleWithUncopyableElement)
 {
   static_assert(
       std::is_default_constructible<fused::tuple<unsigned, std::unique_ptr<double>, char>>::value,
@@ -41,11 +41,11 @@ TEST_CASE("canDefaultConstructTupleWithUncopyableElement")
 
   auto t = fused::tuple<unsigned, std::unique_ptr<double>, char>{};
 
-  REQUIRE(3u == fused::tuple_size(t));
-  REQUIRE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char) <= sizeof(t));
+  EXPECT_EQ(3u, fused::tuple_size(t));
+  EXPECT_LE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char), sizeof(t));
 }
 
-TEST_CASE("canConstruct")
+TEST(tuple, canConstruct)
 {
   {
     static_assert(
@@ -53,8 +53,8 @@ TEST_CASE("canConstruct")
         "");
     auto t = fused::tuple<unsigned, double, char>(1u, 2.0, '3');
 
-    REQUIRE(3u == fused::tuple_size(t));
-    REQUIRE(sizeof(unsigned) + sizeof(double) + sizeof(char) <= sizeof(t));
+    EXPECT_EQ(3u, fused::tuple_size(t));
+    EXPECT_LE(sizeof(unsigned) + sizeof(double) + sizeof(char), sizeof(t));
   }
   {
     static_assert(std::is_constructible<fused::tuple<unsigned, std::unique_ptr<double>, char>,
@@ -63,12 +63,12 @@ TEST_CASE("canConstruct")
     auto t =
         fused::tuple<unsigned, std::unique_ptr<double>, char>(1u, std::unique_ptr<double>{}, '3');
 
-    REQUIRE(3u == fused::tuple_size(t));
-    REQUIRE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char) <= sizeof(t));
+    EXPECT_EQ(3u, fused::tuple_size(t));
+    EXPECT_LE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char), sizeof(t));
   }
 }
 
-TEST_CASE("canConstructTupleWithUncopyableElement")
+TEST(tuple, canConstructTupleWithUncopyableElement)
 {
   static_assert(std::is_constructible<fused::tuple<unsigned, std::unique_ptr<double>, char>,
                                       unsigned, std::unique_ptr<double>&&, char>::value,
@@ -76,11 +76,11 @@ TEST_CASE("canConstructTupleWithUncopyableElement")
   auto t =
       fused::tuple<unsigned, std::unique_ptr<double>, char>(1u, std::make_unique<double>(2.0), '3');
 
-  REQUIRE(3u == fused::tuple_size(t));
-  REQUIRE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char) <= sizeof(t));
+  EXPECT_EQ(3u, fused::tuple_size(t));
+  EXPECT_LE(sizeof(unsigned) + sizeof(std::unique_ptr<double>) + sizeof(char), sizeof(t));
 }
 
-TEST_CASE("makeTupleTakesElementsByValue")
+TEST(tuple, makeTupleTakesElementsByValue)
 {
   unsigned a = 1u;
   double b = 2.0;
@@ -88,65 +88,65 @@ TEST_CASE("makeTupleTakesElementsByValue")
 
   auto t = fused::make_tuple(a, b, c);
 
-  REQUIRE(3u == fused::tuple_size(t));
+  EXPECT_EQ(3u, fused::tuple_size(t));
 
-  REQUIRE(a == fused::get<0>(t));
-  REQUIRE(b == fused::get<1>(t));
-  REQUIRE(c == fused::get<2>(t));
+  EXPECT_EQ(a, fused::get<0>(t));
+  EXPECT_EQ(b, fused::get<1>(t));
+  EXPECT_EQ(c, fused::get<2>(t));
 
-  REQUIRE(&a != &fused::get<0>(t));
-  REQUIRE(&b != &fused::get<1>(t));
-  REQUIRE(&c != &fused::get<2>(t));
+  EXPECT_NE(&a, &fused::get<0>(t));
+  EXPECT_NE(&b, &fused::get<1>(t));
+  EXPECT_NE(&c, &fused::get<2>(t));
 }
 
-TEST_CASE("makeTupleTakesElementsByRValue")
+TEST(tuple, makeTupleTakesElementsByRValue)
 {
   auto ptr = std::make_unique<char>('3');
   auto t = fused::make_tuple(1u, std::make_unique<double>(2.0), std::move(ptr));
 
-  REQUIRE(3u == fused::tuple_size(t));
+  EXPECT_EQ(3u, fused::tuple_size(t));
 
-  REQUIRE(2.0 == *fused::get<1>(t));
-  REQUIRE('3' == *fused::get<2>(t));
+  EXPECT_EQ(2.0, *fused::get<1>(t));
+  EXPECT_EQ('3', *fused::get<2>(t));
 }
 
-TEST_CASE("canUseGetByIdToRead")
+TEST(tuple, canUseGetByIdToRead)
 {
   auto t = fused::make_tuple(1u, 2.0, '3');
 
-  REQUIRE(3u == fused::tuple_size(t));
+  EXPECT_EQ(3u, fused::tuple_size(t));
 
-  REQUIRE(1u == fused::get<0>(t));
-  REQUIRE(2.0 == fused::get<1>(t));
-  REQUIRE('3' == fused::get<2>(t));
+  EXPECT_EQ(1u, fused::get<0>(t));
+  EXPECT_EQ(2.0, fused::get<1>(t));
+  EXPECT_EQ('3', fused::get<2>(t));
 
   auto const& x = fused::get<0>(t);
-  REQUIRE(1u == x);
+  EXPECT_EQ(1u, x);
   auto const& y = fused::get<0>(t);
-  REQUIRE(&x == &y);
+  EXPECT_EQ(&x, &y);
 }
 
-TEST_CASE("canUseGetByIdToWrite")
+TEST(tuple, canUseGetByIdToWrite)
 {
   auto t = fused::make_tuple(1u, std::make_unique<double>(2.0), '3');
 
-  REQUIRE(3u == fused::tuple_size(t));
+  EXPECT_EQ(3u, fused::tuple_size(t));
 
   auto const& x = fused::get<0>(t);
-  REQUIRE(1u == x);
+  EXPECT_EQ(1u, x);
   auto& y = fused::get<0>(t);
-  REQUIRE(&x == &y);
+  EXPECT_EQ(&x, &y);
   y = 4u;
-  REQUIRE(4u == x);
+  EXPECT_EQ(4u, x);
   fused::get<0>(t) = 5u;
-  REQUIRE(5u == x);
+  EXPECT_EQ(5u, x);
 
-  REQUIRE(2.0 == *fused::get<1>(t));
+  EXPECT_EQ(2.0, *fused::get<1>(t));
   fused::get<1>(t) = std::make_unique<double>(3.0);
-  REQUIRE(3.0 == *fused::get<1>(t));
+  EXPECT_EQ(3.0, *fused::get<1>(t));
 }
 
-TEST_CASE("canUseAtWithTuple")
+TEST(tuple, canUseAtWithTuple)
 {
   constexpr auto const& at_0 = fused::at<0>;
   constexpr auto const& at_1 = fused::at<1>;
@@ -154,22 +154,22 @@ TEST_CASE("canUseAtWithTuple")
 
   auto t = fused::make_tuple(1u, 2.0, '3');
 
-  REQUIRE(3u == fused::tuple_size(t));
+  EXPECT_EQ(3u, fused::tuple_size(t));
 
-  REQUIRE(1u == at_0(t));
-  REQUIRE(2.0 == at_1(t));
-  REQUIRE('3' == at_2(t));
+  EXPECT_EQ(1u, at_0(t));
+  EXPECT_EQ(2.0, at_1(t));
+  EXPECT_EQ('3', at_2(t));
 
   auto const& x = at_0(t);
-  REQUIRE(1u == x);
+  EXPECT_EQ(1u, x);
   auto const& y = at_0(t);
-  REQUIRE(&x == &y);
+  EXPECT_EQ(&x, &y);
 
   at_0(t) = 4u;
-  REQUIRE(4u == x);
+  EXPECT_EQ(4u, x);
 }
 
-TEST_CASE("canCopyConstruct")
+TEST(tuple, canCopyConstruct)
 {
   static_assert(
       !std::is_copy_constructible<fused::tuple<unsigned, std::unique_ptr<double>, char>>::value,
@@ -179,28 +179,28 @@ TEST_CASE("canCopyConstruct")
   auto copy = orig;
   auto copy2(orig);
 
-  REQUIRE(3u == fused::tuple_size(orig));
-  REQUIRE(3u == fused::tuple_size(copy));
-  REQUIRE(3u == fused::tuple_size(copy2));
+  EXPECT_EQ(3u, fused::tuple_size(orig));
+  EXPECT_EQ(3u, fused::tuple_size(copy));
+  EXPECT_EQ(3u, fused::tuple_size(copy2));
 
-  REQUIRE(fused::get<0>(orig) == fused::get<0>(copy));
-  REQUIRE(fused::get<1>(orig) == fused::get<1>(copy));
-  REQUIRE(fused::get<2>(orig) == fused::get<2>(copy));
+  EXPECT_EQ(fused::get<0>(orig), fused::get<0>(copy));
+  EXPECT_EQ(fused::get<1>(orig), fused::get<1>(copy));
+  EXPECT_EQ(fused::get<2>(orig), fused::get<2>(copy));
 
-  REQUIRE(&fused::get<0>(orig) != &fused::get<0>(copy));
-  REQUIRE(&fused::get<1>(orig) != &fused::get<1>(copy));
-  REQUIRE(&fused::get<2>(orig) != &fused::get<2>(copy));
+  EXPECT_NE(&fused::get<0>(orig), &fused::get<0>(copy));
+  EXPECT_NE(&fused::get<1>(orig), &fused::get<1>(copy));
+  EXPECT_NE(&fused::get<2>(orig), &fused::get<2>(copy));
 
-  REQUIRE(fused::get<0>(orig) == fused::get<0>(copy2));
-  REQUIRE(fused::get<1>(orig) == fused::get<1>(copy2));
-  REQUIRE(fused::get<2>(orig) == fused::get<2>(copy2));
+  EXPECT_EQ(fused::get<0>(orig), fused::get<0>(copy2));
+  EXPECT_EQ(fused::get<1>(orig), fused::get<1>(copy2));
+  EXPECT_EQ(fused::get<2>(orig), fused::get<2>(copy2));
 
-  REQUIRE(&fused::get<0>(orig) != &fused::get<0>(copy2));
-  REQUIRE(&fused::get<1>(orig) != &fused::get<1>(copy2));
-  REQUIRE(&fused::get<2>(orig) != &fused::get<2>(copy2));
+  EXPECT_NE(&fused::get<0>(orig), &fused::get<0>(copy2));
+  EXPECT_NE(&fused::get<1>(orig), &fused::get<1>(copy2));
+  EXPECT_NE(&fused::get<2>(orig), &fused::get<2>(copy2));
 }
 
-TEST_CASE("canCopyAssign")
+TEST(tuple, canCopyAssign)
 {
   static_assert(
       std::is_copy_assignable<fused::tuple<unsigned, std::unique_ptr<double>, char>>::value, "");
@@ -208,45 +208,45 @@ TEST_CASE("canCopyAssign")
   auto orig = fused::tuple<unsigned, double, char>(1u, 2.0, '3');
   auto copy = fused::tuple<unsigned, double, char>(2u, 4.0, '6');
 
-  REQUIRE(3u == fused::tuple_size(orig));
-  REQUIRE(3u == fused::tuple_size(copy));
+  EXPECT_EQ(3u, fused::tuple_size(orig));
+  EXPECT_EQ(3u, fused::tuple_size(copy));
 
-  REQUIRE(2u == fused::get<0>(copy));
-  REQUIRE(4.0 == fused::get<1>(copy));
-  REQUIRE('6' == fused::get<2>(copy));
+  EXPECT_EQ(2u, fused::get<0>(copy));
+  EXPECT_EQ(4.0, fused::get<1>(copy));
+  EXPECT_EQ('6', fused::get<2>(copy));
 
   copy = orig;
 
-  REQUIRE(3u == fused::tuple_size(copy));
+  EXPECT_EQ(3u, fused::tuple_size(copy));
 
-  REQUIRE(1u == fused::get<0>(copy));
-  REQUIRE(2.0 == fused::get<1>(copy));
-  REQUIRE('3' == fused::get<2>(copy));
+  EXPECT_EQ(1u, fused::get<0>(copy));
+  EXPECT_EQ(2.0, fused::get<1>(copy));
+  EXPECT_EQ('3', fused::get<2>(copy));
 }
 
-TEST_CASE("canMoveConstruct")
+TEST(tuple, canMoveConstruct)
 {
   static_assert(
       std::is_move_constructible<fused::tuple<unsigned, std::unique_ptr<double>, char>>::value, "");
   static_assert(std::is_move_constructible<fused::tuple<unsigned, double, char>>::value, "");
   auto orig = fused::tuple<unsigned, double, char>(1u, 2.0, '3');
 
-  REQUIRE(3u == fused::tuple_size(orig));
+  EXPECT_EQ(3u, fused::tuple_size(orig));
 
-  REQUIRE(1u == fused::get<0>(orig));
-  REQUIRE(2.0 == fused::get<1>(orig));
-  REQUIRE('3' == fused::get<2>(orig));
+  EXPECT_EQ(1u, fused::get<0>(orig));
+  EXPECT_EQ(2.0, fused::get<1>(orig));
+  EXPECT_EQ('3', fused::get<2>(orig));
 
   auto copy = fused::tuple<unsigned, double, char>{std::move(orig)};
 
-  REQUIRE(3u == fused::tuple_size(copy));
+  EXPECT_EQ(3u, fused::tuple_size(copy));
 
-  REQUIRE(1u == fused::get<0>(copy));
-  REQUIRE(2.0 == fused::get<1>(copy));
-  REQUIRE('3' == fused::get<2>(copy));
+  EXPECT_EQ(1u, fused::get<0>(copy));
+  EXPECT_EQ(2.0, fused::get<1>(copy));
+  EXPECT_EQ('3', fused::get<2>(copy));
 }
 
-TEST_CASE("canMoveAssign")
+TEST(tuple, canMoveAssign)
 {
   static_assert(
       std::is_move_assignable<fused::tuple<unsigned, std::unique_ptr<double>, char>>::value, "");
@@ -254,49 +254,49 @@ TEST_CASE("canMoveAssign")
   auto orig = fused::tuple<unsigned, double, char>(1u, 2.0, '3');
   auto copy = fused::tuple<unsigned, double, char>(2u, 4.0, '6');
 
-  REQUIRE(3u == fused::tuple_size(orig));
-  REQUIRE(3u == fused::tuple_size(copy));
+  EXPECT_EQ(3u, fused::tuple_size(orig));
+  EXPECT_EQ(3u, fused::tuple_size(copy));
 
-  REQUIRE(2u == fused::get<0>(copy));
-  REQUIRE(4.0 == fused::get<1>(copy));
-  REQUIRE('6' == fused::get<2>(copy));
+  EXPECT_EQ(2u, fused::get<0>(copy));
+  EXPECT_EQ(4.0, fused::get<1>(copy));
+  EXPECT_EQ('6', fused::get<2>(copy));
 
   copy = std::move(orig);
 
-  REQUIRE(3u == fused::tuple_size(copy));
+  EXPECT_EQ(3u, fused::tuple_size(copy));
 
-  REQUIRE(1u == fused::get<0>(copy));
-  REQUIRE(2.0 == fused::get<1>(copy));
-  REQUIRE('3' == fused::get<2>(copy));
+  EXPECT_EQ(1u, fused::get<0>(copy));
+  EXPECT_EQ(2.0, fused::get<1>(copy));
+  EXPECT_EQ('3', fused::get<2>(copy));
 }
 
-TEST_CASE("canCompareEquality")
+TEST(tuple, canCompareEquality)
 {
   auto t1 = fused::make_tuple(1u, 2.0, '3');
   auto t2 = fused::make_tuple(1u, 2.0, '3');
   auto t3 = fused::make_tuple(0u, 2.0, '3');
   auto t4 = fused::make_tuple(1u, 2.0, '4');
 
-  REQUIRE(t1 == t1);
-  REQUIRE(t1 == t2);
-  REQUIRE_FALSE(t1 == t3);
-  REQUIRE_FALSE(t1 == t4);
+  EXPECT_EQ(t1, t1);
+  EXPECT_EQ(t1, t2);
+  EXPECT_NE(t1, t3);
+  EXPECT_NE(t1, t4);
 }
 
-TEST_CASE("canCompareInequality")
+TEST(tuple, canCompareInequality)
 {
   auto t1 = fused::make_tuple(1u, 2.0, '3');
   auto t2 = fused::make_tuple(1u, 2.0, '3');
   auto t3 = fused::make_tuple(0u, 2.0, '3');
   auto t4 = fused::make_tuple(1u, 2.0, '4');
 
-  REQUIRE_FALSE(t1 != t1);
-  REQUIRE_FALSE(t1 != t2);
-  REQUIRE(t1 != t3);
-  REQUIRE(t1 != t4);
+  EXPECT_EQ(t1, t1);
+  EXPECT_EQ(t1, t2);
+  EXPECT_NE(t1, t3);
+  EXPECT_NE(t1, t4);
 }
 
-TEST_CASE("canLexicographicalCompareLess")
+TEST(tuple, canLexicographicalCompareLess)
 {
   auto t1 = fused::make_tuple(1u, 2.0, '3');
   auto t2 = fused::make_tuple(1u, 2.0, '3');
@@ -304,31 +304,31 @@ TEST_CASE("canLexicographicalCompareLess")
   auto t4 = fused::make_tuple(1u, 2.0, '4');
   auto t5 = fused::make_tuple(2u, 2.0, '1');
 
-  REQUIRE_FALSE(t1 < t1);
-  REQUIRE_FALSE(t1 < t2);
-  REQUIRE_FALSE(t2 < t1);
+  EXPECT_GE(t1, t1);
+  EXPECT_GE(t1, t2);
+  EXPECT_GE(t2, t1);
 
-  REQUIRE_FALSE(t1 < t3);
-  REQUIRE(t3 < t1);
+  EXPECT_GE(t1, t3);
+  EXPECT_LT(t3, t1);
 
-  REQUIRE(t1 < t4);
-  REQUIRE_FALSE(t4 < t1);
+  EXPECT_LT(t1, t4);
+  EXPECT_GE(t4, t1);
 
-  REQUIRE(t1 < t5);
-  REQUIRE_FALSE(t5 < t1);
+  EXPECT_LT(t1, t5);
+  EXPECT_GE(t5, t1);
 }
 
-TEST_CASE("canAssignSimilarTuples")
+TEST(tuple, canAssignSimilarTuples)
 {
   auto t = fused::make_tuple(1ul, 2ul, 3ul);
   t = fused::make_tuple(4u, 5u, 6u);
 
-  REQUIRE(4u == fused::get<0>(t));
-  REQUIRE(5u == fused::get<1>(t));
-  REQUIRE(6u == fused::get<2>(t));
+  EXPECT_EQ(4u, fused::get<0>(t));
+  EXPECT_EQ(5u, fused::get<1>(t));
+  EXPECT_EQ(6u, fused::get<2>(t));
 }
 
-TEST_CASE("canStoreValuesInTuple")
+TEST(tuple, canStoreValuesInTuple)
 {
   unsigned a = 1u;
   double b = 2.0;
@@ -336,24 +336,24 @@ TEST_CASE("canStoreValuesInTuple")
 
   auto t = fused::tuple<unsigned, double, char>(a, b, c);
 
-  REQUIRE(&a != &fused::get<0>(t));
-  REQUIRE(&b != &fused::get<1>(t));
-  REQUIRE(&c != &fused::get<2>(t));
+  EXPECT_NE(&a, &fused::get<0>(t));
+  EXPECT_NE(&b, &fused::get<1>(t));
+  EXPECT_NE(&c, &fused::get<2>(t));
 
   fused::get<0>(t) = 0;
   fused::get<1>(t) = 0;
   fused::get<2>(t) = 0;
 
-  REQUIRE(0u == fused::get<0>(t));
-  REQUIRE(0 == fused::get<1>(t));
-  REQUIRE(0 == fused::get<2>(t));
+  EXPECT_EQ(0u, fused::get<0>(t));
+  EXPECT_EQ(0, fused::get<1>(t));
+  EXPECT_EQ(0, fused::get<2>(t));
 
-  REQUIRE(1u == a);
-  REQUIRE(2.0 == b);
-  REQUIRE('3' == c);
+  EXPECT_EQ(1u, a);
+  EXPECT_EQ(2.0, b);
+  EXPECT_EQ('3', c);
 }
 
-TEST_CASE("canStoreReferencesInTuple")
+TEST(tuple, canStoreReferencesInTuple)
 {
   static_assert(
       std::is_constructible<fused::tuple<unsigned, double, char&>, unsigned, double, char&>::value,
@@ -364,26 +364,26 @@ TEST_CASE("canStoreReferencesInTuple")
 
   auto t = fused::tuple<unsigned&, double&, char&>(a, b, c);
 
-  REQUIRE(&a == &fused::get<0>(t));
-  REQUIRE(&b == &fused::get<1>(t));
-  REQUIRE(&c == &fused::get<2>(t));
+  EXPECT_EQ(&a, &fused::get<0>(t));
+  EXPECT_EQ(&b, &fused::get<1>(t));
+  EXPECT_EQ(&c, &fused::get<2>(t));
 
   fused::get<0>(t) = 4u;
   fused::get<1>(t) = 5.0;
   fused::get<2>(t) = '6';
 
-  REQUIRE(4u == a);
-  REQUIRE(5.0 == b);
-  REQUIRE('6' == c);
+  EXPECT_EQ(4u, a);
+  EXPECT_EQ(5.0, b);
+  EXPECT_EQ('6', c);
 
   t = fused::make_tuple(7u, 8.0, '9');
 
-  REQUIRE(7u == a);
-  REQUIRE(8.0 == b);
-  REQUIRE('9' == c);
+  EXPECT_EQ(7u, a);
+  EXPECT_EQ(8.0, b);
+  EXPECT_EQ('9', c);
 }
 
-TEST_CASE("canTieElements")
+TEST(tuple, canTieElements)
 {
   unsigned a = 1u;
   double b = 2.0;
@@ -391,30 +391,30 @@ TEST_CASE("canTieElements")
 
   auto t = fused::tie(a, b, c);
 
-  REQUIRE(1u == fused::get<0>(t));
-  REQUIRE(2.0 == fused::get<1>(t));
-  REQUIRE('3' == fused::get<2>(t));
+  EXPECT_EQ(1u, fused::get<0>(t));
+  EXPECT_EQ(2.0, fused::get<1>(t));
+  EXPECT_EQ('3', fused::get<2>(t));
 
-  REQUIRE(&a == &fused::get<0>(t));
-  REQUIRE(&b == &fused::get<1>(t));
-  REQUIRE(&c == &fused::get<2>(t));
+  EXPECT_EQ(&a, &fused::get<0>(t));
+  EXPECT_EQ(&b, &fused::get<1>(t));
+  EXPECT_EQ(&c, &fused::get<2>(t));
 
   fused::get<0>(t) = 4u;
   fused::get<1>(t) = 5.0;
   fused::get<2>(t) = '6';
 
-  REQUIRE(4u == a);
-  REQUIRE(5.0 == b);
-  REQUIRE('6' == c);
+  EXPECT_EQ(4u, a);
+  EXPECT_EQ(5.0, b);
+  EXPECT_EQ('6', c);
 
   t = fused::make_tuple(7u, 8.0, '9');
 
-  REQUIRE(7u == a);
-  REQUIRE(8.0 == b);
-  REQUIRE('9' == c);
+  EXPECT_EQ(7u, a);
+  EXPECT_EQ(8.0, b);
+  EXPECT_EQ('9', c);
 }
 
-TEST_CASE("canTieConstElements")
+TEST(tuple, canTieConstElements)
 {
   auto a = 1u;
   auto const b = 2.0;
@@ -424,27 +424,27 @@ TEST_CASE("canTieConstElements")
   static_assert(std::is_same<std::remove_reference_t<decltype(t)>,
                              fused::tuple<unsigned&, double const&, char&>>::value,
                 "");
-  REQUIRE(1u == fused::get<0>(t));
-  REQUIRE(2.0 == fused::get<1>(t));
-  REQUIRE('3' == fused::get<2>(t));
+  EXPECT_EQ(1u, fused::get<0>(t));
+  EXPECT_EQ(2.0, fused::get<1>(t));
+  EXPECT_EQ('3', fused::get<2>(t));
 
-  REQUIRE(&a == &fused::get<0>(t));
-  REQUIRE(&b == &fused::get<1>(t));
-  REQUIRE(&c == &fused::get<2>(t));
+  EXPECT_EQ(&a, &fused::get<0>(t));
+  EXPECT_EQ(&b, &fused::get<1>(t));
+  EXPECT_EQ(&c, &fused::get<2>(t));
 }
 
-TEST_CASE("canTieWithIgnore")
+TEST(tuple, canTieWithIgnore)
 {
   unsigned a = 0;
   char c = 0;
 
   fused::tie(a, fused::ignore, c) = fused::make_tuple(1u, 2.0, '3');
 
-  REQUIRE(1u == a);
-  REQUIRE('3' == c);
+  EXPECT_EQ(1u, a);
+  EXPECT_EQ('3', c);
 }
 
-TEST_CASE("canUseTupleElement")
+TEST(tuple, canUseTupleElement)
 {
   using t = fused::tuple<unsigned, std::unique_ptr<double>, char&>;
   static_assert(std::is_same<fused::tuple_element_t<0, t>, unsigned>::value, "");
@@ -452,24 +452,24 @@ TEST_CASE("canUseTupleElement")
   static_assert(std::is_same<fused::tuple_element_t<2, t>, char&>::value, "");
 }
 
-TEST_CASE("canGetElementByType")
+TEST(tuple, canGetElementByType)
 {
   auto t = fused::make_tuple(1u, 2.0, '3');
 
-  REQUIRE(1u == fused::get<unsigned>(t));
-  REQUIRE(2.0 == fused::get<double>(t));
-  REQUIRE('3' == fused::get<char>(t));
+  EXPECT_EQ(1u, fused::get<unsigned>(t));
+  EXPECT_EQ(2.0, fused::get<double>(t));
+  EXPECT_EQ('3', fused::get<char>(t));
 
   fused::get<unsigned>(t) = 4u;
   fused::get<double>(t) = 5.0;
   fused::get<char>(t) = '6';
 
-  REQUIRE(4u == fused::get<unsigned>(t));
-  REQUIRE(5.0 == fused::get<double>(t));
-  REQUIRE('6' == fused::get<char>(t));
+  EXPECT_EQ(4u, fused::get<unsigned>(t));
+  EXPECT_EQ(5.0, fused::get<double>(t));
+  EXPECT_EQ('6', fused::get<char>(t));
 }
 
-TEST_CASE("canExtractElement")
+TEST(tuple, canExtractElement)
 {
   constexpr auto const& ex_u = fused::extract<unsigned>;
   constexpr auto const& ex_d = fused::extract<double>;
@@ -477,17 +477,17 @@ TEST_CASE("canExtractElement")
 
   auto t = fused::make_tuple(1u, 2.0, '3');
 
-  REQUIRE(1u == ex_u(t));
-  REQUIRE(2.0 == ex_d(t));
-  REQUIRE('3' == ex_c(t));
+  EXPECT_EQ(1u, ex_u(t));
+  EXPECT_EQ(2.0, ex_d(t));
+  EXPECT_EQ('3', ex_c(t));
 
   ex_u(t) = 4u;
   ex_d(t) = 5.0;
   ex_c(t) = '6';
 
-  REQUIRE(4u == ex_u(t));
-  REQUIRE(5.0 == ex_d(t));
-  REQUIRE('6' == ex_c(t));
+  EXPECT_EQ(4u, ex_u(t));
+  EXPECT_EQ(5.0, ex_d(t));
+  EXPECT_EQ('6', ex_c(t));
 }
 
 struct conv {
@@ -498,7 +498,7 @@ struct conv {
 };
 
 #if defined(USE_ARCHIE_TUPLE)
-TEST_CASE("canConstructTupleWithExplicitElementCtor")
+TEST(tuple, canConstructTupleWithExplicitElementCtor)
 {
   static_assert(traits::is_convertible<unsigned, conv>::value, "");
   static_assert(!traits::is_convertible<std::string&, conv>::value, "");
@@ -506,12 +506,12 @@ TEST_CASE("canConstructTupleWithExplicitElementCtor")
   std::string a{"abc"};
   auto t1 = fused::tuple<conv>(1u);
   auto t2 = fused::tuple<conv>(a);
-  REQUIRE(1u == fused::get<0>(t1));
-  REQUIRE(3u == fused::get<0>(t2));
+  EXPECT_EQ(1u, fused::get<0>(t1));
+  EXPECT_EQ(3u, fused::get<0>(t2));
 }
 #endif
 
-TEST_CASE("canMakeTupleOfTuples")
+TEST(tuple, canMakeTupleOfTuples)
 {
   auto t0 = fused::make_tuple(1, 2u);
   auto t1 = fused::tuple<fused::tuple<int, unsigned>>{};
@@ -520,10 +520,10 @@ TEST_CASE("canMakeTupleOfTuples")
   auto t4 =
       fused::tuple<fused::tuple<int, unsigned>, fused::tuple<char>>{t0, fused::make_tuple('3')};
 
-  REQUIRE(2u == fused::tuple_size(t0));
-  REQUIRE(1u == fused::tuple_size(t1));
-  REQUIRE(1u == fused::tuple_size(t2));
-  REQUIRE(2u == fused::tuple_size(t3));
-  REQUIRE(2u == fused::tuple_size(t4));
+  EXPECT_EQ(2u, fused::tuple_size(t0));
+  EXPECT_EQ(1u, fused::tuple_size(t1));
+  EXPECT_EQ(1u, fused::tuple_size(t2));
+  EXPECT_EQ(2u, fused::tuple_size(t3));
+  EXPECT_EQ(2u, fused::tuple_size(t4));
 }
 }

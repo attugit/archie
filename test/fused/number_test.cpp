@@ -1,12 +1,12 @@
 #include <archie/number.hpp>
-#include <catch.hpp>
+#include <gtest/gtest.h>
 
 namespace {
 namespace fused = archie::fused;
-TEST_CASE("canUseFusedNumber", "[fused::number]")
+TEST(number, canUseFusedNumber)
 {
-  REQUIRE(0u == fused::number<0>);
-  REQUIRE(1u == fused::number<1>);
-  REQUIRE(2u == fused::number<2>);
+  EXPECT_EQ(0u, fused::number<0>);
+  EXPECT_EQ(1u, fused::number<1>);
+  EXPECT_EQ(2u, fused::number<2>);
 }
 }

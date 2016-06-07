@@ -1,7 +1,7 @@
 #include <archie/meta/compose.hpp>
 #include <archie/number.hpp>
 #include <memory>
-#include <catch.hpp>
+
 namespace {
 namespace au = archie;
 
@@ -24,9 +24,6 @@ using foo = au::meta::compose<uptr_>::apply<Xs...>;
 template <typename... Xs>
 using goo = au::meta::compose<uptr_, size>::apply<Xs...>;
 
-TEST_CASE("meta::compose")
-{
-  static_assert(std::is_same<std::unique_ptr<_0>, foo<_0>::type>::value, "");
-  static_assert(std::is_same<std::unique_ptr<au::meta::number<2>>, goo<_0, _1>::type>::value, "");
-}
+static_assert(std::is_same<std::unique_ptr<_0>, foo<_0>::type>::value, "");
+static_assert(std::is_same<std::unique_ptr<au::meta::number<2>>, goo<_0, _1>::type>::value, "");
 }

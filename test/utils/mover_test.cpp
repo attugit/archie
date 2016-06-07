@@ -1,6 +1,6 @@
 #include <archie/fused/mover.hpp>
 #include <type_traits>
-#include <catch.hpp>
+#include <gtest/gtest.h>
 
 namespace {
 namespace fused = archie::fused;
@@ -30,11 +30,11 @@ static_assert(
     std::is_same<fused::move_t<noncopyable>, fused::detail::move_capture<noncopyable>>::value,
     "");
 
-TEST_CASE("canCastToConstValue")
+TEST(mover, canCastToConstValue)
 {
   auto i = 1;
   auto m = fused::move_t<const int&>(i);
   auto const& x = static_cast<const int&>(m);
-  REQUIRE(&i == &x);
+  EXPECT_EQ(&i, &x);
 }
 }

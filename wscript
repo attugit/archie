@@ -83,20 +83,21 @@ def build(bld):
   if not bld.variant:
     bld.fatal('try "waf --help"')
   bld.env.DEFINES += ['USE_ARCHIE_TUPLE']
-  bld.env.INCLUDES += ['include', 'test']
+  bld.env.INCLUDES += ['include', 'test', 'gtest', 'gtest/include']
   bld(
-    source       = bld.path.ant_glob(['test/test_main.cpp']),
-    target       = 'TEST_MAIN',
+    source       = bld.path.ant_glob(['gtest/src/gtest_main.cc', 'gtest/src/gtest-all.cc']),
+    target       = 'GTEST',
     features     = 'cxx',
     install_path = None,
   )
+  bld.env.LIB += ['pthread']
   for suite in os.listdir('./test'):
     if 'ignore' not in suite and os.path.isdir(os.path.join('./test', suite)):
       bld(
         source       = bld.path.ant_glob(['test/%s/**/*.cpp'%suite]),
         target       = 'ut_' + str(suite),
         features     = 'cxx cxxprogram test',
-        use          = ['TEST_MAIN'],
+        use          = ['GTEST'],
         install_path = None,
       )
   bld.add_post_fun(waf_unit_test.summary)

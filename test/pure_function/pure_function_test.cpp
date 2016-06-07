@@ -1,5 +1,5 @@
 #include <archie/pure_function.hpp>
-#include <catch.hpp>
+#include <gtest/gtest.h>
 #include <memory>
 
 namespace {
@@ -18,74 +18,69 @@ struct bar {
 
 using pf_t = pure_function<int(arg_t)>;
 
-TEST_CASE("pure_function construction", "[pure_function]")
+TEST(pure_function, construction)
 {
-  SECTION("can construct from free function")
   {
     pf_t pf{foo};
-    REQUIRE(pf);
-    REQUIRE(pf(std::make_unique<int>(0)) == foo(std::make_unique<int>(0)));
+    EXPECT_TRUE(pf);
+    EXPECT_EQ(pf(std::make_unique<int>(0)), foo(std::make_unique<int>(0)));
   }
-  SECTION("can assign captureless lambda")
   {
     auto const l = [](arg_t) { return 3; };
     pf_t pf{l};
-    REQUIRE(pf);
-    REQUIRE(pf(std::make_unique<int>(0)) == l(std::make_unique<int>(0)));
+    EXPECT_TRUE(pf);
+    EXPECT_EQ(pf(std::make_unique<int>(0)), l(std::make_unique<int>(0)));
   }
-  SECTION("can assing custom function object")
   {
     pf_t pf{boo};
-    REQUIRE(pf);
-    REQUIRE(pf(std::make_unique<int>(0)) == boo(std::make_unique<int>(0)));
+    EXPECT_TRUE(pf);
+    EXPECT_EQ(pf(std::make_unique<int>(0)), boo(std::make_unique<int>(0)));
   }
 }
 
-TEST_CASE("pure_function assigment", "[pure_function]")
+TEST(pure_function, assigment)
 {
   pf_t pf;
-  SECTION("default constructed pure_function is null") { REQUIRE(!pf); }
-  SECTION("can assign free function")
+  {
+    EXPECT_FALSE(pf);
+  }
   {
     pf = foo;
-    REQUIRE(pf);
-    REQUIRE(pf(std::make_unique<int>(0)) == foo(std::make_unique<int>(0)));
+    EXPECT_TRUE(pf);
+    EXPECT_EQ(pf(std::make_unique<int>(0)), foo(std::make_unique<int>(0)));
   }
-  SECTION("can assign captureless lambda")
   {
     auto const l = [](arg_t) { return 3; };
     pf = l;
-    REQUIRE(pf);
-    REQUIRE(pf(std::make_unique<int>(0)) == l(std::make_unique<int>(0)));
+    EXPECT_TRUE(pf);
+    EXPECT_EQ(pf(std::make_unique<int>(0)), l(std::make_unique<int>(0)));
   }
-  SECTION("can assing custom function object")
   {
     pf = boo;
-    REQUIRE(pf);
-    REQUIRE(pf(std::make_unique<int>(0)) == boo(std::make_unique<int>(0)));
+    EXPECT_TRUE(pf);
+    EXPECT_EQ(pf(std::make_unique<int>(0)), boo(std::make_unique<int>(0)));
   }
-  SECTION("can assign nullptr")
   {
     pf = nullptr;
-    REQUIRE(!pf);
+    EXPECT_FALSE(pf);
   }
 }
 
-TEST_CASE("pure_function conversion to function pointer", "[pure_function]")
+TEST(pure_function, conversionToFunctionPointer)
 {
   pf_t pf;
   pf_t::type ptr = pf;
-  REQUIRE(!ptr);
+  EXPECT_FALSE(ptr);
   pf = boo;
   ptr = pf;
-  REQUIRE(ptr);
-  REQUIRE(ptr(std::make_unique<int>(0)) == boo(std::make_unique<int>(0)));
+  EXPECT_TRUE(ptr);
+  EXPECT_EQ(ptr(std::make_unique<int>(0)), boo(std::make_unique<int>(0)));
 }
 
-TEST_CASE("pure function returning void", "[pure_function]")
+TEST(pure_function, returningVoid)
 {
   pure_function<void(int)> pf{[](int) {}};
-  REQUIRE(pf);
+  EXPECT_TRUE(pf);
   pf(42);
 }
 }
