@@ -6,7 +6,6 @@ services:
 env:
   - COMPILER=g++-6 BUILDTYPE=debug
   - COMPILER=g++-6 BUILDTYPE=release
-  - COMPILER=g++-6 BUILDTYPE=coverage
   - COMPILER=clang++-3.8 BUILDTYPE=debug
   - COMPILER=clang++-3.8 BUILDTYPE=release
 
