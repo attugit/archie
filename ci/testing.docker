@@ -1,4 +1,4 @@
-FROM attugit/dtest:v1.1
+FROM attugit/dtest:v1.2
 
 ADD . attugit/archie
 

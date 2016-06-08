@@ -32,6 +32,7 @@ import os
 def options(opt):
   opt.load('compiler_cxx')
   opt.load('waf_unit_test')
+  opt.load('boost')
   opt.add_option( '-m', '--mode',
           action  = 'store',
           default = os.environ.get('MODE', modes[0]),
@@ -47,6 +48,8 @@ def configure(conf):
   conf.define('APPNAME', APPNAME)
   conf.define('VERSION', VERSION)
   conf.load('compiler_cxx')
+  conf.load('boost')
+  conf.check_boost()
   conf.env.CXXFLAGS += flags
 
   for variant in modes:
@@ -98,7 +101,7 @@ def build(bld):
         source       = bld.path.ant_glob(['test/%s/**/*.cpp'%suite]),
         target       = 'ut_' + str(suite),
         features     = 'cxx cxxprogram test',
-        use          = ['GTEST'],
+        use          = ['GTEST', 'BOOST'],
         install_path = None,
       )
   bld.add_post_fun(waf_unit_test.summary)
