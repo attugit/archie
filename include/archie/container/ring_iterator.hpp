@@ -44,7 +44,9 @@ private:
 public:
   template <typename Iter, typename Distance0, typename Distance1>
   explicit ring_iterator(Iter it, Distance0 last, Distance1 offset)
-      : front_(it), to_last_(last != 0 ? last : 1), offset_(offset)
+      : front_(it),
+        to_last_(last != 0 ? static_cast<difference_type>(last) : 1),
+        offset_(static_cast<difference_type>(offset))
   {
   }
 

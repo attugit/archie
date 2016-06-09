@@ -36,7 +36,7 @@ public:
 
   iterator begin() { return pos_; }
   const_iterator begin() const { return iterator{container_, 0}; }
-  iterator end() { return begin() + size(); }
+  iterator end() { return begin() + static_cast<difference_type>(size()); }
   const_iterator end() const { return begin() + size(); }
   size_type size() const { return container_.size(); }
   size_type capacity() const { return container_.capacity(); }

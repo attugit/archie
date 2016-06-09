@@ -23,7 +23,7 @@ TEST(ring_adapter, vector)
     auto const distance =
         static_cast<typename ring_t::size_type>(std::distance(std::begin(ra), std::end(ra)));
     EXPECT_EQ(distance, size);
-    EXPECT_EQ(*(std::begin(ra) + ra.size() - 1), item);
+    EXPECT_EQ(*(std::begin(ra) + static_cast<ring_t::difference_type>(ra.size()) - 1), item);
   };
 
   for (auto idx = 0; idx < capacity; ++idx) {
