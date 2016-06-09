@@ -18,7 +18,6 @@ TEST(ring_iterator, ring)
     EXPECT_NE(it2, it3);
     EXPECT_NE(it2, it3);
     EXPECT_EQ((&(*it2)), (&(*it3)));
-    EXPECT_EQ(norm(it2), norm(it3));
   }
   {
     using buff_t = std::vector<int>;

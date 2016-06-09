@@ -96,31 +96,31 @@ private:
 
   void rollback()
   {
-    auto& node = *it;
-    if (node.is_root()) {
-      ++it;
-      return;
-    }
-    auto next = ++it;
-    auto& parent = *node.parent();
-    if (next != parent.end()) {
-      it = next;
-    }
-    else
-    {
-      it = node.parent();
-      rollback();
+    auto parent = it->parent();
+    while (true) {
+      if (++it != parent->end()) return;
+      it = parent;
+      if (it->is_root()) {
+        ++it;
+        return;
+      }
+      parent = it->parent();
     }
   }
 
   void increment()
   {
-    auto& node = *it;
-    if (!node.empty()) {
-      it = node.begin();
-      return;
+    if (!it->empty()) {
+      it = it->begin();
     }
-    rollback();
+    else if (it->is_root())
+    {
+      ++it;
+    }
+    else
+    {
+      rollback();
+    }
   }
 
   auto& dereference() const { return *it; }
