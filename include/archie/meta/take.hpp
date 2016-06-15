@@ -1,7 +1,7 @@
 #pragma once
 
 #include <utility>
-#include <archie/meta.hpp>
+#include <archie/meta/base.hpp>
 #include <archie/meta/at.hpp>
 #include <archie/meta/indexable.hpp>
 

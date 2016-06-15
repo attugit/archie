@@ -1,7 +1,7 @@
 #pragma once
 
 #include <type_traits>
-#include <archie/meta.hpp>
+#include <archie/meta/base.hpp>
 
 namespace archie::meta
 {
