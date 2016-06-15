@@ -1,6 +1,7 @@
 #pragma once
 
 #include <utility>
+#include <type_traits>
 
 namespace archie::meta
 {
@@ -127,6 +128,13 @@ namespace archie::meta
 
   template <typename... T>
   struct type_list : comparable<type_list<T...>> {
+  };
+
+  template <typename Condition, typename T, typename U>
+  using if_t = std::conditional_t<Condition::value, T, U>;
+
+  template <std::size_t... N>
+  struct sum : number<(N + ...)> {
   };
 }
 
