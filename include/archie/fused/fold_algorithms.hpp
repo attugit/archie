@@ -6,9 +6,10 @@
 #include <archie/boolean.hpp>
 #include <archie/meta/static_constexpr_storage.hpp>
 
-namespace archie {
-namespace fused {
-  namespace detail {
+namespace archie::fused
+{
+  namespace detail
+  {
     struct accumulate_ {
       template <typename F, typename Tp>
       constexpr decltype(auto) operator()(F const& f, Tp&& t) const
@@ -118,5 +119,4 @@ namespace fused {
   static constexpr auto const& none_of = meta::instance<detail::none_of_>();
   static constexpr auto const& count_if = meta::instance<detail::count_if_>();
   static constexpr auto const& is_sorted = meta::instance<detail::is_sorted_>();
-}
 }

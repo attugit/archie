@@ -5,9 +5,10 @@
 #include <archie/meta/logic.hpp>
 #include <archie/traits.hpp>
 
-namespace archie {
-namespace fused {
-  namespace detail {
+namespace archie::fused
+{
+  namespace detail
+  {
     template <typename Tp>
     struct move_capture {
       using value_type = std::decay_t<Tp>;
@@ -34,5 +35,4 @@ namespace fused {
                                      meta::no<traits::is_trivially_copy_constructible<Tp>>>>,
                  detail::move_capture<Tp>,
                  Tp>;
-}
 }

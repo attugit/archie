@@ -4,9 +4,10 @@
 #include <archie/ignore.hpp>
 #include <archie/meta/static_constexpr_storage.hpp>
 
-namespace archie {
-namespace fused {
-  namespace detail {
+namespace archie::fused
+{
+  namespace detail
+  {
     struct for_each_ {
       template <typename Func, typename... Args>
       decltype(auto) operator()(Func&& func, Args&&... args) const
@@ -18,5 +19,4 @@ namespace fused {
   }
 
   static constexpr auto const& for_each = meta::instance<detail::for_each_>();
-}
 }

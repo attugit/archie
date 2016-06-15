@@ -6,9 +6,10 @@
 #include <archie/meta/static_constexpr_storage.hpp>
 #include <utility>
 
-namespace archie {
-namespace fused {
-  namespace detail {
+namespace archie::fused
+{
+  namespace detail
+  {
     struct transform_ {
       template <typename F, typename... Ts>
       decltype(auto) operator()(F&& f, Ts&&... x) const
@@ -34,5 +35,4 @@ namespace fused {
   }
   static constexpr auto const& transform = meta::instance<detail::transform_>();
   static constexpr auto const& transform_view = meta::instance<detail::transform_view_>();
-}
 }

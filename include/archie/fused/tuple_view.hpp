@@ -4,8 +4,8 @@
 #include <archie/index_of.hpp>
 #include <functional>
 
-namespace archie {
-namespace fused {
+namespace archie::fused
+{
   template <typename Tp>
   struct value_view : std::reference_wrapper<Tp> {
     using base_t = std::reference_wrapper<Tp>;
@@ -21,7 +21,8 @@ namespace fused {
   template <typename... Ts>
   using tuple_view = tuple<value_view<Ts>...>;
 
-  namespace detail {
+  namespace detail
+  {
     struct make_view_ {
       template <typename... Ts>
       constexpr decltype(auto) operator()(Ts&... args) const
@@ -58,5 +59,4 @@ namespace fused {
     constexpr auto idx = index_of<Tp>(type_list<Us...>);
     return get<idx>(t).get();
   }
-}
 }

@@ -4,9 +4,10 @@
 #include <archie/meta/static_constexpr_storage.hpp>
 #include <archie/fused/tuple.hpp>
 
-namespace archie {
-namespace fused {
-  namespace detail {
+namespace archie::fused
+{
+  namespace detail
+  {
     struct zip_impl {
     private:
       template <std::size_t n>
@@ -22,7 +23,8 @@ namespace fused {
         template <typename F, typename... Ts>
         constexpr decltype(auto) operator()(F&& f, Ts&&... t) const
         {
-          return fused::make_tuple(impl_n<ns::value>{}(std::forward<F>(f), std::forward<Ts>(t)...)...);
+          return fused::make_tuple(
+              impl_n<ns::value>{}(std::forward<F>(f), std::forward<Ts>(t)...)...);
         }
       };
 
@@ -53,5 +55,4 @@ namespace fused {
   }
   static constexpr auto const& zip = meta::instance<detail::zip_>();
   static constexpr auto const& zip_view = meta::instance<detail::zip_view_>();
-}
 }

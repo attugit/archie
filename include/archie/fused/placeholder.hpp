@@ -6,9 +6,10 @@
 #include <archie/meta/indexable.hpp>
 #include <archie/meta/static_constexpr_storage.hpp>
 
-namespace archie {
-namespace fused {
-  namespace detail {
+namespace archie::fused
+{
+  namespace detail
+  {
     template <typename... other>
     struct placeholder {
       template <typename Tp, typename... Us>
@@ -32,7 +33,8 @@ namespace fused {
   template <std::size_t N>
   static constexpr auto const& nth = meta::instance<placeholder<N>>();
 
-  inline namespace placeholders {
+  inline namespace placeholders
+  {
     static constexpr auto const& _0 = fused::nth<0>;
     static constexpr auto const& _1 = fused::nth<1>;
     static constexpr auto const& _2 = fused::nth<2>;
@@ -44,5 +46,4 @@ namespace fused {
     static constexpr auto const& _8 = fused::nth<8>;
     static constexpr auto const& _9 = fused::nth<9>;
   }
-}
 }

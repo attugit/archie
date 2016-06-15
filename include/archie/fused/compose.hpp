@@ -8,9 +8,10 @@
 #include <archie/fused/static_if.hpp>
 #include <archie/traits/is_fused_tuple.hpp>
 
-namespace archie {
-namespace fused {
-  namespace detail {
+namespace archie::fused
+{
+  namespace detail
+  {
     struct compose_ {
       template <typename F, typename... Ts>
       constexpr decltype(auto) operator()(F&& f, Ts&&... ts) const
@@ -40,5 +41,4 @@ namespace fused {
   }
 
   static constexpr auto const& compose = meta::instance<detail::compose_>();
-}
 }

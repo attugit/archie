@@ -5,8 +5,8 @@
 #include <archie/boolean.hpp>
 #include <utility>
 
-namespace archie {
-namespace fused {
+namespace archie::fused
+{
   template <typename Tp>
   struct type_tag : meta::identity<Tp> {
     template <typename... Us>
@@ -31,7 +31,8 @@ namespace fused {
     return !std::is_same<Tp, Up>::value;
   }
 
-  namespace detail {
+  namespace detail
+  {
     struct make_tag_ {
       template <typename Tp>
       constexpr decltype(auto) operator()(Tp&&) const noexcept
@@ -43,5 +44,4 @@ namespace fused {
   static constexpr auto const& make_tag = meta::instance<detail::make_tag_>();
   template <typename T>
   static constexpr auto const& id = meta::instance<type_tag<T>>();
-}
 }

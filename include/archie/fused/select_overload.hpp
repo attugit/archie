@@ -2,8 +2,8 @@
 
 #include <archie/ignore.hpp>
 
-namespace archie {
-namespace fused {
+namespace archie::fused
+{
   template <unsigned N>
   struct choice : choice<N + 1> {
   };
@@ -18,5 +18,4 @@ namespace fused {
 
   constexpr choice<0> select_overload{};
   using otherwise = meta::ignore;
-}
 }

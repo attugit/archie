@@ -3,9 +3,10 @@
 #include <utility>
 #include <archie/meta/static_constexpr_storage.hpp>
 
-namespace archie {
-namespace fused {
-  namespace detail {
+namespace archie::fused
+{
+  namespace detail
+  {
     struct static_if_ {
       template <typename Cond>
       decltype(auto) operator()(Cond const&) const
@@ -39,5 +40,4 @@ namespace fused {
   }
 
   static constexpr auto const& static_if = meta::instance<detail::static_if_>();
-}
 }

@@ -10,9 +10,10 @@
 #include <archie/fused/type_tag.hpp>
 #include <archie/meta/static_constexpr_storage.hpp>
 
-namespace archie {
-namespace fused {
-  namespace detail {
+namespace archie::fused
+{
+  namespace detail
+  {
     struct tuple_size_ {
       template <typename Tp>
       constexpr decltype(auto) operator()(type_tag<Tp>) const
@@ -63,5 +64,4 @@ namespace fused {
   static constexpr auto const& at = meta::instance<detail::at_<N>>();
   template <typename T>
   static constexpr auto const& extract = meta::instance<detail::extract_<T>>();
-}
 }

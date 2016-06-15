@@ -6,10 +6,10 @@
 #include <archie/meta/indexable.hpp>
 #include <archie/fused/nth.hpp>
 
-namespace archie {
-namespace fused {
-  namespace detail {
-
+namespace archie::fused
+{
+  namespace detail
+  {
     struct order_forward {
     };
     struct order_backward {
@@ -32,7 +32,8 @@ namespace fused {
       decltype(auto) go(order_backward, F&& f, Ts&&... args) const
       {
         meta::ignore{
-            (f(get_n(meta::number<sizeof...(ids)-ids::value - 1>{}, std::forward<Ts>(args)...)), 0)...};
+            (f(get_n(meta::number<sizeof...(ids)-ids::value - 1>{}, std::forward<Ts>(args)...)),
+             0)...};
         return f;
       }
       template <typename Order, typename F, typename... Ts>
@@ -54,5 +55,4 @@ namespace fused {
     return meta::indexable_t<detail::for_each_order, sizeof...(Ts)>{}(
         detail::order_backward{}, std::forward<F>(f), std::forward<Ts>(args)...);
   }
-}
 }

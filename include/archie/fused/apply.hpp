@@ -7,9 +7,10 @@
 #include <archie/fused/conditional.hpp>
 #include <archie/traits/is_fused_tuple.hpp>
 
-namespace archie {
-namespace fused {
-  namespace detail {
+namespace archie::fused
+{
+  namespace detail
+  {
     struct apply_args_ {
       template <typename F, typename... Ts>
       decltype(auto) operator()(F&& f, Ts&&... ts) const
@@ -42,5 +43,4 @@ namespace fused {
 
   static constexpr auto const apply =
       make_conditional(detail::apply_tuple_{}, detail::apply_args_{});
-}
 }

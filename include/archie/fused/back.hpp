@@ -4,9 +4,10 @@
 #include <archie/ignore.hpp>
 #include <archie/meta/static_constexpr_storage.hpp>
 
-namespace archie {
-namespace fused {
-  namespace detail {
+namespace archie::fused
+{
+  namespace detail
+  {
     struct back_ {
       template <typename Tp, typename... Us>
       constexpr decltype(auto) operator()(Tp&& t, Us&&... us) const noexcept
@@ -18,5 +19,4 @@ namespace fused {
     };
   }
   static constexpr auto const& back = meta::instance<detail::back_>();
-}
 }

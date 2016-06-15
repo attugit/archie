@@ -7,9 +7,10 @@
 #include <archie/meta/requires.hpp>
 #include <archie/meta/static_constexpr_storage.hpp>
 
-namespace archie {
-namespace fused {
-  namespace detail {
+namespace archie::fused
+{
+  namespace detail
+  {
     template <typename, typename...>
     struct conditional_;
 
@@ -74,5 +75,4 @@ namespace fused {
   static constexpr auto const& conditional = meta::instance<conditional_t<T...>>();
 
   static constexpr auto const& make_conditional = meta::instance<detail::make_conditional_>();
-}
 }

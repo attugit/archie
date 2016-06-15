@@ -2,12 +2,13 @@
 
 #if defined(USE_STD_TUPLE)
 #include <tuple>
-namespace archie {
-namespace fused {
+namespace archie::fused
+{
   using std::tuple;
   using std::get;
   using std::tuple_element;
-  namespace detail {
+  namespace detail
+  {
     struct make_tuple_ {
       template <typename... Ts>
       constexpr decltype(auto) operator()(Ts&&... ts) const
@@ -23,6 +24,5 @@ namespace fused {
       }
     };
   }
-}
 }
 #endif

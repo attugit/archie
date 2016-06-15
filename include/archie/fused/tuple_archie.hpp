@@ -16,8 +16,8 @@
 #include <archie/fused/static_if.hpp>
 #include <archie/boolean.hpp>
 
-namespace archie {
-namespace fused {
+namespace archie::fused
+{
   template <typename... Ts>
   struct tuple {
   private:
@@ -142,7 +142,8 @@ namespace fused {
     }
   };
 
-  namespace detail {
+  namespace detail
+  {
     struct make_tuple_ {
       template <typename... Ts>
       constexpr decltype(auto) operator()(Ts&&... args) const
@@ -188,7 +189,8 @@ namespace fused {
     using type = meta::at_t<I, Ts...>;
   };
 
-  namespace detail {
+  namespace detail
+  {
     template <typename... idx>
     struct tuple_internals {
       template <typename... Ts, typename... Us>
@@ -199,7 +201,8 @@ namespace fused {
       template <typename... Ts, typename... Us>
       static void move_assign(tuple<Ts...>& lhs, tuple<Us...>&& rhs)
       {
-        meta::ignore{(fused::get<idx::value>(lhs) = std::move(fused::get<idx::value>(rhs)), false)...};
+        meta::ignore{
+            (fused::get<idx::value>(lhs) = std::move(fused::get<idx::value>(rhs)), false)...};
       }
     };
   }
@@ -226,5 +229,4 @@ namespace fused {
     meta::indexable_t<detail::tuple_internals, sizeof...(Ts)>::copy_assign(*this, orig);
     return *this;
   }
-}
 }
