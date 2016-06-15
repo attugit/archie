@@ -1,7 +1,6 @@
 #pragma once
 
-#include <archie/meta/static_constexpr_storage.hpp>
-#include <archie/meta/comparable.hpp>
+#include <archie/meta.hpp>
 
 namespace archie::meta
 {

@@ -1,10 +1,8 @@
 #pragma once
 
-#include <archie/meta/eval.hpp>
+#include <archie/meta.hpp>
 #include <archie/type_list.hpp>
 #include <archie/index_of.hpp>
-#include <archie/boolean.hpp>
-#include <archie/meta/returns.hpp>
 
 namespace archie::meta
 {

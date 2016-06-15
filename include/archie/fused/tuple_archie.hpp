@@ -2,19 +2,17 @@
 
 #include <utility>
 #include <array>
-#include <archie/meta/eval.hpp>
 #include <archie/index_of.hpp>
 #include <archie/meta/requires.hpp>
 #include <archie/meta/at.hpp>
 #include <archie/meta/indexable.hpp>
-#include <archie/meta/logic.hpp>
 #include <archie/traits.hpp>
 #include <archie/fused/nth.hpp>
 #include <archie/fused/mover.hpp>
 #include <archie/ignore.hpp>
 #include <archie/traits/is_callable.hpp>
 #include <archie/fused/static_if.hpp>
-#include <archie/boolean.hpp>
+#include <archie/meta.hpp>
 
 namespace archie::fused
 {

@@ -1,9 +1,7 @@
 #pragma once
 
 #include <type_traits>
-#include <archie/meta/eval.hpp>
-#include <archie/meta/logic.hpp>
-#include <archie/boolean.hpp>
+#include <archie/meta.hpp>
 
 namespace archie::meta
 {

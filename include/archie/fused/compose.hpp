@@ -4,7 +4,7 @@
 #include <archie/fused/tuple.hpp>
 #include <archie/fused/apply.hpp>
 #include <archie/fused/tail.hpp>
-#include <archie/boolean.hpp>
+#include <archie/meta.hpp>
 #include <archie/fused/static_if.hpp>
 #include <archie/traits/is_fused_tuple.hpp>
 

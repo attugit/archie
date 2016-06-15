@@ -1,8 +1,7 @@
 #pragma once
 
 #include <utility>
-#include <archie/meta/eval.hpp>
-#include <archie/meta/returns.hpp>
+#include <archie/meta.hpp>
 #include <archie/type_list.hpp>
 #include <archie/meta/at.hpp>
 #include <archie/meta/indexable.hpp>

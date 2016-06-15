@@ -1,9 +1,7 @@
 #pragma once
 
-#include <archie/meta/eval.hpp>
-#include <archie/meta/logic.hpp>
+#include <archie/meta.hpp>
 #include <archie/meta/append.hpp>
-#include <archie/meta/returns.hpp>
 
 namespace archie::meta
 {

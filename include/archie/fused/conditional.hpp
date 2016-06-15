@@ -2,10 +2,10 @@
 
 #include <utility>
 #include <type_traits>
+#include <archie/meta.hpp>
+#include <archie/meta/requires.hpp>
 #include <archie/traits/is_callable.hpp>
 #include <archie/fused/static_if.hpp>
-#include <archie/meta/requires.hpp>
-#include <archie/meta/static_constexpr_storage.hpp>
 
 namespace archie::fused
 {

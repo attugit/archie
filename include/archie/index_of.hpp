@@ -1,9 +1,8 @@
 #pragma once
 
-#include <archie/search_for.hpp>
+#include <archie/meta.hpp>
 #include <archie/type_list.hpp>
-#include <archie/quote.hpp>
-#include <archie/meta/static_constexpr_storage.hpp>
+#include <archie/search_for.hpp>
 
 namespace archie::fused
 {

@@ -1,7 +1,6 @@
 #pragma once
 
-#include <archie/meta/static_constexpr_storage.hpp>
-#include <archie/number.hpp>
+#include <archie/meta.hpp>
 
 namespace archie::fused
 {

@@ -1,9 +1,7 @@
 #pragma once
 
-#include <archie/meta/identity.hpp>
-#include <archie/meta/static_constexpr_storage.hpp>
-#include <archie/boolean.hpp>
 #include <utility>
+#include <archie/meta.hpp>
 
 namespace archie::fused
 {

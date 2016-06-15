@@ -7,8 +7,8 @@
 #include <archie/fused/tuple_std.hpp>
 #endif
 
+#include <archie/meta.hpp>
 #include <archie/fused/type_tag.hpp>
-#include <archie/meta/static_constexpr_storage.hpp>
 
 namespace archie::fused
 {

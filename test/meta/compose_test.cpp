@@ -1,6 +1,6 @@
-#include <archie/meta/compose.hpp>
-#include <archie/number.hpp>
 #include <memory>
+#include <archie/meta.hpp>
+#include <archie/meta/compose.hpp>
 
 namespace
 {

@@ -1,11 +1,9 @@
 #pragma once
 
-#include <archie/meta/eval.hpp>
-#include <archie/number.hpp>
-#include <archie/boolean.hpp>
+#include <utility>
+#include <archie/meta.hpp>
 #include <archie/meta/at.hpp>
 #include <archie/index_of.hpp>
-#include <utility>
 
 namespace archie::meta
 {

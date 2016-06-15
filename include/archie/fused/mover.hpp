@@ -1,8 +1,8 @@
 #pragma once
 
 #include <utility>
+#include <archie/meta.hpp>
 #include <archie/meta/functional.hpp>
-#include <archie/meta/logic.hpp>
 #include <archie/traits.hpp>
 
 namespace archie::fused

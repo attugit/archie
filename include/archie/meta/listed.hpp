@@ -1,6 +1,6 @@
 #pragma once
 
-#include <archie/meta/returns.hpp>
+#include <archie/meta.hpp>
 #include <archie/type_list.hpp>
 
 namespace archie::meta

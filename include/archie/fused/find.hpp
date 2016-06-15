@@ -1,8 +1,8 @@
 #pragma once
 
+#include <archie/meta.hpp>
 #include <archie/index_of.hpp>
 #include <archie/meta/find.hpp>
-#include <archie/meta/static_constexpr_storage.hpp>
 #include <archie/fused/nth.hpp>
 
 namespace archie::fused

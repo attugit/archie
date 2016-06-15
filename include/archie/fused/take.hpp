@@ -1,7 +1,7 @@
 #pragma once
 
 #include <utility>
-#include <archie/meta/static_constexpr_storage.hpp>
+#include <archie/meta.hpp>
 #include <archie/meta/indexable.hpp>
 #include <archie/fused/tuple.hpp>
 #include <archie/fused/nth.hpp>

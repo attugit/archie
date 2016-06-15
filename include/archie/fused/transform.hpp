@@ -1,10 +1,10 @@
 #pragma once
 
+#include <utility>
+#include <archie/meta.hpp>
 #include <archie/fused/tuple.hpp>
 #include <archie/fused/tuple_view.hpp>
 #include <archie/fused/apply.hpp>
-#include <archie/meta/static_constexpr_storage.hpp>
-#include <utility>
 
 namespace archie::fused
 {

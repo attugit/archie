@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstddef>
-#include <archie/meta/static_constexpr_storage.hpp>
+#include <archie/meta.hpp>
 
 namespace archie::meta
 {

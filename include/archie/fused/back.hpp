@@ -1,8 +1,8 @@
 #pragma once
 
 #include <utility>
+#include <archie/meta.hpp>
 #include <archie/ignore.hpp>
-#include <archie/meta/static_constexpr_storage.hpp>
 
 namespace archie::fused
 {

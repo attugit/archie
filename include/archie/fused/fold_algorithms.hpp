@@ -3,8 +3,7 @@
 #include <utility>
 #include <functional>
 #include <archie/fused/fold.hpp>
-#include <archie/boolean.hpp>
-#include <archie/meta/static_constexpr_storage.hpp>
+#include <archie/meta.hpp>
 
 namespace archie::fused
 {

@@ -1,4 +1,4 @@
-#include <archie/meta/logic.hpp>
+#include <archie/meta.hpp>
 
 namespace
 {

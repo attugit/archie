@@ -1,10 +1,8 @@
 #pragma once
 
 #include <utility>
-#include <archie/meta/eval.hpp>
-#include <archie/number.hpp>
+#include <archie/meta.hpp>
 #include <archie/meta/listed.hpp>
-#include <archie/meta/returns.hpp>
 
 namespace archie::meta
 {
