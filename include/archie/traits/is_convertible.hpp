@@ -2,9 +2,10 @@
 
 #include <archie/traits/has_member.hpp>
 
-namespace archie {
-namespace traits {
-  namespace detail {
+namespace archie::traits
+{
+  namespace detail
+  {
     template <typename Tp>
     struct convert_helper {
       static void implicit(Tp);
@@ -15,5 +16,4 @@ namespace traits {
   }
   template <typename Tp, typename Up>
   using is_convertible = has_member<detail::inspect_convertible, meta::type_list<Tp, Up>>;
-}
 }

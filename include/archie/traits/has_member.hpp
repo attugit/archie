@@ -4,8 +4,8 @@
 #include <archie/meta/well_formed.hpp>
 #include <archie/type_list.hpp>
 
-namespace archie {
-namespace traits {
+namespace archie::traits
+{
   template <template <typename...> class, typename, typename = meta::well_formed_t<>>
   struct has_member : decltype(fused::False) {
   };
@@ -14,5 +14,4 @@ namespace traits {
   struct has_member<F, meta::type_list<Ts...>, meta::well_formed_t<F<Ts...>>>
       : decltype(fused::True) {
   };
-}
 }

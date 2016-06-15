@@ -2,9 +2,10 @@
 
 #include <archie/traits/has_member.hpp>
 
-namespace archie {
-namespace traits {
-  namespace detail {
+namespace archie::traits
+{
+  namespace detail
+  {
     template <typename Tp, typename Up>
     using inspect_assignable = decltype(std::declval<Tp>() = std::declval<Up>());
   }
@@ -17,5 +18,4 @@ namespace traits {
 
   template <typename Tp>
   using is_move_assignable = is_assignable<Tp, Tp&&>;
-}
 }

@@ -4,8 +4,8 @@
 #include <archie/boolean.hpp>
 #include <archie/meta/well_formed.hpp>
 
-namespace archie {
-namespace traits {
+namespace archie::traits
+{
   template <typename, typename = meta::well_formed_t<>>
   struct model_of : decltype(fused::False) {
   };
@@ -16,5 +16,4 @@ namespace traits {
       meta::well_formed_t<decltype(std::declval<Concept>().requires(std::declval<Ts>()...))>>
       : decltype(fused::True) {
   };
-}
 }

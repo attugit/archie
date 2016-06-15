@@ -3,9 +3,10 @@
 #include <type_traits>
 #include <archie/traits/has_member.hpp>
 
-namespace archie {
-namespace traits {
-  namespace detail {
+namespace archie::traits
+{
+  namespace detail
+  {
     template <typename Tp, typename... Us>
     using inspect_constructible = decltype(Tp{std::declval<Us>()...});
   }
@@ -20,5 +21,4 @@ namespace traits {
 
   template <typename Tp>
   using is_trivially_copy_constructible = std::is_trivially_copy_constructible<Tp>;
-}
 }

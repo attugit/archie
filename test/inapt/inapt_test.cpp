@@ -41,82 +41,83 @@ int main() {
 
 #include <archie/inapt.hpp>
 #include <gtest/gtest.h>
-namespace {
-using namespace archie;
-struct error {
-  enum codes : int
-  {
-    a = -1,
-    b = -2,
-    c = -3
-  };
-};
-
-using status = reserved_t<int, error::codes::a, error::codes::b, error::codes::c>;
-using failure = reserved_t<int, 0>;
-
-TEST(inapt, canCreateInapt)
+namespace
 {
-  enum
-  {
-    non_null = 7
+  using namespace archie;
+  struct error {
+    enum codes : int
+    {
+      a = -1,
+      b = -2,
+      c = -3
+    };
   };
-  status s;
-  null_inapt_t null;
 
-  {
-    EXPECT_EQ(s, null);
-    failure f;
-    EXPECT_EQ(f, null);
-  }
+  using status = reserved_t<int, error::codes::a, error::codes::b, error::codes::c>;
+  using failure = reserved_t<int, 0>;
 
+  TEST(inapt, canCreateInapt)
   {
-    EXPECT_NE(s, error::codes::b);
-    s = error::codes::b;
-    EXPECT_EQ(s, error::codes::b);
-    EXPECT_EQ(s, null);
-  }
+    enum
+    {
+      non_null = 7
+    };
+    status s;
+    null_inapt_t null;
 
-  {
-    EXPECT_NE(s, non_null);
-    s = non_null;
-    EXPECT_EQ(s, non_null);
-    EXPECT_NE(s, null);
-  }
+    {
+      EXPECT_EQ(s, null);
+      failure f;
+      EXPECT_EQ(f, null);
+    }
 
-  {
-    status nn{non_null};
-    EXPECT_EQ(nn, non_null);
-    EXPECT_NE(nn, null);
-  }
+    {
+      EXPECT_NE(s, error::codes::b);
+      s = error::codes::b;
+      EXPECT_EQ(s, error::codes::b);
+      EXPECT_EQ(s, null);
+    }
 
-  {
-    s = non_null;
-    EXPECT_NE(s, null);
-    s = null;
-    EXPECT_EQ(s, null);
-  }
+    {
+      EXPECT_NE(s, non_null);
+      s = non_null;
+      EXPECT_EQ(s, non_null);
+      EXPECT_NE(s, null);
+    }
 
-  {
-    status a;
-    EXPECT_FALSE(a);
-    a = non_null;
-    EXPECT_TRUE(a);
-  }
+    {
+      status nn{non_null};
+      EXPECT_EQ(nn, non_null);
+      EXPECT_NE(nn, null);
+    }
 
-  {
-    status a;
-    status const b(error::a);
-    EXPECT_EQ(*a, error::a);
-    EXPECT_EQ(*b, error::a);
-  }
+    {
+      s = non_null;
+      EXPECT_NE(s, null);
+      s = null;
+      EXPECT_EQ(s, null);
+    }
 
-  {
-    status a(error::b);
-    status b(a);
-    a = b;
-    EXPECT_EQ(a, error::b);
-    EXPECT_EQ(b, error::b);
+    {
+      status a;
+      EXPECT_FALSE(a);
+      a = non_null;
+      EXPECT_TRUE(a);
+    }
+
+    {
+      status a;
+      status const b(error::a);
+      EXPECT_EQ(*a, error::a);
+      EXPECT_EQ(*b, error::a);
+    }
+
+    {
+      status a(error::b);
+      status b(a);
+      a = b;
+      EXPECT_EQ(a, error::b);
+      EXPECT_EQ(b, error::b);
+    }
   }
-}
 }

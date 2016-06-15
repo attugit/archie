@@ -25,6 +25,7 @@ namespace archie::meta
   using eat_n = ignore;
 }
 
-namespace archie::fused {
+namespace archie::fused
+{
   static constexpr auto const& ignore = meta::instance<meta::ignore>();
 }
