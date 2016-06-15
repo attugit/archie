@@ -1,7 +1,7 @@
 #pragma once
 
-namespace archie {
-namespace meta {
+namespace archie::meta
+{
   template <typename T>
   struct static_constexpr_storage {
     static constexpr T const value{};
@@ -15,5 +15,4 @@ namespace meta {
   {
     return static_constexpr_storage<T>::value;
   }
-}
 }

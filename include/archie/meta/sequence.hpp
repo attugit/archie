@@ -7,8 +7,8 @@
 #include <archie/index_of.hpp>
 #include <utility>
 
-namespace archie {
-namespace meta {
+namespace archie::meta
+{
   template <typename... Ts>
   struct sequence {
     using size = meta::number<sizeof...(Ts)>;
@@ -40,5 +40,4 @@ namespace meta {
     template <typename Up>
     using contains = boolean<find<Up>::value != size::value>;
   };
-}
 }

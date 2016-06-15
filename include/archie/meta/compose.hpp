@@ -1,7 +1,7 @@
 #pragma once
 
-namespace archie {
-namespace meta {
+namespace archie::meta
+{
   template <template <typename...> class...>
   struct compose;
 
@@ -16,5 +16,4 @@ namespace meta {
     template <typename... Xs>
     using apply = F<typename compose<Gs...>::template apply<Xs...>::type>;
   };
-}
 }

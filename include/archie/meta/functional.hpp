@@ -7,8 +7,8 @@
 #include <archie/meta/returns.hpp>
 #include <archie/type_list.hpp>
 
-namespace archie {
-namespace meta {
+namespace archie::meta
+{
   template <typename Condition, typename Tp, typename Up>
   using if_t = eval<std::conditional<Condition::value, Tp, Up>>;
 
@@ -36,5 +36,4 @@ namespace meta {
 
   template <unsigned... N>
   using usum_t = sum_t<number<N>...>;
-}
 }

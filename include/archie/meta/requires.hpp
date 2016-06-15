@@ -6,8 +6,8 @@
 #include <archie/ignore.hpp>
 #include <archie/meta/returns.hpp>
 
-namespace archie {
-namespace meta {
+namespace archie::meta
+{
   using enabler = ignore;
 
   template <typename Condition>
@@ -21,5 +21,4 @@ namespace meta {
 
   template <typename... Conditions>
   using requires_none = requires<none<Conditions...>>;
-}
 }

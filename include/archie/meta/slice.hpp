@@ -5,8 +5,8 @@
 #include <archie/meta/tail.hpp>
 #include <archie/type_list.hpp>
 
-namespace archie {
-namespace meta {
+namespace archie::meta
+{
   template <std::size_t i, std::size_t j, typename... Ts>
   struct slice : returns<tail_t<i, take_t<j, Ts...>>> {
   };
@@ -17,5 +17,4 @@ namespace meta {
 
   template <std::size_t i, std::size_t j, typename... Ts>
   using slice_t = eval<slice<i, j, Ts...>>;
-}
 }

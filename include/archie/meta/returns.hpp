@@ -2,9 +2,8 @@
 
 #include <archie/meta/identity.hpp>
 
-namespace archie {
-namespace meta {
+namespace archie::meta
+{
   template <typename Tp>
   using returns = identity<Tp>;
-}
 }

@@ -2,8 +2,8 @@
 
 #include <archie/meta/eval.hpp>
 
-namespace archie {
-namespace meta {
+namespace archie::meta
+{
   template <typename Tp>
   struct identity {
     using type = Tp;
@@ -11,5 +11,4 @@ namespace meta {
 
   template <typename Tp>
   using identity_t = eval<identity<Tp>>;
-}
 }

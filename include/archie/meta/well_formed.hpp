@@ -3,7 +3,8 @@
 #include <archie/ignore.hpp>
 #include <archie/meta/returns.hpp>
 
-namespace archie::meta {
+namespace archie::meta
+{
   template <typename...>
   struct well_formed : returns<ignore> {
   };

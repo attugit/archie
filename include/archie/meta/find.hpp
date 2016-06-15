@@ -6,9 +6,10 @@
 #include <archie/boolean.hpp>
 #include <archie/meta/returns.hpp>
 
-namespace archie {
-namespace meta {
-  namespace detail {
+namespace archie::meta
+{
+  namespace detail
+  {
     template <typename Tp, typename... Us>
     using find = decltype(fused::index_of<Tp>(fused::type_list<Us...>));
   }
@@ -34,5 +35,4 @@ namespace meta {
 
   template <template <typename> class F, typename... Ts>
   using find_if_t = eval<find_if<F, Ts...>>;
-}
 }

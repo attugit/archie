@@ -8,9 +8,10 @@
 #include <archie/number.hpp>
 #include <archie/meta/indexable.hpp>
 
-namespace archie {
-namespace meta {
-  namespace detail {
+namespace archie::meta
+{
+  namespace detail
+  {
     template <typename... other>
     struct tail_ {
       template <typename... Ts>
@@ -34,5 +35,4 @@ namespace meta {
 
   template <std::size_t n, typename... Ts>
   using tail_t = eval<tail<n, Ts...>>;
-}
 }

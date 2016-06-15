@@ -3,8 +3,8 @@
 #include <archie/meta/returns.hpp>
 #include <archie/type_list.hpp>
 
-namespace archie {
-namespace meta {
+namespace archie::meta
+{
   template <template <typename...> class, typename>
   struct listed;
 
@@ -14,5 +14,4 @@ namespace meta {
 
   template <template <typename...> class C, typename Tp>
   using listed_t = typename listed<C, Tp>::type;
-}
 }

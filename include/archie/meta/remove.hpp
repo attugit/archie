@@ -5,8 +5,8 @@
 #include <archie/meta/append.hpp>
 #include <archie/meta/returns.hpp>
 
-namespace archie {
-namespace meta {
+namespace archie::meta
+{
   template <template <typename> class, typename...>
   struct remove_if;
 
@@ -21,5 +21,4 @@ namespace meta {
 
   template <template <typename> class F, typename Tp>
   using remove_if_t = eval<remove_if<F, Tp>>;
-}
 }

@@ -3,8 +3,8 @@
 #include <archie/meta/eval.hpp>
 #include <archie/type_list.hpp>
 
-namespace archie {
-namespace meta {
+namespace archie::meta
+{
   template <template <typename> class F, typename... Xs>
   struct transform {
     using type = type_list<typename F<Xs>::type...>;
@@ -16,5 +16,4 @@ namespace meta {
 
   template <template <typename> class F, typename... Xs>
   using transform_t = eval<transform<F, Xs...>>;
-}
 }

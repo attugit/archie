@@ -7,9 +7,10 @@
 #include <archie/meta/at.hpp>
 #include <archie/meta/indexable.hpp>
 
-namespace archie {
-namespace meta {
-  namespace detail {
+namespace archie::meta
+{
+  namespace detail
+  {
     template <typename... other>
     struct take_ {
     public:
@@ -27,5 +28,4 @@ namespace meta {
 
   template <std::size_t n, typename... Ts>
   using take_t = eval<take<n, Ts...>>;
-}
 }

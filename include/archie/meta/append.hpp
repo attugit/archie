@@ -6,8 +6,8 @@
 #include <archie/meta/functional.hpp>
 #include <archie/meta/logic.hpp>
 
-namespace archie {
-namespace meta {
+namespace archie::meta
+{
   template <typename, typename>
   struct append;
 
@@ -43,5 +43,4 @@ namespace meta {
 
   template <template <typename> class F, typename... Ts>
   using append_if_not_t = eval<append_if_not<F, Ts...>>;
-}
 }
