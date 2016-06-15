@@ -2,7 +2,6 @@
 
 #include <archie/meta.hpp>
 #include <archie/meta/well_formed.hpp>
-#include <archie/type_list.hpp>
 
 namespace archie::traits
 {

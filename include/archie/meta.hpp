@@ -17,16 +17,10 @@ namespace archie::meta
   {
     return static_constexpr_storage<T>::value;
   }
-}
 
-namespace archie::meta
-{
   template <typename Tp>
   using eval = typename Tp::type;
-}
 
-namespace archie::meta
-{
   template <bool B>
   struct boolean : std::integral_constant<bool, B> {
   };
@@ -70,10 +64,7 @@ namespace archie::meta
   {
     return fused::boolean<B1 != B2>;
   }
-}
 
-namespace archie::meta
-{
   template <typename>
   struct comparable {
   };
@@ -101,10 +92,7 @@ namespace archie::meta
   {
     return fused::True;
   }
-}
 
-namespace archie::meta
-{
   template <typename... Ts>
   struct all : boolean<(... && Ts::value)> {
   };
@@ -118,12 +106,27 @@ namespace archie::meta
 
   template <typename T>
   using no = none<T>;
-}
 
-namespace archie::meta
-{
   template <std::size_t N>
   struct number : std::integral_constant<std::size_t, N> {
+  };
+
+  template <typename T>
+  struct quote : comparable<quote<T>> {
+    using type = T;
+  };
+
+  template <typename T>
+  using identity = quote<T>;
+
+  template <typename T>
+  using identity_t = eval<identity<T>>;
+
+  template <typename Tp>
+  using returns = identity<Tp>;
+
+  template <typename... T>
+  struct type_list : comparable<type_list<T...>> {
   };
 }
 
@@ -131,34 +134,10 @@ namespace archie::fused
 {
   template <std::size_t N>
   static constexpr auto const& number = meta::instance<meta::number<N>>();
-}
 
-namespace archie::meta
-{
-  template <typename T>
-  struct quote : comparable<quote<T>> {
-  };
-}
-
-namespace archie::fused
-{
   template <typename T>
   static constexpr auto const& quote = meta::instance<meta::quote<T>>();
-}
 
-namespace archie::meta
-{
-  template <typename Tp>
-  struct identity {
-    using type = Tp;
-  };
-
-  template <typename Tp>
-  using identity_t = eval<identity<Tp>>;
-}
-
-namespace archie::meta
-{
-  template <typename Tp>
-  using returns = identity<Tp>;
+  template <typename... T>
+  static constexpr auto const& type_list = meta::instance<meta::type_list<T...>>();
 }

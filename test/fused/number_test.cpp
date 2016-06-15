@@ -6,4 +6,8 @@ namespace
   static_assert(0 == fused::number<0>);
   static_assert(1 == fused::number<1>);
   static_assert(2 == fused::number<2>);
+  static_assert(fused::number<2>> fused::number<1>);
+  static_assert(fused::number<2> >= fused::number<1>);
+  static_assert(fused::number<1> < fused::number<2>);
+  static_assert(fused::number<1> <= fused::number<2>);
 }

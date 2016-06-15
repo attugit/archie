@@ -1,7 +1,6 @@
 #pragma once
 
 #include <archie/meta.hpp>
-#include <archie/type_list.hpp>
 #include <archie/index_of.hpp>
 
 namespace archie::meta

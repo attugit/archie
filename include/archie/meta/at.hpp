@@ -3,7 +3,6 @@
 #include <utility>
 #include <archie/meta.hpp>
 #include <archie/ignore.hpp>
-#include <archie/type_list.hpp>
 #include <archie/meta/indexable.hpp>
 
 namespace archie::meta

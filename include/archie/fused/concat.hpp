@@ -1,10 +1,10 @@
 #pragma once
 
+#include <archie/meta.hpp>
+#include <archie/to_type_list.hpp>
 #include <archie/fused/tuple.hpp>
 #include <archie/traits/is_fused_tuple.hpp>
-#include <archie/meta.hpp>
 #include <archie/meta/requires.hpp>
-#include <archie/type_list.hpp>
 #include <archie/fused/conditional.hpp>
 
 namespace archie::fused
