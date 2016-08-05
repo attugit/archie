@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./waf distclean configure build install --testcmd="valgrind --error-exitcode=1 %s" --prefix=/usr
+./waf distclean configure build_${BUILDTYPE} install_${BUILDTYPE} --testcmd="valgrind --error-exitcode=1 %s" --prefix=/usr
