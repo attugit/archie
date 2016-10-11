@@ -2,6 +2,8 @@
 
 #include <utility>
 #include <archie/meta/static_constexpr_storage.hpp>
+#include <archie/fused/static_if.hpp>
+#include <archie/boolean.hpp>
 
 namespace archie::fused
 {
@@ -9,22 +11,17 @@ namespace archie::fused
   {
     struct fold_ {
       template <typename F, typename S, typename... Xs>
-      constexpr decltype(auto) operator()(F&& f, S&& s, Xs&&... xs) const
+      constexpr decltype(auto) operator()(F const& func, S&& acc, Xs&&... xs) const
       {
-        return impl(std::forward<F>(f), std::forward<S>(s), std::forward<Xs>(xs)...);
-      }
-
-    private:
-      template <typename F, typename S, typename X>
-      constexpr decltype(auto) impl(F&& f, S&& arg_state, X&& arg_x) const
-      {
-        return std::forward<F>(f)(std::forward<S>(arg_state), std::forward<X>(arg_x));
-      }
-      template <typename F, typename S, typename X, typename... Ys>
-      constexpr decltype(auto) impl(F&& f, S&& arg_state, X&& arg_x, Ys&&... ys) const
-      {
-        return impl(std::forward<F>(f), f(std::forward<S>(arg_state), std::forward<X>(arg_x)),
-                    std::forward<Ys>(ys)...);
+        return static_if(fused::boolean<(sizeof...(Xs) > 1)>)
+            .then([this](auto const& f, auto&& state, auto&& x_, auto&&... y) -> decltype(auto) {
+              return this->operator()(
+                  f, f(std::forward<decltype(state)>(state), std::forward<decltype(x_)>(x_)),
+                  std::forward<decltype(y)>(y)...);
+            })
+            .else_([](auto const& f, auto&& state, auto&& x_) -> decltype(auto) {
+              return f(std::forward<decltype(state)>(state), std::forward<decltype(x_)>(x_));
+            })(func, std::forward<S>(acc), std::forward<Xs>(xs)...);
       }
     };
     struct greedy_fold_ {
