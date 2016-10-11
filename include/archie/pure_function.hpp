@@ -18,9 +18,9 @@ namespace archie
       template <typename T>
       type operator()(T&& t) const
       {
-        return fused::static_if(std::is_convertible<std::decay_t<T>, type>{})(
-            [](auto&& x) -> type { return std::forward<decltype(x)>(x); },
-            [](auto&& x) -> type {
+        return fused::static_if(std::is_convertible<std::decay_t<T>, type>{})
+            .then([](auto&& x) -> type { return std::forward<decltype(x)>(x); })
+            .else_([](auto&& x) -> type {
               using ObjT = std::decay_t<decltype(x)>;
               static_assert(
                   std::is_empty<ObjT>::value && std::is_trivially_constructible<ObjT>::value, "");

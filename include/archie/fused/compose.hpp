@@ -17,22 +17,24 @@ namespace archie::fused
       constexpr decltype(auto) operator()(F&& f, Ts&&... ts) const
       {
         int workaround_for_gcc_bug_71095 = 0;
-        return fused::static_if(traits::is_fused_tuple<std::decay_t<F>>{})(
-            [this](auto&& tpl, auto&&... xs) -> decltype(auto) {
+        return fused::static_if(traits::is_fused_tuple<std::decay_t<F>>{})
+            .then([this](auto&& tpl, auto&&... xs) -> decltype(auto) {
               int workaround_for_gcc_bug_71095_ = 0;
               return fused::static_if(
-                  meta::boolean<(tuple_size(type_tag<std::decay_t<decltype(tpl)>>{}) == 1)>{})(
-                  [workaround_for_gcc_bug_71095_](auto&& t, auto&&... args) -> decltype(auto) {
-                    return fused::apply(fused::get<0>(std::forward<decltype(t)>(t)),
-                                        std::forward<decltype(args)>(args)...);
-                  },
-                  [this](auto&& t, auto&&... args) -> decltype(auto) {
+                         meta::boolean<(tuple_size(type_tag<std::decay_t<decltype(tpl)>>{}) ==
+                                        1)>{})
+                  .then(
+                      [workaround_for_gcc_bug_71095_](auto&& t, auto&&... args) -> decltype(auto) {
+                        return fused::apply(fused::get<0>(std::forward<decltype(t)>(t)),
+                                            std::forward<decltype(args)>(args)...);
+                      })
+                  .else_([this](auto&& t, auto&&... args) -> decltype(auto) {
                     return fused::apply(fused::get<0>(std::forward<decltype(t)>(t)),
                                         this->operator()(fused::tail(std::forward<decltype(t)>(t)),
                                                          std::forward<decltype(args)>(args)...));
                   })(std::forward<decltype(tpl)>(tpl), std::forward<decltype(xs)>(xs)...);
-            },
-            [workaround_for_gcc_bug_71095](auto&& func, auto&&... args) -> decltype(auto) {
+            })
+            .else_([workaround_for_gcc_bug_71095](auto&& func, auto&&... args) -> decltype(auto) {
               return fused::apply(std::forward<decltype(func)>(func),
                                   std::forward<decltype(args)>(args)...);
             })(std::forward<F>(f), std::forward<Ts>(ts)...);

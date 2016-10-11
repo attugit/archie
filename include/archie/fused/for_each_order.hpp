@@ -32,7 +32,7 @@ namespace archie::fused
       decltype(auto) go(order_backward, F&& f, Ts&&... args) const
       {
         meta::ignore{
-            (f(get_n(meta::number<sizeof...(ids)-ids::value - 1>{}, std::forward<Ts>(args)...)),
+            (f(get_n(meta::number<sizeof...(ids) - ids::value - 1>{}, std::forward<Ts>(args)...)),
              0)...};
         return f;
       }

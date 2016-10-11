@@ -40,11 +40,11 @@ namespace archie::fused
       template <typename... Ts>
       constexpr decltype(auto) operator()(Ts&&... xs) const
       {
-        return fused::static_if(traits::is_callable<F1, Ts&&...>{})(
-            [this](auto&&... args) -> decltype(auto) {
+        return fused::static_if(traits::is_callable<F1, Ts&&...>{})
+            .then([this](auto&&... args) -> decltype(auto) {
               return this->F1::operator()(std::forward<decltype(args)>(args)...);
-            },
-            [this](auto&&... args) -> decltype(auto) {
+            })
+            .else_([this](auto&&... args) -> decltype(auto) {
               return this->F2::operator()(std::forward<decltype(args)>(args)...);
             })(std::forward<Ts>(xs)...);
       }

@@ -26,14 +26,14 @@ namespace archie::fused
       template <typename Eq, typename Cmp, typename... Us, typename... Vs>
       static bool call(Eq eq, Cmp cmp, tuple<Us...> const& x, tuple<Vs...> const& y)
       {
-        return fused::static_if(meta::boolean<((head + 1) < sizeof...(Us))>{})(
-            [eq, cmp](auto const& x1, auto const& y1, auto idx) -> bool {
+        return fused::static_if(meta::boolean<((head + 1) < sizeof...(Us))>{})
+            .then([eq, cmp](auto const& x1, auto const& y1, auto idx) -> bool {
               constexpr auto const& pos = fused::nth<decltype(idx)::value>;
               return eq(x1.apply(pos), y1.apply(pos))
                          ? recursion<decltype(idx)::value + 1>::call(eq, cmp, x1, y1)
                          : cmp(x1.apply(pos), y1.apply(pos));
-            },
-            [cmp](auto const& x2, auto const& y2, auto idx) -> bool {
+            })
+            .else_([cmp](auto const& x2, auto const& y2, auto idx) -> bool {
               constexpr auto const& pos = fused::nth<decltype(idx)::value>;
               return cmp(x2.apply(pos), y2.apply(pos));
             })(x, y, meta::number<head>{});
@@ -114,7 +114,7 @@ namespace archie::fused
     bool operator<=(tuple const& rhs) const { return !(*this > rhs); }
     constexpr std::size_t size() noexcept { return sizeof...(Ts); }
     template <typename F>
-    decltype(auto) apply(F&& f, requires_callable<F, Ts const&...> = fused::ignore) const&
+    decltype(auto) apply(F&& f, requires_callable<F, Ts const&...> = fused::ignore) const &
     {
       auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
         return std::forward<decltype(f)>(f)(static_cast<Ts const&>(xs)...);
