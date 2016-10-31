@@ -4,8 +4,13 @@
 
 namespace archie
 {
+  namespace detail
+  {
+    template <typename, typename>
+    class filter_impl;
+  }
   template <typename Range, typename Pred>
-  auto filter(Range&, Pred);
+  auto filter(Range& r, Pred) -> detail::filter_impl<decltype(std::begin(r)), Pred>;
 
   namespace detail
   {
@@ -38,7 +43,7 @@ namespace archie
       Pred pred_;
 
       template <typename Range, typename P>
-      friend auto archie::filter(Range&, P);
+      friend auto archie::filter(Range& r, P) -> filter_impl<decltype(std::begin(r)), P>;
 
       explicit filter_impl(ForwardIt first, ForwardIt last, Pred pred)
           : first_(std::find_if(first, last, pred)), last_(last), pred_(pred)
@@ -52,7 +57,7 @@ namespace archie
   }
 
   template <typename Range, typename Pred>
-  auto filter(Range& r, Pred pred)
+  auto filter(Range& r, Pred pred) -> detail::filter_impl<decltype(std::begin(r)), Pred>
   {
     return detail::filter_impl<decltype(std::begin(r)), Pred>(std::begin(r), std::end(r), pred);
   }
