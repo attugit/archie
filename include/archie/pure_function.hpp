@@ -1,37 +1,9 @@
 #pragma once
 #include <utility>
 #include <type_traits>
-#include <archie/meta/static_constexpr_storage.hpp>
-#include <archie/fused/static_if.hpp>
 
 namespace archie
 {
-  namespace detail
-  {
-    template <typename...>
-    struct to_function_pointer_;
-
-    template <typename R, typename... Args>
-    struct to_function_pointer_<R(Args...)> {
-      using type = R (*)(Args...);
-
-      template <typename T>
-      type operator()(T&& t) const
-      {
-        return fused::static_if(std::is_convertible<std::decay_t<T>, type>{})
-            .then([](auto&& x) -> type { return std::forward<decltype(x)>(x); })
-            .else_([](auto&& x) -> type {
-              using ObjT = std::decay_t<decltype(x)>;
-              static_assert(
-                  std::is_empty<ObjT>::value && std::is_trivially_constructible<ObjT>::value, "");
-              return [](Args... args) {
-                return std::add_const_t<ObjT>{}(std::forward<Args>(args)...);
-              };
-            })(std::forward<T>(t));
-      }
-    };
-  }
-
   template <typename...>
   struct pure_function;
 
@@ -42,15 +14,14 @@ namespace archie
     pure_function() = default;
 
     template <typename T>
-    explicit pure_function(T t)
-        : fptr(meta::instance<detail::to_function_pointer_<R(Args...)>>()(t))
+    explicit pure_function(T t) : fptr(convert(t))
     {
     }
 
     template <typename T>
     pure_function& operator=(T t)
     {
-      fptr = meta::instance<detail::to_function_pointer_<R(Args...)>>()(t);
+      fptr = convert(t);
       return *this;
     }
 
@@ -63,6 +34,19 @@ namespace archie
     explicit operator bool() const { return fptr != nullptr; }
     operator type() const { return fptr; }
   private:
+    template <typename T>
+    static constexpr type convert(T&& t)
+    {
+      if
+        constexpr(std::is_convertible<std::decay_t<T>, type>::value) { return std::forward<T>(t); }
+      else
+      {
+        return [](Args... args) -> R {
+          return std::remove_reference_t<T const>{}(std::forward<Args>(args)...);
+        };
+      }
+    }
+
     type fptr = nullptr;
   };
 }
