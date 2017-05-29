@@ -16,9 +16,10 @@ namespace archie
     template <typename T>
     explicit pure_function(T t) : fptr(nullptr)
     {
-      if constexpr(std::is_convertible<T, type>::value) {
-        fptr = t;
-      } else {
+      if
+        constexpr(std::is_convertible<T, type>::value) { fptr = t; }
+      else
+      {
         (void)t;
         fptr = [](auto... args) {
           return std::remove_reference_t<T>{}(std::forward<decltype(args)>(args)...);

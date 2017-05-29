@@ -59,7 +59,6 @@ def build(bld):
     bld.env.CXXFLAGS += flags
     bld.define('APPNAME', APPNAME)
     bld.define('VERSION', VERSION)
-    bld.env.DEFINES += ['USE_ARCHIE_TUPLE']
     bld.env.INCLUDES += ['include', 'test', 'gtest', 'gtest/include']
     bld(source=bld.path.ant_glob(['gtest/src/gtest_main.cc',
                                   'gtest/src/gtest-all.cc']),

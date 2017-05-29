@@ -1,11 +1,29 @@
 #pragma once
 
-#include <utility>
-#if defined(USE_ARCHIE_TUPLE)
-#include <archie/fused/tuple_archie.hpp>
-#elif defined(USE_STD_TUPLE)
-#include <archie/fused/tuple_std.hpp>
-#endif
+#include <tuple>
+namespace archie::fused
+{
+  using std::tuple;
+  using std::get;
+  using std::tuple_element;
+  namespace detail
+  {
+    struct make_tuple_ {
+      template <typename... Ts>
+      constexpr decltype(auto) operator()(Ts&&... ts) const
+      {
+        return std::make_tuple(std::forward<Ts>(ts)...);
+      }
+    };
+    struct tie_ {
+      template <typename... Ts>
+      constexpr decltype(auto) operator()(Ts&&... ts) const
+      {
+        return std::tie(std::forward<Ts>(ts)...);
+      }
+    };
+  }
+}
 
 #include <archie/fused/type_tag.hpp>
 #include <archie/meta/static_constexpr_storage.hpp>
