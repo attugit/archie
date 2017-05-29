@@ -4,7 +4,7 @@
 #include <archie/fused/tuple.hpp>
 #include <archie/meta/indexable.hpp>
 #include <archie/meta/requires.hpp>
-#include <archie/fused/conditional.hpp>
+#include <archie/fused/overload.hpp>
 #include <archie/traits/is_fused_tuple.hpp>
 
 namespace archie::fused
@@ -41,6 +41,5 @@ namespace archie::fused
     };
   }
 
-  static constexpr auto const apply =
-      make_conditional(detail::apply_tuple_{}, detail::apply_args_{});
+  static constexpr auto const apply = make_overload(detail::apply_tuple_{}, detail::apply_args_{});
 }

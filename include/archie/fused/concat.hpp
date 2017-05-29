@@ -5,7 +5,7 @@
 #include <archie/meta/requires.hpp>
 #include <archie/boolean.hpp>
 #include <archie/type_list.hpp>
-#include <archie/fused/conditional.hpp>
+#include <archie/fused/overload.hpp>
 
 namespace archie::fused
 {
@@ -51,5 +51,5 @@ namespace archie::fused
     };
   }
   constexpr auto const concat =
-      fused::make_conditional(detail::concat_tuples_{}, detail::append_tuple_{});
+      fused::make_overload(detail::concat_tuples_{}, detail::append_tuple_{});
 }

@@ -1,4 +1,4 @@
-#include <archie/fused/conditional.hpp>
+#include <archie/fused/overload.hpp>
 #include <gtest/gtest.h>
 
 namespace
@@ -12,38 +12,38 @@ namespace
 
   namespace fused = archie::fused;
 
-  TEST(conditional, canUseConditionalT)
+  TEST(overload, canUseConditionalT)
   {
-    fused::conditional<goo, hoo> cond;
+    fused::overload<goo, hoo> cond;
     auto x = cond();
     auto y = cond(1);
     EXPECT_EQ(3, x);
     EXPECT_EQ(4, y);
   }
 
-  TEST(conditional, canUseConditional)
+  TEST(overload, canUseConditional)
   {
-    auto x = fused::conditional<goo, hoo>()();
-    auto y = fused::conditional<goo, hoo>()(1);
+    auto x = fused::overload<goo, hoo>()();
+    auto y = fused::overload<goo, hoo>()(1);
     EXPECT_EQ(3, x);
     EXPECT_EQ(4, y);
   }
 
-  TEST(conditional, canUseMakeConditional)
+  TEST(overload, canUseMakeConditional)
   {
-    constexpr auto f = fused::make_conditional(goo{}, hoo{});
+    constexpr auto f = fused::make_overload(goo{}, hoo{});
     EXPECT_EQ(3, f());
     EXPECT_EQ(4, f(7));
   }
 
-  TEST(conditional, canUseConditionalWithLambda)
+  TEST(overload, canUseConditionalWithLambda)
   {
     auto const f = [](int i) { return i + 2; };
     auto const g = [](int i, int j) { return 2 * i + j; };
     auto const h = [](int i, int j, int k) { return i * j + k; };
-    auto const c = fused::make_conditional(f);
-    auto const d = fused::make_conditional(f, g);
-    auto const e = fused::make_conditional(f, g, h);
+    auto const c = fused::make_overload(f);
+    auto const d = fused::make_overload(f, g);
+    auto const e = fused::make_overload(f, g, h);
     EXPECT_EQ(f(1), c(1));
     EXPECT_EQ(f(3), c(3));
     EXPECT_EQ(f(1), d(1));
