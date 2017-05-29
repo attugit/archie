@@ -1,4 +1,21 @@
-FROM attugit/dtest:v1.1
+FROM debian:testing
 
-ADD . attugit/archie
+RUN echo "deb http://deb.debian.org/debian experimental main" >> /etc/apt/sources.list
+RUN \
+    apt update -y && \
+    apt upgrade -y && \
+    apt install -y -t experimental \
+        g++-7 \
+        libboost-dev \
+        python \
+        valgrind \
+    && rm -rf /var/lib/apt/lists/* \
+              /tmp/* \
+              /var/tmp/*
 
+ENV CXX=g++-7
+
+ADD https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64.deb /tmp/dumb-init_1.2.0_amd64.deb
+RUN dpkg -i /tmp/dumb-init_1.2.0_amd64.deb && rm /tmp/dumb-init_1.2.0_amd64.deb
+
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]

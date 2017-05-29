@@ -56,8 +56,9 @@ namespace archie
 
     template <typename F, typename H, typename... T>
     struct get_f<F, H, T...> {
-      using type = typename std::
-          conditional<std::is_base_of<F, H>::value, H, typename get_f<F, T...>::type>::type;
+      using type = typename std::conditional<std::is_base_of<F, H>::value,
+                                             H,
+                                             typename get_f<F, T...>::type>::type;
     };
   }
 

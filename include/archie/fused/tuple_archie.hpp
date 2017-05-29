@@ -114,7 +114,7 @@ namespace archie::fused
     bool operator<=(tuple const& rhs) const { return !(*this > rhs); }
     constexpr std::size_t size() noexcept { return sizeof...(Ts); }
     template <typename F>
-    decltype(auto) apply(F&& f, requires_callable<F, Ts const&...> = fused::ignore) const &
+    decltype(auto) apply(F&& f, requires_callable<F, Ts const&...> = fused::ignore) const&
     {
       auto exec = [&f](move_t<Ts>&... xs) -> decltype(auto) {
         return std::forward<decltype(f)>(f)(static_cast<Ts const&>(xs)...);
