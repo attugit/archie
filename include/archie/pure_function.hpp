@@ -14,14 +14,22 @@ namespace archie
     pure_function() = default;
 
     template <typename T>
-    explicit pure_function(T t) : fptr(convert(t))
+    explicit pure_function(T t) : fptr(nullptr)
     {
+      if constexpr(std::is_convertible<T, type>::value) {
+        fptr = t;
+      } else {
+        (void)t;
+        fptr = [](auto... args) {
+          return std::remove_reference_t<T>{}(std::forward<decltype(args)>(args)...);
+        };
+      }
     }
 
     template <typename T>
     pure_function& operator=(T t)
     {
-      fptr = convert(t);
+      *this = pure_function(t);
       return *this;
     }
 
@@ -34,19 +42,6 @@ namespace archie
     explicit operator bool() const { return fptr != nullptr; }
     operator type() const { return fptr; }
   private:
-    template <typename T>
-    static constexpr type convert(T&& t)
-    {
-      if
-        constexpr(std::is_convertible<std::decay_t<T>, type>::value) { return std::forward<T>(t); }
-      else
-      {
-        return [](Args... args) -> R {
-          return std::remove_reference_t<T const>{}(std::forward<Args>(args)...);
-        };
-      }
-    }
-
     type fptr = nullptr;
   };
 }
