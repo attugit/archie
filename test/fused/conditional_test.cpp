@@ -14,7 +14,7 @@ namespace
 
   TEST(conditional, canUseConditionalT)
   {
-    fused::conditional_t<goo, hoo> cond;
+    fused::conditional<goo, hoo> cond;
     auto x = cond();
     auto y = cond(1);
     EXPECT_EQ(3, x);
@@ -23,8 +23,8 @@ namespace
 
   TEST(conditional, canUseConditional)
   {
-    auto x = fused::conditional<goo, hoo>();
-    auto y = fused::conditional<goo, hoo>(1);
+    auto x = fused::conditional<goo, hoo>()();
+    auto y = fused::conditional<goo, hoo>()(1);
     EXPECT_EQ(3, x);
     EXPECT_EQ(4, y);
   }
