@@ -82,4 +82,11 @@ namespace archie::fused
   static constexpr auto const& at = meta::instance<detail::at_<N>>();
   template <typename T>
   static constexpr auto const& extract = meta::instance<detail::extract_<T>>();
+
+  constexpr auto const apply_to = [](auto&& f) {
+    return [f = std::forward<decltype(f)>(f)](auto&& t)->decltype(auto)
+    {
+      return std::apply(std::forward<decltype(f)>(f), std::forward<decltype(t)>(t));
+    };
+  };
 }

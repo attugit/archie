@@ -10,7 +10,7 @@ namespace
   TEST(algorithms, canUseFusedCompose)
   {
     {
-      auto x = fused::compose(fused::make_tuple, 1, 2u, '3');
+      auto x = fused::compose(fused::make_tuple)(1, 2u, '3');
       static_assert(fused::tuple_size(fused::id<decltype(x)>) == 3u, "");
       EXPECT_EQ(1, fused::get<0>(x));
       EXPECT_EQ(2u, fused::get<1>(x));
@@ -20,17 +20,7 @@ namespace
       auto a = 1;
       auto b = 2u;
       auto c = '3';
-
-      auto const& x = fused::compose(fused::make_tuple(fused::front, fused::tie), a, b, c);
-      EXPECT_EQ(&a, &x);
-    }
-    {
-      auto a = 1;
-      auto b = 2u;
-      auto c = '3';
-
-      auto opt = fused::make_tuple(fused::front, fused::tie);
-      auto const& x = fused::compose(opt, a, b, c);
+      auto const& x = fused::compose(fused::apply_to(fused::front), fused::tie)(a, b, c);
       EXPECT_EQ(&a, &x);
     }
   }
@@ -94,8 +84,7 @@ EXPECT_EQ(1, x);
     {
       auto i = 0u;
       auto f = [&i](auto&&) { ++i; };
-      auto opt = fused::make_tuple(fused::for_each, fused::make_tuple);
-      fused::compose(opt, f, 1, 2u, '3', 4.0);
+      fused::compose(fused::for_each)(f, 1, 2u, '3', 4.0);
       EXPECT_EQ(4u, i);
     }
   }
@@ -126,8 +115,7 @@ EXPECT_EQ(1, x);
     }
     {
       auto f = [](auto&& x) { return std::make_unique<std::remove_reference_t<decltype(x)>>(x); };
-      auto opt = fused::make_tuple(fused::transform, fused::make_tuple);
-      auto x = fused::compose(opt, f, 1, 2u, '3', 4.0);
+      auto x = fused::compose(fused::transform)(f, 1, 2u, '3', 4.0);
       static_assert(fused::tuple_size(fused::id<decltype(x)>) == 4u, "");
       EXPECT_NE(fused::get<0>(x), nullptr);
       EXPECT_EQ(1, *fused::get<0>(x));
