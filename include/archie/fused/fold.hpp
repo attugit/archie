@@ -59,7 +59,7 @@ namespace archie::fused
     }
   };
 
-  constexpr auto const& make_fold = fused::make_overload(
+  constexpr auto const& make_fold = fused::overload(
       [](auto const& f) {
         return [f](auto&&... xs) { return fused::fold(f, std::forward<decltype(xs)>(xs)...); };
       },

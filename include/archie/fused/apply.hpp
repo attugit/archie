@@ -41,5 +41,6 @@ namespace archie::fused
     };
   }
 
-  static constexpr auto const apply = make_overload(detail::apply_tuple_{}, detail::apply_args_{});
+  static constexpr auto const apply =
+      fused::overload(detail::apply_tuple_{}, detail::apply_args_{});
 }

@@ -50,6 +50,5 @@ namespace archie::fused
       }
     };
   }
-  constexpr auto const concat =
-      fused::make_overload(detail::concat_tuples_{}, detail::append_tuple_{});
+  constexpr auto const concat = fused::overload(detail::concat_tuples_{}, detail::append_tuple_{});
 }
