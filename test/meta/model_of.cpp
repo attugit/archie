@@ -7,7 +7,7 @@
 
 namespace
 {
-  using archie::meta::requires;
+  using archie::meta::require;
   using archie::traits::model_of;
   using archie::models::Callable;
   using archie::models::Iterable;
@@ -16,12 +16,12 @@ namespace
 
   struct foo {
     template <typename Tp>
-    int func(Tp, requires<model_of<Callable(Tp)>> = fused::ignore) const
+    int func(Tp, require<model_of<Callable(Tp)>> = fused::ignore) const
     {
       return 0;
     }
     template <typename Tp>
-    int func(Tp, requires<model_of<Callable(Tp, int)>> = fused::ignore) const
+    int func(Tp, require<model_of<Callable(Tp, int)>> = fused::ignore) const
     {
       return 1;
     }

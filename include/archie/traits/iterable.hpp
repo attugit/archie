@@ -8,7 +8,7 @@ namespace archie
   {
     struct Iterable {
       template <typename Tp>
-      auto requires(Tp&& f) -> decltype(std::begin(f), std::end(f));
+      auto require(Tp&& f) -> decltype(std::begin(f), std::end(f));
     };
   }
 }

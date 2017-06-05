@@ -8,7 +8,7 @@ namespace archie
   {
     struct Callable {
       template <typename F, typename... Ts>
-      auto requires(F&& f, Ts&&... xs) -> decltype(f(std::forward<Ts>(xs)...));
+      auto require(F&& f, Ts&&... xs) -> decltype(f(std::forward<Ts>(xs)...));
     };
   }
 }

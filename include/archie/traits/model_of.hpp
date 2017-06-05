@@ -13,7 +13,7 @@ namespace archie::traits
   template <typename Concept, typename... Ts>
   struct model_of<
       Concept(Ts...),
-      meta::well_formed_t<decltype(std::declval<Concept>().requires(std::declval<Ts>()...))>>
+      meta::well_formed_t<decltype(std::declval<Concept>().require(std::declval<Ts>()...))>>
       : decltype(fused::True) {
   };
 }

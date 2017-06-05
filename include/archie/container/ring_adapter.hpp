@@ -10,15 +10,15 @@ namespace archie
   private:
     struct is_valid_container {
       template <typename C>
-      auto requires(C) -> decltype(std::declval<C const>().begin(),
-                                   std::declval<C const>().end(),
-                                   std::declval<C const>().size(),
-                                   std::declval<C const>().capacity());
+      auto require(C) -> decltype(std::declval<C const>().begin(),
+                                  std::declval<C const>().end(),
+                                  std::declval<C const>().size(),
+                                  std::declval<C const>().capacity());
     };
     struct can_emplace {
       template <typename C, typename... Args>
-      auto requires(C, Args...) -> decltype(std::declval<C>().emplace_back(std::declval<Args>()...),
-                                            typename C::value_type{std::declval<Args>()...});
+      auto require(C, Args...) -> decltype(std::declval<C>().emplace_back(std::declval<Args>()...),
+                                           typename C::value_type{std::declval<Args>()...});
     };
     static_assert(traits::model_of<is_valid_container(Container)>::value == true, "");
 

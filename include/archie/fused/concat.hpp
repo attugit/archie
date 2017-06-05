@@ -14,8 +14,8 @@ namespace archie::fused
     struct concat_tuples_ {
       template <typename Tp,
                 typename Up,
-                typename = meta::requires_all<traits::is_fused_tuple<std::remove_reference_t<Tp>>,
-                                              traits::is_fused_tuple<std::remove_reference_t<Up>>>>
+                typename = meta::require_all<traits::is_fused_tuple<std::remove_reference_t<Tp>>,
+                                             traits::is_fused_tuple<std::remove_reference_t<Up>>>>
       constexpr decltype(auto) operator()(Tp&& tp, Up&& up) const
       {
         return impl(std::forward<Tp>(tp), to_type_list(tp), std::forward<Up>(up), to_type_list(up));
@@ -36,7 +36,7 @@ namespace archie::fused
     struct append_tuple_ {
       template <typename Tp,
                 typename... Us,
-                typename = meta::requires<traits::is_fused_tuple<std::remove_reference_t<Tp>>>>
+                typename = meta::require<traits::is_fused_tuple<std::remove_reference_t<Tp>>>>
       constexpr decltype(auto) operator()(Tp&& tp, Us&&... us) const
       {
         return impl(std::forward<Tp>(tp), to_type_list(tp), std::forward<Us>(us)...);

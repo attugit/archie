@@ -19,8 +19,8 @@ namespace archie
   private:
     struct is_valid_policy {
       template <typename Policy>
-      auto requires(Policy) -> decltype(std::declval<Policy>().null(),
-                                        std::declval<Policy>().is_null(std::declval<T>()));
+      auto require(Policy) -> decltype(std::declval<Policy>().null(),
+                                       std::declval<Policy>().is_null(std::declval<T>()));
     };
     static_assert(traits::model_of<is_valid_policy(P)>::value == true,
                   "Inapt policy must provide null() and is_null(T) methods");

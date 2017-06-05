@@ -8,6 +8,7 @@ top = '.'
 out = 'build'
 flags = [
     '-std=c++1z',
+    '-fconcepts',
     '-Wall',
     '-Wextra',
     '-Wshadow',
