@@ -5,16 +5,14 @@
 namespace archie::meta
 {
   template <typename... Ts>
-  struct all : boolean<(... && Ts::value)> {
-  };
+  constexpr bool const all = (Ts::value && ...);
 
   template <typename... Ts>
-  struct any : boolean<(... || Ts::value)> {
-  };
+  constexpr bool const any = (Ts::value || ...);
 
   template <typename... Ts>
-  using none = boolean<!any<Ts...>::value>;
+  constexpr bool const none = !any<Ts...>;
 
   template <typename T>
-  using no = none<T>;
+  constexpr bool const no = none<T>;
 }

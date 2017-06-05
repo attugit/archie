@@ -14,11 +14,11 @@ namespace archie::meta
   using require = eval<std::enable_if<Condition::value, enabler>>;
 
   template <typename... Conditions>
-  using require_all = require<all<Conditions...>>;
+  using require_all = require<std::integral_constant<bool, all<Conditions...>>>;
 
   template <typename... Conditions>
-  using require_any = require<any<Conditions...>>;
+  using require_any = require<std::integral_constant<bool, any<Conditions...>>>;
 
   template <typename... Conditions>
-  using require_none = require<none<Conditions...>>;
+  using require_none = require<std::integral_constant<bool, none<Conditions...>>>;
 }
