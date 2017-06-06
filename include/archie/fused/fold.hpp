@@ -1,36 +1,10 @@
 #pragma once
 
 #include <utility>
-#include <archie/meta/static_constexpr_storage.hpp>
 #include <archie/fused/overload.hpp>
-#include <archie/boolean.hpp>
 
 namespace archie::fused
 {
-  namespace detail
-  {
-    struct greedy_fold_ {
-      template <typename F, typename S, typename... Xs>
-      decltype(auto) operator()(F const& f, S const& s, Xs const&... xs) const
-      {
-        return impl(f, s, xs...);
-      }
-
-    private:
-      template <typename F, typename S, typename X>
-      decltype(auto) impl(F const& f, S const& s, X const& x) const
-      {
-        return f(s, x);
-      }
-      template <typename F, typename S, typename X, typename... Ys>
-      decltype(auto) impl(F const& f, S const& s, X const& x, Ys const&... ys) const
-      {
-        return impl(f, f(s, x, ys...), ys...);
-      }
-    };
-  }
-  static constexpr auto const& greedy_fold = meta::instance<detail::greedy_fold_>();
-
   constexpr auto const fold = [](auto const& func, auto&& init, auto&&... xs) -> decltype(auto) {
     if
       constexpr(sizeof...(xs))

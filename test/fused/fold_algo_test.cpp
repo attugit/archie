@@ -14,32 +14,32 @@ namespace
 
   TEST(fold_algo, canUseAccumulate)
   {
-    EXPECT_EQ(1u, fused::accumulate(plus)(0, 1u));
-    EXPECT_EQ(3.0, fused::accumulate(plus)(0, 1u, 2.0));
-    EXPECT_EQ(54.0, fused::accumulate(plus)(0, 1u, 2.0, '3'));
+    EXPECT_EQ(1u, fused::reduce(plus)(0, 1u));
+    EXPECT_EQ(3.0, fused::reduce(plus)(0, 1u, 2.0));
+    EXPECT_EQ(54.0, fused::reduce(plus)(0, 1u, 2.0, '3'));
   }
 
   TEST(fold_algo, canApplyAccumulate)
   {
     auto const t = fused::make_tuple(0, 1, 2);
-    EXPECT_EQ(3, fused::apply(fused::accumulate(plus), t));
-    EXPECT_EQ(6, fused::apply(fused::accumulate(plus), fused::make_tuple(0, 1, 2, 3)));
+    EXPECT_EQ(3, fused::apply(fused::reduce(plus), t));
+    EXPECT_EQ(6, fused::apply(fused::reduce(plus), fused::make_tuple(0, 1, 2, 3)));
   }
 
   TEST(fold_algo, canUseAccumulateWithCustomFunctionObject)
   {
     auto const t = fused::make_tuple(0, 1, 2);
     auto const f = [](auto a, auto b) { return a + 3 * b; };
-    EXPECT_EQ(9, fused::apply(fused::accumulate(f), t));
-    EXPECT_EQ(9, fused::apply(fused::accumulate(f, 0), t));
-    EXPECT_EQ(10, fused::apply(fused::accumulate(f, 1), t));
+    EXPECT_EQ(9, fused::apply(fused::reduce(f), t));
+    EXPECT_EQ(9, fused::apply(fused::reduce(f, 0), t));
+    EXPECT_EQ(10, fused::apply(fused::reduce(f, 1), t));
   }
 
   TEST(fold_algo, canUseMax)
   {
-    EXPECT_EQ(1.0, fused::max(0, 1.0));
-    EXPECT_EQ('1', fused::max(0, '1', 2.0));
-    EXPECT_EQ(3, fused::max(0, 3, 2.0));
+    EXPECT_EQ(1.0, fused::max(0.0, 1.0));
+    EXPECT_EQ('2', fused::max('0', '1', '2'));
+    EXPECT_EQ(3, fused::max(0, 3, 2));
   }
 
   TEST(fold_algo, canApplyMax)
@@ -154,21 +154,21 @@ namespace
 
   TEST(fold_algo, canUseIsSorted)
   {
+    EXPECT_TRUE(fused::is_sorted(le)());
     EXPECT_TRUE(fused::is_sorted(le)(0));
-    EXPECT_TRUE(fused::is_sorted(le)(0, 1u));
-    EXPECT_TRUE(fused::is_sorted(le)(0, 1u, 2.0));
-    EXPECT_TRUE(fused::is_sorted(le)(0, 1u, 2.0, '3'));
-    EXPECT_FALSE(fused::is_sorted(le)(0, 1u, 2.0, 0));
-    EXPECT_FALSE(fused::is_sorted(le)(0, 1u, 0.0, '3'));
+    EXPECT_TRUE(fused::is_sorted(le)(0, 1));
+    EXPECT_TRUE(fused::is_sorted(le)(0, 1, 2));
+    EXPECT_TRUE(fused::is_sorted(le)(0, 1, 2, 3));
+    EXPECT_FALSE(fused::is_sorted(le)(0, 1, 2, 0));
+    EXPECT_FALSE(fused::is_sorted(le)(0, 1, 0, 3));
   }
-
   TEST(fold_algo, canApplyIsSorted)
   {
     EXPECT_TRUE(fused::apply(fused::is_sorted(le), fused::make_tuple(0)));
-    EXPECT_TRUE(fused::apply(fused::is_sorted(le), fused::make_tuple(0, 1u)));
-    EXPECT_TRUE(fused::apply(fused::is_sorted(le), fused::make_tuple(0, 1u, 2.0)));
-    EXPECT_TRUE(fused::apply(fused::is_sorted(le), fused::make_tuple(0, 1u, 2.0, '3')));
-    EXPECT_FALSE(fused::apply(fused::is_sorted(le), fused::make_tuple(0, 1u, 2.0, 0)));
-    EXPECT_FALSE(fused::apply(fused::is_sorted(le), fused::make_tuple(0, 1u, 0.0, '3')));
+    EXPECT_TRUE(fused::apply(fused::is_sorted(le), fused::make_tuple(0, 1)));
+    EXPECT_TRUE(fused::apply(fused::is_sorted(le), fused::make_tuple(0, 1, 2)));
+    EXPECT_TRUE(fused::apply(fused::is_sorted(le), fused::make_tuple(0, 1, 2, 3)));
+    EXPECT_FALSE(fused::apply(fused::is_sorted(le), fused::make_tuple(0, 1, 2, 0)));
+    EXPECT_FALSE(fused::apply(fused::is_sorted(le), fused::make_tuple(0, 1, 0, 3)));
   }
 }
